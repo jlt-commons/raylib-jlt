@@ -29,6 +29,12 @@ jobs:
     uses: jlt-commons/ci-builds/.github/workflows/site.yml@main
     with:
       base-path: /raylib-jlt
+      # docs-engine v0.3.0 adds a default Contributing page to every
+      # project's generated guide (see the docs-engine README, "The
+      # default Contributing page"). Pinned here rather than trusting
+      # the shared workflow's own default, so this build stays
+      # reproducible even after that default moves on again.
+      docs-engine-ref: v0.3.0
     permissions:
       contents: read
       pages: write
