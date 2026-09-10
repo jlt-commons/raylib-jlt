@@ -39,7 +39,7 @@ permissions:
 # first, use a workflow_dispatch run with the jolt-version input, which
 # overrides this for that run only.
 env:
-  JOLT_VERSION: ${{ inputs.jolt-version || '0.8.2' }}
+  JOLT_VERSION: ${{ inputs.jolt-version || '0.8.6' }}
 
 jobs:
   gates:
