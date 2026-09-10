@@ -43,7 +43,7 @@ env:
 
 jobs:
   gates:
-    name: compile · lint · format
+    name: compile · test · lint · format
     runs-on: ubuntu-latest
 
     steps:
