@@ -29,12 +29,10 @@ jobs:
     uses: jlt-commons/ci-builds/.github/workflows/site.yml@main
     with:
       base-path: /raylib-jlt
-      # Pinned rather than trusting the shared workflow's own default, so
-      # this build stays reproducible even after that default moves on.
-      # v0.3.1 adds a shareable "copy link" anchor to every heading (see
-      # the docs-engine README, "Markdown"); v0.3.0 added the default
-      # Contributing page.
-      docs-engine-ref: v0.3.1
+      # Pinned rather than trusting the shared workflow's own default.
+      # v0.3.2 fixes `jolt run build`/`clean` (docs-engine#3); v0.3.1
+      # added heading anchors, v0.3.0 the default Contributing page.
+      docs-engine-ref: v0.3.2
     permissions:
       contents: read
       pages: write
