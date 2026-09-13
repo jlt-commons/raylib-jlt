@@ -133,12 +133,12 @@
          zoom 1.0}} f]
   (let [p (ffi/alloc 24)]
     (try
-      (ffi/write p :float 0  (double offset-x))
-      (ffi/write p :float 4  (double offset-y))
-      (ffi/write p :float 8  (double target-x))
-      (ffi/write p :float 12 (double target-y))
-      (ffi/write p :float 16 (double rotation))
-      (ffi/write p :float 20 (double zoom))
+      (ffi/write p :float (double offset-x) 0)
+      (ffi/write p :float (double offset-y) 4)
+      (ffi/write p :float (double target-x) 8)
+      (ffi/write p :float (double target-y) 12)
+      (ffi/write p :float (double rotation) 16)
+      (ffi/write p :float (double zoom) 20)
       (begin-mode-2d-ptr p)
       (f)
       (end-mode-2d)
@@ -222,17 +222,17 @@
          projection 0}} f]
   (let [p (ffi/alloc 44)]
     (try
-      (ffi/write p :float 0  (double pos-x))
-      (ffi/write p :float 4  (double pos-y))
-      (ffi/write p :float 8  (double pos-z))
-      (ffi/write p :float 12 (double target-x))
-      (ffi/write p :float 16 (double target-y))
-      (ffi/write p :float 20 (double target-z))
-      (ffi/write p :float 24 (double up-x))
-      (ffi/write p :float 28 (double up-y))
-      (ffi/write p :float 32 (double up-z))
-      (ffi/write p :float 36 (double fovy))
-      (ffi/write p :int   40 (int projection))
+       (ffi/write p :float (double pos-x) 0)
+       (ffi/write p :float (double pos-y) 4)
+       (ffi/write p :float (double pos-z) 8)
+       (ffi/write p :float (double target-x) 12)
+       (ffi/write p :float (double target-y) 16)
+       (ffi/write p :float (double target-z) 20)
+       (ffi/write p :float (double up-x) 24)
+       (ffi/write p :float (double up-y) 28)
+       (ffi/write p :float (double up-z) 32)
+       (ffi/write p :float (double fovy) 36)
+       (ffi/write p :int (int projection) 40)
       (begin-mode-3d-ptr p)
       (f)
       (end-mode-3d)
@@ -946,7 +946,7 @@
     (try
       (dotimes [y h]
         (dotimes [x w]
-          (ffi/write buf :uint (* 4 (+ x (* y w))) (f x y))))
+          (ffi/write buf :uint (f x y) (* 4 (+ x (* y w))))))
       (let [id (rl-load-texture buf w h PIXELFORMAT-R8G8B8A8 1)]
         (texture-filter! id RL-TEXTURE-FILTER-NEAREST)
         (texture-wrap! id RL-TEXTURE-WRAP-REPEAT)
@@ -963,7 +963,7 @@
     (try
       (dotimes [y h]
         (dotimes [x w]
-          (ffi/write buf :uint (* 4 (+ x (* y w))) (f x y))))
+          (ffi/write buf :uint (f x y) (* 4 (+ x (* y w))))))
       (rl-update-texture id 0 0 w h PIXELFORMAT-R8G8B8A8 buf)
       (finally (ffi/free buf)))))
 
@@ -1097,11 +1097,11 @@
       (rl-ortho 0.0 (double rw) (double rh) 0.0 0.0 1.0)
       (rl-matrix-mode RL-MODELVIEW)
       (rl-load-identity)
-      (dotimes [i 16] (ffi/write m :float (* 4 i) 0.0))
-      (ffi/write m :float 0 sx)
-      (ffi/write m :float 20 sy)
-      (ffi/write m :float 40 1.0)
-      (ffi/write m :float 60 1.0)
+  (dotimes [i 16] (ffi/write m :float 0.0 (* 4 i)))
+  (ffi/write m :float sx 0)
+  (ffi/write m :float sy 20)
+  (ffi/write m :float 1.0 40)
+  (ffi/write m :float 1.0 60)
       (rl-mult-matrix-f m)
       (finally (ffi/free m)))))
 
@@ -1230,11 +1230,12 @@
   [write-type values f]
   (let [p (ffi/alloc (* 4 (count values)))]
     (try
-      (dotimes [i (count values)]
-        (ffi/write p write-type (* 4 i)
-                   (if (= write-type :float)
-                     (double (nth values i))
-                     (int (nth values i)))))
+       (dotimes [i (count values)]
+         (ffi/write p write-type
+                    (if (= write-type :float)
+                      (double (nth values i))
+                      (int (nth values i)))
+                    (* 4 i)))
       (f p)
       (finally (ffi/free p)))))
 

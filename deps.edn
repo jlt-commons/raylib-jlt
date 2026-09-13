@@ -10,6 +10,8 @@
                 :linux  ["libraylib.so.6" "libraylib.so"]}]
 
  :aliases {:check  {:main-opts ["-m" "net.b12n.raylib-jlt.check"]}   ; headless: compile every example
+           :test   {:paths ["src" "test"]
+                     :main-opts ["-m" "net.b12n.raylib-jlt.test-runner"]} ; headless: run the test suite
            :run    {:main-opts ["-m" "net.b12n.raylib-jlt.core"]}    ; basic window (default)
            :input  {:main-opts ["-m" "net.b12n.raylib-jlt.input"]}   ; move a circle with arrow keys
            :bounce {:main-opts ["-m" "net.b12n.raylib-jlt.bounce"]}   ; bouncing ball, SPACE pauses
