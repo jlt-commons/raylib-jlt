@@ -432,6 +432,8 @@
   camera-3d-split-screen {:doc "▶ two players, two render-texture halves" :task (run-example "camera-3d-split-screen")}
   rectangle-bounds  {:doc "▶ draggable word-wrap text container"  :task (run-example "rectangle-bounds")}
   polygon-drawing   {:doc "▶ hue-wheel texture on a spinning polygon" :task (run-example "polygon-drawing")}
+  texture-rendering {:doc "▶ a grid of squares painted entirely by a shader" :task (run-example "texture-rendering")}
+  texture-waves     {:doc "▶ a starfield rippled by a UV-displacement shader" :task (run-example "texture-waves")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

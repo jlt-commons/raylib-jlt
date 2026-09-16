@@ -146,7 +146,9 @@
    ["geometric-shapes"    "geometric-shapes" "3d"   "cubes, spheres, cylinders, cones, capsules"]
    ["camera-3d-split-screen" "camera-3d-split-screen" "3d" "two players, two render-texture halves"]
    ["rectangle-bounds"    "rectangle-bounds" "text" "draggable word-wrap text container"]
-   ["polygon-drawing"     "polygon-drawing" "textures" "hue-wheel texture on a spinning polygon"]])
+   ["polygon-drawing"     "polygon-drawing" "textures" "hue-wheel texture on a spinning polygon"]
+   ["texture-rendering"   "texture-rendering" "shaders" "a grid of squares painted entirely by a shader"]
+   ["texture-waves"       "texture-waves" "shaders" "a starfield rippled by a UV-displacement shader"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
