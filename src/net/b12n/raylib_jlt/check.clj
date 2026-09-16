@@ -9,6 +9,7 @@
   (:require
    [net.b12n.raylib-jlt.analog-clock]
    [net.b12n.raylib-jlt.asteroids]
+   [net.b12n.raylib-jlt.audio-raw-stream]
    [net.b12n.raylib-jlt.ball-physics]
    [net.b12n.raylib-jlt.basic-screen-manager]
    [net.b12n.raylib-jlt.boids]
@@ -20,6 +21,7 @@
    [net.b12n.raylib-jlt.bunnymark]
    [net.b12n.raylib-jlt.camera-2d-mouse-zoom]
    [net.b12n.raylib-jlt.camera-2d-platformer]
+   [net.b12n.raylib-jlt.camera-2d-split-screen]
    [net.b12n.raylib-jlt.camera-3d]
    [net.b12n.raylib-jlt.camera-3d-first-person]
    [net.b12n.raylib-jlt.camera2d]
@@ -107,6 +109,7 @@
    [net.b12n.raylib-jlt.shapes]
    [net.b12n.raylib-jlt.snake]
    [net.b12n.raylib-jlt.space-invaders]
+   [net.b12n.raylib-jlt.starfield-effect]
    [net.b12n.raylib-jlt.spinning-cubes]
    [net.b12n.raylib-jlt.spirograph]
    [net.b12n.raylib-jlt.splines]
@@ -129,6 +132,7 @@
    [net.b12n.raylib-jlt.window-should-close]
    [net.b12n.raylib-jlt.wireframe-shapes]
    [net.b12n.raylib-jlt.words-alignment]
+   [net.b12n.raylib-jlt.world-screen]
    [net.b12n.raylib-jlt.writing-anim]
    [net.b12n.raylib-jlt.yaw-pitch-roll]))
 

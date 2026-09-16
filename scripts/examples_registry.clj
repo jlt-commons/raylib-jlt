@@ -130,7 +130,11 @@
    ["texture-painting"    "texture-painting" "shaders" "a blank texture painted by a shader"]
    ["helitorus"           "helitorus" "3d"     "a helix wound around a torus, swept into a tube"]
    ["doom"                "doom"      "3d"     "a textured raycaster: one ray per screen column"]
-   ["pacman"              "pacman"    "games"  "pac-man, with the classic ghost personalities"]])
+   ["pacman"              "pacman"    "games"  "pac-man, with the classic ghost personalities"]
+   ["audio-raw-stream"    "audio-raw-stream" "audio" "arrow keys steer a live sine tone's pitch/pan"]
+   ["starfield-effect"    "starfield-effect" "shapes" "flying starfield (wheel=speed, SPACE=mode)"]
+   ["world-screen"        "world-screen" "3d" "a 2D label tracks a cube via GetWorldToScreen"]
+   ["camera-2d-split-screen" "camera-2d-split-screen" "core" "two players, two cameras, two render textures"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

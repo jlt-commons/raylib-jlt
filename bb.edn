@@ -416,6 +416,10 @@
   helitorus         {:doc "▶ a helix wound around a torus, swept into a tube" :task (run-example "helitorus")}
   doom              {:doc "▶ a textured raycaster: one ray per screen column" :task (run-example "doom")}
   pacman            {:doc "▶ pac-man, with the classic ghost personalities" :task (run-example "pacman")}
+  audio-raw-stream  {:doc "▶ arrow keys steer a live sine tone's pitch/pan" :task (run-example "audio-raw-stream")}
+  starfield-effect  {:doc "▶ flying starfield (wheel=speed, SPACE=mode)"    :task (run-example "starfield-effect")}
+  world-screen      {:doc "▶ a 2D label tracks a cube via GetWorldToScreen" :task (run-example "world-screen")}
+  camera-2d-split-screen {:doc "▶ two players, two cameras, two render textures" :task (run-example "camera-2d-split-screen")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
@@ -477,7 +481,7 @@
   info
   {:doc "Grouped cheat-sheet of all examples"
    :task (do
-           (doseq [g ["games" "core" "shapes" "text" "3d" "generative" "textures" "shaders"]]
+           (doseq [g ["games" "core" "shapes" "text" "3d" "generative" "textures" "shaders" "audio"]]
              (let [rows (filterv (fn [row] (= g (nth row 2))) examples)]
                (println (str "\n=== " g " (" (count rows) ") ==="))
                (doseq [row rows] (print-row row))))
