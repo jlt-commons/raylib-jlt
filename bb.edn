@@ -430,6 +430,7 @@
   viewport-scaling  {:doc "▶ 6 viewport-scaling policies, resize live"   :task (run-example "viewport-scaling")}
   geometric-shapes  {:doc "▶ cubes, spheres, cylinders, cones, capsules" :task (run-example "geometric-shapes")}
   camera-3d-split-screen {:doc "▶ two players, two render-texture halves" :task (run-example "camera-3d-split-screen")}
+  rectangle-bounds  {:doc "▶ draggable word-wrap text container"  :task (run-example "rectangle-bounds")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
