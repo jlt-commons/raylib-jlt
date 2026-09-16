@@ -156,6 +156,7 @@
            :rectangle-bounds {:main-opts ["-m" "net.b12n.raylib-jlt.rectangle-bounds"]} ; draggable word-wrap text container
            :polygon-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.polygon-drawing"]} ; hue-wheel texture on a spinning polygon
            :texture-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.texture-rendering"]} ; a grid of squares painted entirely by a shader
-           :texture-waves {:main-opts ["-m" "net.b12n.raylib-jlt.texture-waves"]}} ; a starfield rippled by a UV-displacement shader
+           :texture-waves {:main-opts ["-m" "net.b12n.raylib-jlt.texture-waves"]} ; a starfield rippled by a UV-displacement shader
+           :srcrec-dstrec {:main-opts ["-m" "net.b12n.raylib-jlt.srcrec-dstrec"]}} ; srcrec picks the frame, dstrec scales+spins it
 
  :tasks {run "joltc -M:run"}}

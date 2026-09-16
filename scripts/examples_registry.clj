@@ -148,7 +148,8 @@
    ["rectangle-bounds"    "rectangle-bounds" "text" "draggable word-wrap text container"]
    ["polygon-drawing"     "polygon-drawing" "textures" "hue-wheel texture on a spinning polygon"]
    ["texture-rendering"   "texture-rendering" "shaders" "a grid of squares painted entirely by a shader"]
-   ["texture-waves"       "texture-waves" "shaders" "a starfield rippled by a UV-displacement shader"]])
+   ["texture-waves"       "texture-waves" "shaders" "a starfield rippled by a UV-displacement shader"]
+   ["srcrec-dstrec"       "srcrec-dstrec" "textures" "srcrec picks the frame, dstrec scales+spins it"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

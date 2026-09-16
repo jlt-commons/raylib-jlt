@@ -123,6 +123,7 @@
    [net.b12n.raylib-jlt.spinning-cubes]
    [net.b12n.raylib-jlt.spirograph]
    [net.b12n.raylib-jlt.splines]
+   [net.b12n.raylib-jlt.srcrec-dstrec]
    [net.b12n.raylib-jlt.starfield-effect]
    [net.b12n.raylib-jlt.stars]
    [net.b12n.raylib-jlt.storage-values]

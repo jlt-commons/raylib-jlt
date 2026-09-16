@@ -434,6 +434,7 @@
   polygon-drawing   {:doc "▶ hue-wheel texture on a spinning polygon" :task (run-example "polygon-drawing")}
   texture-rendering {:doc "▶ a grid of squares painted entirely by a shader" :task (run-example "texture-rendering")}
   texture-waves     {:doc "▶ a starfield rippled by a UV-displacement shader" :task (run-example "texture-waves")}
+  srcrec-dstrec     {:doc "▶ srcrec picks the frame, dstrec scales+spins it" :task (run-example "srcrec-dstrec")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
