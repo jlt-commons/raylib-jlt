@@ -153,6 +153,7 @@
            :viewport-scaling {:main-opts ["-m" "net.b12n.raylib-jlt.viewport-scaling"]} ; 6 viewport-scaling policies, resize live
            :geometric-shapes {:main-opts ["-m" "net.b12n.raylib-jlt.geometric-shapes"]} ; cubes, spheres, cylinders, cones, capsules
            :camera-3d-split-screen {:main-opts ["-m" "net.b12n.raylib-jlt.camera-3d-split-screen"]} ; two players, two render-texture halves
-           :rectangle-bounds {:main-opts ["-m" "net.b12n.raylib-jlt.rectangle-bounds"]}} ; draggable word-wrap text container
+           :rectangle-bounds {:main-opts ["-m" "net.b12n.raylib-jlt.rectangle-bounds"]} ; draggable word-wrap text container
+           :polygon-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.polygon-drawing"]}} ; hue-wheel texture on a spinning polygon
 
  :tasks {run "joltc -M:run"}}

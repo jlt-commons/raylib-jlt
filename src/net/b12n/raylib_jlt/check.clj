@@ -94,6 +94,7 @@
    [net.b12n.raylib-jlt.penrose-tiling]
    [net.b12n.raylib-jlt.pie-chart]
    [net.b12n.raylib-jlt.point-cloud]
+   [net.b12n.raylib-jlt.polygon-drawing]
    [net.b12n.raylib-jlt.pong]
    [net.b12n.raylib-jlt.postprocessing]
    [net.b12n.raylib-jlt.random-sequence]

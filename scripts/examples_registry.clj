@@ -145,7 +145,8 @@
    ["viewport-scaling"    "viewport-scaling" "core" "6 viewport-scaling policies, resize live"]
    ["geometric-shapes"    "geometric-shapes" "3d"   "cubes, spheres, cylinders, cones, capsules"]
    ["camera-3d-split-screen" "camera-3d-split-screen" "3d" "two players, two render-texture halves"]
-   ["rectangle-bounds"    "rectangle-bounds" "text" "draggable word-wrap text container"]])
+   ["rectangle-bounds"    "rectangle-bounds" "text" "draggable word-wrap text container"]
+   ["polygon-drawing"     "polygon-drawing" "textures" "hue-wheel texture on a spinning polygon"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
