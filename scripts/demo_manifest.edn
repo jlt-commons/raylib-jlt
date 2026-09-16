@@ -126,6 +126,11 @@
   "cellular-automata"       {:duration 8
                              :input [[1.5 :key "up"] [3.0 :key "up"] [4.5 :key "right"]
                                      [6.0 :key "space"]]}
+  ;; Both halves render the same shared world through their own camera, so
+  ;; neither view shows anything without moving its own player.
+  "camera-2d-split-screen"  {:duration 8
+                             :input [[2.0 :key "d"] [3.0 :key "d"] [4.0 :key "right"]
+                                     [5.0 :key "s"] [6.0 :key "down"] [7.0 :key "right"]]}
   ;; lorenz-attractor, dna-helix, render-texture, window-letterbox,
   ;; monitor-detector and input-gamepad animate or report on their own, so
   ;; they take the defaults with no steering.

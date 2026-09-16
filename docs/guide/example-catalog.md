@@ -1,4 +1,4 @@
-# The example catalog: 122 raylib demos in jolt
+# The example catalog: 126 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -30,7 +30,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/minesweeper.gif" width="80">](demos.md#minesweeper) | `minesweeper` | reveal/flag grid (mouse L reveal, R flag) |
 | *not recorded yet* | `pacman` | the four classic ghost personalities, buffered turns |
 
-## core (23)
+## core (24)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -57,8 +57,9 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/camera-2d-mouse-zoom.gif" width="80">](demos.md#camera-2d-mouse-zoom) | `camera-2d-mouse-zoom` | zoom pinned to the point under the cursor |
 | [<img src="../demos/storage-values.gif" width="80">](demos.md#storage-values) | `storage-values` | values that survive a restart, via a file |
 | [<img src="../demos/camera-2d-platformer.gif" width="80">](demos.md#camera-2d-platformer) | `camera-2d-platformer` | five ways a camera can follow a jumping player |
+| [<img src="../demos/camera-2d-split-screen.png" width="80">](demos.md#camera-2d-split-screen) | `camera-2d-split-screen` | two players, two cameras, two render textures |
 
-## shapes (42)
+## shapes (43)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -104,6 +105,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/logo-anim.gif" width="80">](demos.md#logo-anim) | `logo-anim` | the raylib logo assembling itself, unsmoothed |
 | [<img src="../demos/rectangle-advanced.png" width="80">](demos.md#rectangle-advanced) | `rectangle-advanced` | per-side roundness with a horizontal gradient |
 | [<img src="../demos/easings-testbed.gif" width="80">](demos.md#easings-testbed) | `easings-testbed` | one curve at a time, plotted and run |
+| [<img src="../demos/starfield-effect.gif" width="80">](demos.md#starfield-effect) | `starfield-effect` | flying starfield (wheel=speed, SPACE=mode) |
 
 ## text (5)
 
@@ -115,7 +117,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/words-alignment.gif" width="80">](demos.md#words-alignment) | `words-alignment` | align a word inside a box with `MeasureText` |
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
 
-## 3d (18)
+## 3d (19)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -135,6 +137,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/dna-helix.gif" width="80">](demos.md#dna-helix) | `dna-helix` | a turning double helix with coloured base pairs |
 | [<img src="../demos/yaw-pitch-roll.gif" width="80">](demos.md#yaw-pitch-roll) | `yaw-pitch-roll` | the three aircraft rotations in 3D |
 | [<img src="../demos/first-person-maze.gif" width="80">](demos.md#first-person-maze) | `first-person-maze` | walk a grid maze in first person, with a minimap |
+| [<img src="../demos/world-screen.gif" width="80">](demos.md#world-screen) | `world-screen` | a 2D label tracks a cube via `GetWorldToScreen` |
 | *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
 | *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
 

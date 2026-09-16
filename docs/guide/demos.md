@@ -1,15 +1,17 @@
 # Full-size demo gallery
 
 Every recorded example at full size, linked from
-[the example catalog](example-catalog.md)'s preview thumbnails. All 119 recordings
-are here, covering 119 of the suite's 122 examples: `helitorus`, `doom` and
+[the example catalog](example-catalog.md)'s preview thumbnails. All 123 recordings
+are here, covering 123 of the suite's 126 examples: `helitorus`, `doom` and
 `pacman` have not been recorded yet, so run them with `bb helitorus`, `bb doom`
 or `bb pacman`.
 
-117 are animated GIFs. Two are still frames: `rectangle-advanced` and
+120 are animated GIFs. Three are still frames. `rectangle-advanced` and
 `rlgl-triangle` draw something fixed and only move when you drive them, so a
-recording of either would be a valid animation of one repeated image. A still is
-the honest form for those two.
+recording of either would be a valid animation of one repeated image, and a still
+is the honest form for those two. `camera-2d-split-screen` needs a player moving
+to show anything at all, and the capture tool's simulated key presses aren't
+landing for it yet, so a still stands in until that's sorted.
 
 ## games (10)
 
@@ -73,7 +75,7 @@ reveal/flag grid (mouse L reveal, R flag)
 
 ![minesweeper](../demos/minesweeper.gif)
 
-## core (23)
+## core (24)
 
 ### basic-window
 
@@ -213,7 +215,13 @@ five ways a camera can follow a jumping player
 
 ![camera-2d-platformer](../demos/camera-2d-platformer.gif)
 
-## shapes (42)
+### camera-2d-split-screen
+
+two players, two cameras, two render textures
+
+![camera-2d-split-screen](../demos/camera-2d-split-screen.png)
+
+## shapes (43)
 
 ### bouncing-ball
 
@@ -467,6 +475,12 @@ one curve at a time, plotted and run
 
 ![easings-testbed](../demos/easings-testbed.gif)
 
+### starfield-effect
+
+flying starfield (wheel=speed, SPACE=mode)
+
+![starfield-effect](../demos/starfield-effect.gif)
+
 ## text (5)
 
 ### font-sizes
@@ -499,7 +513,7 @@ type into a text box (GetCharPressed)
 
 ![input-box](../demos/input-box.gif)
 
-## 3d (16)
+## 3d (17)
 
 ### camera-3d
 
@@ -596,6 +610,12 @@ the three aircraft rotations in 3D
 walk a grid maze, with a minimap
 
 ![first-person-maze](../demos/first-person-maze.gif)
+
+### world-screen
+
+a 2D label tracks a cube via GetWorldToScreen
+
+![world-screen](../demos/world-screen.gif)
 
 ## generative (9)
 
@@ -740,3 +760,11 @@ a blank texture painted by a shader
 two textures blended by a second sampler
 
 ![multi-sampler](../demos/multi-sampler.gif)
+
+## audio (1)
+
+### audio-raw-stream
+
+arrow keys steer a live sine tone's pitch/pan
+
+![audio-raw-stream](../demos/audio-raw-stream.gif)

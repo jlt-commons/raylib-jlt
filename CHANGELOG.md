@@ -12,6 +12,19 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## Unreleased
 
+- **Four more examples ported from the jank raylib port**, catching this suite
+  up: `audio-raw-stream` (the first raudio binding, `AudioStream` passed by
+  value, a sine wave streamed with zero bundled audio assets), `starfield-effect`,
+  `world-screen` (the first genuinely by-value `Camera3D`, since
+  `with-camera-3d`'s pointer trick is wrong on x86-64 by its own docstring), and
+  `camera-2d-split-screen`. 126 examples total now. Both demo galleries and the
+  README caught up to match: `docs/guide/demos.md`, `example-catalog.md`,
+  `README.md` and `docs/site.edn` all gained the new rows and counts, and
+  `docs/demos/README.md` got a rare hand-edit (its own `bb record`-owned
+  entries stayed put, but `camera-2d-split-screen` needed one added by hand --
+  the capture tool's simulated key presses don't land for it yet, so it is a
+  still frame like `rectangle-advanced` and `rlgl-triangle`, which the same
+  hand-edit backfilled since they had never made it into that gallery).
 - **Relicensed from zlib to the Eclipse Public License 2.0**, matching the rest of
   jlt-commons and jolt itself. zlib was chosen to match raylib, since many examples
   are ports of raylib's own, but one exception across the organisation was harder to

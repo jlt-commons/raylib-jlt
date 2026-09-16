@@ -204,6 +204,12 @@ close is a question: ESC asks before it exits
 
 ![window-should-close](window-should-close.gif)
 
+### camera-2d-split-screen
+
+two players, two cameras, two render textures
+
+![camera-2d-split-screen](camera-2d-split-screen.png)
+
 ## shapes
 
 ### bouncing-ball
@@ -446,6 +452,24 @@ a rotating fan of thick lines (line-ex!)
 
 ![lines-drawing](lines-drawing.gif)
 
+### starfield-effect
+
+flying starfield (wheel=speed, SPACE=mode)
+
+![starfield-effect](starfield-effect.gif)
+
+### rectangle-advanced
+
+per-side roundness with a horizontal gradient
+
+![rectangle-advanced](rectangle-advanced.png)
+
+### rlgl-triangle
+
+per-vertex colour interpolated across a face
+
+![rlgl-triangle](rlgl-triangle.png)
+
 ## text
 
 ### font-sizes
@@ -575,6 +599,12 @@ the three aircraft rotations in 3D
 walk a grid maze, with a minimap
 
 ![first-person-maze](first-person-maze.gif)
+
+### world-screen
+
+a 2D label tracks a cube via GetWorldToScreen
+
+![world-screen](world-screen.gif)
 
 ## generative
 
@@ -719,4 +749,12 @@ a mouse-steered swirl over a scene
 a blank texture painted by a shader
 
 ![texture-painting](texture-painting.gif)
+
+## audio
+
+### audio-raw-stream
+
+arrow keys steer a live sine tone's pitch/pan
+
+![audio-raw-stream](audio-raw-stream.gif)
 
