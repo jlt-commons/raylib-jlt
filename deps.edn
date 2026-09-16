@@ -107,24 +107,24 @@
            :dna-helix {:main-opts ["-m" "net.b12n.raylib-jlt.dna-helix"]} ; a turning double helix with coloured base pairs
            :yaw-pitch-roll {:main-opts ["-m" "net.b12n.raylib-jlt.yaw-pitch-roll"]} ; the three aircraft rotations on the rlgl matrix stack
            :first-person-maze {:main-opts ["-m" "net.b12n.raylib-jlt.first-person-maze"]} ; walk a grid maze in first person, with a minimap
-  :camera-2d-mouse-zoom {:main-opts ["-m" "net.b12n.raylib-jlt.camera-2d-mouse-zoom"]}
-  :camera-2d-platformer {:main-opts ["-m" "net.b12n.raylib-jlt.camera-2d-platformer"]}
+           :camera-2d-mouse-zoom {:main-opts ["-m" "net.b12n.raylib-jlt.camera-2d-mouse-zoom"]}
+           :camera-2d-platformer {:main-opts ["-m" "net.b12n.raylib-jlt.camera-2d-platformer"]}
            :cellular-automata {:main-opts ["-m" "net.b12n.raylib-jlt.cellular-automata"]}
-  :circle-sector-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.circle-sector-drawing"]}
-  :easings-ball {:main-opts ["-m" "net.b12n.raylib-jlt.easings-ball"]}
-  :easings-box {:main-opts ["-m" "net.b12n.raylib-jlt.easings-box"]}
-  :easings-rectangles {:main-opts ["-m" "net.b12n.raylib-jlt.easings-rectangles"]}
-  :easings-testbed {:main-opts ["-m" "net.b12n.raylib-jlt.easings-testbed"]}
-  :ellipse-collision {:main-opts ["-m" "net.b12n.raylib-jlt.ellipse-collision"]}
-  :input-gestures {:main-opts ["-m" "net.b12n.raylib-jlt.input-gestures"]}
-  :logo-anim {:main-opts ["-m" "net.b12n.raylib-jlt.logo-anim"]}
-  :random-sequence {:main-opts ["-m" "net.b12n.raylib-jlt.random-sequence"]}
-  :rectangle-advanced {:main-opts ["-m" "net.b12n.raylib-jlt.rectangle-advanced"]}
-  :rlgl-color-wheel {:main-opts ["-m" "net.b12n.raylib-jlt.rlgl-color-wheel"]}
-  :rlgl-triangle {:main-opts ["-m" "net.b12n.raylib-jlt.rlgl-triangle"]}
-  :storage-values {:main-opts ["-m" "net.b12n.raylib-jlt.storage-values"]}
-  :undo-redo {:main-opts ["-m" "net.b12n.raylib-jlt.undo-redo"]}
-  :window-should-close {:main-opts ["-m" "net.b12n.raylib-jlt.window-should-close"]}
+           :circle-sector-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.circle-sector-drawing"]}
+           :easings-ball {:main-opts ["-m" "net.b12n.raylib-jlt.easings-ball"]}
+           :easings-box {:main-opts ["-m" "net.b12n.raylib-jlt.easings-box"]}
+           :easings-rectangles {:main-opts ["-m" "net.b12n.raylib-jlt.easings-rectangles"]}
+           :easings-testbed {:main-opts ["-m" "net.b12n.raylib-jlt.easings-testbed"]}
+           :ellipse-collision {:main-opts ["-m" "net.b12n.raylib-jlt.ellipse-collision"]}
+           :input-gestures {:main-opts ["-m" "net.b12n.raylib-jlt.input-gestures"]}
+           :logo-anim {:main-opts ["-m" "net.b12n.raylib-jlt.logo-anim"]}
+           :random-sequence {:main-opts ["-m" "net.b12n.raylib-jlt.random-sequence"]}
+           :rectangle-advanced {:main-opts ["-m" "net.b12n.raylib-jlt.rectangle-advanced"]}
+           :rlgl-color-wheel {:main-opts ["-m" "net.b12n.raylib-jlt.rlgl-color-wheel"]}
+           :rlgl-triangle {:main-opts ["-m" "net.b12n.raylib-jlt.rlgl-triangle"]}
+           :storage-values {:main-opts ["-m" "net.b12n.raylib-jlt.storage-values"]}
+           :undo-redo {:main-opts ["-m" "net.b12n.raylib-jlt.undo-redo"]}
+           :window-should-close {:main-opts ["-m" "net.b12n.raylib-jlt.window-should-close"]}
            :clock-of-clocks {:main-opts ["-m" "net.b12n.raylib-jlt.clock-of-clocks"]} ; Wolfram's elementary automata (LEFT/RIGHT change rule)
            :julia-set {:main-opts ["-m" "net.b12n.raylib-jlt.julia-set"]} ; the Julia set, mouse-steered, in a shader
            :mandelbrot-set {:main-opts ["-m" "net.b12n.raylib-jlt.mandelbrot-set"]} ; the Mandelbrot set, zoomable, in a shader
@@ -138,6 +138,10 @@
            :texture-painting {:main-opts ["-m" "net.b12n.raylib-jlt.texture-painting"]} ; a blank texture painted by a shader
            :helitorus {:main-opts ["-m" "net.b12n.raylib-jlt.helitorus"]} ; a helix wound around a torus, swept into a tube
            :doom {:main-opts ["-m" "net.b12n.raylib-jlt.doom"]} ; a textured raycaster: one ray per screen column
-           :pacman {:main-opts ["-m" "net.b12n.raylib-jlt.pacman"]}} ; pac-man, with the classic ghost personalities
+           :pacman {:main-opts ["-m" "net.b12n.raylib-jlt.pacman"]} ; pac-man, with the classic ghost personalities
+           :audio-raw-stream {:main-opts ["-m" "net.b12n.raylib-jlt.audio-raw-stream"]} ; a raw sine-wave AudioStream; arrows steer pitch/pan
+           :starfield-effect {:main-opts ["-m" "net.b12n.raylib-jlt.starfield-effect"]} ; stars fly toward camera; wheel=speed, SPACE=mode
+           :world-screen {:main-opts ["-m" "net.b12n.raylib-jlt.world-screen"]} ; a 2D label tracks a cube via GetWorldToScreen
+           :camera-2d-split-screen {:main-opts ["-m" "net.b12n.raylib-jlt.camera-2d-split-screen"]}} ; two players, two cameras, two render textures
 
  :tasks {run "joltc -M:run"}}

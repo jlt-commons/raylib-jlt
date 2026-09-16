@@ -26,7 +26,9 @@
           {:key "textures"
            :title "textures"}
           {:key "shaders"
-           :title "shaders"}]
+           :title "shaders"}
+          {:key "audio"
+           :title "audio"}]
 
  :defaults {:duration 6
             :fps 10

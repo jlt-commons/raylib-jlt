@@ -1343,3 +1343,162 @@
 (ffi/defcfn set-mouse-position "SetMousePosition" [:int :int] :void)
 (ffi/defcfn hide-cursor        "HideCursor"       [] :void)
 (ffi/defcfn show-cursor        "ShowCursor"       [] :void)
+
+;; --- audio (raudio) -----------------------------------------------------
+;; AudioStream is {rAudioBuffer* buffer; rAudioProcessor* processor; uint
+;; sampleRate; uint sampleSize; uint channels} -- two pointers and three u32s,
+;; passed BY VALUE everywhere raudio touches it. That is the same [:by-value
+;; [:struct ...]] mechanism circle-gradient! already uses for its Vector2
+;; centre; LoadAudioStream also RETURNS one by value, so its binding takes a
+;; caller-allocated destination pointer FIRST (jolt's calling convention for
+;; an aggregate return) and hands that same pointer back.
+(def ^:private audio-stream-layout
+  (ffi/layout [:struct [[:buffer :pointer]
+                        [:processor :pointer]
+                        [:sample-rate :uint32]
+                        [:sample-size :uint32]
+                        [:channels :uint32]]]))
+
+(ffi/defcfn init-audio-device  "InitAudioDevice"  [] :void)
+(ffi/defcfn close-audio-device "CloseAudioDevice" [] :void)
+(ffi/defcfn set-audio-stream-buffer-size-default
+  "SetAudioStreamBufferSizeDefault" [:int] :void)
+
+(ffi/defcfn ^:private load-audio-stream-raw "LoadAudioStream"
+  [:uint32 :uint32 :uint32]
+  [:by-value [:struct [[:buffer :pointer] [:processor :pointer]
+                       [:sample-rate :uint32] [:sample-size :uint32]
+                       [:channels :uint32]]]])
+(ffi/defcfn ^:private unload-audio-stream-raw "UnloadAudioStream"
+  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
+                        [:sample-rate :uint32] [:sample-size :uint32]
+                        [:channels :uint32]]]]]
+  :void)
+(ffi/defcfn ^:private play-audio-stream-raw "PlayAudioStream"
+  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
+                        [:sample-rate :uint32] [:sample-size :uint32]
+                        [:channels :uint32]]]]]
+  :void)
+(ffi/defcfn ^:private is-audio-stream-processed-raw "IsAudioStreamProcessed"
+  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
+                        [:sample-rate :uint32] [:sample-size :uint32]
+                        [:channels :uint32]]]]]
+  :int)
+(ffi/defcfn ^:private update-audio-stream-raw "UpdateAudioStream"
+  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
+                        [:sample-rate :uint32] [:sample-size :uint32]
+                        [:channels :uint32]]]]
+   :pointer :int]
+  :void)
+(ffi/defcfn ^:private set-audio-stream-pan-raw "SetAudioStreamPan"
+  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
+                        [:sample-rate :uint32] [:sample-size :uint32]
+                        [:channels :uint32]]]]
+   :float]
+  :void)
+
+(defn load-audio-stream
+  "LoadAudioStream. Returns an opaque native pointer to the by-value AudioStream
+  -- pass it to every other audio-stream fn below and release it with
+  unload-audio-stream."
+  [sample-rate sample-size channels]
+  (let [stream (ffi/alloc (ffi/layout-size audio-stream-layout))]
+    (load-audio-stream-raw stream sample-rate sample-size channels)))
+
+(defn unload-audio-stream
+  [stream]
+  (unload-audio-stream-raw stream)
+  (ffi/free stream))
+
+(defn play-audio-stream
+  [stream]
+  (play-audio-stream-raw stream))
+
+(defn audio-stream-processed?
+  [stream]
+  (not (zero? (bit-and (is-audio-stream-processed-raw stream) 0xff))))
+
+(defn update-audio-stream
+  "UpdateAudioStream. `samples` is a seq of floats for one refill; its count
+  must match the stream's own frame-count-per-channel (mono here). Stages a
+  scratch native buffer via `staged` the same way the shader uniform setters
+  do -- a few refills a second is not a hot path."
+  [stream samples]
+  (staged :float samples (fn [p] (update-audio-stream-raw stream p (count samples)))))
+
+(defn set-audio-stream-pan
+  [stream pan]
+  (set-audio-stream-pan-raw stream (double pan)))
+
+;; --- world <-> screen (genuine by-value Camera3D) -----------------------
+;; with-camera-3d's Camera3D pointer trick above is correct on AArch64 by
+;; accident of the ABI (a struct too large for registers goes via a hidden
+;; pointer there) and wrong on x86-64 SysV, where it goes on the stack
+;; instead (see raylib.clj's file-level ABI note). GetWorldToScreen is new
+;; code, not a migration of with-camera-3d, so it uses jolt's real
+;; [:by-value [:struct ...]] passing for BOTH the Vector3 and the Camera3D --
+;; correct on either ABI, and the pattern the rest of the by-value bindings
+;; above already follow.
+(def ^:private vector3-layout
+  (ffi/layout [:struct [[:x :float] [:y :float] [:z :float]]]))
+
+(def ^:private camera3d-layout
+  (ffi/layout [:struct [[:position [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:target   [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:up       [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:fovy :float]
+                        [:projection :int32]]]))
+
+(ffi/defcfn ^:private get-world-to-screen-raw "GetWorldToScreen"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]
+   [:by-value [:struct [[:position [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:target   [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:up       [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:fovy :float]
+                        [:projection :int32]]]]]
+  [:by-value [:struct [[:x :float] [:y :float]]]])
+
+(defn world-to-screen
+  "GetWorldToScreen. `pos` is [x y z] in world space; `camera` takes the same
+  keys as with-camera-3d's opts map (share one map between both calls to
+  project a point through the exact camera a frame draws with). Returns
+  [screen-x screen-y] as doubles."
+  [[px py pz]
+   {:keys [pos-x pos-y pos-z target-x target-y target-z up-x up-y up-z
+           fovy projection]
+    :or {pos-x 0
+         pos-y 0
+         pos-z 0
+         target-x 0
+         target-y 0
+         target-z 0
+         up-x 0
+         up-y 1
+         up-z 0
+         fovy 45
+         projection 0}}]
+  (let [p   (ffi/alloc (ffi/layout-size vector3-layout))
+        cam (ffi/alloc (ffi/layout-size camera3d-layout))
+        out (ffi/alloc (ffi/layout-size vector2-layout))]
+    (try
+      (ffi/write-field p vector3-layout :x (double px))
+      (ffi/write-field p vector3-layout :y (double py))
+      (ffi/write-field p vector3-layout :z (double pz))
+      (ffi/write-field cam camera3d-layout [:position :x] (double pos-x))
+      (ffi/write-field cam camera3d-layout [:position :y] (double pos-y))
+      (ffi/write-field cam camera3d-layout [:position :z] (double pos-z))
+      (ffi/write-field cam camera3d-layout [:target :x] (double target-x))
+      (ffi/write-field cam camera3d-layout [:target :y] (double target-y))
+      (ffi/write-field cam camera3d-layout [:target :z] (double target-z))
+      (ffi/write-field cam camera3d-layout [:up :x] (double up-x))
+      (ffi/write-field cam camera3d-layout [:up :y] (double up-y))
+      (ffi/write-field cam camera3d-layout [:up :z] (double up-z))
+      (ffi/write-field cam camera3d-layout :fovy (double fovy))
+      (ffi/write-field cam camera3d-layout :projection (int projection))
+      (get-world-to-screen-raw out p cam)
+      [(ffi/read-field out vector2-layout :x)
+       (ffi/read-field out vector2-layout :y)]
+      (finally
+        (ffi/free p)
+        (ffi/free cam)
+        (ffi/free out)))))
