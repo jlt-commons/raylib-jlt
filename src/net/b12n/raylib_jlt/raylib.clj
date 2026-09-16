@@ -1664,3 +1664,29 @@
         p2 (vec3->ptr! end-pos)]
     (try (draw-capsule-wires-raw p1 p2 (double radius) (int slices) (int rings) color)
          (finally (ffi/free p1) (ffi/free p2)))))
+
+;; --- ground plane, genuinely by value (camera-3d-split-screen) ----------
+(defn- vec2->ptr!
+  "Allocate a vector2-layout buffer and write [x y] into it. Caller frees."
+  [[x y]]
+  (let [p (ffi/alloc (ffi/layout-size vector2-layout))]
+    (ffi/write-field p vector2-layout :x (double x))
+    (ffi/write-field p vector2-layout :y (double y))
+    p))
+
+(ffi/defcfn ^:private draw-plane-raw "DrawPlane"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]
+   [:by-value [:struct [[:x :float] [:y :float]]]]
+   :uint]
+  :void)
+
+(defn draw-plane!
+  "DrawPlane. :pos :size :color."
+  [& {:keys [pos size color]
+      :or {pos [0.0 0.0 0.0]
+           size [1.0 1.0]
+           color BLACK}}]
+  (let [p (vec3->ptr! pos)
+        s (vec2->ptr! size)]
+    (try (draw-plane-raw p s color)
+         (finally (ffi/free p) (ffi/free s)))))

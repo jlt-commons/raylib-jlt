@@ -429,6 +429,7 @@
   smooth-pixelperfect {:doc "▶ sub-pixel camera smoothing at 5x upscale" :task (run-example "smooth-pixelperfect")}
   viewport-scaling  {:doc "▶ 6 viewport-scaling policies, resize live"   :task (run-example "viewport-scaling")}
   geometric-shapes  {:doc "▶ cubes, spheres, cylinders, cones, capsules" :task (run-example "geometric-shapes")}
+  camera-3d-split-screen {:doc "▶ two players, two render-texture halves" :task (run-example "camera-3d-split-screen")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

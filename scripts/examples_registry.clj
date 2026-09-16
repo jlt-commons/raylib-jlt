@@ -143,7 +143,8 @@
    ["particles-blending"  "particles-blending" "textures" "200 sparks trail the mouse, alpha vs additive"]
    ["smooth-pixelperfect" "smooth-pixelperfect" "core" "sub-pixel camera smoothing at 5x upscale"]
    ["viewport-scaling"    "viewport-scaling" "core" "6 viewport-scaling policies, resize live"]
-   ["geometric-shapes"    "geometric-shapes" "3d"   "cubes, spheres, cylinders, cones, capsules"]])
+   ["geometric-shapes"    "geometric-shapes" "3d"   "cubes, spheres, cylinders, cones, capsules"]
+   ["camera-3d-split-screen" "camera-3d-split-screen" "3d" "two players, two render-texture halves"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

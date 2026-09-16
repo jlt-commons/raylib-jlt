@@ -151,6 +151,7 @@
            :particles-blending {:main-opts ["-m" "net.b12n.raylib-jlt.particles-blending"]} ; 200 sparks trail the mouse, alpha vs additive
            :smooth-pixelperfect {:main-opts ["-m" "net.b12n.raylib-jlt.smooth-pixelperfect"]} ; sub-pixel camera smoothing at 5x upscale
            :viewport-scaling {:main-opts ["-m" "net.b12n.raylib-jlt.viewport-scaling"]} ; 6 viewport-scaling policies, resize live
-           :geometric-shapes {:main-opts ["-m" "net.b12n.raylib-jlt.geometric-shapes"]}} ; cubes, spheres, cylinders, cones, capsules
+           :geometric-shapes {:main-opts ["-m" "net.b12n.raylib-jlt.geometric-shapes"]} ; cubes, spheres, cylinders, cones, capsules
+           :camera-3d-split-screen {:main-opts ["-m" "net.b12n.raylib-jlt.camera-3d-split-screen"]}} ; two players, two render-texture halves
 
  :tasks {run "joltc -M:run"}}
