@@ -94,3 +94,8 @@
           (rl/end-drawing)
           (recur (inc frame) controlled ax ay bx by)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

@@ -86,3 +86,8 @@
         (recur (inc frame))))
     (doseq [id ids] (rl/unload-texture! id)))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

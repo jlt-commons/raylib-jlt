@@ -115,3 +115,8 @@ void main() {
           (rl/end-drawing)
           (recur (inc frame) sh label reloads failures note)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

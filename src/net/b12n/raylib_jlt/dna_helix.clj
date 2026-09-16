@@ -98,3 +98,8 @@
           (rl/end-drawing)
           (recur (inc frame) turns spin spinning?)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

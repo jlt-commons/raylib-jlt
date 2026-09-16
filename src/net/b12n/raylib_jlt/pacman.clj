@@ -503,3 +503,8 @@
                     (recur (inc frame) s'))))]
     (rl/close-window)
     (println "final score:" (:score final) "level:" (:level final))))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

@@ -69,3 +69,8 @@
           (rl/end-drawing)
           (recur (inc frame) px pz yaw pitch mx my)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

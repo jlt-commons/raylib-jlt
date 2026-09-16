@@ -105,3 +105,8 @@
           (rl/end-drawing)
           (recur (inc frame) state counter top-w left-h bottom-w right-h letters alpha)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

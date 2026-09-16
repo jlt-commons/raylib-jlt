@@ -107,3 +107,8 @@
           (rl/end-drawing)
           (recur (inc frame) px py hop)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

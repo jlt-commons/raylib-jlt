@@ -137,3 +137,8 @@ void main() {
             (rl/unload-render-texture! rt)
             (rl/unload-shader! sh))))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

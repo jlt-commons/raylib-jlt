@@ -61,3 +61,8 @@
           (rl/end-drawing)
           (recur (inc frame) (+ t 0.005) parts)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

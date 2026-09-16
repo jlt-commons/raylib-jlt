@@ -28,3 +28,8 @@
           (rl/end-drawing)
           (recur (inc frame) value history)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

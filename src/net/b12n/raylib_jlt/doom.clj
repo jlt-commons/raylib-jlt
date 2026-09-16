@@ -531,3 +531,8 @@
       (rl/show-cursor)
       (rl/close-window)
       (println "kills:" (:kills final) "health:" (:health final)))))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

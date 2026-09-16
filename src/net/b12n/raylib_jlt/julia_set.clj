@@ -131,3 +131,8 @@ void main() {
                 (recur (inc frame) zoom iter frozen))))
           (finally (rl/unload-shader! sh))))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

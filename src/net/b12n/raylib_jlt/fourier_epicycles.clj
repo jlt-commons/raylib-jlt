@@ -47,3 +47,8 @@
           (rl/end-drawing)
           (recur (inc frame) (+ theta 0.05) path)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

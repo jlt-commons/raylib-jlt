@@ -37,9 +37,7 @@
           (recur (inc frame) x y vx vy paused?)))))
   (rl/close-window))
 
+;; To run this from your editor
 (comment
-  ;; Not (-main): over nREPL that opens the window from a worker thread and
-  ;; macOS kills the process. rl/run! hops onto the main thread.
   (rl/run! -main)
-
   nil)

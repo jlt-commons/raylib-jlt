@@ -188,3 +188,8 @@ void main() {
                 (recur (inc frame) px py pz yaw pitch heat? last-mouse))))
           (finally (rl/unload-shader! sh))))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

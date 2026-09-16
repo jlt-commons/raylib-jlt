@@ -29,3 +29,8 @@
           (rl/end-drawing)
           (recur (inc frame) x y)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

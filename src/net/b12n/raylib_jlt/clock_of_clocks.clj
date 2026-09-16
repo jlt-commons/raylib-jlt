@@ -153,3 +153,8 @@
           (rl/end-drawing)
           (recur (inc frame) sec hour-mode current new-src new-dst timer)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

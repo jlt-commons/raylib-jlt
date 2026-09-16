@@ -69,3 +69,8 @@
             (recur (inc frame))))
         (rl/unload-render-texture! rt))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

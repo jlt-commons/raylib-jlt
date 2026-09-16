@@ -50,3 +50,8 @@
           (rl/end-drawing)
           (recur (inc frame) live)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

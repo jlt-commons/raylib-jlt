@@ -144,3 +144,8 @@ void main() {
                 (recur (inc frame) cx cy radius border mode))))
           (finally (rl/unload-shader! sh))))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)

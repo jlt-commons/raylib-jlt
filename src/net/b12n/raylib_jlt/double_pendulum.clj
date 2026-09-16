@@ -60,3 +60,8 @@
           (rl/end-drawing)
           (recur (inc frame) a1' a2' v1' v2' trail)))))
   (rl/close-window))
+
+;; To run this from your editor
+(comment
+  (rl/run! -main)
+  nil)
