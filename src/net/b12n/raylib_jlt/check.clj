@@ -33,6 +33,7 @@
    [net.b12n.raylib-jlt.clipboard-text]
    [net.b12n.raylib-jlt.clock-of-clocks]
    [net.b12n.raylib-jlt.collision-area]
+   [net.b12n.raylib-jlt.color-correction]
    [net.b12n.raylib-jlt.color-wheel]
    [net.b12n.raylib-jlt.colors]
    [net.b12n.raylib-jlt.core]
