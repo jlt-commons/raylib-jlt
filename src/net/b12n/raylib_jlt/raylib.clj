@@ -1477,23 +1477,28 @@
          up-z 0
          fovy 45
          projection 0}}]
-  (ffi/with-layout [p vector3-layout]
-    (ffi/with-layout [cam camera3d-layout]
-      (ffi/with-layout [out vector2-layout]
-        (ffi/write-field p vector3-layout :x (double px))
-        (ffi/write-field p vector3-layout :y (double py))
-        (ffi/write-field p vector3-layout :z (double pz))
-        (ffi/write-field cam camera3d-layout [:position :x] (double pos-x))
-        (ffi/write-field cam camera3d-layout [:position :y] (double pos-y))
-        (ffi/write-field cam camera3d-layout [:position :z] (double pos-z))
-        (ffi/write-field cam camera3d-layout [:target :x] (double target-x))
-        (ffi/write-field cam camera3d-layout [:target :y] (double target-y))
-        (ffi/write-field cam camera3d-layout [:target :z] (double target-z))
-        (ffi/write-field cam camera3d-layout [:up :x] (double up-x))
-        (ffi/write-field cam camera3d-layout [:up :y] (double up-y))
-        (ffi/write-field cam camera3d-layout [:up :z] (double up-z))
-        (ffi/write-field cam camera3d-layout :fovy (double fovy))
-        (ffi/write-field cam camera3d-layout :projection (int projection))
-        (get-world-to-screen-raw out p cam)
-        [(ffi/read-field out vector2-layout :x)
-         (ffi/read-field out vector2-layout :y)]))))
+  (let [p   (ffi/alloc (ffi/layout-size vector3-layout))
+        cam (ffi/alloc (ffi/layout-size camera3d-layout))
+        out (ffi/alloc (ffi/layout-size vector2-layout))]
+    (try
+      (ffi/write-field p vector3-layout :x (double px))
+      (ffi/write-field p vector3-layout :y (double py))
+      (ffi/write-field p vector3-layout :z (double pz))
+      (ffi/write-field cam camera3d-layout [:position :x] (double pos-x))
+      (ffi/write-field cam camera3d-layout [:position :y] (double pos-y))
+      (ffi/write-field cam camera3d-layout [:position :z] (double pos-z))
+      (ffi/write-field cam camera3d-layout [:target :x] (double target-x))
+      (ffi/write-field cam camera3d-layout [:target :y] (double target-y))
+      (ffi/write-field cam camera3d-layout [:target :z] (double target-z))
+      (ffi/write-field cam camera3d-layout [:up :x] (double up-x))
+      (ffi/write-field cam camera3d-layout [:up :y] (double up-y))
+      (ffi/write-field cam camera3d-layout [:up :z] (double up-z))
+      (ffi/write-field cam camera3d-layout :fovy (double fovy))
+      (ffi/write-field cam camera3d-layout :projection (int projection))
+      (get-world-to-screen-raw out p cam)
+      [(ffi/read-field out vector2-layout :x)
+       (ffi/read-field out vector2-layout :y)]
+      (finally
+        (ffi/free p)
+        (ffi/free cam)
+        (ffi/free out)))))
