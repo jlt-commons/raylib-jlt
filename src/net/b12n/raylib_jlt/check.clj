@@ -7,6 +7,7 @@
   a real window (each example's own `RAYLIB_APP_AUTO_QUIT_MS` + `RAYLIB_APP_SHOT`
   smoke does that)."
   (:require
+   [net.b12n.raylib-jlt.amp-envelope]
    [net.b12n.raylib-jlt.analog-clock]
    [net.b12n.raylib-jlt.asteroids]
    [net.b12n.raylib-jlt.audio-raw-stream]
