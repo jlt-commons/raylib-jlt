@@ -204,6 +204,30 @@ close is a question: ESC asks before it exits
 
 ![window-should-close](window-should-close.gif)
 
+### keyboard-testbed
+
+an on-screen ENG-US keyboard, every key lit
+
+![keyboard-testbed](keyboard-testbed.gif)
+
+### input-actions
+
+abstract input actions: keyboard + gamepad
+
+![input-actions](input-actions.gif)
+
+### smooth-pixelperfect
+
+sub-pixel camera smoothing at 5x upscale
+
+![smooth-pixelperfect](smooth-pixelperfect.gif)
+
+### viewport-scaling
+
+6 viewport-scaling policies, resize live
+
+![viewport-scaling](viewport-scaling.gif)
+
 ### camera-2d-split-screen
 
 two players, two cameras, two render textures
@@ -502,6 +526,12 @@ type into a text box (GetCharPressed)
 
 ![input-box](input-box.gif)
 
+### rectangle-bounds
+
+draggable word-wrap text container
+
+![rectangle-bounds](rectangle-bounds.gif)
+
 ## 3d
 
 ### camera-3d
@@ -606,6 +636,18 @@ a 2D label tracks a cube via GetWorldToScreen
 
 ![world-screen](world-screen.gif)
 
+### geometric-shapes
+
+cubes, spheres, cylinders, cones, capsules
+
+![geometric-shapes](geometric-shapes.gif)
+
+### camera-3d-split-screen
+
+two players, two render-texture halves
+
+![camera-3d-split-screen](camera-3d-split-screen.gif)
+
 ## generative
 
 ### game-of-life
@@ -662,6 +704,12 @@ Wolfram's elementary automata
 
 ![cellular-automata](cellular-automata.gif)
 
+### particles
+
+water/smoke/fire particles follow the mouse
+
+![particles](particles.gif)
+
 ## textures
 
 ### texture-procedural
@@ -687,6 +735,24 @@ a scene drawn off-screen, then reused
 the sprite-count benchmark (click to add)
 
 ![bunnymark](bunnymark.gif)
+
+### mouse-painting
+
+a paint program on a render-texture canvas
+
+![mouse-painting](mouse-painting.gif)
+
+### particles-blending
+
+200 sparks trail the mouse, alpha vs additive
+
+![particles-blending](particles-blending.gif)
+
+### polygon-drawing
+
+hue-wheel texture on a spinning polygon
+
+![polygon-drawing](polygon-drawing.gif)
 
 ## shaders
 
@@ -749,6 +815,12 @@ a mouse-steered swirl over a scene
 a blank texture painted by a shader
 
 ![texture-painting](texture-painting.gif)
+
+### eratosthenes-sieve
+
+the Sieve of Eratosthenes, one test per pixel
+
+![eratosthenes-sieve](eratosthenes-sieve.gif)
 
 ## audio
 

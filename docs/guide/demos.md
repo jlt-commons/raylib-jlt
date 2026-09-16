@@ -1,12 +1,12 @@
 # Full-size demo gallery
 
 Every recorded example at full size, linked from
-[the example catalog](example-catalog.md)'s preview thumbnails. All 123 recordings
-are here, covering 123 of the suite's 126 examples: `helitorus`, `doom` and
+[the example catalog](example-catalog.md)'s preview thumbnails. All 135 recordings
+are here, covering 135 of the suite's 138 examples: `helitorus`, `doom` and
 `pacman` have not been recorded yet, so run them with `bb helitorus`, `bb doom`
 or `bb pacman`.
 
-120 are animated GIFs. Three are still frames. `rectangle-advanced` and
+132 are animated GIFs. Three are still frames. `rectangle-advanced` and
 `rlgl-triangle` draw something fixed and only move when you drive them, so a
 recording of either would be a valid animation of one repeated image, and a still
 is the honest form for those two. `camera-2d-split-screen` needs a player moving
@@ -75,7 +75,7 @@ reveal/flag grid (mouse L reveal, R flag)
 
 ![minesweeper](../demos/minesweeper.gif)
 
-## core (24)
+## core (28)
 
 ### basic-window
 
@@ -220,6 +220,30 @@ five ways a camera can follow a jumping player
 two players, two cameras, two render textures
 
 ![camera-2d-split-screen](../demos/camera-2d-split-screen.png)
+
+### keyboard-testbed
+
+an on-screen ENG-US keyboard, every key lit
+
+![keyboard-testbed](../demos/keyboard-testbed.gif)
+
+### input-actions
+
+abstract input actions: keyboard + gamepad
+
+![input-actions](../demos/input-actions.gif)
+
+### smooth-pixelperfect
+
+sub-pixel camera smoothing at 5x upscale
+
+![smooth-pixelperfect](../demos/smooth-pixelperfect.gif)
+
+### viewport-scaling
+
+6 viewport-scaling policies, resize live
+
+![viewport-scaling](../demos/viewport-scaling.gif)
 
 ## shapes (43)
 
@@ -481,7 +505,7 @@ flying starfield (wheel=speed, SPACE=mode)
 
 ![starfield-effect](../demos/starfield-effect.gif)
 
-## text (5)
+## text (6)
 
 ### font-sizes
 
@@ -513,7 +537,13 @@ type into a text box (GetCharPressed)
 
 ![input-box](../demos/input-box.gif)
 
-## 3d (17)
+### rectangle-bounds
+
+draggable word-wrap text container
+
+![rectangle-bounds](../demos/rectangle-bounds.gif)
+
+## 3d (19)
 
 ### camera-3d
 
@@ -617,7 +647,19 @@ a 2D label tracks a cube via GetWorldToScreen
 
 ![world-screen](../demos/world-screen.gif)
 
-## generative (9)
+### geometric-shapes
+
+cubes, spheres, cylinders, cones, capsules
+
+![geometric-shapes](../demos/geometric-shapes.gif)
+
+### camera-3d-split-screen
+
+two players, two render-texture halves
+
+![camera-3d-split-screen](../demos/camera-3d-split-screen.gif)
+
+## generative (10)
 
 ### game-of-life
 
@@ -673,7 +715,13 @@ six digits spelled by a grid of clock hands
 
 ![clock-of-clocks](../demos/clock-of-clocks.gif)
 
-## textures (4)
+### particles
+
+water/smoke/fire particles follow the mouse
+
+![particles](../demos/particles.gif)
+
+## textures (7)
 
 ### texture-procedural
 
@@ -699,7 +747,25 @@ the sprite-count benchmark (click to add)
 
 ![bunnymark](../demos/bunnymark.gif)
 
-## shaders (10)
+### mouse-painting
+
+a paint program on a render-texture canvas
+
+![mouse-painting](../demos/mouse-painting.gif)
+
+### particles-blending
+
+200 sparks trail the mouse, alpha vs additive
+
+![particles-blending](../demos/particles-blending.gif)
+
+### polygon-drawing
+
+hue-wheel texture on a spinning polygon
+
+![polygon-drawing](../demos/polygon-drawing.gif)
+
+## shaders (11)
 
 ### julia-set
 
@@ -760,6 +826,12 @@ a blank texture painted by a shader
 two textures blended by a second sampler
 
 ![multi-sampler](../demos/multi-sampler.gif)
+
+### eratosthenes-sieve
+
+the Sieve of Eratosthenes, one test per pixel
+
+![eratosthenes-sieve](../demos/eratosthenes-sieve.gif)
 
 ## audio (1)
 

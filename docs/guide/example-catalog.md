@@ -1,4 +1,4 @@
-# The example catalog: 126 raylib demos in jolt
+# The example catalog: 138 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -30,7 +30,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/minesweeper.gif" width="80">](demos.md#minesweeper) | `minesweeper` | reveal/flag grid (mouse L reveal, R flag) |
 | *not recorded yet* | `pacman` | the four classic ghost personalities, buffered turns |
 
-## core (24)
+## core (28)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -58,6 +58,10 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/storage-values.gif" width="80">](demos.md#storage-values) | `storage-values` | values that survive a restart, via a file |
 | [<img src="../demos/camera-2d-platformer.gif" width="80">](demos.md#camera-2d-platformer) | `camera-2d-platformer` | five ways a camera can follow a jumping player |
 | [<img src="../demos/camera-2d-split-screen.png" width="80">](demos.md#camera-2d-split-screen) | `camera-2d-split-screen` | two players, two cameras, two render textures |
+| [<img src="../demos/keyboard-testbed.gif" width="80">](demos.md#keyboard-testbed) | `keyboard-testbed` | an on-screen ENG-US keyboard, every key lit |
+| [<img src="../demos/input-actions.gif" width="80">](demos.md#input-actions) | `input-actions` | abstract input actions: keyboard + gamepad |
+| [<img src="../demos/smooth-pixelperfect.gif" width="80">](demos.md#smooth-pixelperfect) | `smooth-pixelperfect` | sub-pixel camera smoothing at 5x upscale |
+| [<img src="../demos/viewport-scaling.gif" width="80">](demos.md#viewport-scaling) | `viewport-scaling` | 6 viewport-scaling policies, resize live |
 
 ## shapes (43)
 
@@ -107,7 +111,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/easings-testbed.gif" width="80">](demos.md#easings-testbed) | `easings-testbed` | one curve at a time, plotted and run |
 | [<img src="../demos/starfield-effect.gif" width="80">](demos.md#starfield-effect) | `starfield-effect` | flying starfield (wheel=speed, SPACE=mode) |
 
-## text (5)
+## text (6)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -116,8 +120,9 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/format-text.gif" width="80">](demos.md#format-text) | `format-text` | `format` padded score + MM:SS timer |
 | [<img src="../demos/words-alignment.gif" width="80">](demos.md#words-alignment) | `words-alignment` | align a word inside a box with `MeasureText` |
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
+| [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
 
-## 3d (19)
+## 3d (21)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -138,6 +143,8 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/yaw-pitch-roll.gif" width="80">](demos.md#yaw-pitch-roll) | `yaw-pitch-roll` | the three aircraft rotations in 3D |
 | [<img src="../demos/first-person-maze.gif" width="80">](demos.md#first-person-maze) | `first-person-maze` | walk a grid maze in first person, with a minimap |
 | [<img src="../demos/world-screen.gif" width="80">](demos.md#world-screen) | `world-screen` | a 2D label tracks a cube via `GetWorldToScreen` |
+| [<img src="../demos/geometric-shapes.gif" width="80">](demos.md#geometric-shapes) | `geometric-shapes` | cubes, spheres, cylinders, cones, capsules |
+| [<img src="../demos/camera-3d-split-screen.gif" width="80">](demos.md#camera-3d-split-screen) | `camera-3d-split-screen` | two players, two render-texture halves |
 | *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
 | *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
 
@@ -154,7 +161,7 @@ a textured vertical strip, with no 3D geometry and no camera matrix anywhere; pu
 it beside `first-person-maze`, which walks a grid of real cubes under a
 `Camera3D`, and the two techniques for the same picture sit side by side.
 
-## generative (9)
+## generative (10)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -167,13 +174,14 @@ it beside `first-person-maze`, which walks a grid of real cubes under a
 | [<img src="../demos/flow-field.gif" width="80">](demos.md#flow-field) | `flow-field` | particles steered by a flow field (trails) |
 | [<img src="../demos/cellular-automata.gif" width="80">](demos.md#cellular-automata) | `cellular-automata` | Wolfram's elementary automata |
 | [<img src="../demos/clock-of-clocks.gif" width="80">](demos.md#clock-of-clocks) | `clock-of-clocks` | six digits spelled by a grid of clock hands |
+| [<img src="../demos/particles.gif" width="80">](demos.md#particles) | `particles` | water/smoke/fire particles follow the mouse |
 
-All eight are pure math + the drawing API, no new bindings. They showcase the
+All nine are pure math + the drawing API, no new bindings. They showcase the
 suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (4)
+## textures (7)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -186,8 +194,11 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/texture-tiling.gif" width="80">](demos.md#texture-tiling) | `texture-tiling` | one tile repeated across the window |
 | [<img src="../demos/render-texture.gif" width="80">](demos.md#render-texture) | `render-texture` | a scene drawn off-screen, then reused |
 | [<img src="../demos/bunnymark.gif" width="80">](demos.md#bunnymark) | `bunnymark` | the sprite-count benchmark (click to add) |
+| [<img src="../demos/mouse-painting.gif" width="80">](demos.md#mouse-painting) | `mouse-painting` | a paint program on a render-texture canvas |
+| [<img src="../demos/particles-blending.gif" width="80">](demos.md#particles-blending) | `particles-blending` | 200 sparks trail the mouse, alpha vs additive |
+| [<img src="../demos/polygon-drawing.gif" width="80">](demos.md#polygon-drawing) | `polygon-drawing` | hue-wheel texture on a spinning polygon |
 
-## shaders (10)
+## shaders (11)
 
 GLSL compiled at runtime and run over a full-screen quad. raylib's `LoadShader`
 returns a `Shader` by value, which needed jolt's `[:by-value [:struct ...]]` -
@@ -215,6 +226,17 @@ by-value API itself is not written yet.
 | [<img src="../demos/custom-uniform.gif" width="80">](demos.md#custom-uniform) | `custom-uniform` | a mouse-steered swirl over a scene |
 | [<img src="../demos/texture-painting.gif" width="80">](demos.md#texture-painting) | `texture-painting` | a blank texture painted by a shader |
 | [<img src="../demos/multi-sampler.gif" width="80">](demos.md#multi-sampler) | `multi-sampler` | two textures blended by a second sampler |
+| [<img src="../demos/eratosthenes-sieve.gif" width="80">](demos.md#eratosthenes-sieve) | `eratosthenes-sieve` | the Sieve of Eratosthenes, one test per pixel |
+
+## audio (1)
+
+raylib's raudio, streamed by hand: a caller-managed ring buffer refilled every
+frame with `IsAudioStreamProcessed` / `UpdateAudioStream`, rather than a
+one-shot `LoadSound`.
+
+| preview | `bb` name | shows |
+|---|---|---|
+| [<img src="../demos/audio-raw-stream.gif" width="80">](demos.md#audio-raw-stream) | `audio-raw-stream` | arrow keys steer a live sine tone's pitch/pan |
 
 ## Adding an example: the five touchpoints
 

@@ -12,6 +12,30 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## Unreleased
 
+- **Twelve more examples, taking the suite to 138.** Eight are zero-new-FFI
+  ports from the jank raylib port: `eratosthenes-sieve` (a fragment shader
+  computing primality per pixel), `keyboard-testbed`, `mouse-painting`,
+  `input-actions`, `particles`, `particles-blending`, `smooth-pixelperfect`
+  and `viewport-scaling`. `geometric-shapes` and `camera-3d-split-screen` are
+  the first two examples to use jolt's genuine `[:by-value [:struct ...]]`
+  for `DrawCube`/`DrawSphere`/`DrawCylinder`/`DrawCapsule`/`DrawPlane`,
+  rather than the rlgl immediate-mode `cube!`/`sphere!` stand-ins the rest of
+  the suite draws through, and every one of the new raylib.clj functions
+  taking more than 3 arguments uses the same `[& {:keys [...] :or {...}}]`
+  kwargs style `cube!`/`sphere!` already established. `rectangle-bounds` and
+  `polygon-drawing` round out the batch: the first needs no new FFI at all
+  (word-wrap only needs `MeasureText`'s int width, not `MeasureTextEx`'s
+  per-glyph `Font` indexing), and the second reuses the same low-level rlgl
+  calls `rl/texture!` is built from (`rlSetTexture`/`rlBegin`/
+  `rlTexCoord2f`/`rlVertex2f`) with a procedurally-generated hue-wheel
+  texture standing in for the C example's `cat.png`, since this suite loads
+  no textures from disk. Docs caught up to match: `docs/guide/demos.md`,
+  `example-catalog.md` (which also picked up a missing `audio` section left
+  over from the prior batch), `README.md`, `docs/site.edn` and
+  `docs/guide/index.md` all gained the new rows and counts, and
+  `docs/demos/README.md` needed its usual `bb record`-regeneration
+  hand-patch, since the tool has no memory of the 3 hand-captured still
+  frames (`camera-2d-split-screen`, `rectangle-advanced`, `rlgl-triangle`).
 - **Four more examples ported from the jank raylib port**, catching this suite
   up: `audio-raw-stream` (the first raudio binding, `AudioStream` passed by
   value, a sine wave streamed with zero bundled audio assets), `starfield-effect`,
