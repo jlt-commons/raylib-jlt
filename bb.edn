@@ -436,6 +436,7 @@
   texture-waves     {:doc "▶ a starfield rippled by a UV-displacement shader" :task (run-example "texture-waves")}
   srcrec-dstrec     {:doc "▶ srcrec picks the frame, dstrec scales+spins it" :task (run-example "srcrec-dstrec")}
   amp-envelope      {:doc "▶ ADSR amplitude envelope on a 440Hz tone" :task (run-example "amp-envelope")}
+  blend-modes       {:doc "▶ four 2D blend modes over a night skyline" :task (run-example "blend-modes")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

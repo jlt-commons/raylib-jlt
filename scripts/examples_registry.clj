@@ -150,7 +150,8 @@
    ["texture-rendering"   "texture-rendering" "shaders" "a grid of squares painted entirely by a shader"]
    ["texture-waves"       "texture-waves" "shaders" "a starfield rippled by a UV-displacement shader"]
    ["srcrec-dstrec"       "srcrec-dstrec" "textures" "srcrec picks the frame, dstrec scales+spins it"]
-   ["amp-envelope"        "amp-envelope" "audio" "ADSR amplitude envelope on a 440Hz tone"]])
+   ["amp-envelope"        "amp-envelope" "audio" "ADSR amplitude envelope on a 440Hz tone"]
+   ["blend-modes"         "blend-modes" "textures" "four 2D blend modes over a night skyline"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

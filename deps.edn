@@ -158,6 +158,7 @@
            :texture-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.texture-rendering"]} ; a grid of squares painted entirely by a shader
            :texture-waves {:main-opts ["-m" "net.b12n.raylib-jlt.texture-waves"]} ; a starfield rippled by a UV-displacement shader
            :srcrec-dstrec {:main-opts ["-m" "net.b12n.raylib-jlt.srcrec-dstrec"]} ; srcrec picks the frame, dstrec scales+spins it
-           :amp-envelope {:main-opts ["-m" "net.b12n.raylib-jlt.amp-envelope"]}} ; ADSR amplitude envelope on a 440Hz tone
+           :amp-envelope {:main-opts ["-m" "net.b12n.raylib-jlt.amp-envelope"]} ; ADSR amplitude envelope on a 440Hz tone
+           :blend-modes {:main-opts ["-m" "net.b12n.raylib-jlt.blend-modes"]}} ; four 2D blend modes over a night skyline
 
  :tasks {run "joltc -M:run"}}

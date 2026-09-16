@@ -13,6 +13,7 @@
    [net.b12n.raylib-jlt.audio-raw-stream]
    [net.b12n.raylib-jlt.ball-physics]
    [net.b12n.raylib-jlt.basic-screen-manager]
+   [net.b12n.raylib-jlt.blend-modes]
    [net.b12n.raylib-jlt.boids]
    [net.b12n.raylib-jlt.bounce]
    [net.b12n.raylib-jlt.bouncing-spheres]
