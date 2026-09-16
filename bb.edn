@@ -426,6 +426,8 @@
   input-actions     {:doc "▶ abstract input actions: keyboard + gamepad"   :task (run-example "input-actions")}
   particles         {:doc "▶ water/smoke/fire particles follow the mouse" :task (run-example "particles")}
   particles-blending {:doc "▶ 200 sparks trail the mouse, alpha vs additive" :task (run-example "particles-blending")}
+  smooth-pixelperfect {:doc "▶ sub-pixel camera smoothing at 5x upscale" :task (run-example "smooth-pixelperfect")}
+  viewport-scaling  {:doc "▶ 6 viewport-scaling policies, resize live"   :task (run-example "viewport-scaling")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

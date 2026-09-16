@@ -140,7 +140,9 @@
    ["mouse-painting"      "mouse-painting" "textures" "a paint program on a render-texture canvas"]
    ["input-actions"       "input-actions" "core" "abstract input actions: keyboard + gamepad"]
    ["particles"           "particles" "generative" "water/smoke/fire particles follow the mouse"]
-   ["particles-blending"  "particles-blending" "textures" "200 sparks trail the mouse, alpha vs additive"]])
+   ["particles-blending"  "particles-blending" "textures" "200 sparks trail the mouse, alpha vs additive"]
+   ["smooth-pixelperfect" "smooth-pixelperfect" "core" "sub-pixel camera smoothing at 5x upscale"]
+   ["viewport-scaling"    "viewport-scaling" "core" "6 viewport-scaling policies, resize live"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
