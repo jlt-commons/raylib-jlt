@@ -87,7 +87,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width width :height height :title "raylib [games] example - space invaders")
+  (rl/window! {:width width
+               :height height
+               :title "raylib [games] example - space invaders"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -99,14 +101,34 @@
           (rl/begin-drawing)
           (rl/clear-background rl/BLACK)
           (doseq [[c r] (:aliens st)]
-            (rl/rect! :x (int (alien-px (:ax st) c)) :y (int (alien-py (:ay st) r))
-                      :width alien-w :height alien-h :color rl/LIME))
+            (rl/rect! {:x (int (alien-px (:ax st) c))
+                       :y (int (alien-py (:ay st) r))
+                       :width alien-w
+                       :height alien-h
+                       :color rl/LIME}))
           (doseq [{:keys [x y]} (:bullets st)]
-            (rl/rect! :x (int x) :y (int y) :width 4 :height 12 :color rl/GOLD))
-          (rl/rect! :x (int (:ship-x st)) :y ship-y :width ship-w :height 16 :color rl/SKYBLUE)
-          (rl/text! (str "score " (:score st)) :x 8 :y 8 :size 20 :color rl/RAYWHITE)
-          (when (:over? st) (rl/text! "GAME OVER - SPACE" :x 280 :y 210 :size 28 :color rl/RED))
-          (when (:won? st) (rl/text! "YOU WIN! - SPACE" :x 290 :y 210 :size 28 :color rl/LIME))
+            (rl/rect! {:x (int x)
+                       :y (int y)
+                       :width 4
+                       :height 12
+                       :color rl/GOLD}))
+          (rl/rect! {:x (int (:ship-x st))
+                     :y ship-y
+                     :width ship-w
+                     :height 16
+                     :color rl/SKYBLUE})
+          (rl/text! (str "score " (:score st)) {:x 8
+                                                :y 8
+                                                :size 20
+                                                :color rl/RAYWHITE})
+          (when (:over? st) (rl/text! "GAME OVER - SPACE" {:x 280
+                                                           :y 210
+                                                           :size 28
+                                                           :color rl/RED}))
+          (when (:won? st) (rl/text! "YOU WIN! - SPACE" {:x 290
+                                                         :y 210
+                                                         :size 28
+                                                         :color rl/LIME}))
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))

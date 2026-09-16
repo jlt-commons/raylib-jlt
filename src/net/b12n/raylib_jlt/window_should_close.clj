@@ -22,7 +22,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - window should close")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - window should close"})
   ;; Take ESC away from raylib so the confirmation below can answer for it.
   (rl/set-exit-key rl/KEY-NULL)
   (rl/set-target-fps 60)
@@ -45,11 +47,21 @@
           (rl/clear-background rl/RAYWHITE)
           (if asked?
             (do
-              (rl/rect! :x 0 :y 100 :width W :height 200 :color rl/BLACK)
+              (rl/rect! {:x 0
+                         :y 100
+                         :width W
+                         :height 200
+                         :color rl/BLACK})
               (rl/text! "Are you sure you want to exit program? [Y/N]"
-                        :x 40 :y 180 :size 30 :color rl/WHITE))
+                        {:x 40
+                         :y 180
+                         :size 30
+                         :color rl/WHITE}))
             (rl/text! "Try to close the window to get confirmation message!"
-                      :x 120 :y 200 :size 20 :color rl/LIGHTGRAY))
+                      {:x 120
+                       :y 200
+                       :size 20
+                       :color rl/LIGHTGRAY}))
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) asked? exit?)))))

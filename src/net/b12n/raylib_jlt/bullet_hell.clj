@@ -12,7 +12,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - bullet spiral")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - bullet spiral"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         cx (/ W 2.0) cy (/ H 2.0)]
@@ -33,9 +35,18 @@
           (rl/begin-drawing)
           (rl/clear-background (rl/rgba 15 15 30 255))
           (doseq [b bullets]
-            (rl/circle! :x (int (:x b)) :y (int (:y b)) :radius 4 :color rl/GOLD))
-          (rl/circle! :x (int cx) :y (int cy) :radius 12 :color rl/RED)
-          (rl/text! "a rotating bullet spiral" :x 10 :y 10 :size 20 :color rl/RAYWHITE)
+            (rl/circle! {:x (int (:x b))
+                         :y (int (:y b))
+                         :radius 4
+                         :color rl/GOLD}))
+          (rl/circle! {:x (int cx)
+                       :y (int cy)
+                       :radius 12
+                       :color rl/RED})
+          (rl/text! "a rotating bullet spiral" {:x 10
+                                                :y 10
+                                                :size 20
+                                                :color rl/RAYWHITE})
           (rl/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame) bullets)))))

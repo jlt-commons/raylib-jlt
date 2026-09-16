@@ -71,8 +71,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width (* cols cell) :height (+ top (* rows cell))
-              :title "raylib [games] example - minesweeper")
+  (rl/window! {:width (* cols cell)
+               :height (+ top (* rows cell))
+               :title "raylib [games] example - minesweeper"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -100,23 +101,52 @@
                   mine? (contains? (:mines st) cl)]
               (cond
                 (and revealed? mine?)
-                (rl/rect! :x x :y y :width cell :height cell :color rl/RED)
+                (rl/rect! {:x x
+                           :y y
+                           :width cell
+                           :height cell
+                           :color rl/RED})
                 revealed?
                 (let [n (mine-count (:mines st) cl)]
-                  (rl/rect! :x x :y y :width cell :height cell :color rl/LIGHTGRAY)
+                  (rl/rect! {:x x
+                             :y y
+                             :width cell
+                             :height cell
+                             :color rl/LIGHTGRAY})
                   (when (pos? n)
-                    (rl/text! (str n) :x (+ x 9) :y (+ y 5) :size 22 :color rl/DARKBLUE)))
+                    (rl/text! (str n) {:x (+ x 9)
+                                       :y (+ y 5)
+                                       :size 22
+                                       :color rl/DARKBLUE})))
                 :else
-                (rl/rect! :x x :y y :width cell :height cell :color rl/GRAY))
-              (rl/rect-lines! :x x :y y :width cell :height cell :color rl/DARKGRAY)
+                (rl/rect! {:x x
+                           :y y
+                           :width cell
+                           :height cell
+                           :color rl/GRAY}))
+              (rl/rect-lines! {:x x
+                               :y y
+                               :width cell
+                               :height cell
+                               :color rl/DARKGRAY})
               (when (and flagged? (not revealed?))
-                (rl/rect! :x (+ x 8) :y (+ y 8) :width (- cell 16) :height (- cell 16) :color rl/ORANGE))
+                (rl/rect! {:x (+ x 8)
+                           :y (+ y 8)
+                           :width (- cell 16)
+                           :height (- cell 16)
+                           :color rl/ORANGE}))
               (when (and (:over? st) mine? (not revealed?))
-                (rl/circle! :x (+ x (quot cell 2)) :y (+ y (quot cell 2)) :radius 6 :color rl/BLACK))))
+                (rl/circle! {:x (+ x (quot cell 2))
+                             :y (+ y (quot cell 2))
+                             :radius 6
+                             :color rl/BLACK}))))
           (rl/text! (cond (:won? st) "YOU WIN! - SPACE"
                           (:over? st) "BOOM! - SPACE"
                           :else "L: reveal   R: flag")
-                    :x 8 :y 10 :size 20 :color (if (:won? st) rl/DARKGREEN rl/MAROON))
+                    {:x 8
+                     :y 10
+                     :size 20
+                     :color (if (:won? st) rl/DARKGREEN rl/MAROON)})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))

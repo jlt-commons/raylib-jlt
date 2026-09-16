@@ -55,7 +55,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - penrose tiling")
+  (rl/window! {:title "raylib [shapes] example - penrose tiling"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         tris (mapv front (deflate (wheel 400 230 235.0) 5))]
@@ -73,10 +73,25 @@
         (rl/rl-end)
         ;; edges
         (doseq [[_ [ax ay] [bx by] [cx cy]] tris]
-          (rl/line! :x1 (int ax) :y1 (int ay) :x2 (int bx) :y2 (int by) :color edge)
-          (rl/line! :x1 (int bx) :y1 (int by) :x2 (int cx) :y2 (int cy) :color edge)
-          (rl/line! :x1 (int cx) :y1 (int cy) :x2 (int ax) :y2 (int ay) :color edge))
-        (rl/text! "Penrose P3 tiling (deflation)" :x 10 :y 10 :size 20 :color rl/RAYWHITE)
+          (rl/line! {:x1 (int ax)
+                     :y1 (int ay)
+                     :x2 (int bx)
+                     :y2 (int by)
+                     :color edge})
+          (rl/line! {:x1 (int bx)
+                     :y1 (int by)
+                     :x2 (int cx)
+                     :y2 (int cy)
+                     :color edge})
+          (rl/line! {:x1 (int cx)
+                     :y1 (int cy)
+                     :x2 (int ax)
+                     :y2 (int ay)
+                     :color edge}))
+        (rl/text! "Penrose P3 tiling (deflation)" {:x 10
+                                                   :y 10
+                                                   :size 20
+                                                   :color rl/RAYWHITE})
         (rl/maybe-screenshot! frame 12)
         (rl/end-drawing)
         (recur (inc frame)))))

@@ -167,34 +167,77 @@
   "A background bar plus a fill of the given :frac (0..1). Keyword args :x :y :w :h
   :frac :color."
   [& {:keys [x y w h frac color]}]
-  (rl/rect! :x x :y y :width w :height h :color rl/DARKGRAY)
-  (rl/rect! :x x :y y :width (int (* w (clamp frac 0.0 1.0))) :height h :color color))
+  (rl/rect! {:x x
+             :y y
+             :width w
+             :height h
+             :color rl/DARKGRAY})
+  (rl/rect! {:x x
+             :y y
+             :width (int (* w (clamp frac 0.0 1.0)))
+             :height h
+             :color color}))
 
 (defn- draw-state
   [s]
   (rl/clear-background (rl/rgba 20 18 28 255))
-  (doseq [g (:gems s)]    (rl/rect! :x (int (:x g)) :y (int (:y g)) :width 6 :height 6 :color rl/LIME))
-  (doseq [e (:enemies s)] (rl/circle! :x (int (:x e)) :y (int (:y e)) :radius ENEMY-R :color rl/RED))
-  (doseq [b (:bullets s)] (rl/circle! :x (int (:x b)) :y (int (:y b)) :radius BULLET-R :color rl/GOLD))
+  (doseq [g (:gems s)]    (rl/rect! {:x (int (:x g))
+                                     :y (int (:y g))
+                                     :width 6
+                                     :height 6
+                                     :color rl/LIME}))
+  (doseq [e (:enemies s)] (rl/circle! {:x (int (:x e))
+                                       :y (int (:y e))
+                                       :radius ENEMY-R
+                                       :color rl/RED}))
+  (doseq [b (:bullets s)] (rl/circle! {:x (int (:x b))
+                                       :y (int (:y b))
+                                       :radius BULLET-R
+                                       :color rl/GOLD}))
   (let [h (:hero s)]
-    (rl/circle! :x (int (:x h)) :y (int (:y h)) :radius HERO-R
-                :color (if (pos? (:hurt-cd h)) rl/RAYWHITE rl/SKYBLUE))
+    (rl/circle! {:x (int (:x h))
+                 :y (int (:y h))
+                 :radius HERO-R
+                 :color (if (pos? (:hurt-cd h)) rl/RAYWHITE rl/SKYBLUE)})
     (bar! :x 12 :y 12 :w 200 :h 16 :frac (/ (max 0 (:hp h)) (double HERO-HP)) :color rl/RED)
     (bar! :x 12 :y 34 :w 200 :h 8  :frac (/ (:xp h) (double (* (:level h) 5))) :color rl/SKYBLUE)
-    (rl/text! (str "LV " (:level h)) :x 220 :y 14 :size 20 :color rl/RAYWHITE))
-  (rl/text! (str "KILLS " (:kills s)) :x (- W 160) :y 12 :size 20 :color rl/RAYWHITE)
-  (rl/text! (str "TIME " (quot (:time s) 60) "s") :x (- W 160) :y 38 :size 18 :color rl/GRAY)
+    (rl/text! (str "LV " (:level h)) {:x 220
+                                      :y 14
+                                      :size 20
+                                      :color rl/RAYWHITE}))
+  (rl/text! (str "KILLS " (:kills s)) {:x (- W 160)
+                                       :y 12
+                                       :size 20
+                                       :color rl/RAYWHITE})
+  (rl/text! (str "TIME " (quot (:time s) 60) "s") {:x (- W 160)
+                                                   :y 38
+                                                   :size 18
+                                                   :color rl/GRAY})
   (rl/text! "WASD / arrows to move - you auto-fire at the nearest enemy"
-            :x 170 :y (- H 26) :size 16 :color rl/GRAY)
+            {:x 170
+             :y (- H 26)
+             :size 16
+             :color rl/GRAY})
   (when (:over? s)
-    (rl/text! "YOU DIED" :x 270 :y 175 :size 46 :color rl/RED)
+    (rl/text! "YOU DIED" {:x 270
+                          :y 175
+                          :size 46
+                          :color rl/RED})
     (rl/text! (str "survived " (quot (:time s) 60) "s  -  " (:kills s) " kills")
-              :x 250 :y 235 :size 20 :color rl/RAYWHITE)
-    (rl/text! "ENTER to restart" :x 300 :y 270 :size 18 :color rl/GRAY)))
+              {:x 250
+               :y 235
+               :size 20
+               :color rl/RAYWHITE})
+    (rl/text! "ENTER to restart" {:x 300
+                                  :y 270
+                                  :size 18
+                                  :color rl/GRAY})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "vampire survivors")
+  (rl/window! {:width W
+               :height H
+               :title "vampire survivors"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 s (initial-state)]

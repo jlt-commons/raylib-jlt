@@ -9,16 +9,26 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [shapes] example - rectangle gradient")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [shapes] example - rectangle gradient"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
       (when (rl/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
-        (rl/rect-gradient! :x 0 :y 0 :width 800 :height 450 :top rl/SKYBLUE :bottom rl/DARKPURPLE)
+        (rl/rect-gradient! {:x 0
+                            :y 0
+                            :width 800
+                            :height 450
+                            :top rl/SKYBLUE
+                            :bottom rl/DARKPURPLE})
         (rl/text! "vertical gradient (DrawRectangleGradientV, two by-value Colors)"
-                  :x 10 :y 10 :size 20 :color rl/RAYWHITE)
+                  {:x 10
+                   :y 10
+                   :size 20
+                   :color rl/RAYWHITE})
         (rl/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))

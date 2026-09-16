@@ -80,7 +80,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - rectangle advanced")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - rectangle advanced"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -94,7 +96,10 @@
               (rounded-gradient! 50.0 (+ 50.0 (* i (inc h))) w (dec h)
                                  rl-round rr-round left right)))
           (rl/text! "per-side roundness, horizontal gradient, one triangle fan each"
-                    :x 50 :y 16 :size 20 :color rl/DARKGRAY)
+                    {:x 50
+                     :y 16
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))

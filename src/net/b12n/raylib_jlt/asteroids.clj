@@ -173,7 +173,11 @@
     (doseq [i (range n)]
       (let [[ax ay] (nth pts i)
             [bx by] (nth pts (mod (inc i) n))]
-        (rl/line! :x1 (int ax) :y1 (int ay) :x2 (int bx) :y2 (int by) :color rl/LIGHTGRAY)))))
+        (rl/line! {:x1 (int ax)
+                   :y1 (int ay)
+                   :x2 (int bx)
+                   :y2 (int by)
+                   :color rl/LIGHTGRAY})))))
 
 (defn- draw-ship
   [ship]
@@ -182,28 +186,60 @@
              [(+ x (* SHIP-R (Math/cos (+ angle da))))
               (+ y (* SHIP-R (Math/sin (+ angle da))))])
         [nx ny] (pt 0.0) [lx ly] (pt 2.6) [rx ry] (pt -2.6)]
-    (rl/line! :x1 (int nx) :y1 (int ny) :x2 (int lx) :y2 (int ly) :color rl/RAYWHITE)
-    (rl/line! :x1 (int lx) :y1 (int ly) :x2 (int rx) :y2 (int ry) :color rl/GRAY)
-    (rl/line! :x1 (int rx) :y1 (int ry) :x2 (int nx) :y2 (int ny) :color rl/RAYWHITE)))
+    (rl/line! {:x1 (int nx)
+               :y1 (int ny)
+               :x2 (int lx)
+               :y2 (int ly)
+               :color rl/RAYWHITE})
+    (rl/line! {:x1 (int lx)
+               :y1 (int ly)
+               :x2 (int rx)
+               :y2 (int ry)
+               :color rl/GRAY})
+    (rl/line! {:x1 (int rx)
+               :y1 (int ry)
+               :x2 (int nx)
+               :y2 (int ny)
+               :color rl/RAYWHITE})))
 
 (defn- draw-state
   [s]
   (rl/clear-background (rl/rgba 8 8 18 255))
   (doseq [a (:asteroids s)] (draw-asteroid a))
-  (doseq [b (:bullets s)] (rl/circle! :x (int (:x b)) :y (int (:y b)) :radius 2.0 :color rl/GOLD))
+  (doseq [b (:bullets s)] (rl/circle! {:x (int (:x b))
+                                       :y (int (:y b))
+                                       :radius 2.0
+                                       :color rl/GOLD}))
   (when (or (zero? (:invuln s)) (even? (quot (:invuln s) 5)))   ; blink while invulnerable
     (draw-ship (:ship s)))
-  (rl/text! (str "SCORE " (:score s)) :x 12 :y 12 :size 22 :color rl/RAYWHITE)
-  (rl/text! (str "LIVES " (:lives s)) :x (- W 128) :y 12 :size 22 :color rl/RAYWHITE)
+  (rl/text! (str "SCORE " (:score s)) {:x 12
+                                       :y 12
+                                       :size 22
+                                       :color rl/RAYWHITE})
+  (rl/text! (str "LIVES " (:lives s)) {:x (- W 128)
+                                       :y 12
+                                       :size 22
+                                       :color rl/RAYWHITE})
   (when (zero? (:score s))
-    (rl/text! "LEFT/RIGHT rotate - UP thrust - SPACE fire" :x 190 :y (- H 34) :size 18 :color rl/GRAY))
+    (rl/text! "LEFT/RIGHT rotate - UP thrust - SPACE fire" {:x 190
+                                                            :y (- H 34)
+                                                            :size 18
+                                                            :color rl/GRAY}))
   (when (:over? s)
-    (rl/text! "GAME OVER" :x 262 :y 180 :size 50 :color rl/RED)
-    (rl/text! "press ENTER to restart" :x 280 :y 250 :size 20 :color rl/RAYWHITE)))
+    (rl/text! "GAME OVER" {:x 262
+                           :y 180
+                           :size 50
+                           :color rl/RED})
+    (rl/text! "press ENTER to restart" {:x 280
+                                        :y 250
+                                        :size 20
+                                        :color rl/RAYWHITE})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "asteroids")
+  (rl/window! {:width W
+               :height H
+               :title "asteroids"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 s (initial-state)]

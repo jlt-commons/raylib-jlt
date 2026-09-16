@@ -43,7 +43,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width width :height height :title "raylib [generative] example - flow field")
+  (rl/window! {:width width
+               :height height
+               :title "raylib [generative] example - flow field"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -56,7 +58,11 @@
           (doseq [{:keys [x y trail]} parts]
             (let [col (trail-color (field-angle x y t))]
               (doseq [[[x1 y1] [x2 y2]] (partition 2 1 trail)]
-                (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2) :color col))))
+                (rl/line! {:x1 (int x1)
+                           :y1 (int y1)
+                           :x2 (int x2)
+                           :y2 (int y2)
+                           :color col}))))
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) (+ t 0.005) parts)))))

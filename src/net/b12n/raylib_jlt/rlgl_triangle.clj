@@ -54,7 +54,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - rlgl triangle")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - rlgl triangle"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -103,10 +105,15 @@
           ;; Handles last, so they sit over the triangle.
           (dotimes [i 3]
             (let [[x y] (nth pts i)]
-              (rl/circle! :x (int x) :y (int y) :radius HANDLE
-                          :color (if (= dragging i) rl/DARKGRAY rl/GRAY))))
+              (rl/circle! {:x (int x)
+                           :y (int y)
+                           :radius HANDLE
+                           :color (if (= dragging i) rl/DARKGRAY rl/GRAY)})))
           (rl/text! "drag a corner - [SPACE] lines/filled - [R] reset"
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) pts dragging lines?)))))

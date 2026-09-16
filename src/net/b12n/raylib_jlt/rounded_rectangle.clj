@@ -13,18 +13,54 @@
   (let [rad (double (int (max 0.0 (min rad (/ (min w h) 2.0)))))
         ri (int rad)]
     ;; body: center column full height + left/right columns between the corners
-    (rl/rect! :x (int (+ x rad)) :y (int y) :width (int (- w (* 2 rad))) :height (int h) :color color)
-    (rl/rect! :x (int x) :y (int (+ y rad)) :width ri :height (int (- h (* 2 rad))) :color color)
-    (rl/rect! :x (int (+ x (- w rad))) :y (int (+ y rad)) :width ri :height (int (- h (* 2 rad))) :color color)
+    (rl/rect! {:x (int (+ x rad))
+               :y (int y)
+               :width (int (- w (* 2 rad)))
+               :height (int h)
+               :color color})
+    (rl/rect! {:x (int x)
+               :y (int (+ y rad))
+               :width ri
+               :height (int (- h (* 2 rad)))
+               :color color})
+    (rl/rect! {:x (int (+ x (- w rad)))
+               :y (int (+ y rad))
+               :width ri
+               :height (int (- h (* 2 rad)))
+               :color color})
     ;; corners (sector! angles: 0 up, 90 right, 180 down, 270 left)
-    (rl/sector! :cx (+ x rad) :cy (+ y rad) :radius rad :start-deg 270 :end-deg 360 :segments 20 :color color)
-    (rl/sector! :cx (+ x (- w rad)) :cy (+ y rad) :radius rad :start-deg 0 :end-deg 90 :segments 20 :color color)
-    (rl/sector! :cx (+ x (- w rad)) :cy (+ y (- h rad)) :radius rad :start-deg 90 :end-deg 180 :segments 20 :color color)
-    (rl/sector! :cx (+ x rad) :cy (+ y (- h rad)) :radius rad :start-deg 180 :end-deg 270 :segments 20 :color color)))
+    (rl/sector! {:cx (+ x rad)
+                 :cy (+ y rad)
+                 :radius rad
+                 :start-deg 270
+                 :end-deg 360
+                 :segments 20
+                 :color color})
+    (rl/sector! {:cx (+ x (- w rad))
+                 :cy (+ y rad)
+                 :radius rad
+                 :start-deg 0
+                 :end-deg 90
+                 :segments 20
+                 :color color})
+    (rl/sector! {:cx (+ x (- w rad))
+                 :cy (+ y (- h rad))
+                 :radius rad
+                 :start-deg 90
+                 :end-deg 180
+                 :segments 20
+                 :color color})
+    (rl/sector! {:cx (+ x rad)
+                 :cy (+ y (- h rad))
+                 :radius rad
+                 :start-deg 180
+                 :end-deg 270
+                 :segments 20
+                 :color color})))
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - rounded rectangle")
+  (rl/window! {:title "raylib [shapes] example - rounded rectangle"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -39,7 +75,10 @@
           (rounded-rect! 310 350 180 70 22.0 (rl/rgba 255 161 0 255))
           (rounded-rect! 560 350 180 70 35.0 (rl/rgba 200 122 255 255))
           (rl/text! (format "rounded rect - corner radius %.0f (sector! corners)" rad)
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame)))))

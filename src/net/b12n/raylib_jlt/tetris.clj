@@ -136,38 +136,73 @@
 ;; --- draw --------------------------------------------------------------------
 (defn- cell!
   [c r color]
-  (rl/rect! :x (+ WELL-X (* c CELL)) :y (+ WELL-Y (* r CELL))
-            :width (dec CELL) :height (dec CELL) :color color))
+  (rl/rect! {:x (+ WELL-X (* c CELL))
+             :y (+ WELL-Y (* r CELL))
+             :width (dec CELL)
+             :height (dec CELL)
+             :color color}))
 
 (defn- draw-state
   [s]
   (rl/clear-background (rl/rgba 18 18 28 255))
-  (rl/rect-lines! :x (- WELL-X 2) :y (- WELL-Y 2)
-                  :width (+ (* COLS CELL) 4) :height (+ (* ROWS CELL) 4) :color rl/GRAY)
+  (rl/rect-lines! {:x (- WELL-X 2)
+                   :y (- WELL-Y 2)
+                   :width (+ (* COLS CELL) 4)
+                   :height (+ (* ROWS CELL) 4)
+                   :color rl/GRAY})
   (doseq [r (range ROWS) c (range COLS)]
     (when-let [color (get-in (:board s) [r c])] (cell! c r color)))
   (let [color (:color (PIECES (:type (:piece s))))]
     (doseq [[c r] (piece-cells (:piece s))]
       (when (>= r 0) (cell! c r color))))
   ;; side panel
-  (rl/text! "TETRIS" :x 470 :y 40 :size 34 :color rl/RAYWHITE)
-  (rl/text! (str "SCORE " (:score s)) :x 470 :y 110 :size 20 :color rl/RAYWHITE)
-  (rl/text! (str "LINES " (:lines s)) :x 470 :y 140 :size 20 :color rl/RAYWHITE)
-  (rl/text! (str "LEVEL " (:level s)) :x 470 :y 170 :size 20 :color rl/RAYWHITE)
-  (rl/text! "NEXT" :x 470 :y 220 :size 20 :color rl/GRAY)
+  (rl/text! "TETRIS" {:x 470
+                      :y 40
+                      :size 34
+                      :color rl/RAYWHITE})
+  (rl/text! (str "SCORE " (:score s)) {:x 470
+                                       :y 110
+                                       :size 20
+                                       :color rl/RAYWHITE})
+  (rl/text! (str "LINES " (:lines s)) {:x 470
+                                       :y 140
+                                       :size 20
+                                       :color rl/RAYWHITE})
+  (rl/text! (str "LEVEL " (:level s)) {:x 470
+                                       :y 170
+                                       :size 20
+                                       :color rl/RAYWHITE})
+  (rl/text! "NEXT" {:x 470
+                    :y 220
+                    :size 20
+                    :color rl/GRAY})
   (let [color (:color (PIECES (:next s)))]
     (doseq [[cx cy] (first (:rots (PIECES (:next s))))]
-      (rl/rect! :x (+ 480 (* cx CELL)) :y (+ 250 (* cy CELL))
-                :width (dec CELL) :height (dec CELL) :color color)))
+      (rl/rect! {:x (+ 480 (* cx CELL))
+                 :y (+ 250 (* cy CELL))
+                 :width (dec CELL)
+                 :height (dec CELL)
+                 :color color})))
   (rl/text! "<> move   ^ rotate   v soft   SPACE hard drop"
-            :x 30 :y (- H 26) :size 16 :color rl/GRAY)
+            {:x 30
+             :y (- H 26)
+             :size 16
+             :color rl/GRAY})
   (when (:over? s)
-    (rl/text! "GAME OVER" :x 130 :y 180 :size 34 :color rl/RED)
-    (rl/text! "ENTER to restart" :x 120 :y 230 :size 18 :color rl/RAYWHITE)))
+    (rl/text! "GAME OVER" {:x 130
+                           :y 180
+                           :size 34
+                           :color rl/RED})
+    (rl/text! "ENTER to restart" {:x 120
+                                  :y 230
+                                  :size 18
+                                  :color rl/RAYWHITE})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "tetris")
+  (rl/window! {:width W
+               :height H
+               :title "tetris"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 s (initial-state)]

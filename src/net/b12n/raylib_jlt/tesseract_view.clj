@@ -50,7 +50,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "tesseract")
+  (rl/window! {:width W
+               :height H
+               :title "tesseract"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -62,9 +64,15 @@
           (doseq [[i j] edges]
             (let [[x1 y1] (nth pts i)
                   [x2 y2] (nth pts j)]
-              (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2)
-                        :color (edge-color i j))))
-          (rl/text! "a rotating tesseract (4D hypercube)" :x 12 :y 12 :size 20 :color rl/RAYWHITE)
+              (rl/line! {:x1 (int x1)
+                         :y1 (int y1)
+                         :x2 (int x2)
+                         :y2 (int y2)
+                         :color (edge-color i j)})))
+          (rl/text! "a rotating tesseract (4D hypercube)" {:x 12
+                                                           :y 12
+                                                           :size 20
+                                                           :color rl/RAYWHITE})
           (rl/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame))))))

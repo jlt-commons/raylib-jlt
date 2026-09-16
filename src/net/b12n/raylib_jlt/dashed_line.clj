@@ -12,7 +12,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - dashed line")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - dashed line"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         cx (/ W 2.0) cy (/ H 2.0)]
@@ -27,11 +29,19 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           (doseq [i (range 0 steps 2)]              ; every other segment = a dash
-            (rl/line! :x1 (int (+ cx (* ux DASH i)))       :y1 (int (+ cy (* uy DASH i)))
-                      :x2 (int (+ cx (* ux DASH (inc i)))) :y2 (int (+ cy (* uy DASH (inc i))))
-                      :color rl/MAROON))
-          (rl/circle! :x (int cx) :y (int cy) :radius 6 :color rl/DARKGRAY)
-          (rl/text! "a dashed line follows the mouse" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+            (rl/line! {:x1 (int (+ cx (* ux DASH i)))
+                       :y1 (int (+ cy (* uy DASH i)))
+                       :x2 (int (+ cx (* ux DASH (inc i))))
+                       :y2 (int (+ cy (* uy DASH (inc i))))
+                       :color rl/MAROON}))
+          (rl/circle! {:x (int cx)
+                       :y (int cy)
+                       :radius 6
+                       :color rl/DARKGRAY})
+          (rl/text! "a dashed line follows the mouse" {:x 10
+                                                       :y 10
+                                                       :size 20
+                                                       :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))

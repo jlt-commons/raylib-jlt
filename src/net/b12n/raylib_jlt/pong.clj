@@ -93,21 +93,57 @@
   [s]
   (rl/clear-background (rl/rgba 10 10 18 255))
   (doseq [y (range 0 H 30)]                                   ; dashed centre line
-    (rl/rect! :x (- (quot W 2) 2) :y y :width 4 :height 16 :color rl/GRAY))
-  (rl/rect! :x LEFT-X  :y (int (:ly s)) :width PW :height PH :color rl/RAYWHITE)
-  (rl/rect! :x RIGHT-X :y (int (:ry s)) :width PW :height PH :color rl/RAYWHITE)
-  (rl/rect! :x (int (:bx s)) :y (int (:by s)) :width BS :height BS :color rl/GOLD)
-  (rl/text! (str (:ls s)) :x (- (quot W 2) 80) :y 30 :size 50 :color rl/RAYWHITE)
-  (rl/text! (str (:rs s)) :x (+ (quot W 2) 50) :y 30 :size 50 :color rl/RAYWHITE)
-  (rl/text! "W / S" :x 20 :y (- H 30) :size 18 :color rl/GRAY)
-  (rl/text! "CPU"   :x (- W 70) :y (- H 30) :size 18 :color rl/GRAY)
+    (rl/rect! {:x (- (quot W 2) 2)
+               :y y
+               :width 4
+               :height 16
+               :color rl/GRAY}))
+  (rl/rect! {:x LEFT-X
+             :y (int (:ly s))
+             :width PW
+             :height PH
+             :color rl/RAYWHITE})
+  (rl/rect! {:x RIGHT-X
+             :y (int (:ry s))
+             :width PW
+             :height PH
+             :color rl/RAYWHITE})
+  (rl/rect! {:x (int (:bx s))
+             :y (int (:by s))
+             :width BS
+             :height BS
+             :color rl/GOLD})
+  (rl/text! (str (:ls s)) {:x (- (quot W 2) 80)
+                           :y 30
+                           :size 50
+                           :color rl/RAYWHITE})
+  (rl/text! (str (:rs s)) {:x (+ (quot W 2) 50)
+                           :y 30
+                           :size 50
+                           :color rl/RAYWHITE})
+  (rl/text! "W / S" {:x 20
+                     :y (- H 30)
+                     :size 18
+                     :color rl/GRAY})
+  (rl/text! "CPU"   {:x (- W 70)
+                     :y (- H 30)
+                     :size 18
+                     :color rl/GRAY})
   (when (:over? s)
-    (rl/text! (str (:winner s) " WINS!") :x 250 :y 180 :size 40 :color rl/GOLD)
-    (rl/text! "ENTER to restart" :x 295 :y 240 :size 20 :color rl/RAYWHITE)))
+    (rl/text! (str (:winner s) " WINS!") {:x 250
+                                          :y 180
+                                          :size 40
+                                          :color rl/GOLD})
+    (rl/text! "ENTER to restart" {:x 295
+                                  :y 240
+                                  :size 20
+                                  :color rl/RAYWHITE})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "pong")
+  (rl/window! {:width W
+               :height H
+               :title "pong"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 s (initial-state)]

@@ -41,7 +41,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - easings rectangles")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - easings rectangles"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -67,13 +69,21 @@
               (let [cx (+ (/ REC-W 2.0) (* REC-W gx))
                     cy (+ (/ REC-H 2.0) (* REC-H gy))]
                 ;; Origin at the rectangle's own centre, so each spins in place.
-                (rl/rect-pro! :x cx :y cy :width w :height h
-                              :origin-x (/ w 2.0) :origin-y (/ h 2.0)
-                              :rotation rotation :color rl/MAROON))))
+                (rl/rect-pro! {:x cx
+                               :y cy
+                               :width w
+                               :height h
+                               :origin-x (/ w 2.0)
+                               :origin-y (/ h 2.0)
+                               :rotation rotation
+                               :color rl/MAROON}))))
           (rl/text! (if playing?
                       "easing out, both size and rotation"
                       "[SPACE] play again")
-                    :x 10 :y (- H 30) :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y (- H 30)
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) counter playing?)))))

@@ -18,7 +18,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - rectangle scaling")
+  (rl/window! {:title "raylib [shapes] example - rectangle scaling"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         rx 300 ry 165]
@@ -33,11 +33,22 @@
               rh (if drag? (max 50 (- my ry)) rh)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/rect! :x rx :y ry :width rw :height rh :color (rl/rgba 70 130 200 90))
-          (rl/rect-lines! :x rx :y ry :width rw :height rh :color rl/BLUE)
+          (rl/rect! {:x rx
+                     :y ry
+                     :width rw
+                     :height rh
+                     :color (rl/rgba 70 130 200 90)})
+          (rl/rect-lines! {:x rx
+                           :y ry
+                           :width rw
+                           :height rh
+                           :color rl/BLUE})
           (handle-tri! (+ rx rw) (+ ry rh) (if over? rl/RED rl/DARKBLUE))
           (rl/text! (format "W x H: %d x %d  (drag the corner handle)" rw rh)
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame) rw rh)))))

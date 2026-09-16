@@ -41,7 +41,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - random sequence")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - random sequence"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -64,15 +66,27 @@
           ;; Above the bars, where there is empty window. The two captions below
           ;; overlap the bars in the C too, so they are left where it puts them.
           (rl/text! (str n' " bars, each height used exactly once")
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (dotimes [i (count bars)]
             (let [{:keys [height color]} (nth bars i)]
-              (rl/rect! :x (int (* i size)) :y (int (- H height))
-                        :width (int (- size 1)) :height (int height) :color color)))
+              (rl/rect! {:x (int (* i size))
+                         :y (int (- H height))
+                         :width (int (- size 1))
+                         :height (int height)
+                         :color color})))
           (rl/text! "Press SPACE to shuffle the current sequence"
-                    :x 10 :y (- H 96) :size 20 :color rl/BLACK)
+                    {:x 10
+                     :y (- H 96)
+                     :size 20
+                     :color rl/BLACK})
           (rl/text! "Press UP or DOWN to change the sequence length"
-                    :x 10 :y (- H 66) :size 20 :color rl/BLACK)
+                    {:x 10
+                     :y (- H 66)
+                     :size 20
+                     :color rl/BLACK})
 
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)

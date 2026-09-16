@@ -19,7 +19,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - first person")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - first person"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         columns  (vec (repeatedly N-COLUMNS
@@ -61,10 +63,15 @@
             (fn []
               (rl/draw-grid 40 1.0)
               (doseq [c columns]
-                (rl/cube! :pos [(:x c) (/ (:h c) 2.0) (:z c)]
-                          :size [2.0 (:h c) 2.0] :color (:color c)))))
-          (rl/text! "WASD move - mouse look" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
-          (rl/fps! :x 10 :y (- H 30))
+                (rl/cube! {:pos [(:x c) (/ (:h c) 2.0) (:z c)]
+                           :size [2.0 (:h c) 2.0]
+                           :color (:color c)}))))
+          (rl/text! "WASD move - mouse look" {:x 10
+                                              :y 10
+                                              :size 20
+                                              :color rl/DARKGRAY})
+          (rl/fps! {:x 10
+                    :y (- H 30)})
           (rl/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) px pz yaw pitch mx my)))))

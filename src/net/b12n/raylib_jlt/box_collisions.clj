@@ -46,7 +46,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [models] example - box collisions")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [models] example - box collisions"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 px 0.0 pz 0.0]
@@ -70,11 +72,17 @@
               (rl/draw-grid 20 1.0)
               (doseq [b boxes]
                 (let [s (:s b)]
-                  (rl/cube! :pos [(:x b) (/ s 2.0) (:z b)] :size s
-                            :color (if (hit? px pz b) rl/RED rl/GRAY))))
-              (rl/cube! :pos [px (/ PS 2.0) pz] :size PS :color rl/LIME)))  ; player
+                  (rl/cube! {:pos [(:x b) (/ s 2.0) (:z b)]
+                             :size s
+                             :color (if (hit? px pz b) rl/RED rl/GRAY)})))
+              (rl/cube! {:pos [px (/ PS 2.0) pz]
+                         :size PS
+                         :color rl/LIME})))  ; player
           (rl/text! (if colliding? "COLLISION!" "WASD move the player")
-                    :x 10 :y 10 :size 20 :color (if colliding? rl/MAROON rl/DARKGRAY))
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color (if colliding? rl/MAROON rl/DARKGRAY)})
           (rl/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) px pz)))))

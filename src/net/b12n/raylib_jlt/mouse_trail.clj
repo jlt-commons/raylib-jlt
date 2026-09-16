@@ -11,7 +11,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - mouse trail")
+  (rl/window! {:title "raylib [shapes] example - mouse trail"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 trail []]
@@ -23,9 +23,14 @@
           (doseq [i (range n)]
             (let [[x y] (nth trail i)
                   t (/ (inc i) (double n))]            ; 0..1, newest = 1
-              (rl/circle! :x x :y y :radius (* 30.0 t)
-                          :color (rl/rgba 230 41 55 (int (* 255 t))))))
-          (rl/text! "move the mouse for a fading trail" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+              (rl/circle! {:x x
+                           :y y
+                           :radius (* 30.0 t)
+                           :color (rl/rgba 230 41 55 (int (* 255 t)))})))
+          (rl/text! "move the mouse for a fading trail" {:x 10
+                                                         :y 10
+                                                         :size 20
+                                                         :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) trail)))))

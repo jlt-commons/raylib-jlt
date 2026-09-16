@@ -33,7 +33,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - raylib logo animation")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - raylib logo animation"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -77,30 +79,69 @@
             ;; The blink: on for half of each 30-frame cycle.
             (= state 0)
             (when (< (mod (quot counter 15) 2) 1)
-              (rl/rect! :x LX :y LY :width BORDER :height BORDER :color rl/BLACK))
+              (rl/rect! {:x LX
+                         :y LY
+                         :width BORDER
+                         :height BORDER
+                         :color rl/BLACK}))
 
             (#{1 2} state)
             (do
-              (rl/rect! :x LX :y LY :width top-w :height BORDER :color rl/BLACK)
-              (rl/rect! :x LX :y LY :width BORDER :height left-h :color rl/BLACK)
+              (rl/rect! {:x LX
+                         :y LY
+                         :width top-w
+                         :height BORDER
+                         :color rl/BLACK})
+              (rl/rect! {:x LX
+                         :y LY
+                         :width BORDER
+                         :height left-h
+                         :color rl/BLACK})
               (when (= state 2)
-                (rl/rect! :x (+ LX LOGO (- BORDER)) :y LY
-                          :width BORDER :height right-h :color rl/BLACK)
-                (rl/rect! :x (- (+ LX LOGO) bottom-w) :y (+ LY LOGO (- BORDER))
-                          :width bottom-w :height BORDER :color rl/BLACK)))
+                (rl/rect! {:x (+ LX LOGO (- BORDER))
+                           :y LY
+                           :width BORDER
+                           :height right-h
+                           :color rl/BLACK})
+                (rl/rect! {:x (- (+ LX LOGO) bottom-w)
+                           :y (+ LY LOGO (- BORDER))
+                           :width bottom-w
+                           :height BORDER
+                           :color rl/BLACK})))
 
             (#{3 4} state)
             (let [c (fade alpha)]
               ;; The finished frame, then a growing prefix of the word inside it.
-              (rl/rect! :x LX :y LY :width LOGO :height BORDER :color c)
-              (rl/rect! :x LX :y LY :width BORDER :height LOGO :color c)
-              (rl/rect! :x (+ LX LOGO (- BORDER)) :y LY :width BORDER :height LOGO :color c)
-              (rl/rect! :x LX :y (+ LY LOGO (- BORDER)) :width LOGO :height BORDER :color c)
+              (rl/rect! {:x LX
+                         :y LY
+                         :width LOGO
+                         :height BORDER
+                         :color c})
+              (rl/rect! {:x LX
+                         :y LY
+                         :width BORDER
+                         :height LOGO
+                         :color c})
+              (rl/rect! {:x (+ LX LOGO (- BORDER))
+                         :y LY
+                         :width BORDER
+                         :height LOGO
+                         :color c})
+              (rl/rect! {:x LX
+                         :y (+ LY LOGO (- BORDER))
+                         :width LOGO
+                         :height BORDER
+                         :color c})
               (rl/text! (subs "raylib" 0 (min 6 letters))
-                        :x (- (+ LX LOGO) 138) :y (- (+ LY LOGO) 100)
-                        :size 50 :color c)))
+                        {:x (- (+ LX LOGO) 138)
+                         :y (- (+ LY LOGO) 100)
+                         :size 50
+                         :color c})))
           (when (= state 4)
-            (rl/text! "[R] REPLAY" :x 340 :y 200 :size 20 :color rl/GRAY))
+            (rl/text! "[R] REPLAY" {:x 340
+                                    :y 200
+                                    :size 20
+                                    :color rl/GRAY}))
           (rl/maybe-screenshot! frame 150)
           (rl/end-drawing)
           (recur (inc frame) state counter top-w left-h bottom-w right-h letters alpha)))))

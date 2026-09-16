@@ -38,14 +38,28 @@
 
 (defn- draw-world
   [px]
-  (rl/rect! :x -600 :y GROUND-Y :width 2400 :height 200 :color rl/GRAY)   ; ground
+  (rl/rect! {:x -600
+             :y GROUND-Y
+             :width 2400
+             :height 200
+             :color rl/GRAY})   ; ground
   (doseq [{:keys [x w h color]} buildings]
-    (rl/rect! :x x :y (- GROUND-Y h) :width w :height h :color color))
-  (rl/rect! :x (int (- px 15)) :y (- GROUND-Y 60) :width 30 :height 60 :color rl/RED))  ; player
+    (rl/rect! {:x x
+               :y (- GROUND-Y h)
+               :width w
+               :height h
+               :color color}))
+  (rl/rect! {:x (int (- px 15))
+             :y (- GROUND-Y 60)
+             :width 30
+             :height 60
+             :color rl/RED}))  ; player
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - 2d camera")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - 2d camera"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 px 400.0 zoom 1.0 rot 0.0]
@@ -71,9 +85,16 @@
                               :zoom zoom}
             (fn [] (draw-world px)))
           ;; screen space, HUD + a center reference line
-          (rl/line! :x1 (int (/ W 2)) :y1 0 :x2 (int (/ W 2)) :y2 H :color rl/LIGHTGRAY)
+          (rl/line! {:x1 (int (/ W 2))
+                     :y1 0
+                     :x2 (int (/ W 2))
+                     :y2 H
+                     :color rl/LIGHTGRAY})
           (rl/text! "arrows move - wheel zooms - A/D rotate - R resets"
-                    :x 10 :y 10 :size 18 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 18
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) px zoom rot)))))

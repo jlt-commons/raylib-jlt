@@ -72,7 +72,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [models] example - Lorenz attractor")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [models] example - Lorenz attractor"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -107,13 +109,25 @@
              :target-z 0.0
              :fovy 45}
             (fn [] (draw-trail! points)))
-          (rl/text! "Lorenz attractor" :x 20 :y 18 :size 22 :color rl/RAYWHITE)
+          (rl/text! "Lorenz attractor" {:x 20
+                                        :y 18
+                                        :size 22
+                                        :color rl/RAYWHITE})
           (rl/text! (format "rho %.2f   sigma %.1f   beta %.2f" rho SIGMA BETA)
-                    :x 20 :y 46 :size 16 :color rl/SKYBLUE)
+                    {:x 20
+                     :y 46
+                     :size 16
+                     :color rl/SKYBLUE})
           (rl/text! (str (count points) " points" (when-not running? "   (paused)"))
-                    :x 20 :y 68 :size 14 :color rl/GRAY)
+                    {:x 20
+                     :y 68
+                     :size 14
+                     :color rl/GRAY})
           (rl/text! "UP/DOWN rho   SPACE pause   R reseed"
-                    :x 20 :y (- H 30) :size 14 :color rl/GRAY)
+                    {:x 20
+                     :y (- H 30)
+                     :size 14
+                     :color rl/GRAY})
           (rl/maybe-screenshot! frame 60)
           (rl/end-drawing)
           (recur (inc frame) points rho running?)))))

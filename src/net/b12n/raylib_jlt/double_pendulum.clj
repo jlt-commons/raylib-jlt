@@ -17,7 +17,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - double pendulum")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - double pendulum"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         ox (/ W 2.0) oy 150.0]
@@ -49,13 +51,32 @@
           (doseq [i (range n)]
             (let [[tx ty] (nth trail i)
                   t (/ (inc i) (double n))]
-              (rl/circle! :x (int tx) :y (int ty) :radius (* 2.0 t)
-                          :color (rl/rgba 80 200 255 (int (* 200 t))))))
-          (rl/line! :x1 (int ox) :y1 (int oy) :x2 (int x1) :y2 (int y1) :color rl/RAYWHITE)
-          (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2) :color rl/RAYWHITE)
-          (rl/circle! :x (int x1) :y (int y1) :radius 8 :color rl/GOLD)
-          (rl/circle! :x (int x2) :y (int y2) :radius 8 :color rl/RED)
-          (rl/text! "a chaotic double pendulum" :x 10 :y 10 :size 20 :color rl/RAYWHITE)
+              (rl/circle! {:x (int tx)
+                           :y (int ty)
+                           :radius (* 2.0 t)
+                           :color (rl/rgba 80 200 255 (int (* 200 t)))})))
+          (rl/line! {:x1 (int ox)
+                     :y1 (int oy)
+                     :x2 (int x1)
+                     :y2 (int y1)
+                     :color rl/RAYWHITE})
+          (rl/line! {:x1 (int x1)
+                     :y1 (int y1)
+                     :x2 (int x2)
+                     :y2 (int y2)
+                     :color rl/RAYWHITE})
+          (rl/circle! {:x (int x1)
+                       :y (int y1)
+                       :radius 8
+                       :color rl/GOLD})
+          (rl/circle! {:x (int x2)
+                       :y (int y2)
+                       :radius 8
+                       :color rl/RED})
+          (rl/text! "a chaotic double pendulum" {:x 10
+                                                 :y 10
+                                                 :size 20
+                                                 :color rl/RAYWHITE})
           (rl/maybe-screenshot! frame 70)
           (rl/end-drawing)
           (recur (inc frame) a1' a2' v1' v2' trail)))))

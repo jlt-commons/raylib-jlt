@@ -95,7 +95,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [games] example - 2048")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [games] example - 2048"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -117,12 +119,24 @@
             (let [c (mod i 4) r (quot i 4)
                   v (nth (:board st) i)
                   x (+ 210 (* c 95)) y (+ 40 (* r 95))]
-              (rl/rect! :x x :y y :width 88 :height 88
-                        :color (get tile-colors v (get tile-colors 2048)))
+              (rl/rect! {:x x
+                         :y y
+                         :width 88
+                         :height 88
+                         :color (get tile-colors v (get tile-colors 2048))})
               (when (pos? v)
-                (rl/text! (str v) :x (+ x 8) :y (+ y 28) :size 32 :color rl/DARKGRAY))))
-          (rl/text! (str "score " (:score st)) :x 20 :y 20 :size 24 :color rl/RAYWHITE)
-          (when over? (rl/text! "GAME OVER - SPACE" :x 250 :y 415 :size 24 :color rl/RAYWHITE))
+                (rl/text! (str v) {:x (+ x 8)
+                                   :y (+ y 28)
+                                   :size 32
+                                   :color rl/DARKGRAY}))))
+          (rl/text! (str "score " (:score st)) {:x 20
+                                                :y 20
+                                                :size 24
+                                                :color rl/RAYWHITE})
+          (when over? (rl/text! "GAME OVER - SPACE" {:x 250
+                                                     :y 415
+                                                     :size 24
+                                                     :color rl/RAYWHITE}))
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))

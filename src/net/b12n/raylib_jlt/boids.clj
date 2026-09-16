@@ -54,14 +54,21 @@
   (let [s (Math/sqrt (+ (* vx vx) (* vy vy)))
         s (if (< s 0.001) 1.0 s)
         ux (/ vx s) uy (/ vy s)]
-    (rl/line! :x1 (int x) :y1 (int y)
-              :x2 (int (+ x (* ux 11.0))) :y2 (int (+ y (* uy 11.0)))
-              :color (rl/rgba 120 200 255 255))
-    (rl/circle! :x (int x) :y (int y) :radius 3 :color rl/SKYBLUE)))
+    (rl/line! {:x1 (int x)
+               :y1 (int y)
+               :x2 (int (+ x (* ux 11.0)))
+               :y2 (int (+ y (* uy 11.0)))
+               :color (rl/rgba 120 200 255 255)})
+    (rl/circle! {:x (int x)
+                 :y (int y)
+                 :radius 3
+                 :color rl/SKYBLUE})))
 
 (defn -main
   [& _]
-  (rl/window! :width width :height height :title "raylib [generative] example - boids")
+  (rl/window! {:width width
+               :height height
+               :title "raylib [generative] example - boids"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0

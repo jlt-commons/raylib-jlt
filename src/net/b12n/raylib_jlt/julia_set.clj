@@ -57,7 +57,9 @@ void main() {
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - Julia set")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - Julia set"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
@@ -113,19 +115,33 @@ void main() {
                 (rl/with-shader
                   sh
                   (fn []
-                    (rl/rect! :x 0 :y 0 :width W :height H :color rl/WHITE)))
-                (rl/rect! :x 0 :y 0 :width W :height 62 :color (rl/rgba 0 0 0 150))
+                    (rl/rect! {:x 0
+                               :y 0
+                               :width W
+                               :height H
+                               :color rl/WHITE})))
+                (rl/rect! {:x 0
+                           :y 0
+                           :width W
+                           :height 62
+                           :color (rl/rgba 0 0 0 150)})
               ;; The sign is built by hand: jolt's format has no '+' flag, and a
               ;; complex number wants the sign attached to the imaginary part.
                 (rl/text! (format "c = %.4f %s%.4fi   zoom %.2f   %d iterations"
                                   c-re (if (neg? c-im) "-" "+") (Math/abs c-im) zoom iter)
-                          :x 14 :y 12 :size 18 :color rl/RAYWHITE)
+                          {:x 14
+                           :y 12
+                           :size 18
+                           :color rl/RAYWHITE})
                 (rl/text! (if frozen
                             "SPACE releases c   ·   wheel zooms   ·   UP/DOWN iterations"
                             (if over?
                               "move the mouse to steer c   ·   SPACE freezes it"
                               "pointer is off-window - showing c = -0.79 + 0.15i"))
-                          :x 14 :y 38 :size 14 :color rl/LIGHTGRAY)
+                          {:x 14
+                           :y 38
+                           :size 14
+                           :color rl/LIGHTGRAY})
                 (rl/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) zoom iter frozen))))

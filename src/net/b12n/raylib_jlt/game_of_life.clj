@@ -31,8 +31,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width (* cols cell) :height (* rows cell)
-              :title "raylib [generative] example - game of life")
+  (rl/window! {:width (* cols cell)
+               :height (* rows cell)
+               :title "raylib [generative] example - game of life"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -44,8 +45,15 @@
           (rl/begin-drawing)
           (rl/clear-background rl/BLACK)
           (doseq [[c r] live]
-            (rl/rect! :x (* c cell) :y (* r cell) :width (- cell 1) :height (- cell 1) :color rl/LIME))
-          (rl/text! (str (count live) " cells - SPACE reseeds") :x 8 :y 6 :size 18 :color rl/RAYWHITE)
+            (rl/rect! {:x (* c cell)
+                       :y (* r cell)
+                       :width (- cell 1)
+                       :height (- cell 1)
+                       :color rl/LIME}))
+          (rl/text! (str (count live) " cells - SPACE reseeds") {:x 8
+                                                                 :y 6
+                                                                 :size 18
+                                                                 :color rl/RAYWHITE})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) live)))))

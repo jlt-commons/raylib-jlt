@@ -44,15 +44,21 @@
   [dir dx dy active?]
   (let [x (+ PAD-X (* dx 44))
         y (+ PAD-Y (* dy 44))]
-    (rl/circle! :x x :y y :radius 26
-                :color (if active? rl/BLUE (rl/rgba 0 0 0 25)))
+    (rl/circle! {:x x
+                 :y y
+                 :radius 26
+                 :color (if active? rl/BLUE (rl/rgba 0 0 0 25))})
     (rl/text! (case dir :up "^" :down "v" :left "<" :right ">")
-              :x (- x 4) :y (- y 9) :size 20
-              :color (if active? rl/RAYWHITE rl/GRAY))))
+              {:x (- x 4)
+               :y (- y 9)
+               :size 20
+               :color (if active? rl/RAYWHITE rl/GRAY)})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - input virtual controls")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - input virtual controls"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -82,15 +88,26 @@
                     :else 0.0)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/text! "virtual controls" :x 30 :y 26 :size 24 :color rl/DARKGRAY)
+          (rl/text! "virtual controls" {:x 30
+                                        :y 26
+                                        :size 24
+                                        :color rl/DARKGRAY})
           (rl/text! "press the pad with the mouse, or use the arrow keys"
-                    :x 30 :y 58 :size 14 :color rl/GRAY)
+                    {:x 30
+                     :y 58
+                     :size 14
+                     :color rl/GRAY})
           ;; The hop is a sine arc over the button's decay, so the square lifts
           ;; and settles rather than teleporting.
-          (rl/rect! :x (int (- px 22))
-                    :y (int (- py 22 (* 60 (Math/sin (* Math/PI hop)))))
-                    :width 44 :height 44 :color rl/MAROON)
-          (rl/circle-lines! :x PAD-X :y PAD-Y :radius PAD-R :color rl/LIGHTGRAY)
+          (rl/rect! {:x (int (- px 22))
+                     :y (int (- py 22 (* 60 (Math/sin (* Math/PI hop)))))
+                     :width 44
+                     :height 44
+                     :color rl/MAROON})
+          (rl/circle-lines! {:x PAD-X
+                             :y PAD-Y
+                             :radius PAD-R
+                             :color rl/LIGHTGRAY})
           (doseq [[dir dx dy _] segments]
             (segment! dir dx dy (or (= seg dir)
                                     (rl/key-down? (case dir
@@ -98,11 +115,18 @@
                                                     :down rl/KEY-DOWN
                                                     :left rl/KEY-LEFT
                                                     :right rl/KEY-RIGHT)))))
-          (rl/circle! :x BTN-X :y BTN-Y :radius BTN-R
-                      :color (if btn? rl/MAROON (rl/rgba 190 33 55 60)))
-          (rl/text! "A" :x (- BTN-X 8) :y (- BTN-Y 12) :size 26
-                    :color (if btn? rl/RAYWHITE rl/MAROON))
-          (rl/text! "jump" :x (- BTN-X 20) :y (+ BTN-Y BTN-R 10) :size 14 :color rl/GRAY)
+          (rl/circle! {:x BTN-X
+                       :y BTN-Y
+                       :radius BTN-R
+                       :color (if btn? rl/MAROON (rl/rgba 190 33 55 60))})
+          (rl/text! "A" {:x (- BTN-X 8)
+                         :y (- BTN-Y 12)
+                         :size 26
+                         :color (if btn? rl/RAYWHITE rl/MAROON)})
+          (rl/text! "jump" {:x (- BTN-X 20)
+                            :y (+ BTN-Y BTN-R 10)
+                            :size 14
+                            :color rl/GRAY})
           (rl/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) px py hop)))))

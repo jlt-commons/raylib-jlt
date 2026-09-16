@@ -21,7 +21,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - collision area")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - collision area"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         aw 220 ah 120 bw 140 bh 100 ay 165]
@@ -34,12 +36,27 @@
               ov (intersect [(int ax) ay aw ah] [bx by bw bh])]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/rect! :x (int ax) :y ay :width aw :height ah :color rl/SKYBLUE)
-          (rl/rect! :x bx :y by :width bw :height bh :color rl/GOLD)
+          (rl/rect! {:x (int ax)
+                     :y ay
+                     :width aw
+                     :height ah
+                     :color rl/SKYBLUE})
+          (rl/rect! {:x bx
+                     :y by
+                     :width bw
+                     :height bh
+                     :color rl/GOLD})
           (when ov
-            (rl/rect! :x (nth ov 0) :y (nth ov 1) :width (nth ov 2) :height (nth ov 3) :color rl/RED))
+            (rl/rect! {:x (nth ov 0)
+                       :y (nth ov 1)
+                       :width (nth ov 2)
+                       :height (nth ov 3)
+                       :color rl/RED}))
           (rl/text! (if ov "COLLISION!" "move the gold box over the blue one")
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) ax vx)))))

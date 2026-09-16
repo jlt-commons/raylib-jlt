@@ -35,7 +35,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width width :height height :title "raylib [generative] example - fireworks")
+  (rl/window! {:width width
+               :height height
+               :title "raylib [generative] example - fireworks"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -58,11 +60,16 @@
           (rl/clear-background rl/BLACK)
           (doseq [r rockets]
             (let [[cr cg cb] (:color r)]
-              (rl/circle! :x (int (:x r)) :y (int (:y r)) :radius 3 :color (rl/rgba cr cg cb 255))))
+              (rl/circle! {:x (int (:x r))
+                           :y (int (:y r))
+                           :radius 3
+                           :color (rl/rgba cr cg cb 255)})))
           (doseq [p parts]
             (let [[cr cg cb] (:color p)]
-              (rl/circle! :x (int (:x p)) :y (int (:y p)) :radius 2
-                          :color (rl/rgba cr cg cb (int (* 255 (:life p)))))))
+              (rl/circle! {:x (int (:x p))
+                           :y (int (:y p))
+                           :radius 2
+                           :color (rl/rgba cr cg cb (int (* 255 (:life p))))})))
           (rl/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame) rockets parts)))))

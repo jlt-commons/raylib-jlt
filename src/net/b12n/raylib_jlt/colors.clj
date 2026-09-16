@@ -31,21 +31,35 @@
         row (quot i cols)
         x   (+ pad (* col (+ cw pad)))
         y   (+ grid-top (* row ch))]
-    (rl/rect! :x x :y y :width cw :height sh :color color)
+    (rl/rect! {:x x
+               :y y
+               :width cw
+               :height sh
+               :color color})
     ;; a light border so the near-white swatches (WHITE, RAYWHITE) stay visible
-    (rl/rect-lines! :x x :y y :width cw :height sh :color rl/LIGHTGRAY)
-    (rl/text! label :x (+ x 4) :y (+ y sh 2) :size 10 :color rl/DARKGRAY)))
+    (rl/rect-lines! {:x x
+                     :y y
+                     :width cw
+                     :height sh
+                     :color rl/LIGHTGRAY})
+    (rl/text! label {:x (+ x 4)
+                     :y (+ y sh 2)
+                     :size 10
+                     :color rl/DARKGRAY})))
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib named colors")
+  (rl/window! {:title "raylib named colors"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
       (when (rl/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
-        (rl/text! "raylib named colors" :x 12 :y 15 :size 22 :color rl/DARKGRAY)
+        (rl/text! "raylib named colors" {:x 12
+                                         :y 15
+                                         :size 22
+                                         :color rl/DARKGRAY})
         (doseq [i (range (count palette))]
           (draw-swatch i (nth palette i)))
         (rl/maybe-screenshot! frame 5)

@@ -71,7 +71,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "wireframe shapes")
+  (rl/window! {:width W
+               :height H
+               :title "wireframe shapes"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -95,7 +97,10 @@
                 (draw-edges! (:edges sh) (:color sh))
                 (rl/rl-pop-matrix))))
           (rl/text! "wireframe shapes via rlgl 3D lines: pyramid, octahedron, torus, helix"
-                    :x 20 :y 12 :size 18 :color rl/RAYWHITE)
+                    {:x 20
+                     :y 12
+                     :size 18
+                     :color rl/RAYWHITE})
           (rl/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame))))))

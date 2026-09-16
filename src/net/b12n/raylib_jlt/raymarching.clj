@@ -122,7 +122,9 @@ void main() {
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - raymarching")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - raymarching"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
@@ -175,14 +177,29 @@ void main() {
                 (rl/set-uniform-int! sh loc-heat (if heat? 1 0))
                 (rl/begin-drawing)
                 (rl/clear-background rl/BLACK)
-                (rl/with-shader sh (fn [] (rl/rect! :x 0 :y 0 :width W :height H :color rl/WHITE)))
-                (rl/rect! :x 0 :y 0 :width W :height 62 :color (rl/rgba 0 0 0 150))
+                (rl/with-shader sh (fn [] (rl/rect! {:x 0
+                                                     :y 0
+                                                     :width W
+                                                     :height H
+                                                     :color rl/WHITE})))
+                (rl/rect! {:x 0
+                           :y 0
+                           :width W
+                           :height 62
+                           :color (rl/rgba 0 0 0 150)})
                 (rl/text! (format "camera %.2f %.2f %.2f   %s"
                                   px py pz (if heat? "step-count heat map" "shaded"))
-                          :x 14 :y 12 :size 17 :color rl/RAYWHITE)
+                          {:x 14
+                           :y 12
+                           :size 17
+                           :color rl/RAYWHITE})
                 (rl/text! "W/A/S/D fly   ·   drag to look   ·   SPACE toggles the heat map"
-                          :x 14 :y 38 :size 14 :color rl/LIGHTGRAY)
-                (rl/fps! :x 14 :y (- H 28))
+                          {:x 14
+                           :y 38
+                           :size 14
+                           :color rl/LIGHTGRAY})
+                (rl/fps! {:x 14
+                          :y (- H 28)})
                 (rl/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) px py pz yaw pitch heat? last-mouse))))

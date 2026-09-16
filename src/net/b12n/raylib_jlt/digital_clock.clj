@@ -23,8 +23,11 @@
   [d x y w hh t on off]
   (let [lit (get segs d)
         seg (fn [k rx ry rw rh]
-              (rl/rect! :x (int rx) :y (int ry) :width (int rw) :height (int rh)
-                        :color (if (contains? lit k) on off)))]
+              (rl/rect! {:x (int rx)
+                         :y (int ry)
+                         :width (int rw)
+                         :height (int rh)
+                         :color (if (contains? lit k) on off)}))]
     (seg :a x y w t)
     (seg :g x (+ y hh) w t)
     (seg :d x (+ y (* 2 hh)) w t)
@@ -35,7 +38,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - digital clock")
+  (rl/window! {:title "raylib [shapes] example - digital clock"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         on  (rl/rgba 80 230 120 255)
@@ -54,9 +57,20 @@
             (draw-digit (nth digits i) (nth xs i) y w hh t on off))
           (let [cc (if (even? s) on off)]   ; colons blink: bright on even seconds, dim on odd
             (doseq [cx colon-xs]
-              (rl/rect! :x cx :y (+ y 30) :width t :height t :color cc)
-              (rl/rect! :x cx :y (+ y (* 2 hh) -18) :width t :height t :color cc)))
-          (rl/text! "seven-segment (libc local time)" :x 10 :y 10 :size 20 :color (rl/rgba 120 180 140 255))
+              (rl/rect! {:x cx
+                         :y (+ y 30)
+                         :width t
+                         :height t
+                         :color cc})
+              (rl/rect! {:x cx
+                         :y (+ y (* 2 hh) -18)
+                         :width t
+                         :height t
+                         :color cc})))
+          (rl/text! "seven-segment (libc local time)" {:x 10
+                                                       :y 10
+                                                       :size 20
+                                                       :color (rl/rgba 120 180 140 255)})
           (rl/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame))))))

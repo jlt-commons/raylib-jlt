@@ -7,7 +7,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [models] example - rotating cube")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [models] example - rotating cube"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -23,10 +25,15 @@
               (rl/rl-push-matrix)
               (rl/rl-rotatef angle 1.0 0.0 0.0)
               (rl/rl-rotatef (* angle 0.7) 0.0 1.0 0.0)
-              (rl/cube! :pos [0.0 0.0 0.0] :size 2.0 :color rl/RED)
+              (rl/cube! {:pos [0.0 0.0 0.0]
+                         :size 2.0
+                         :color rl/RED})
               (rl/rl-pop-matrix)))
           (rl/text! "A cube rotating via the rlgl matrix stack"
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))

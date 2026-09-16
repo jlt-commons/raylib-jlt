@@ -34,7 +34,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width width :height height :title "raylib [shapes] example - ball physics")
+  (rl/window! {:width width
+               :height height
+               :title "raylib [shapes] example - ball physics"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -44,9 +46,15 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           (doseq [{:keys [x y r color]} balls]
-            (rl/circle! :x (int x) :y (int y) :radius r :color color))
+            (rl/circle! {:x (int x)
+                         :y (int y)
+                         :radius r
+                         :color color}))
           (rl/text! "Balls under gravity - SPACE respawns"
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) balls)))))

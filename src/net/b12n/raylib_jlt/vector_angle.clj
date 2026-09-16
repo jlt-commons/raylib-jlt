@@ -21,7 +21,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - vector angle")
+  (rl/window! {:title "raylib [shapes] example - vector angle"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         ox 400 oy 235 len 150.0
@@ -41,18 +41,49 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           ;; the angle arc (translucent) between the two vectors
-          (rl/sector! :cx ox :cy oy :radius 70 :start-deg lo :end-deg hi
-                      :segments 48 :color (rl/rgba 255 200 0 110))
+          (rl/sector! {:cx ox
+                       :cy oy
+                       :radius 70
+                       :start-deg lo
+                       :end-deg hi
+                       :segments 48
+                       :color (rl/rgba 255 200 0 110)})
           ;; vectors
-          (rl/line! :x1 ox :y1 oy :x2 (int (+ ox ax)) :y2 (int (+ oy ay)) :color rl/RED)
-          (rl/line! :x1 ox :y1 oy :x2 (int (+ ox bx)) :y2 (int (+ oy by)) :color rl/BLUE)
-          (rl/circle! :x (int (+ ox ax)) :y (int (+ oy ay)) :radius 5 :color rl/RED)
-          (rl/circle! :x (int (+ ox bx)) :y (int (+ oy by)) :radius 5 :color rl/BLUE)
-          (rl/circle! :x ox :y oy :radius 4 :color rl/DARKGRAY)
-          (rl/text! "A" :x (int (+ ox ax 8)) :y (int (+ oy ay -6)) :size 20 :color rl/RED)
-          (rl/text! "B" :x (int (+ ox bx 8)) :y (int (+ oy by -6)) :size 20 :color rl/BLUE)
+          (rl/line! {:x1 ox
+                     :y1 oy
+                     :x2 (int (+ ox ax))
+                     :y2 (int (+ oy ay))
+                     :color rl/RED})
+          (rl/line! {:x1 ox
+                     :y1 oy
+                     :x2 (int (+ ox bx))
+                     :y2 (int (+ oy by))
+                     :color rl/BLUE})
+          (rl/circle! {:x (int (+ ox ax))
+                       :y (int (+ oy ay))
+                       :radius 5
+                       :color rl/RED})
+          (rl/circle! {:x (int (+ ox bx))
+                       :y (int (+ oy by))
+                       :radius 5
+                       :color rl/BLUE})
+          (rl/circle! {:x ox
+                       :y oy
+                       :radius 4
+                       :color rl/DARKGRAY})
+          (rl/text! "A" {:x (int (+ ox ax 8))
+                         :y (int (+ oy ay -6))
+                         :size 20
+                         :color rl/RED})
+          (rl/text! "B" {:x (int (+ ox bx 8))
+                         :y (int (+ oy by -6))
+                         :size 20
+                         :color rl/BLUE})
           (rl/text! (format "angle: %.1f deg" (Math/abs delta))
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 110)
           (rl/end-drawing)
           (recur (inc frame))))))

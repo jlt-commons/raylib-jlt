@@ -140,9 +140,15 @@
           (let [[sx sy] (centre-of (if (= :door-exit slot)
                                      door-exit
                                      (nth house-slots slot)))]
-            {:name nm :color color :scatter scatter
-             :x sx :y sy :dx 0 :dy -1
-             :frightened 0.0 :home-timer delay}))
+            {:name nm
+             :color color
+             :scatter scatter
+             :x sx
+             :y sy
+             :dx 0
+             :dy -1
+             :frightened 0.0
+             :home-timer delay}))
         ghost-specs))
 
 (defn initial-pac
@@ -150,7 +156,15 @@
   (let [[sx sy] (centre-of pac-start)]
     ;; dx/dy is the current heading, ndx/ndy the BUFFERED turn, fx/fy the last
     ;; non-zero heading — which is where the mouth points while stopped.
-    {:x sx :y sy :dx -1 :dy 0 :ndx -1 :ndy 0 :fx -1 :fy 0 :mouth 0.0}))
+    {:x sx
+     :y sy
+     :dx -1
+     :dy 0
+     :ndx -1
+     :ndy 0
+     :fx -1
+     :fy 0
+     :mouth 0.0}))
 
 (defn new-game
   "A fresh world. With `previous`, score and lives carry over and the level
@@ -195,11 +209,18 @@
             leftover (- dist to-centre)]
         (if (or (and (zero? ndx) (zero? ndy))
                 (walls? (+ tx ndx) (+ ty ndy)))
-          {:x cx :y cy :dx ndx :dy ndy}
+          {:x cx
+           :y cy
+           :dx ndx
+           :dy ndy}
           {:x (mod (+ cx (* ndx leftover)) MW)
            :y (+ cy (* ndy leftover))
-           :dx ndx :dy ndy}))
-      {:x (mod (+ x (* dx dist)) MW) :y (+ y (* dy dist)) :dx dx :dy dy})))
+           :dx ndx
+           :dy ndy}))
+      {:x (mod (+ x (* dx dist)) MW)
+       :y (+ y (* dy dist))
+       :dx dx
+       :dy dy})))
 
 (def ^:const PAC-SPEED 5.6)
 
@@ -214,8 +235,10 @@
                    [ndx ndy]
                    (not (wall? (+ tx dx) (+ ty dy))) [dx dy]
                    :else [0 0]))
-        moved (step-entity pac {:speed PAC-SPEED :dt dt
-                                :decide decide :walls? wall?})
+        moved (step-entity pac {:speed PAC-SPEED
+                                :dt dt
+                                :decide decide
+                                :walls? wall?})
         moving? (not (and (zero? (:dx moved)) (zero? (:dy moved))))]
     (merge pac moved
            {:fx (if moving? (:dx moved) (:fx pac))
@@ -281,7 +304,9 @@
       (merge g (step-entity g {:speed (if frightened?
                                         GHOST-SPEED-SCARED
                                         GHOST-SPEED)
-                               :dt dt :decide decide :walls? ghost-wall?})))))
+                               :dt dt
+                               :decide decide
+                               :walls? ghost-wall?})))))
 
 ;; --- game rules --------------------------------------------------------------
 
@@ -321,8 +346,12 @@
         ;; 200, 400, 800, 1600 within one pellet.
         (update :score + (* 200 (bit-shift-left 1 (dec combo))))
         (assoc :combo combo)
-        (assoc-in [:ghosts i] (merge g {:x hx :y hy :dx 0 :dy -1
-                                        :frightened 0.0 :home-timer 1.5})))))
+        (assoc-in [:ghosts i] (merge g {:x hx
+                                        :y hy
+                                        :dx 0
+                                        :dy -1
+                                        :frightened 0.0
+                                        :home-timer 1.5})))))
 
 (defn collide
   [s]
@@ -384,8 +413,10 @@
             s (eat s)
             s (update s :ghosts
                       (fn [gs]
-                        (mapv #(move-ghost % {:pac (:pac s) :ghosts gs
-                                              :chase? (:chase? s) :dt dt})
+                        (mapv #(move-ghost % {:pac (:pac s)
+                                              :ghosts gs
+                                              :chase? (:chase? s)
+                                              :dt dt})
                               gs)))
             s (collide s)]
         (if (empty? (:dots s))
@@ -403,20 +434,30 @@
             sy (py y)]
         (cond
           (= \# c)
-          (do (rl/rect! :x sx :y sy :width CELL :height CELL :color WALL-EDGE)
-              (rl/rect! :x (+ sx 3) :y (+ sy 3)
-                        :width (- CELL 6) :height (- CELL 6) :color WALL))
+          (do (rl/rect! {:x sx
+                         :y sy
+                         :width CELL
+                         :height CELL
+                         :color WALL-EDGE})
+              (rl/rect! {:x (+ sx 3)
+                         :y (+ sy 3)
+                         :width (- CELL 6)
+                         :height (- CELL 6)
+                         :color WALL}))
           (= \- c)
-          (rl/rect! :x sx :y (+ sy (quot CELL 2) -2)
-                    :width CELL :height 4 :color DOOR)))))
+          (rl/rect! {:x sx
+                     :y (+ sy (quot CELL 2) -2)
+                     :width CELL
+                     :height 4
+                     :color DOOR})))))
   (doseq [[x y] dots]
     ;; Power pellets are bigger and blink; plain dots do neither.
     (let [pellet? (= \o (tile-at x y))]
       (when (or (not pellet?) blink?)
-        (rl/circle! :x (+ (px x) (quot CELL 2))
-                    :y (+ (py y) (quot CELL 2))
-                    :radius (if pellet? 7.0 3.0)
-                    :color PELLET)))))
+        (rl/circle! {:x (+ (px x) (quot CELL 2))
+                     :y (+ (py y) (quot CELL 2))
+                     :radius (if pellet? 7.0 3.0)
+                     :color PELLET})))))
 
 (defn heading-deg
   "The heading (fx, fy) as a sector! angle: 0 points up and increases clockwise,
@@ -431,12 +472,13 @@
   ;; advances, which only happens while Pac-Man is moving.
   (let [open (Math/toDegrees (* 0.42 (+ 1.0 (Math/sin mouth))))
         from (+ (heading-deg fx fy) open)]
-    (rl/sector! :cx (px x) :cy (py y)
-                :radius (* 0.46 CELL)
-                :start-deg from
-                :end-deg (+ from (- 360.0 (* 2.0 open)))
-                :segments 28
-                :color PELLET)))
+    (rl/sector! {:cx (px x)
+                 :cy (py y)
+                 :radius (* 0.46 CELL)
+                 :start-deg from
+                 :end-deg (+ from (- 360.0 (* 2.0 open)))
+                 :segments 28
+                 :color PELLET})))
 
 (defn draw-ghost!
   [g blink?]
@@ -448,34 +490,64 @@
                 (pos? (:frightened g)) SCARED
                 :else (:color g))]
     ;; A dome over a body, with three feet along the bottom.
-    (rl/circle! :x cx :y (- cy 2) :radius r :color color)
-    (rl/rect! :x (- cx r) :y (- cy 2) :width (* 2 r) :height (+ r 2) :color color)
+    (rl/circle! {:x cx
+                 :y (- cy 2)
+                 :radius r
+                 :color color})
+    (rl/rect! {:x (- cx r)
+               :y (- cy 2)
+               :width (* 2 r)
+               :height (+ r 2)
+               :color color})
     (dotimes [i 3]
-      (rl/circle! :x (+ (- cx r) (* i r) (quot r 2)) :y (+ cy r)
-                  :radius (/ (double r) 2.6) :color color))
+      (rl/circle! {:x (+ (- cx r) (* i r) (quot r 2))
+                   :y (+ cy r)
+                   :radius (/ (double r) 2.6)
+                   :color color}))
     ;; The eyes look along the direction of travel; a frightened ghost has none.
     (let [ex (long (* 4 (:dx g)))
           ey (long (* 4 (:dy g)))]
-      (rl/circle! :x (- cx 5) :y (- cy 5) :radius 5.0 :color LABEL)
-      (rl/circle! :x (+ cx 5) :y (- cy 5) :radius 5.0 :color LABEL)
+      (rl/circle! {:x (- cx 5)
+                   :y (- cy 5)
+                   :radius 5.0
+                   :color LABEL})
+      (rl/circle! {:x (+ cx 5)
+                   :y (- cy 5)
+                   :radius 5.0
+                   :color LABEL})
       (when-not (pos? (:frightened g))
-        (rl/circle! :x (+ (- cx 5) ex) :y (+ (- cy 5) ey) :radius 2.5 :color PUPIL)
-        (rl/circle! :x (+ cx 5 ex) :y (+ (- cy 5) ey) :radius 2.5 :color PUPIL)))))
+        (rl/circle! {:x (+ (- cx 5) ex)
+                     :y (+ (- cy 5) ey)
+                     :radius 2.5
+                     :color PUPIL})
+        (rl/circle! {:x (+ cx 5 ex)
+                     :y (+ (- cy 5) ey)
+                     :radius 2.5
+                     :color PUPIL})))))
 
 (defn draw-hud!
   [s]
-  (rl/text! (str "SCORE " (:score s)) :x 20 :y 20 :size 28 :color LABEL)
-  (rl/text! (str "LEVEL " (:level s)) :x (- W 340) :y 20 :size 28 :color LABEL)
+  (rl/text! (str "SCORE " (:score s)) {:x 20
+                                       :y 20
+                                       :size 28
+                                       :color LABEL})
+  (rl/text! (str "LEVEL " (:level s)) {:x (- W 340)
+                                       :y 20
+                                       :size 28
+                                       :color LABEL})
   (dotimes [i (:lives s)]
-    (rl/circle! :x (+ (- W 150) (* i 34)) :y 33 :radius 11.0 :color PELLET))
+    (rl/circle! {:x (+ (- W 150) (* i 34))
+                 :y 33
+                 :radius 11.0
+                 :color PELLET}))
   (when-let [m (:message s)]
     ;; MeasureText is how a scalar API centres text: ask, then place.
     (let [size 46]
       (rl/text! m
-                :x (quot (- W (rl/text-width m :size size)) 2)
-                :y (- (quot H 2) 24)
-                :size size
-                :color (if (:over? s) OVER PELLET)))))
+                {:x (quot (- W (rl/text-width m :size size)) 2)
+                 :y (- (quot H 2) 24)
+                 :size size
+                 :color (if (:over? s) OVER PELLET)}))))
 
 (defn draw-state!
   [s]
@@ -488,7 +560,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "pac-man")
+  (rl/window! {:width W
+               :height H
+               :title "pac-man"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         final (loop [frame 0

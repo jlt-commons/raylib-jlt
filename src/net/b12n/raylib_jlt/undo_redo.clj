@@ -54,18 +54,34 @@
   "The strip along the bottom: one slot per held state, the cursor filled in."
   [x y history cursor]
   (let [slot 12]
-    (rl/text! "HISTORY" :x 40 :y (- y 4) :size 10 :color rl/GRAY)
+    (rl/text! "HISTORY" {:x 40
+                         :y (- y 4)
+                         :size 10
+                         :color rl/GRAY})
     (dotimes [i (count history)]
       (let [sx (+ x (* i slot))]
         (if (= i cursor)
-          (rl/rect! :x sx :y y :width (- slot 2) :height 16 :color rl/DARKGRAY)
-          (rl/rect-lines! :x sx :y y :width (- slot 2) :height 16 :color rl/LIGHTGRAY))))
+          (rl/rect! {:x sx
+                     :y y
+                     :width (- slot 2)
+                     :height 16
+                     :color rl/DARKGRAY})
+          (rl/rect-lines! {:x sx
+                           :y y
+                           :width (- slot 2)
+                           :height 16
+                           :color rl/LIGHTGRAY}))))
     (rl/text! (str (inc cursor) " / " (count history))
-              :x (+ x (* MAX-STATES slot) 12) :y y :size 14 :color rl/GRAY)))
+              {:x (+ x (* MAX-STATES slot) 12)
+               :y y
+               :size 14
+               :color rl/GRAY})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - undo redo")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - undo redo"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         start    {:x 10
@@ -110,25 +126,38 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           (rl/text! "[ARROWS] MOVE - [SPACE] COLOR - [CTRL+Z] UNDO - [CTRL+Y] REDO"
-                    :x 40 :y 20 :size 20 :color rl/DARKGRAY)
+                    {:x 40
+                     :y 20
+                     :size 20
+                     :color rl/DARKGRAY})
           ;; The trail: every state up to the cursor, so an undo visibly shortens it.
           (dotimes [i (inc cursor)]
             (let [{:keys [x y]} (nth history i)]
-              (rl/rect! :x (+ GRID-X (* x CELL)) :y (+ GRID-Y (* y CELL))
-                        :width CELL :height CELL :color rl/LIGHTGRAY)))
+              (rl/rect! {:x (+ GRID-X (* x CELL))
+                         :y (+ GRID-Y (* y CELL))
+                         :width CELL
+                         :height CELL
+                         :color rl/LIGHTGRAY})))
           ;; Grid lines over the trail, so the cells stay legible.
           (dotimes [i (inc CELLS-X)]
-            (rl/line! :x1 (+ GRID-X (* i CELL)) :y1 GRID-Y
-                      :x2 (+ GRID-X (* i CELL)) :y2 (+ GRID-Y (* CELLS-Y CELL))
-                      :color (rl/rgba 220 220 220 255)))
+            (rl/line! {:x1 (+ GRID-X (* i CELL))
+                       :y1 GRID-Y
+                       :x2 (+ GRID-X (* i CELL))
+                       :y2 (+ GRID-Y (* CELLS-Y CELL))
+                       :color (rl/rgba 220 220 220 255)}))
           (dotimes [i (inc CELLS-Y)]
-            (rl/line! :x1 GRID-X :y1 (+ GRID-Y (* i CELL))
-                      :x2 (+ GRID-X (* CELLS-X CELL)) :y2 (+ GRID-Y (* i CELL))
-                      :color (rl/rgba 220 220 220 255)))
+            (rl/line! {:x1 GRID-X
+                       :y1 (+ GRID-Y (* i CELL))
+                       :x2 (+ GRID-X (* CELLS-X CELL))
+                       :y2 (+ GRID-Y (* i CELL))
+                       :color (rl/rgba 220 220 220 255)}))
           (let [{:keys [x y color]} player
                 [r g b a] (nth palette color)]
-            (rl/rect! :x (+ GRID-X (* x CELL)) :y (+ GRID-Y (* y CELL))
-                      :width CELL :height CELL :color (rl/rgba r g b a)))
+            (rl/rect! {:x (+ GRID-X (* x CELL))
+                       :y (+ GRID-Y (* y CELL))
+                       :width CELL
+                       :height CELL
+                       :color (rl/rgba r g b a)}))
           (draw-history! 110 400 history cursor)
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)

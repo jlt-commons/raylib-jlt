@@ -24,7 +24,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - rlgl color wheel")
+  (rl/window! {:title "raylib [shapes] example - rlgl color wheel"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         n 64 cx 400 cy 235 radius 165
@@ -51,7 +51,10 @@
               (rl/rl-color! (hsv->color h1))
               (rl/rl-vertex-2f (double x1) (double y1))))
           (rl/rl-end))
-        (rl/text! "HSV color wheel (rlgl triangle fan)" :x 10 :y 10 :size 20 :color rl/RAYWHITE)
+        (rl/text! "HSV color wheel (rlgl triangle fan)" {:x 10
+                                                         :y 10
+                                                         :size 20
+                                                         :color rl/RAYWHITE})
         (rl/maybe-screenshot! frame 12)
         (rl/end-drawing)
         (recur (inc frame)))))

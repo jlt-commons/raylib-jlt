@@ -141,7 +141,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - 2d camera platformer")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - 2d camera platformer"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         start    {:x 400.0
@@ -168,16 +170,29 @@
           (rl/with-camera-2d cam
             (fn []
               (doseq [[ex ey ew eh _ [r g b]] env-items]
-                (rl/rect! :x ex :y ey :width ew :height eh :color (rl/rgba r g b 255)))
+                (rl/rect! {:x ex
+                           :y ey
+                           :width ew
+                           :height eh
+                           :color (rl/rgba r g b 255)}))
               ;; The player is a 40x40 square standing ON its position, which is
               ;; why the collision test compares against the item's top edge.
-              (rl/rect! :x (- (:x player) 20) :y (- (:y player) 40)
-                        :width 40 :height 40 :color rl/RED)))
+              (rl/rect! {:x (- (:x player) 20)
+                         :y (- (:y player) 40)
+                         :width 40
+                         :height 40
+                         :color rl/RED})))
           (rl/text! "[ARROWS] walk  [SPACE] jump  [C] camera mode  [R] reset"
-                    :x 20 :y 20 :size 20 :color rl/BLACK)
+                    {:x 20
+                     :y 20
+                     :size 20
+                     :color rl/BLACK})
           (rl/text! (str "mode " (inc mode-idx) "/" (count modes) ": "
                          (second (nth modes mode-idx)))
-                    :x 20 :y 46 :size 20 :color rl/DARKGRAY)
+                    {:x 20
+                     :y 46
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 90)
           (rl/end-drawing)
           (recur (inc frame) player cam mode-idx)))))

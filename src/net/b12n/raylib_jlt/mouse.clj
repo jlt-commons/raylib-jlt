@@ -9,7 +9,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [core] example - mouse input")
+  (rl/window! {:title "raylib [core] example - mouse input"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -17,9 +17,15 @@
         (let [color (if (rl/mouse-down? rl/MOUSE-LEFT) rl/LIME rl/DARKBLUE)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/circle! :x (rl/get-mouse-x) :y (rl/get-mouse-y) :radius 40 :color color)
+          (rl/circle! {:x (rl/get-mouse-x)
+                       :y (rl/get-mouse-y)
+                       :radius 40
+                       :color color})
           (rl/text! "move the mouse; hold left button to change color"
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))

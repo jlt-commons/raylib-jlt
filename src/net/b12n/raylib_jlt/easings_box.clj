@@ -49,7 +49,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - easings box anim")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - easings box anim"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -86,13 +88,19 @@
                        1.0)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/rect-pro! :x (/ (double W) 2.0) :y y
-                        :width width :height height
-                        :origin-x (/ width 2.0) :origin-y (/ height 2.0)
-                        :rotation rot
-                        :color (rl/rgba 0 82 172 (int (* 255 (max 0.0 (min 1.0 alpha))))))
+          (rl/rect-pro! {:x (/ (double W) 2.0)
+                         :y y
+                         :width width
+                         :height height
+                         :origin-x (/ width 2.0)
+                         :origin-y (/ height 2.0)
+                         :rotation rot
+                         :color (rl/rgba 0 82 172 (int (* 255 (max 0.0 (min 1.0 alpha)))))})
           (rl/text! (str "stage: " (name stage) "   [SPACE] restart")
-                    :x 20 :y (- H 40) :size 20 :color rl/DARKGRAY)
+                    {:x 20
+                     :y (- H 40)
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 90)
           (rl/end-drawing)
           (recur (inc frame) stage counter)))))

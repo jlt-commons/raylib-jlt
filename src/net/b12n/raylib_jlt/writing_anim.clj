@@ -11,7 +11,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height 450 :title "raylib [text] example - writing animation")
+  (rl/window! {:width W
+               :height 450
+               :title "raylib [text] example - writing animation"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         n (count msg)]
@@ -21,8 +23,14 @@
               shown (subs msg 0 (min n chars))]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/text! "(a self-typing message)" :x 40 :y 20 :size 20 :color rl/GRAY)
-          (rl/text! shown :x 40 :y 200 :size 24 :color rl/DARKBLUE)
+          (rl/text! "(a self-typing message)" {:x 40
+                                               :y 20
+                                               :size 20
+                                               :color rl/GRAY})
+          (rl/text! shown {:x 40
+                           :y 200
+                           :size 24
+                           :color rl/DARKBLUE})
           (rl/maybe-screenshot! frame 60)
           (rl/end-drawing)
           (recur (inc frame))))))

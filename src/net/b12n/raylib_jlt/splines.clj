@@ -62,7 +62,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - splines drawing")
+  (rl/window! {:title "raylib [shapes] example - splines drawing"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 mode-idx 0]
@@ -78,15 +78,29 @@
           ;; control polygon
           (dotimes [i (dec (count pts))]
             (let [[x1 y1] (nth pts i) [x2 y2] (nth pts (inc i))]
-              (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2) :color rl/LIGHTGRAY)))
+              (rl/line! {:x1 (int x1)
+                         :y1 (int y1)
+                         :x2 (int x2)
+                         :y2 (int y2)
+                         :color rl/LIGHTGRAY})))
           ;; the spline
           (dotimes [i (dec (count line-pts))]
             (let [[x1 y1] (nth line-pts i) [x2 y2] (nth line-pts (inc i))]
-              (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2) :color rl/RED)))
+              (rl/line! {:x1 (int x1)
+                         :y1 (int y1)
+                         :x2 (int x2)
+                         :y2 (int y2)
+                         :color rl/RED})))
           ;; control point handles
           (doseq [[x y] pts]
-            (rl/circle-lines! :x (int x) :y (int y) :radius 8 :color rl/DARKBLUE))
-          (rl/text! (format "%s  (SPACE cycles)" label) :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+            (rl/circle-lines! {:x (int x)
+                               :y (int y)
+                               :radius 8
+                               :color rl/DARKBLUE}))
+          (rl/text! (format "%s  (SPACE cycles)" label) {:x 10
+                                                         :y 10
+                                                         :size 20
+                                                         :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame) mode-idx)))))

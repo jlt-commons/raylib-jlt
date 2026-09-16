@@ -88,18 +88,24 @@ void main() {
           x (+ (/ W 2.0) (* 190 (Math/cos a)))
           y (+ (/ H 2.0) (* 120 (Math/sin (* 1.3 a))))
           hue (mod (+ (* i 36) (* t 20)) 360)]
-      (rl/circle! :x (int x) :y (int y) :radius (+ 26 (* 10 (Math/sin (+ t i))))
-                  :color (rl/rgba (int (+ 128 (* 127 (Math/cos (Math/toRadians hue)))))
-                                  (int (+ 128 (* 127 (Math/sin (Math/toRadians hue)))))
-                                  220 255))))
+      (rl/circle! {:x (int x)
+                   :y (int y)
+                   :radius (+ 26 (* 10 (Math/sin (+ t i))))
+                   :color (rl/rgba (int (+ 128 (* 127 (Math/cos (Math/toRadians hue)))))
+                                   (int (+ 128 (* 127 (Math/sin (Math/toRadians hue)))))
+                                   220 255)})))
   (dotimes [i 16]
-    (rl/rect! :x (* i 50) :y (- H 70) :width 30
-              :height (int (+ 20 (* 40 (Math/abs (Math/sin (+ (* 0.4 i) t))))))
-              :color (rl/rgba 250 240 200 255))))
+    (rl/rect! {:x (* i 50)
+               :y (- H 70)
+               :width 30
+               :height (int (+ 20 (* 40 (Math/abs (Math/sin (+ (* 0.4 i) t))))))
+               :color (rl/rgba 250 240 200 255)})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - post-processing")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - post-processing"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sh (rl/shader fragment-shader)
@@ -137,14 +143,28 @@ void main() {
                 (rl/with-shader
                   sh
                   (fn []
-                    (rl/texture! (:texture rt) :x 0 :y 0 :width W :height H
-                                 :v0 1.0 :v1 0.0)))
-                (rl/rect! :x 0 :y 0 :width W :height 62 :color (rl/rgba 0 0 0 150))
+                    (rl/texture! (:texture rt) {:x 0
+                                                :y 0
+                                                :width W
+                                                :height H
+                                                :v0 1.0
+                                                :v1 0.0})))
+                (rl/rect! {:x 0
+                           :y 0
+                           :width W
+                           :height 62
+                           :color (rl/rgba 0 0 0 150)})
                 (rl/text! (format "post-processing   ·   %d/6  %s"
                                   (inc effect) (nth effect-names effect))
-                          :x 14 :y 12 :size 18 :color rl/RAYWHITE)
+                          {:x 14
+                           :y 12
+                           :size 18
+                           :color rl/RAYWHITE})
                 (rl/text! "SPACE or LEFT/RIGHT cycles the effect   ·   the scene never changes"
-                          :x 14 :y 38 :size 14 :color rl/LIGHTGRAY)
+                          {:x 14
+                           :y 38
+                           :size 14
+                           :color rl/LIGHTGRAY})
                 (rl/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) effect))))

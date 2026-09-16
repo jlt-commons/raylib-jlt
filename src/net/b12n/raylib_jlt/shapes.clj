@@ -22,20 +22,45 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - basic shapes")
+  (rl/window! {:title "raylib [shapes] example - basic shapes"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
       (when (rl/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
-        (rl/text! "scalar shape primitives" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
-        (rl/rect!         :x 60  :y 80  :width 120 :height 90 :color rl/RED)
-        (rl/rect-lines!   :x 210 :y 80  :width 120 :height 90 :color rl/BLUE)
-        (rl/circle!       :x 430 :y 125 :radius 50 :color rl/GREEN)
-        (rl/circle-lines! :x 560 :y 125 :radius 50 :color rl/PURPLE)
-        (rl/ellipse!      :x 690 :y 125 :rx 60 :ry 40 :color rl/ORANGE)
-        (rl/line!         :x1 60 :y1 250 :x2 740 :y2 250 :color rl/DARKGRAY)
+        (rl/text! "scalar shape primitives" {:x 10
+                                             :y 10
+                                             :size 20
+                                             :color rl/DARKGRAY})
+        (rl/rect!         {:x 60
+                           :y 80
+                           :width 120
+                           :height 90
+                           :color rl/RED})
+        (rl/rect-lines!   {:x 210
+                           :y 80
+                           :width 120
+                           :height 90
+                           :color rl/BLUE})
+        (rl/circle!       {:x 430
+                           :y 125
+                           :radius 50
+                           :color rl/GREEN})
+        (rl/circle-lines! {:x 560
+                           :y 125
+                           :radius 50
+                           :color rl/PURPLE})
+        (rl/ellipse!      {:x 690
+                           :y 125
+                           :rx 60
+                           :ry 40
+                           :color rl/ORANGE})
+        (rl/line!         {:x1 60
+                           :y1 250
+                           :x2 740
+                           :y2 250
+                           :color rl/DARKGRAY})
         (triangle! :p1 [400 290] :p2 [330 410] :p3 [470 410] :color rl/VIOLET)
         (rl/maybe-screenshot! frame 5)
         (rl/end-drawing)

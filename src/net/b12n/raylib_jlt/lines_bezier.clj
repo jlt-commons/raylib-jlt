@@ -20,7 +20,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [shapes] example - lines bezier")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [shapes] example - lines bezier"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -34,11 +36,21 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           (doseq [[[x1 y1] [x2 y2]] (partition 2 1 pts)]
-            (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2) :color rl/BLUE))
+            (rl/line! {:x1 (int x1)
+                       :y1 (int y1)
+                       :x2 (int x2)
+                       :y2 (int y2)
+                       :color rl/BLUE}))
           (doseq [[px py] [p0 p1 p2 p3]]
-            (rl/circle! :x (int px) :y (int py) :radius 5 :color rl/RED))
+            (rl/circle! {:x (int px)
+                         :y (int py)
+                         :radius 5
+                         :color rl/RED}))
           (rl/text! "Cubic Bezier - move the mouse (end point follows)"
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))

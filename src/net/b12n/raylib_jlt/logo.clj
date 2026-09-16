@@ -14,7 +14,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib logo")
+  (rl/window! {:width W
+               :height H
+               :title "raylib logo"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         x  (int (/ (- W SIZE) 2))
@@ -26,14 +28,21 @@
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         ;; thick border = a black square with an inner background-colored square
-        (rl/rect! :x x :y y :width SIZE :height SIZE :color rl/BLACK)
-        (rl/rect! :x (+ x BORDER) :y (+ y BORDER)
-                  :width (- SIZE (* 2 BORDER)) :height (- SIZE (* 2 BORDER))
-                  :color rl/RAYWHITE)
+        (rl/rect! {:x x
+                   :y y
+                   :width SIZE
+                   :height SIZE
+                   :color rl/BLACK})
+        (rl/rect! {:x (+ x BORDER)
+                   :y (+ y BORDER)
+                   :width (- SIZE (* 2 BORDER))
+                   :height (- SIZE (* 2 BORDER))
+                   :color rl/RAYWHITE})
         (rl/text! "raylib"
-                  :x (- (+ x SIZE) lw BORDER 4)
-                  :y (- (+ y SIZE) ls BORDER 4)
-                  :size ls :color rl/BLACK)
+                  {:x (- (+ x SIZE) lw BORDER 4)
+                   :y (- (+ y SIZE) ls BORDER 4)
+                   :size ls
+                   :color rl/BLACK})
         (rl/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))

@@ -296,15 +296,23 @@
 
 (defn initial-state
   []
-  {:nu 260 :twists 14
-   :rot-x 0.55 :rot-y 0.0
-   :vel-x 0.0 :vel-y 0.45
+  {:nu 260
+   :twists 14
+   :rot-x 0.55
+   :rot-y 0.0
+   :vel-x 0.0
+   :vel-y 0.45
    :zoom 250.0
-   :dragging? false :last-px 0 :last-py 0
+   :dragging? false
+   :last-px 0
+   :last-py 0
    :clock 0.0
    ;; rolling HUD counters: frames and seconds since it last refreshed, plus
    ;; accumulated compute and draw milliseconds
-   :frames 0 :elapsed 0.0 :compute-ms 0.0 :draw-ms 0.0
+   :frames 0
+   :elapsed 0.0
+   :compute-ms 0.0
+   :draw-ms 0.0
    :hud "computing..."})
 
 (defn refresh-hud
@@ -327,7 +335,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "helitorus")
+  (rl/window! {:width W
+               :height H
+               :title "helitorus"})
   (rl/set-target-fps 120)
   ;; See the namespace docstring: this example culls for itself.
   (rl/rl-disable-backface-culling)
@@ -351,8 +361,14 @@
                       (update :compute-ms + (/ (- c1 c0) 1e6))
                       (update :draw-ms + (/ (- d1 d0) 1e6))
                       refresh-hud)]
-            (rl/text! (:hud s) :x 12 :y 12 :size 20 :color HUD-COLOR)
-            (rl/text! HELP-TEXT :x 12 :y (- H 28) :size 16 :color HELP-COLOR)
+            (rl/text! (:hud s) {:x 12
+                                :y 12
+                                :size 20
+                                :color HUD-COLOR})
+            (rl/text! HELP-TEXT {:x 12
+                                 :y (- H 28)
+                                 :size 16
+                                 :color HELP-COLOR})
             (rl/maybe-screenshot! frame 30)
             (rl/end-drawing)
             (recur (inc frame) s))))))

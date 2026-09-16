@@ -14,12 +14,17 @@
   []
   (doseq [gy (range 0 H 40)
           gx (range 0 W 40)]
-    (rl/rect! :x gx :y gy :width 38 :height 38
-              :color (rl/rgba (mod (* gx 3) 256) (mod (* gy 5) 256) 180 255))))
+    (rl/rect! {:x gx
+               :y gy
+               :width 38
+               :height 38
+               :color (rl/rgba (mod (* gx 3) 256) (mod (* gy 5) 256) 180 255)})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - scissor test")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - scissor test"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sx 200 sy 120 sw 400 sh 220]
@@ -30,8 +35,15 @@
         (rl/begin-scissor-mode sx sy sw sh)
         (draw-grid)
         (rl/end-scissor-mode)
-        (rl/rect-lines! :x sx :y sy :width sw :height sh :color rl/RED)
-        (rl/text! "only the scissor box shows the grid" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+        (rl/rect-lines! {:x sx
+                         :y sy
+                         :width sw
+                         :height sh
+                         :color rl/RED})
+        (rl/text! "only the scissor box shows the grid" {:x 10
+                                                         :y 10
+                                                         :size 20
+                                                         :color rl/DARKGRAY})
         (rl/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))
