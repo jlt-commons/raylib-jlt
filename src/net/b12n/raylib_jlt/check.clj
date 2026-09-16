@@ -56,6 +56,7 @@
    [net.b12n.raylib-jlt.fourier-epicycles]
    [net.b12n.raylib-jlt.game-2048]
    [net.b12n.raylib-jlt.game-of-life]
+   [net.b12n.raylib-jlt.geometric-shapes]
    [net.b12n.raylib-jlt.gradient]
    [net.b12n.raylib-jlt.helitorus]
    [net.b12n.raylib-jlt.hilbert-curve]

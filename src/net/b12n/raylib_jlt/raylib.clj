@@ -1525,3 +1525,142 @@
 (def ^:const KEY-F11 300) (def ^:const KEY-F12 301)
 (def ^:const KEY-LEFT-ALT 342) (def ^:const KEY-RIGHT-SHIFT 344)
 (def ^:const KEY-RIGHT-CONTROL 345) (def ^:const KEY-RIGHT-ALT 346)
+
+;; --- geometric primitives, genuinely by value (geometric-shapes) --------
+;; raylib's real Draw{Cube,Sphere,Cylinder,Capsule}* calls, now that
+;; [:by-value [:struct ...]] works -- named draw-*! rather than reusing
+;; cube!/sphere! (the existing rlgl immediate-mode stand-ins), since these
+;; are a genuinely different code path, not a replacement for them.
+(defn- vec3->ptr!
+  "Allocate a vector3-layout buffer and write [x y z] into it. Caller frees."
+  [[x y z]]
+  (let [p (ffi/alloc (ffi/layout-size vector3-layout))]
+    (ffi/write-field p vector3-layout :x (double x))
+    (ffi/write-field p vector3-layout :y (double y))
+    (ffi/write-field p vector3-layout :z (double z))
+    p))
+
+(ffi/defcfn ^:private draw-cube-raw "DrawCube"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :float :float :uint]
+  :void)
+(ffi/defcfn ^:private draw-cube-wires-raw "DrawCubeWires"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :float :float :uint]
+  :void)
+(ffi/defcfn ^:private draw-sphere-raw "DrawSphere"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :uint]
+  :void)
+(ffi/defcfn ^:private draw-sphere-wires-raw "DrawSphereWires"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :int :int :uint]
+  :void)
+(ffi/defcfn ^:private draw-cylinder-raw "DrawCylinder"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :float :float :int :uint]
+  :void)
+(ffi/defcfn ^:private draw-cylinder-wires-raw "DrawCylinderWires"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :float :float :int :uint]
+  :void)
+(ffi/defcfn ^:private draw-capsule-raw "DrawCapsule"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]
+   [:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :int :int :uint]
+  :void)
+(ffi/defcfn ^:private draw-capsule-wires-raw "DrawCapsuleWires"
+  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]
+   [:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :int :int :uint]
+  :void)
+
+(defn draw-cube!
+  "DrawCube. :pos :width :height :length :color."
+  [& {:keys [pos width height length color]
+      :or {pos [0.0 0.0 0.0]
+           width 1.0
+           height 1.0
+           length 1.0
+           color BLACK}}]
+  (let [p (vec3->ptr! pos)]
+    (try (draw-cube-raw p (double width) (double height) (double length) color)
+         (finally (ffi/free p)))))
+
+(defn draw-cube-wires!
+  "DrawCubeWires. :pos :width :height :length :color."
+  [& {:keys [pos width height length color]
+      :or {pos [0.0 0.0 0.0]
+           width 1.0
+           height 1.0
+           length 1.0
+           color BLACK}}]
+  (let [p (vec3->ptr! pos)]
+    (try (draw-cube-wires-raw p (double width) (double height) (double length) color)
+         (finally (ffi/free p)))))
+
+(defn draw-sphere!
+  [pos radius color]
+  (let [p (vec3->ptr! pos)]
+    (try (draw-sphere-raw p (double radius) color)
+         (finally (ffi/free p)))))
+
+(defn draw-sphere-wires!
+  "DrawSphereWires. :pos :radius :rings :slices :color."
+  [& {:keys [pos radius rings slices color]
+      :or {pos [0.0 0.0 0.0]
+           radius 0.5
+           rings 16
+           slices 16
+           color BLACK}}]
+  (let [p (vec3->ptr! pos)]
+    (try (draw-sphere-wires-raw p (double radius) (int rings) (int slices) color)
+         (finally (ffi/free p)))))
+
+(defn draw-cylinder!
+  "DrawCylinder. :pos :radius-top :radius-bottom :height :slices :color."
+  [& {:keys [pos radius-top radius-bottom height slices color]
+      :or {pos [0.0 0.0 0.0]
+           radius-top 1.0
+           radius-bottom 1.0
+           height 1.0
+           slices 16
+           color BLACK}}]
+  (let [p (vec3->ptr! pos)]
+    (try (draw-cylinder-raw p (double radius-top) (double radius-bottom) (double height)
+                            (int slices) color)
+         (finally (ffi/free p)))))
+
+(defn draw-cylinder-wires!
+  "DrawCylinderWires. :pos :radius-top :radius-bottom :height :slices :color."
+  [& {:keys [pos radius-top radius-bottom height slices color]
+      :or {pos [0.0 0.0 0.0]
+           radius-top 1.0
+           radius-bottom 1.0
+           height 1.0
+           slices 16
+           color BLACK}}]
+  (let [p (vec3->ptr! pos)]
+    (try (draw-cylinder-wires-raw p (double radius-top) (double radius-bottom) (double height)
+                                  (int slices) color)
+         (finally (ffi/free p)))))
+
+(defn draw-capsule!
+  "DrawCapsule. :start-pos :end-pos :radius :slices :rings :color."
+  [& {:keys [start-pos end-pos radius slices rings color]
+      :or {start-pos [0.0 0.0 0.0]
+           end-pos [0.0 1.0 0.0]
+           radius 0.5
+           slices 8
+           rings 8
+           color BLACK}}]
+  (let [p1 (vec3->ptr! start-pos)
+        p2 (vec3->ptr! end-pos)]
+    (try (draw-capsule-raw p1 p2 (double radius) (int slices) (int rings) color)
+         (finally (ffi/free p1) (ffi/free p2)))))
+
+(defn draw-capsule-wires!
+  "DrawCapsuleWires. :start-pos :end-pos :radius :slices :rings :color."
+  [& {:keys [start-pos end-pos radius slices rings color]
+      :or {start-pos [0.0 0.0 0.0]
+           end-pos [0.0 1.0 0.0]
+           radius 0.5
+           slices 8
+           rings 8
+           color BLACK}}]
+  (let [p1 (vec3->ptr! start-pos)
+        p2 (vec3->ptr! end-pos)]
+    (try (draw-capsule-wires-raw p1 p2 (double radius) (int slices) (int rings) color)
+         (finally (ffi/free p1) (ffi/free p2)))))
