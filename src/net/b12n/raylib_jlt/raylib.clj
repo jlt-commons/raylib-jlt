@@ -718,6 +718,7 @@
 (ffi/defcfn ^:private gamepad-available-raw "IsGamepadAvailable"     [:int] :int)
 (ffi/defcfn ^:private gamepad-down-raw      "IsGamepadButtonDown"    [:int :int] :int)
 (ffi/defcfn ^:private gamepad-pressed-raw   "IsGamepadButtonPressed" [:int :int] :int)
+(ffi/defcfn ^:private gamepad-released-raw  "IsGamepadButtonReleased" [:int :int] :int)
 
 (defn gamepad-available?
   [pad]
@@ -730,6 +731,10 @@
 (defn gamepad-pressed?
   [pad button]
   (not (zero? (bit-and (gamepad-pressed-raw pad button) 0xff))))
+
+(defn gamepad-released?
+  [pad button]
+  (not (zero? (bit-and (gamepad-released-raw pad button) 0xff))))
 
 ;; raylib GamepadButton / GamepadAxis
 (def ^:const PAD-UP     1)  (def ^:const PAD-RIGHT  2)

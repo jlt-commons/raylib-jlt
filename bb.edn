@@ -423,6 +423,9 @@
   eratosthenes-sieve {:doc "▶ the Sieve of Eratosthenes, one test per pixel" :task (run-example "eratosthenes-sieve")}
   keyboard-testbed  {:doc "▶ an on-screen ENG-US keyboard, every key lit"   :task (run-example "keyboard-testbed")}
   mouse-painting    {:doc "▶ a paint program on a render-texture canvas"   :task (run-example "mouse-painting")}
+  input-actions     {:doc "▶ abstract input actions: keyboard + gamepad"   :task (run-example "input-actions")}
+  particles         {:doc "▶ water/smoke/fire particles follow the mouse" :task (run-example "particles")}
+  particles-blending {:doc "▶ 200 sparks trail the mouse, alpha vs additive" :task (run-example "particles-blending")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

@@ -137,7 +137,10 @@
    ["camera-2d-split-screen" "camera-2d-split-screen" "core" "two players, two cameras, two render textures"]
    ["eratosthenes-sieve"  "eratosthenes-sieve" "shaders" "the Sieve of Eratosthenes, one test per pixel"]
    ["keyboard-testbed"    "keyboard-testbed" "core" "an on-screen ENG-US keyboard, every key lit"]
-   ["mouse-painting"      "mouse-painting" "textures" "a paint program on a render-texture canvas"]])
+   ["mouse-painting"      "mouse-painting" "textures" "a paint program on a render-texture canvas"]
+   ["input-actions"       "input-actions" "core" "abstract input actions: keyboard + gamepad"]
+   ["particles"           "particles" "generative" "water/smoke/fire particles follow the mouse"]
+   ["particles-blending"  "particles-blending" "textures" "200 sparks trail the mouse, alpha vs additive"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

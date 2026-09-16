@@ -145,6 +145,9 @@
            :camera-2d-split-screen {:main-opts ["-m" "net.b12n.raylib-jlt.camera-2d-split-screen"]} ; two players, two cameras, two render textures
            :eratosthenes-sieve {:main-opts ["-m" "net.b12n.raylib-jlt.eratosthenes-sieve"]} ; the Sieve of Eratosthenes, one test per pixel
            :keyboard-testbed {:main-opts ["-m" "net.b12n.raylib-jlt.keyboard-testbed"]} ; an on-screen ENG-US keyboard, every key lit
-           :mouse-painting {:main-opts ["-m" "net.b12n.raylib-jlt.mouse-painting"]}} ; a paint program on a render-texture canvas
+           :mouse-painting {:main-opts ["-m" "net.b12n.raylib-jlt.mouse-painting"]} ; a paint program on a render-texture canvas
+           :input-actions {:main-opts ["-m" "net.b12n.raylib-jlt.input-actions"]} ; abstract input actions: keyboard + gamepad
+           :particles {:main-opts ["-m" "net.b12n.raylib-jlt.particles"]} ; water/smoke/fire particles follow the mouse
+           :particles-blending {:main-opts ["-m" "net.b12n.raylib-jlt.particles-blending"]}} ; 200 sparks trail the mouse, alpha vs additive
 
  :tasks {run "joltc -M:run"}}
