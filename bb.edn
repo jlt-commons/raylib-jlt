@@ -420,6 +420,9 @@
   starfield-effect  {:doc "▶ flying starfield (wheel=speed, SPACE=mode)"    :task (run-example "starfield-effect")}
   world-screen      {:doc "▶ a 2D label tracks a cube via GetWorldToScreen" :task (run-example "world-screen")}
   camera-2d-split-screen {:doc "▶ two players, two cameras, two render textures" :task (run-example "camera-2d-split-screen")}
+  eratosthenes-sieve {:doc "▶ the Sieve of Eratosthenes, one test per pixel" :task (run-example "eratosthenes-sieve")}
+  keyboard-testbed  {:doc "▶ an on-screen ENG-US keyboard, every key lit"   :task (run-example "keyboard-testbed")}
+  mouse-painting    {:doc "▶ a paint program on a render-texture canvas"   :task (run-example "mouse-painting")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
