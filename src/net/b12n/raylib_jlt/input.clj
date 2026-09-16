@@ -10,7 +10,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [core] example - input keys")
+  (rl/window! {:title "raylib [core] example - input keys"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 x 400.0 y 225.0]
@@ -23,8 +23,14 @@
                   (rl/key-down? rl/KEY-DOWN) (+ 2.0))]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/text! "move the ball with arrow keys" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
-          (rl/circle! :x (int x) :y (int y) :radius 50 :color rl/MAROON)
+          (rl/text! "move the ball with arrow keys" {:x 10
+                                                     :y 10
+                                                     :size 20
+                                                     :color rl/DARKGRAY})
+          (rl/circle! {:x (int x)
+                       :y (int y)
+                       :radius 50
+                       :color rl/MAROON})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) x y)))))

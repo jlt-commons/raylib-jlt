@@ -60,23 +60,36 @@ void main() {
   [t]
   (rl/clear-background (rl/rgba 16 18 28 255))
   (dotimes [i 17]
-    (rl/line! :x1 (* i 50) :y1 0 :x2 (* i 50) :y2 H
-              :color (rl/rgba 60 70 110 255)))
+    (rl/line! {:x1 (* i 50)
+               :y1 0
+               :x2 (* i 50)
+               :y2 H
+               :color (rl/rgba 60 70 110 255)}))
   (dotimes [i 10]
-    (rl/line! :x1 0 :y1 (* i 50) :x2 W :y2 (* i 50)
-              :color (rl/rgba 60 70 110 255)))
+    (rl/line! {:x1 0
+               :y1 (* i 50)
+               :x2 W
+               :y2 (* i 50)
+               :color (rl/rgba 60 70 110 255)}))
   (dotimes [i 5]
     (let [a (+ (* t 0.4) (* i 1.26))
           x (int (+ (/ W 2.0) (* 220 (Math/cos a))))
           y (int (+ (/ H 2.0) (* 140 (Math/sin (* 1.7 a)))))]
-      (rl/circle! :x x :y y :radius 34
-                  :color (rl/rgba (- 250 (* i 30)) (+ 90 (* i 30)) 210 255))))
+      (rl/circle! {:x x
+                   :y y
+                   :radius 34
+                   :color (rl/rgba (- 250 (* i 30)) (+ 90 (* i 30)) 210 255)})))
   (rl/text! "straight lines make the swirl legible"
-            :x 20 :y (- H 40) :size 20 :color (rl/rgba 230 230 240 255)))
+            {:x 20
+             :y (- H 40)
+             :size 20
+             :color (rl/rgba 230 230 240 255)}))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - a custom uniform")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - a custom uniform"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sh (rl/shader fragment-shader)
@@ -121,15 +134,29 @@ void main() {
                 (rl/with-shader
                   sh
                   (fn []
-                    (rl/texture! (:texture rt) :x 0 :y 0 :width W :height H
-                                 :v0 1.0 :v1 0.0)))
-                (rl/rect! :x 0 :y 0 :width W :height 62 :color (rl/rgba 0 0 0 150))
+                    (rl/texture! (:texture rt) {:x 0
+                                                :y 0
+                                                :width W
+                                                :height H
+                                                :v0 1.0
+                                                :v1 0.0})))
+                (rl/rect! {:x 0
+                           :y 0
+                           :width W
+                           :height 62
+                           :color (rl/rgba 0 0 0 150)})
                 (rl/text! (format "custom uniform   ·   radius %.2f   strength %.2f" radius strength)
-                          :x 14 :y 12 :size 18 :color rl/RAYWHITE)
+                          {:x 14
+                           :y 12
+                           :size 18
+                           :color rl/RAYWHITE})
                 (rl/text! (if over?
                             "the swirl follows the mouse   ·   wheel radius   ·   UP/DOWN strength"
                             "pointer is off-window - swirl centred   ·   wheel radius   ·   UP/DOWN strength")
-                          :x 14 :y 38 :size 14 :color rl/LIGHTGRAY)
+                          {:x 14
+                           :y 38
+                           :size 14
+                           :color rl/LIGHTGRAY})
                 (rl/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) radius strength))))

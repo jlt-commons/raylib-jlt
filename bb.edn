@@ -21,6 +21,9 @@
 ;;   bb lsp:fix                       auto-fix: format + clean-ns (mutating)
 ;;   bb check:positional-args         find fns with 3+ positional args (report only)
 ;;   bb check:positional-args:strict  bb check:positional-args, but exit non-zero if any found
+;;   bb check:kwarg-calls             find flat :k v calls to a kwargs fn (report only)
+;;   bb check:kwarg-calls:strict      bb check:kwarg-calls, but exit non-zero if any found
+;;   bb fix:kwarg-calls               rewrite flat :k v call sites into an explicit {} map
 ;;
 ;; ── Git hooks ──
 ;;   bb hooks:install                 install FAST pre-commit hook (lint + format + clean-ns, ~2s)
@@ -205,7 +208,7 @@
     (defn raylib-6? [lib-path]
       (let [nm-args (if (= :macos (os-kind)) ["nm" "-gU"] ["nm" "-D" "--defined-only"])
             {:keys [exit out]} (apply shell {:out :string :err :string :continue true}
-                                     (conj (vec nm-args) lib-path))]
+                                      (conj (vec nm-args) lib-path))]
         (when (zero? exit)
           ;; Anchored to line end, with an optional leading underscore: macOS nm
           ;; prints _DrawLineDashed and Linux nm prints DrawLineDashed. A \\b word
@@ -467,7 +470,6 @@
   {:doc "Delete the _site/ build output"
    :task (site-task "clean")}
 
-
   examples
   {:doc "List every runnable example with its description"
    :task (doseq [row examples] (print-row row))}
@@ -603,6 +605,22 @@
   check:positional-args:strict
   {:doc "bb check:positional-args, but exit non-zero if any found"
    :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/check_positional_args.clj" "--strict")]
+           (System/exit exit))}
+
+  ;; --- quality: kwarg-call-site check ---------------------------------------
+  check:kwarg-calls
+  {:doc "Find calls passing flat :k v pairs to a kwargs fn (prefer an explicit {} map; report only)"
+   :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/kwarg_calls_to_maps.clj")]
+           (System/exit exit))}
+
+  check:kwarg-calls:strict
+  {:doc "bb check:kwarg-calls, but exit non-zero if any found"
+   :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/kwarg_calls_to_maps.clj" "--strict")]
+           (System/exit exit))}
+
+  fix:kwarg-calls
+  {:doc "Rewrite flat :k v call sites into an explicit {} map (mutating)"
+   :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/kwarg_calls_to_maps.clj" "--fix")]
            (System/exit exit))}
 
   ;; --- native library (libraylib) ------------------------------------------

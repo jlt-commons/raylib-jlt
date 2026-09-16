@@ -11,7 +11,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - lines drawing")
+  (rl/window! {:title "raylib [shapes] example - lines drawing"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         cx 400 cy 220 n 12]
@@ -26,13 +26,28 @@
                   y2 (+ cy (* 175.0 (Math/sin a)))
                   thick (+ 2.0 (* i 1.4))
                   color (nth palette (mod i (count palette)))]
-              (rl/line-ex! :x1 cx :y1 cy :x2 x2 :y2 y2 :thick thick :color color)
-              (rl/circle! :x (int x2) :y (int y2) :radius (/ thick 2.0) :color color))))
+              (rl/line-ex! {:x1 cx
+                            :y1 cy
+                            :x2 x2
+                            :y2 y2
+                            :thick thick
+                            :color color})
+              (rl/circle! {:x (int x2)
+                           :y (int y2)
+                           :radius (/ thick 2.0)
+                           :color color}))))
         ;; thickness scale
         (dotimes [i 8]
-          (rl/line-ex! :x1 (+ 130 (* i 68)) :y1 420 :x2 (+ 178 (* i 68)) :y2 420
-                       :thick (inc i) :color rl/DARKGRAY))
-        (rl/text! "line-ex! - thick lines (rlgl quads)" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+          (rl/line-ex! {:x1 (+ 130 (* i 68))
+                        :y1 420
+                        :x2 (+ 178 (* i 68))
+                        :y2 420
+                        :thick (inc i)
+                        :color rl/DARKGRAY}))
+        (rl/text! "line-ex! - thick lines (rlgl quads)" {:x 10
+                                                         :y 10
+                                                         :size 20
+                                                         :color rl/DARKGRAY})
         (rl/maybe-screenshot! frame 12)
         (rl/end-drawing)
         (recur (inc frame)))))

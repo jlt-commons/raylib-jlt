@@ -49,7 +49,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width (* cols cell) :height (* rows cell) :title "raylib [games] example - snake")
+  (rl/window! {:width (* cols cell)
+               :height (* rows cell)
+               :title "raylib [games] example - snake"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -62,13 +64,26 @@
           (rl/begin-drawing)
           (rl/clear-background rl/BLACK)
           (let [[fc fr] (:food st)]
-            (rl/rect! :x (* fc cell) :y (* fr cell) :width cell :height cell :color rl/RED))
+            (rl/rect! {:x (* fc cell)
+                       :y (* fr cell)
+                       :width cell
+                       :height cell
+                       :color rl/RED}))
           (doseq [[c r] (:snake st)]
-            (rl/rect! :x (+ 1 (* c cell)) :y (+ 1 (* r cell))
-                      :width (- cell 2) :height (- cell 2) :color rl/LIME))
-          (rl/text! (str "len " (count (:snake st))) :x 8 :y 6 :size 20 :color rl/RAYWHITE)
+            (rl/rect! {:x (+ 1 (* c cell))
+                       :y (+ 1 (* r cell))
+                       :width (- cell 2)
+                       :height (- cell 2)
+                       :color rl/LIME}))
+          (rl/text! (str "len " (count (:snake st))) {:x 8
+                                                      :y 6
+                                                      :size 20
+                                                      :color rl/RAYWHITE})
           (when (:dead? st)
-            (rl/text! "GAME OVER - SPACE to restart" :x 150 :y 210 :size 24 :color rl/RAYWHITE))
+            (rl/text! "GAME OVER - SPACE to restart" {:x 150
+                                                      :y 210
+                                                      :size 24
+                                                      :color rl/RAYWHITE}))
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))

@@ -36,24 +36,50 @@
   (rl/clear-background (rl/rgba 24 28 38 255))
   (dotimes [i 12]
     (let [c (if (even? i) (rl/rgba 0 121 241 255) (rl/rgba 102 191 255 255))]
-      (rl/rect! :x (* i 40) :y 0 :width 40 :height 12 :color c)
-      (rl/rect! :x (* i 40) :y (- VH 12) :width 40 :height 12 :color c)))
-  (rl/circle! :x (int (+ (/ VW 2.0) (* 90 (Math/sin t))))
-              :y (int (/ VH 2.0)) :radius 26 :color rl/GOLD)
-  (rl/text! (str VW "x" VH " virtual resolution") :x 20 :y 40 :size 18 :color rl/RAYWHITE)
+      (rl/rect! {:x (* i 40)
+                 :y 0
+                 :width 40
+                 :height 12
+                 :color c})
+      (rl/rect! {:x (* i 40)
+                 :y (- VH 12)
+                 :width 40
+                 :height 12
+                 :color c})))
+  (rl/circle! {:x (int (+ (/ VW 2.0) (* 90 (Math/sin t))))
+               :y (int (/ VH 2.0))
+               :radius 26
+               :color rl/GOLD})
+  (rl/text! (str VW "x" VH " virtual resolution") {:x 20
+                                                   :y 40
+                                                   :size 18
+                                                   :color rl/RAYWHITE})
   (rl/text! "resize the window - this never changes size"
-            :x 20 :y 68 :size 13 :color rl/LIGHTGRAY)
+            {:x 20
+             :y 68
+             :size 13
+             :color rl/LIGHTGRAY})
   ;; Only draw the crosshair when the pointer is actually over the picture.
   (when (and (<= 0 mx VW) (<= 0 my VH))
-    (rl/line! :x1 (- mx 10) :y1 my :x2 (+ mx 10) :y2 my :color rl/RED)
-    (rl/line! :x1 mx :y1 (- my 10) :x2 mx :y2 (+ my 10) :color rl/RED)))
+    (rl/line! {:x1 (- mx 10)
+               :y1 my
+               :x2 (+ mx 10)
+               :y2 my
+               :color rl/RED})
+    (rl/line! {:x1 mx
+               :y1 (- my 10)
+               :x2 mx
+               :y2 (+ my 10)
+               :color rl/RED})))
 
 (defn -main
   [& _]
   ;; SetConfigFlags only has an effect before InitWindow.
   ;; The window is the suite's usual 16:9 and the virtual screen is 4:3, so the
   ;; bars are there from the first frame rather than only after someone resizes.
-  (rl/window! :width 800 :height 450 :title "raylib [core] example - window letterbox")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [core] example - window letterbox"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         rt (rl/render-texture VW VH)]
@@ -83,21 +109,33 @@
               (rl/with-render-texture rt (fn [] (draw-virtual (rl/get-time) mx my)))
               (rl/clear-background rl/BLACK)
               (rl/texture! (:texture rt)
-                           :x (int ox) :y (int oy)
-                           :width (int (* VW s)) :height (int (* VH s))
-                           :v0 1.0 :v1 0.0)
+                           {:x (int ox)
+                            :y (int oy)
+                            :width (int (* VW s))
+                            :height (int (* VH s))
+                            :v0 1.0
+                            :v1 0.0})
               ;; The readout is about the window, not the picture, so it sits on
               ;; the window's own edge - backed by a strip because with one axis
               ;; letterboxed the other has no bar to write into.
-              (rl/rect! :x 0 :y (- h 24) :width w :height 24 :color (rl/rgba 0 0 0 190))
+              (rl/rect! {:x 0
+                         :y (- h 24)
+                         :width w
+                         :height 24
+                         :color (rl/rgba 0 0 0 190)})
               (rl/text! (str "window " w "x" h "   scale " (format "%.2f" s)
                              "   bars " (int ox) "x" (int oy))
-                        :x 10 :y (- h 19) :size 14 :color rl/LIGHTGRAY)
+                        {:x 10
+                         :y (- h 19)
+                         :size 14
+                         :color rl/LIGHTGRAY})
               (rl/text! (if (rl/window-state? rl/FLAG-WINDOW-RESIZABLE)
                           "resizable - drag a corner"
                           "R makes the window resizable")
-                        :x (- w 250) :y (- h 19) :size 14
-                        :color (if (rl/window-state? rl/FLAG-WINDOW-RESIZABLE) rl/GREEN rl/GRAY))
+                        {:x (- w 250)
+                         :y (- h 19)
+                         :size 14
+                         :color (if (rl/window-state? rl/FLAG-WINDOW-RESIZABLE) rl/GREEN rl/GRAY)})
               (rl/maybe-screenshot! frame 5)
               (rl/end-drawing))
             (recur (inc frame))))

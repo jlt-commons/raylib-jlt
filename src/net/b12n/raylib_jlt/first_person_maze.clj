@@ -67,31 +67,45 @@
               base (if (even? (+ cx cy))
                      (rl/rgba 120 130 160 255)
                      (rl/rgba 95 105 135 255))]
-          (rl/cube! :pos [x 1.5 z] :size [CELL 3.0 CELL] :color base))))))
+          (rl/cube! {:pos [x 1.5 z]
+                     :size [CELL 3.0 CELL]
+                     :color base}))))))
 
 (defn- minimap!
   [px pz heading]
   (let [s 9
         ox 616
         oy 20]
-    (rl/rect! :x (- ox 4) :y (- oy 4) :width (+ (* cols s) 8) :height (+ (* rows s) 8)
-              :color (rl/rgba 0 0 0 170))
+    (rl/rect! {:x (- ox 4)
+               :y (- oy 4)
+               :width (+ (* cols s) 8)
+               :height (+ (* rows s) 8)
+               :color (rl/rgba 0 0 0 170)})
     (dotimes [cy rows]
       (dotimes [cx cols]
         (when (wall? cx cy)
-          (rl/rect! :x (+ ox (* cx s)) :y (+ oy (* cy s)) :width (dec s) :height (dec s)
-                    :color (rl/rgba 150 160 190 255)))))
+          (rl/rect! {:x (+ ox (* cx s))
+                     :y (+ oy (* cy s))
+                     :width (dec s)
+                     :height (dec s)
+                     :color (rl/rgba 150 160 190 255)}))))
     (let [mx (+ ox (* s (/ px CELL)))
           my (+ oy (* s (/ pz CELL)))]
-      (rl/circle! :x (int mx) :y (int my) :radius 4 :color rl/RED)
-      (rl/line! :x1 (int mx) :y1 (int my)
-                :x2 (int (+ mx (* 12 (Math/sin heading))))
-                :y2 (int (+ my (* 12 (Math/cos heading))))
-                :color rl/GOLD))))
+      (rl/circle! {:x (int mx)
+                   :y (int my)
+                   :radius 4
+                   :color rl/RED})
+      (rl/line! {:x1 (int mx)
+                 :y1 (int my)
+                 :x2 (int (+ mx (* 12 (Math/sin heading))))
+                 :y2 (int (+ my (* 12 (Math/cos heading))))
+                 :color rl/GOLD}))))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [models] example - first person maze")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [models] example - first person maze"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -127,9 +141,15 @@
               (rl/draw-grid 40 CELL)
               (draw-maze!)))
           (minimap! nx nz heading)
-          (rl/text! "first person maze" :x 20 :y 18 :size 22 :color rl/RAYWHITE)
+          (rl/text! "first person maze" {:x 20
+                                         :y 18
+                                         :size 22
+                                         :color rl/RAYWHITE})
           (rl/text! "W/S walk   A/D strafe   LEFT/RIGHT turn"
-                    :x 20 :y (- H 30) :size 14 :color rl/GRAY)
+                    {:x 20
+                     :y (- H 30)
+                     :size 14
+                     :color rl/GRAY})
           (rl/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) nx nz heading)))))

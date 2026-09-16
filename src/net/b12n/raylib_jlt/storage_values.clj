@@ -50,7 +50,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - storage save/load values")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - storage save/load values"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -74,12 +76,27 @@
                         :else status)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/text! (str "SCORE: " score) :x 280 :y 130 :size 40 :color rl/MAROON)
-          (rl/text! (str "HI-SCORE: " hiscore) :x 210 :y 200 :size 50 :color rl/BLACK)
+          (rl/text! (str "SCORE: " score) {:x 280
+                                           :y 130
+                                           :size 40
+                                           :color rl/MAROON})
+          (rl/text! (str "HI-SCORE: " hiscore) {:x 210
+                                                :y 200
+                                                :size 50
+                                                :color rl/BLACK})
           (rl/text! "[R] roll  -  [ENTER] save  -  [SPACE] load"
-                    :x 250 :y 300 :size 20 :color rl/GRAY)
-          (rl/text! status :x 250 :y 330 :size 20 :color rl/DARKGRAY)
-          (rl/text! "values survive a restart" :x 250 :y 360 :size 20 :color rl/LIGHTGRAY)
+                    {:x 250
+                     :y 300
+                     :size 20
+                     :color rl/GRAY})
+          (rl/text! status {:x 250
+                            :y 330
+                            :size 20
+                            :color rl/DARKGRAY})
+          (rl/text! "values survive a restart" {:x 250
+                                                :y 360
+                                                :size 20
+                                                :color rl/LIGHTGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) score hiscore status)))))

@@ -37,11 +37,16 @@
 (defn- readout!
   [y label value]
   (rl/text! (str label " " (format "%.1f" (double value)))
-            :x 600 :y y :size 20 :color rl/DARKGRAY))
+            {:x 600
+             :y y
+             :size 20
+             :color rl/DARKGRAY}))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - circle sector drawing")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - circle sector drawing"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         cx (/ (- W 300) 2.0)
@@ -63,26 +68,43 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           ;; The panel the C fills with sliders.
-          (rl/rect! :x 500 :y 0 :width (- W 500) :height H :color (rl/rgba 200 200 200 77))
-          (rl/line! :x1 500 :y1 0 :x2 500 :y2 H :color (rl/rgba 200 200 200 153))
-          (rl/sector! :cx cx :cy cy :radius radius
-                      :start-deg start-angle :end-deg end-angle
-                      :segments drawn :color (rl/rgba 190 33 55 77))
+          (rl/rect! {:x 500
+                     :y 0
+                     :width (- W 500)
+                     :height H
+                     :color (rl/rgba 200 200 200 77)})
+          (rl/line! {:x1 500
+                     :y1 0
+                     :x2 500
+                     :y2 H
+                     :color (rl/rgba 200 200 200 153)})
+          (rl/sector! {:cx cx
+                       :cy cy
+                       :radius radius
+                       :start-deg start-angle
+                       :end-deg end-angle
+                       :segments drawn
+                       :color (rl/rgba 190 33 55 77)})
           ;; Outline: the same fan drawn as spokes, so the segmentation is visible.
           (let [span (- end-angle start-angle)]
             (dotimes [i (inc drawn)]
               (let [a (Math/toRadians (- (+ start-angle (* span (/ (double i) drawn))) 90.0))]
-                (rl/line! :x1 cx :y1 cy
-                          :x2 (+ cx (* radius (Math/cos a)))
-                          :y2 (+ cy (* radius (Math/sin a)))
-                          :color (rl/rgba 190 33 55 153)))))
+                (rl/line! {:x1 cx
+                           :y1 cy
+                           :x2 (+ cx (* radius (Math/cos a)))
+                           :y2 (+ cy (* radius (Math/sin a)))
+                           :color (rl/rgba 190 33 55 153)}))))
           (readout! 40 "[Q/A] start" start-angle)
           (readout! 70 "[W/S] end" end-angle)
           (readout! 140 "[E/D] radius" radius)
           (readout! 170 "[R/F] segments" segments)
           (rl/text! (str "MODE: " (if manual? "MANUAL" "AUTO") "  (min " (int min-segments) ")")
-                    :x 600 :y 200 :size 20 :color (if manual? rl/MAROON rl/DARKGRAY))
-          (rl/fps! :x 10 :y 10)
+                    {:x 600
+                     :y 200
+                     :size 20
+                     :color (if manual? rl/MAROON rl/DARKGRAY)})
+          (rl/fps! {:x 10
+                    :y 10})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) start-angle end-angle radius segments)))))

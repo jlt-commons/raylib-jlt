@@ -59,7 +59,9 @@ void main() {
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - two samplers")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - two samplers"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
@@ -112,21 +114,40 @@ void main() {
                     ;; on unit 0 and sampling texture0. The failure is silent: it
                     ;; renders the first texture twice and blends it with itself.
                     (rl/set-uniform-texture! sh loc-other tex-b TEX TEX)
-                    (rl/texture! tex-a :x 0 :y 0 :width W :height H)))
+                    (rl/texture! tex-a {:x 0
+                                        :y 0
+                                        :width W
+                                        :height H})))
                 ;; The two sources, unblended, so the mix has something to read
                 ;; against.
-                (rl/texture! tex-a :x 14 :y 74 :width 96 :height 96)
-                (rl/texture! tex-b :x 122 :y 74 :width 96 :height 96)
-                (rl/rect! :x 0 :y 0 :width W :height 62 :color (rl/rgba 0 0 0 150))
+                (rl/texture! tex-a {:x 14
+                                    :y 74
+                                    :width 96
+                                    :height 96})
+                (rl/texture! tex-b {:x 122
+                                    :y 74
+                                    :width 96
+                                    :height 96})
+                (rl/rect! {:x 0
+                           :y 0
+                           :width W
+                           :height 62
+                           :color (rl/rgba 0 0 0 150)})
                 (rl/text! (format "two samplers   ·   mix %.2f   ·   texture0 = checker, uOther = gradient"
                                   mix)
-                          :x 14 :y 12 :size 18 :color rl/RAYWHITE)
+                          {:x 14
+                           :y 12
+                           :size 18
+                           :color rl/RAYWHITE})
                 (rl/text! (if over?
                             "move the mouse to blend   ·   SetShaderValueTexture feeds the second sampler"
                             (if touched?
                               "pointer is off-window - LEFT/RIGHT blend"
                               "pointer is off-window - sweeping the mix   ·   LEFT/RIGHT to take over"))
-                          :x 14 :y 38 :size 14 :color rl/LIGHTGRAY)
+                          {:x 14
+                           :y 38
+                           :size 14
+                           :color rl/LIGHTGRAY})
                 (rl/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) keyed touched?))))

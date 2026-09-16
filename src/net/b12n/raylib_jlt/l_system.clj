@@ -39,7 +39,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [generative] example - L-system plant")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [generative] example - L-system plant"})
   (rl/set-target-fps 60)
   (let [segs (build-segments (lsystem-string))
         total (count segs)
@@ -52,8 +54,15 @@
           (rl/clear-background rl/BLACK)
           (dotimes [i shown]
             (let [[x1 y1 x2 y2] (nth segs i)]
-              (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2) :color rl/LIME)))
-          (rl/text! (str total " segments") :x 8 :y 6 :size 18 :color rl/GRAY)
+              (rl/line! {:x1 (int x1)
+                         :y1 (int y1)
+                         :x2 (int x2)
+                         :y2 (int y2)
+                         :color rl/LIME})))
+          (rl/text! (str total " segments") {:x 8
+                                             :y 6
+                                             :size 18
+                                             :color rl/GRAY})
           (rl/maybe-screenshot! frame 45)
           (rl/end-drawing)
           (recur (inc frame))))))

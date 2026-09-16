@@ -13,7 +13,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - bouncing ball")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - bouncing ball"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0 x 400.0 y 225.0 vx 5.0 vy 4.0 paused? false]
@@ -28,10 +30,17 @@
                               [x y vx vy]))]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/circle! :x (int x) :y (int y) :radius R :color rl/MAROON)
+          (rl/circle! {:x (int x)
+                       :y (int y)
+                       :radius R
+                       :color rl/MAROON})
           (rl/text! "PRESS SPACE to PAUSE BALL MOVEMENT"
-                    :x 10 :y (- H 25) :size 20 :color rl/LIGHTGRAY)
-          (rl/fps! :x 10 :y 10)
+                    {:x 10
+                     :y (- H 25)
+                     :size 20
+                     :color rl/LIGHTGRAY})
+          (rl/fps! {:x 10
+                    :y 10})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) x y vx vy paused?)))))

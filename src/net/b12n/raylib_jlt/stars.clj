@@ -13,7 +13,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "starfield")
+  (rl/window! {:width W
+               :height H
+               :title "starfield"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         night    (rl/rgba 10 12 28 255)
@@ -29,9 +31,15 @@
           (let [t (* 0.15 (+ frame phase))
                 b (int (+ 160 (* 95 (Math/sin t))))              ; brightness 65..255
                 r (+ 1.0 (* 0.8 (+ 1.0 (Math/sin (* 0.7 t)))))]  ; radius 1.0..2.6
-            (rl/circle! :x sx :y sy :radius r :color (rl/rgba b b (min 255 (+ b 20)) 255))))
+            (rl/circle! {:x sx
+                         :y sy
+                         :radius r
+                         :color (rl/rgba b b (min 255 (+ b 20)) 255)})))
         (rl/text! "starfield - GetRandomValue + bulk draw"
-                  :x 12 :y 12 :size 18 :color rl/RAYWHITE)
+                  {:x 12
+                   :y 12
+                   :size 18
+                   :color rl/RAYWHITE})
         (rl/maybe-screenshot! frame 20)
         (rl/end-drawing)
         (recur (inc frame)))))

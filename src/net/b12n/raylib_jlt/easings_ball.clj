@@ -30,7 +30,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - easings ball anim")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - easings ball anim"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -59,10 +61,15 @@
                        1.0)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/circle! :x x :y (/ H 2) :radius radius
-                      :color (rl/rgba 190 33 55 (int (* 255 (max 0.0 (min 1.0 alpha))))))
+          (rl/circle! {:x x
+                       :y (/ H 2)
+                       :radius radius
+                       :color (rl/rgba 190 33 55 (int (* 255 (max 0.0 (min 1.0 alpha)))))})
           (rl/text! (str "stage: " (clojure.core/name stage) "   [SPACE] restart")
-                    :x 20 :y (- H 40) :size 20 :color rl/DARKGRAY)
+                    {:x 20
+                     :y (- H 40)
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 60)
           (rl/end-drawing)
           (recur (inc frame) stage counter)))))

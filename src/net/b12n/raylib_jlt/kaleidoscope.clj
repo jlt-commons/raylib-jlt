@@ -14,7 +14,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "kaleidoscope")
+  (rl/window! {:width W
+               :height H
+               :title "kaleidoscope"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         cx (/ W 2.0) cy (/ H 2.0)]
@@ -39,8 +41,16 @@
                       x2 (+ cx (- (* bx ca) (* by sa))) y2 (+ cy (+ (* bx sa) (* by ca)))
                       mx1 (+ cx (- (* (- ax) ca) (* ay sa))) my1 (+ cy (+ (* (- ax) sa) (* ay ca)))
                       mx2 (+ cx (- (* (- bx) ca) (* by sa))) my2 (+ cy (+ (* (- bx) sa) (* by ca)))]
-                  (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2) :color hue)
-                  (rl/line! :x1 (int mx1) :y1 (int my1) :x2 (int mx2) :y2 (int my2) :color hue)))))
+                  (rl/line! {:x1 (int x1)
+                             :y1 (int y1)
+                             :x2 (int x2)
+                             :y2 (int y2)
+                             :color hue})
+                  (rl/line! {:x1 (int mx1)
+                             :y1 (int my1)
+                             :x2 (int mx2)
+                             :y2 (int my2)
+                             :color hue})))))
           (rl/maybe-screenshot! frame 120)
           (rl/end-drawing)
           (recur (inc frame) trail)))))

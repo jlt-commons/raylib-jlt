@@ -43,7 +43,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - input gestures")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - input gestures"})
   (rl/set-gestures-enabled 0x0fff)   ; every gesture flag raylib knows
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
@@ -64,21 +66,43 @@
                         log)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/rect! :x AREA-X :y AREA-Y :width AREA-W :height AREA-H :color rl/GRAY)
-          (rl/text! "GESTURES TEST AREA" :x (- (+ AREA-X AREA-W) 210) :y (- (+ AREA-Y AREA-H) 40)
-                    :size 20 :color (rl/rgba 200 200 200 255))
+          (rl/rect! {:x AREA-X
+                     :y AREA-Y
+                     :width AREA-W
+                     :height AREA-H
+                     :color rl/GRAY})
+          (rl/text! "GESTURES TEST AREA" {:x (- (+ AREA-X AREA-W) 210)
+                                          :y (- (+ AREA-Y AREA-H) 40)
+                                          :size 20
+                                          :color (rl/rgba 200 200 200 255)})
           ;; The log, newest at the bottom, alternating rows for legibility.
           (dotimes [i (count log)]
             (let [y (+ 15 (* i 20))]
               (when (odd? i)
-                (rl/rect! :x 0 :y y :width 200 :height 20 :color (rl/rgba 200 200 200 128)))
-              (rl/text! (nth log i) :x 35 :y (+ y 3) :size 14
-                        :color (if (= i (dec (count log))) rl/MAROON rl/DARKGRAY))))
-          (rl/rect-lines! :x 0 :y 0 :width 200 :height H :color rl/GRAY)
-          (rl/text! "DETECTED GESTURES" :x 25 :y (- H 30) :size 14 :color rl/GRAY)
+                (rl/rect! {:x 0
+                           :y y
+                           :width 200
+                           :height 20
+                           :color (rl/rgba 200 200 200 128)}))
+              (rl/text! (nth log i) {:x 35
+                                     :y (+ y 3)
+                                     :size 14
+                                     :color (if (= i (dec (count log))) rl/MAROON rl/DARKGRAY)})))
+          (rl/rect-lines! {:x 0
+                           :y 0
+                           :width 200
+                           :height H
+                           :color rl/GRAY})
+          (rl/text! "DETECTED GESTURES" {:x 25
+                                         :y (- H 30)
+                                         :size 14
+                                         :color rl/GRAY})
           ;; Where raylib thinks the finger is, when it thinks there is one.
           (when (not= gesture rl/GESTURE-NONE)
-            (rl/circle! :x tx :y ty :radius 30 :color rl/MAROON))
+            (rl/circle! {:x tx
+                         :y ty
+                         :radius 30
+                         :color rl/MAROON}))
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) gesture log)))))

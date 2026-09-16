@@ -65,7 +65,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [textures] example - bunnymark")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [textures] example - bunnymark"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         id (rl/texture-from-fn SPRITE SPRITE bunny-texel)]
@@ -83,13 +85,27 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           (doseq [{:keys [x y color]} bunnies]
-            (rl/texture! id :x (int x) :y (int y)
-                         :width SPRITE :height SPRITE :tint color))
-          (rl/rect! :x 0 :y 0 :width W :height 46 :color (rl/rgba 20 24 34 220))
-          (rl/text! (str (count bunnies) " bunnies") :x 12 :y 8 :size 20 :color rl/RAYWHITE)
-          (rl/fps! :x 12 :y 28)
+            (rl/texture! id {:x (int x)
+                             :y (int y)
+                             :width SPRITE
+                             :height SPRITE
+                             :tint color}))
+          (rl/rect! {:x 0
+                     :y 0
+                     :width W
+                     :height 46
+                     :color (rl/rgba 20 24 34 220)})
+          (rl/text! (str (count bunnies) " bunnies") {:x 12
+                                                      :y 8
+                                                      :size 20
+                                                      :color rl/RAYWHITE})
+          (rl/fps! {:x 12
+                    :y 28})
           (rl/text! "hold the left mouse button to add - SPACE clears"
-                    :x 170 :y 14 :size 16 :color rl/LIGHTGRAY)
+                    {:x 170
+                     :y 14
+                     :size 16
+                     :color rl/LIGHTGRAY})
           (rl/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) bunnies)))))

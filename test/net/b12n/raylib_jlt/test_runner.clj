@@ -34,7 +34,10 @@
           ;; namespace and reports a cheerful zero. Guard the empty case.
           results (if (seq loaded)
                     (apply t/run-tests loaded)
-                    {:test 0 :pass 0 :fail 0 :error 0})
+                    {:test 0
+                     :pass 0
+                     :fail 0
+                     :error 0})
           failed  (+ (:fail results 0) (:error results 0) (count @broken))]
       (println "----")
       (when (seq @broken)

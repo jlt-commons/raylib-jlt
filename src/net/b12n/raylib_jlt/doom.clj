@@ -141,10 +141,15 @@
   []
   ;; dir is the heading; plane is the camera plane perpendicular to it, and its
   ;; length is the field of view.
-  {:pos-x 2.5 :pos-y 7.5
-   :dir-x 1.0 :dir-y 0.0
-   :plane-x 0.0 :plane-y 0.66
-   :imps (mapv (fn [[x y]] {:x x :y y :alive true}) imp-spawns)
+  {:pos-x 2.5
+   :pos-y 7.5
+   :dir-x 1.0
+   :dir-y 0.0
+   :plane-x 0.0
+   :plane-y 0.66
+   :imps (mapv (fn [[x y]] {:x x
+                            :y y
+                            :alive true}) imp-spawns)
    :health 100
    :kills 0
    :shots 0
@@ -190,7 +195,9 @@
                 wx (if (zero? side)
                      (+ pos-y (* dist rdy))
                      (+ pos-x (* dist rdx)))]
-            {:dist dist :tile (max 1 tile) :side side
+            {:dist dist
+             :tile (max 1 tile)
+             :side side
              :wall-x (- wx (Math/floor wx))})
           ;; Always advance whichever axis is nearer along the ray.
           (if (< sdx sdy)
@@ -399,7 +406,9 @@
     (rl/set-mouse-position (quot W 2) (quot H 2))
     (cond-> s
       (or (not= 0 forward) (not= 0 strafe))
-      (move {:forward forward :strafe strafe :dt dt})
+      (move {:forward forward
+             :strafe strafe
+             :dt dt})
 
       (or (rl/mouse-pressed? rl/MOUSE-LEFT) (rl/key-pressed? rl/KEY-SPACE))
       shoot)))
@@ -446,71 +455,123 @@
 (defn draw-minimap!
   [{:keys [pos-x pos-y dir-x dir-y imps]}]
   (let [s 7 ox 12 oy 12]
-    (rl/rect! :x (- ox 4) :y (- oy 4)
-              :width (+ (* MAP-W s) 8) :height (+ (* MAP-H s) 8)
-              :color MINIMAP-BG)
+    (rl/rect! {:x (- ox 4)
+               :y (- oy 4)
+               :width (+ (* MAP-W s) 8)
+               :height (+ (* MAP-H s) 8)
+               :color MINIMAP-BG})
     (dotimes [y MAP-H]
       (dotimes [x MAP-W]
         (let [t (wall-at x y)]
           (when (pos? t)
-            (rl/rect! :x (+ ox (* x s)) :y (+ oy (* y s))
-                      :width (dec s) :height (dec s)
-                      :color (wall-color t))))))
+            (rl/rect! {:x (+ ox (* x s))
+                       :y (+ oy (* y s))
+                       :width (dec s)
+                       :height (dec s)
+                       :color (wall-color t)})))))
     (doseq [imp imps :when (:alive imp)]
-      (rl/circle! :x (+ ox (* (:x imp) s)) :y (+ oy (* (:y imp) s))
-                  :radius 2.0 :color IMP))
-    (rl/circle! :x (+ ox (* pos-x s)) :y (+ oy (* pos-y s))
-                :radius 2.5 :color PLAYER)
-    (rl/line! :x1 (+ ox (* pos-x s)) :y1 (+ oy (* pos-y s))
-              :x2 (+ ox (* (+ pos-x (* 2 dir-x)) s))
-              :y2 (+ oy (* (+ pos-y (* 2 dir-y)) s))
-              :color PLAYER)))
+      (rl/circle! {:x (+ ox (* (:x imp) s))
+                   :y (+ oy (* (:y imp) s))
+                   :radius 2.0
+                   :color IMP}))
+    (rl/circle! {:x (+ ox (* pos-x s))
+                 :y (+ oy (* pos-y s))
+                 :radius 2.5
+                 :color PLAYER})
+    (rl/line! {:x1 (+ ox (* pos-x s))
+               :y1 (+ oy (* pos-y s))
+               :x2 (+ ox (* (+ pos-x (* 2 dir-x)) s))
+               :y2 (+ oy (* (+ pos-y (* 2 dir-y)) s))
+               :color PLAYER})))
 
 (defn draw-crosshair!
   []
   (let [cx (quot W 2)
         cy (quot H 2)]
-    (rl/line! :x1 (- cx 9) :y1 cy :x2 (- cx 3) :y2 cy :color CROSSHAIR)
-    (rl/line! :x1 (+ cx 3) :y1 cy :x2 (+ cx 9) :y2 cy :color CROSSHAIR)
-    (rl/line! :x1 cx :y1 (- cy 9) :x2 cx :y2 (- cy 3) :color CROSSHAIR)
-    (rl/line! :x1 cx :y1 (+ cy 3) :x2 cx :y2 (+ cy 9) :color CROSSHAIR)))
+    (rl/line! {:x1 (- cx 9)
+               :y1 cy
+               :x2 (- cx 3)
+               :y2 cy
+               :color CROSSHAIR})
+    (rl/line! {:x1 (+ cx 3)
+               :y1 cy
+               :x2 (+ cx 9)
+               :y2 cy
+               :color CROSSHAIR})
+    (rl/line! {:x1 cx
+               :y1 (- cy 9)
+               :x2 cx
+               :y2 (- cy 3)
+               :color CROSSHAIR})
+    (rl/line! {:x1 cx
+               :y1 (+ cy 3)
+               :x2 cx
+               :y2 (+ cy 9)
+               :color CROSSHAIR})))
 
 (defn draw-hud!
   [{:keys [health kills shots imps fps]}]
   (let [alive (count (filter :alive imps))]
-    (rl/rect! :x 0 :y (- H 42) :width W :height 42 :color HUD-BG)
-    (rl/text! (str "HEALTH " health) :x 16 :y (- H 32) :size 22
-              :color (if (< health 40)
-                       (rl/rgba 235 70 60 255)
-                       (rl/rgba 220 220 210 255)))
-    (rl/text! (str "KILLS " kills) :x 190 :y (- H 32) :size 22
-              :color (rl/rgba 220 220 210 255))
-    (rl/text! (str "IMPS " alive) :x 330 :y (- H 32) :size 22
-              :color (rl/rgba 220 180 120 255))
-    (rl/text! (str "SHOTS " shots) :x 460 :y (- H 32) :size 22
-              :color (rl/rgba 150 150 160 255))
+    (rl/rect! {:x 0
+               :y (- H 42)
+               :width W
+               :height 42
+               :color HUD-BG})
+    (rl/text! (str "HEALTH " health) {:x 16
+                                      :y (- H 32)
+                                      :size 22
+                                      :color (if (< health 40)
+                                               (rl/rgba 235 70 60 255)
+                                               (rl/rgba 220 220 210 255))})
+    (rl/text! (str "KILLS " kills) {:x 190
+                                    :y (- H 32)
+                                    :size 22
+                                    :color (rl/rgba 220 220 210 255)})
+    (rl/text! (str "IMPS " alive) {:x 330
+                                   :y (- H 32)
+                                   :size 22
+                                   :color (rl/rgba 220 180 120 255)})
+    (rl/text! (str "SHOTS " shots) {:x 460
+                                    :y (- H 32)
+                                    :size 22
+                                    :color (rl/rgba 150 150 160 255)})
     (rl/text! (format "%d fps  %d cols" (long fps) COLS)
-              :x 620 :y (- H 32) :size 22 :color (rl/rgba 120 130 140 255))
+              {:x 620
+               :y (- H 32)
+               :size 22
+               :color (rl/rgba 120 130 140 255)})
     (draw-crosshair!)
     (when (zero? health)
-      (rl/text! "YOU DIED" :x (- (quot W 2) 120) :y (- (quot H 2) 40) :size 54
-                :color (rl/rgba 220 40 40 255)))))
+      (rl/text! "YOU DIED" {:x (- (quot W 2) 120)
+                            :y (- (quot H 2) 40)
+                            :size 54
+                            :color (rl/rgba 220 40 40 255)}))))
 
 (defn draw-state!
   [atlas-id s]
   ;; The ceiling is the clear color; the floor is one rectangle over its half.
   (rl/clear-background CEILING)
-  (rl/rect! :x 0 :y (quot H 2) :width W :height (quot H 2) :color FLOOR)
+  (rl/rect! {:x 0
+             :y (quot H 2)
+             :width W
+             :height (quot H 2)
+             :color FLOOR})
   (draw-walls! atlas-id s)
   (draw-imps! atlas-id s)
   (when (pos? (:flash s))
-    (rl/rect! :x 0 :y 0 :width W :height H :color MUZZLE-FLASH))
+    (rl/rect! {:x 0
+               :y 0
+               :width W
+               :height H
+               :color MUZZLE-FLASH}))
   (draw-minimap! s)
   (draw-hud! s))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "doom-like raycaster")
+  (rl/window! {:width W
+               :height H
+               :title "doom-like raycaster"})
   (rl/set-target-fps 60)
   (rl/hide-cursor)
   ;; Only now is there a GL context to upload a texture into.

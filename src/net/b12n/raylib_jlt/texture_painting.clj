@@ -55,7 +55,9 @@ void main() {
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - painting a texture")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - painting a texture"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sh (rl/shader fragment-shader)
@@ -98,19 +100,35 @@ void main() {
                       sh
                       (fn []
                         (rl/texture! white
-                                     :x (- px (/ BRUSH 2)) :y (- (- H py) (/ BRUSH 2))
-                                     :width BRUSH :height BRUSH)))))
+                                     {:x (- px (/ BRUSH 2))
+                                      :y (- (- H py) (/ BRUSH 2))
+                                      :width BRUSH
+                                      :height BRUSH})))))
                 (rl/begin-drawing)
                 (rl/clear-background rl/BLACK)
-                (rl/texture! (:texture rt) :x 0 :y 0 :width W :height H
-                             :v0 1.0 :v1 0.0)
-                (rl/rect! :x 0 :y 0 :width W :height 62 :color (rl/rgba 0 0 0 150))
+                (rl/texture! (:texture rt) {:x 0
+                                            :y 0
+                                            :width W
+                                            :height H
+                                            :v0 1.0
+                                            :v1 0.0})
+                (rl/rect! {:x 0
+                           :y 0
+                           :width W
+                           :height 62
+                           :color (rl/rgba 0 0 0 150)})
                 (rl/text! "painting a texture   ·   the canvas is never cleared"
-                          :x 14 :y 12 :size 18 :color rl/RAYWHITE)
+                          {:x 14
+                           :y 12
+                           :size 18
+                           :color rl/RAYWHITE})
                 (rl/text! (if over?
                             "paint under the cursor   ·   C clears"
                             "pointer is off-window - painting a Lissajous path   ·   C clears")
-                          :x 14 :y 38 :size 14 :color rl/LIGHTGRAY)
+                          {:x 14
+                           :y 38
+                           :size 14
+                           :color rl/LIGHTGRAY})
                 ;; Frame 110 rather than the suite's usual 5: this example has
                 ;; nothing to show until the canvas has accumulated a stroke, and
                 ;; frame 5 captures a single dab.

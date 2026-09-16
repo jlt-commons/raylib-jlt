@@ -8,7 +8,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [text] example - formatted text")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [text] example - formatted text"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -17,9 +19,15 @@
               score (* frame 7)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/text! (format "SCORE: %08d" score) :x 60 :y 150 :size 40 :color rl/MAROON)
+          (rl/text! (format "SCORE: %08d" score) {:x 60
+                                                  :y 150
+                                                  :size 40
+                                                  :color rl/MAROON})
           (rl/text! (format "TIME: %02d:%02d" (quot secs 60) (mod secs 60))
-                    :x 60 :y 230 :size 40 :color rl/DARKBLUE)
+                    {:x 60
+                     :y 230
+                     :size 40
+                     :color rl/DARKBLUE})
           (rl/maybe-screenshot! frame 90)
           (rl/end-drawing)
           (recur (inc frame))))))

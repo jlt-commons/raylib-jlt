@@ -26,27 +26,56 @@
   []
   ;; Fuselage, wings, tailplane and fin, all axis-aligned boxes: the transform
   ;; above is doing the interesting work, so the model stays trivial.
-  (rl/cube! :pos [0.0 0.0 0.0] :size [1.1 0.7 4.4] :color (rl/rgba 200 205 215 255))
-  (rl/cube! :pos [0.0 0.0 -2.6] :size [0.7 0.5 1.2] :color (rl/rgba 160 165 180 255))
-  (rl/cube! :pos [0.0 0.0 0.2] :size [7.0 0.22 1.3] :color (rl/rgba 0 121 241 255))
-  (rl/cube! :pos [0.0 0.0 1.9] :size [2.6 0.18 0.7] :color (rl/rgba 0 82 172 255))
-  (rl/cube! :pos [0.0 0.7 2.0] :size [0.16 1.3 0.7] :color (rl/rgba 230 41 55 255)))
+  (rl/cube! {:pos [0.0 0.0 0.0]
+             :size [1.1 0.7 4.4]
+             :color (rl/rgba 200 205 215 255)})
+  (rl/cube! {:pos [0.0 0.0 -2.6]
+             :size [0.7 0.5 1.2]
+             :color (rl/rgba 160 165 180 255)})
+  (rl/cube! {:pos [0.0 0.0 0.2]
+             :size [7.0 0.22 1.3]
+             :color (rl/rgba 0 121 241 255)})
+  (rl/cube! {:pos [0.0 0.0 1.9]
+             :size [2.6 0.18 0.7]
+             :color (rl/rgba 0 82 172 255)})
+  (rl/cube! {:pos [0.0 0.7 2.0]
+             :size [0.16 1.3 0.7]
+             :color (rl/rgba 230 41 55 255)}))
 
 (defn- gauge!
   [x y label v]
-  (rl/text! label :x x :y y :size 14 :color rl/GRAY)
-  (rl/rect! :x x :y (+ y 20) :width 160 :height 12 :color (rl/rgba 0 0 0 20))
+  (rl/text! label {:x x
+                   :y y
+                   :size 14
+                   :color rl/GRAY})
+  (rl/rect! {:x x
+             :y (+ y 20)
+             :width 160
+             :height 12
+             :color (rl/rgba 0 0 0 20)})
   ;; Centre-anchored bar: the fill grows out of the middle in whichever
   ;; direction the angle went, so level reads as empty.
   (let [half (int (* 80 (max -1.0 (min 1.0 (/ v 45.0)))))]
-    (rl/rect! :x (if (neg? half) (+ x 80 half) (+ x 80))
-              :y (+ y 20) :width (Math/abs half) :height 12 :color rl/SKYBLUE))
-  (rl/rect! :x (+ x 79) :y (+ y 17) :width 2 :height 18 :color rl/DARKGRAY)
-  (rl/text! (format "%6.1f deg" v) :x (+ x 168) :y (+ y 19) :size 14 :color rl/LIGHTGRAY))
+    (rl/rect! {:x (if (neg? half) (+ x 80 half) (+ x 80))
+               :y (+ y 20)
+               :width (Math/abs half)
+               :height 12
+               :color rl/SKYBLUE}))
+  (rl/rect! {:x (+ x 79)
+             :y (+ y 17)
+             :width 2
+             :height 18
+             :color rl/DARKGRAY})
+  (rl/text! (format "%6.1f deg" v) {:x (+ x 168)
+                                    :y (+ y 19)
+                                    :size 14
+                                    :color rl/LIGHTGRAY}))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [models] example - yaw pitch roll")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [models] example - yaw pitch roll"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -90,14 +119,24 @@
               (rl/rl-rotatef roll 0.0 0.0 1.0)
               (draw-plane!)
               (rl/rl-pop-matrix)))
-          (rl/text! "yaw, pitch and roll" :x 24 :y 20 :size 22 :color rl/RAYWHITE)
+          (rl/text! "yaw, pitch and roll" {:x 24
+                                           :y 20
+                                           :size 22
+                                           :color rl/RAYWHITE})
           ;; The gauges sit over the 3D scene, so they get their own ground.
-          (rl/rect! :x 0 :y 288 :width W :height (- H 288) :color (rl/rgba 10 12 20 220))
+          (rl/rect! {:x 0
+                     :y 288
+                     :width W
+                     :height (- H 288)
+                     :color (rl/rgba 10 12 20 220)})
           (gauge! 24 300 "yaw   A / D" yaw)
           (gauge! 24 348 "pitch W / S" pitch)
           (gauge! 24 396 "roll  Q / E" roll)
           (rl/text! "let go and each axis eases back to level"
-                    :x 430 :y 396 :size 14 :color rl/GRAY)
+                    {:x 430
+                     :y 396
+                     :size 14
+                     :color rl/GRAY})
           (rl/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) yaw pitch roll)))))

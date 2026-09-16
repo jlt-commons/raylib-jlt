@@ -64,7 +64,9 @@ void main() {
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - Mandelbrot set")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - Mandelbrot set"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
@@ -116,13 +118,27 @@ void main() {
                 (rl/set-uniform-int! sh loc-iter iter)
                 (rl/begin-drawing)
                 (rl/clear-background rl/BLACK)
-                (rl/with-shader sh (fn [] (rl/rect! :x 0 :y 0 :width W :height H :color rl/WHITE)))
-                (rl/rect! :x 0 :y 0 :width W :height 62 :color (rl/rgba 0 0 0 150))
+                (rl/with-shader sh (fn [] (rl/rect! {:x 0
+                                                     :y 0
+                                                     :width W
+                                                     :height H
+                                                     :color rl/WHITE})))
+                (rl/rect! {:x 0
+                           :y 0
+                           :width W
+                           :height 62
+                           :color (rl/rgba 0 0 0 150)})
                 (rl/text! (format "centre %.6f %s%.6fi   zoom %.0fx   %d iterations"
                                   cx (if (neg? cy) "-" "+") (Math/abs cy) nzoom iter)
-                          :x 14 :y 12 :size 17 :color rl/RAYWHITE)
+                          {:x 14
+                           :y 12
+                           :size 17
+                           :color rl/RAYWHITE})
                 (rl/text! "wheel zooms toward the pointer   ·   drag to pan   ·   UP/DOWN iterations"
-                          :x 14 :y 38 :size 14 :color rl/LIGHTGRAY)
+                          {:x 14
+                           :y 38
+                           :size 14
+                           :color rl/LIGHTGRAY})
                 (rl/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) cx cy nzoom iter drag))))

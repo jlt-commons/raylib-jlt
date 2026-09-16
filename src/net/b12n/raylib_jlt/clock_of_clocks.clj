@@ -79,14 +79,18 @@
 (defn- hand!
   [cx cy deg len color]
   (let [t (Math/toRadians deg)]
-    (rl/line-ex! :x1 cx :y1 cy
-                 :x2 (+ cx (* len (Math/cos t)))
-                 :y2 (+ cy (* len (Math/sin t)))
-                 :thick 4 :color color)))
+    (rl/line-ex! {:x1 cx
+                  :y1 cy
+                  :x2 (+ cx (* len (Math/cos t)))
+                  :y2 (+ cy (* len (Math/sin t)))
+                  :thick 4
+                  :color color})))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - clock of clocks")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - clock of clocks"})
   (rl/set-target-fps 60)
   (let [deadline    (rl/auto-quit-deadline)
         bg          (rl/rgba 8 12 28 255)
@@ -125,7 +129,10 @@
           (rl/begin-drawing)
           (rl/clear-background bg)
           (rl/text! (str hour-mode "-h mode, SPACE to change")
-                    :x 10 :y 30 :size 20 :color rl/RAYWHITE)
+                    {:x 10
+                     :y 30
+                     :size 20
+                     :color rl/RAYWHITE})
           ;; x-offset walks left to right, gaining a colon and sectionSpacing
           ;; after each odd digit, so hh:mm:ss groups apart. Carried through the
           ;; loop rather than computed per digit, because the colon makes the
@@ -137,16 +144,34 @@
                   (let [cx (+ x-offset (* col step) (* FACE 0.5))
                         cy (+ 100.0 (* row step) (* FACE 0.5))
                         [a b] (get-in current [digit (+ (* row 4) col)])]
-                    (rl/ring! :cx cx :cy cy :inner (- (* FACE 0.5) 2.0) :outer (* FACE 0.5)
-                              :start-deg 0 :end-deg 360 :segments 24 :color bezel)
+                    (rl/ring! {:cx cx
+                               :cy cy
+                               :inner (- (* FACE 0.5) 2.0)
+                               :outer (* FACE 0.5)
+                               :start-deg 0
+                               :end-deg 360
+                               :segments 24
+                               :color bezel})
                     (hand! cx cy a (+ (* FACE 0.5) 2.0) hands-color)
                     (hand! cx cy b (* FACE 0.5) hands-color))))
               (let [x (+ x-offset (* step 4))]
                 (if (odd? digit)
-                  (do (rl/ring! :cx (+ x 4.0) :cy 160.0 :inner 6.0 :outer 8.0
-                                :start-deg 0 :end-deg 360 :segments 24 :color hands-color)
-                      (rl/ring! :cx (+ x 4.0) :cy 225.0 :inner 6.0 :outer 8.0
-                                :start-deg 0 :end-deg 360 :segments 24 :color hands-color)
+                  (do (rl/ring! {:cx (+ x 4.0)
+                                 :cy 160.0
+                                 :inner 6.0
+                                 :outer 8.0
+                                 :start-deg 0
+                                 :end-deg 360
+                                 :segments 24
+                                 :color hands-color})
+                      (rl/ring! {:cx (+ x 4.0)
+                                 :cy 225.0
+                                 :inner 6.0
+                                 :outer 8.0
+                                 :start-deg 0
+                                 :end-deg 360
+                                 :segments 24
+                                 :color hands-color})
                       (recur (inc digit) (+ x SECTION)))
                   (recur (inc digit) x)))))
           (rl/maybe-screenshot! frame 40)

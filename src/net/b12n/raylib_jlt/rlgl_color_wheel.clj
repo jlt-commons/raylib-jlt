@@ -44,7 +44,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - rlgl color wheel")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - rlgl color wheel"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         cx (/ (double W) 2.0)
@@ -93,8 +95,14 @@
                   (rl/rl-color! (rl/rgba r1 g1 b1 255)) (rl/rl-vertex-2f x1 y1)))))
           (rl/rl-end)
           (rl/text! "wheel: triangle count - [UP]/[DOWN] size - [LEFT]/[RIGHT] centre - [SPACE] wire"
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
-          (rl/text! (str tris " triangles") :x 10 :y 36 :size 20 :color rl/MAROON)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
+          (rl/text! (str tris " triangles") {:x 10
+                                             :y 36
+                                             :size 20
+                                             :color rl/MAROON})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) tris scale value lines?)))))

@@ -27,10 +27,19 @@
     (let [ph (* i 0.9)
           x (+ (/ RT-W 2.0) (* 110 (Math/sin (+ t ph))))
           y (+ (/ RT-H 2.0) (* 70 (Math/cos (* 1.4 (+ t ph)))))]
-      (rl/circle! :x (int x) :y (int y) :radius 18
-                  :color (rl/rgba (mod (* i 60) 256) 200 (- 255 (mod (* i 60) 256)) 255))))
-  (rl/text! "off-screen" :x 10 :y 10 :size 20 :color rl/RAYWHITE)
-  (rl/rect-lines! :x 0 :y 0 :width RT-W :height RT-H :color rl/GRAY))
+      (rl/circle! {:x (int x)
+                   :y (int y)
+                   :radius 18
+                   :color (rl/rgba (mod (* i 60) 256) 200 (- 255 (mod (* i 60) 256)) 255)})))
+  (rl/text! "off-screen" {:x 10
+                          :y 10
+                          :size 20
+                          :color rl/RAYWHITE})
+  (rl/rect-lines! {:x 0
+                   :y 0
+                   :width RT-W
+                   :height RT-H
+                   :color rl/GRAY}))
 
 (def ^:private copies
   ;; [x y scale tint-label tint]
@@ -38,7 +47,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [textures] example - render texture")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [textures] example - render texture"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         rt (rl/render-texture RT-W RT-H)]
@@ -54,16 +65,27 @@
               (rl/with-render-texture rt (fn [] (draw-scene t)))
               (rl/clear-background rl/RAYWHITE)
               (rl/text! "one scene rendered once, drawn back four times"
-                        :x 40 :y 40 :size 20 :color rl/DARKGRAY)
+                        {:x 40
+                         :y 40
+                         :size 20
+                         :color rl/DARKGRAY})
               (doseq [[x y s label] copies]
                 (let [w (int (* RT-W s))
                       h (int (* RT-H s))
                       tint (if (= label "50% tinted") (rl/rgba 255 180 180 255) rl/WHITE)]
                   ;; v0 1.0 -> v1 0.0 flips the bottom-up framebuffer texture.
                   (rl/texture! (:texture rt)
-                               :x x :y y :width w :height h
-                               :v0 1.0 :v1 0.0 :tint tint)
-                  (rl/text! label :x x :y (+ y h 4) :size 14 :color rl/GRAY)))
+                               {:x x
+                                :y y
+                                :width w
+                                :height h
+                                :v0 1.0
+                                :v1 0.0
+                                :tint tint})
+                  (rl/text! label {:x x
+                                   :y (+ y h 4)
+                                   :size 14
+                                   :color rl/GRAY})))
               (rl/maybe-screenshot! frame 5)
               (rl/end-drawing))
             (recur (inc frame))))

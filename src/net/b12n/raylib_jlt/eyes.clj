@@ -24,7 +24,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - following eyes")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - following eyes"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         er 60.0 pr 22.0
@@ -37,11 +39,26 @@
               [rpx rpy] (pupil rx cy er pr mx my)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/circle! :x (int lx)  :y (int cy)  :radius er :color rl/LIGHTGRAY)
-          (rl/circle! :x (int rx)  :y (int cy)  :radius er :color rl/LIGHTGRAY)
-          (rl/circle! :x (int lpx) :y (int lpy) :radius pr :color rl/DARKGRAY)
-          (rl/circle! :x (int rpx) :y (int rpy) :radius pr :color rl/DARKGRAY)
-          (rl/text! "the eyes follow the mouse" :x 10 :y 10 :size 20 :color rl/GRAY)
+          (rl/circle! {:x (int lx)
+                       :y (int cy)
+                       :radius er
+                       :color rl/LIGHTGRAY})
+          (rl/circle! {:x (int rx)
+                       :y (int cy)
+                       :radius er
+                       :color rl/LIGHTGRAY})
+          (rl/circle! {:x (int lpx)
+                       :y (int lpy)
+                       :radius pr
+                       :color rl/DARKGRAY})
+          (rl/circle! {:x (int rpx)
+                       :y (int rpy)
+                       :radius pr
+                       :color rl/DARKGRAY})
+          (rl/text! "the eyes follow the mouse" {:x 10
+                                                 :y 10
+                                                 :size 20
+                                                 :color rl/GRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))

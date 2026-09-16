@@ -31,7 +31,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [textures] example - texture tiling")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [textures] example - texture tiling"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         id (rl/texture-from-fn TEX TEX tile)]
@@ -52,16 +54,31 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           (rl/texture! id
-                       :x 0 :y 0 :width W :height H
-                       :u0 scroll :v0 scroll
-                       :u1 (+ scroll tiles) :v1 (+ scroll (* tiles (/ (double H) W))))
-          (rl/rect! :x 0 :y 0 :width W :height 60 :color (rl/rgba 0 0 0 150))
+                       {:x 0
+                        :y 0
+                        :width W
+                        :height H
+                        :u0 scroll
+                        :v0 scroll
+                        :u1 (+ scroll tiles)
+                        :v1 (+ scroll (* tiles (/ (double H) W)))})
+          (rl/rect! {:x 0
+                     :y 0
+                     :width W
+                     :height 60
+                     :color (rl/rgba 0 0 0 150)})
           ;; v spans a shorter range than u so the tiles stay square, so the
           ;; count on screen is tiles wide by tiles*(H/W) tall, not tiles squared.
           (rl/text! (str "texture tiling - " (int (* tiles tiles (/ (double H) W)))
                          " tiles from one " TEX "x" TEX " texture, one quad")
-                    :x 16 :y 14 :size 18 :color rl/RAYWHITE)
-          (rl/text! "UP/DOWN change density" :x 16 :y 36 :size 14 :color rl/LIGHTGRAY)
+                    {:x 16
+                     :y 14
+                     :size 18
+                     :color rl/RAYWHITE})
+          (rl/text! "UP/DOWN change density" {:x 16
+                                              :y 36
+                                              :size 14
+                                              :color rl/LIGHTGRAY})
           (rl/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) tiles scroll)))))

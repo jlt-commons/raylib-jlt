@@ -18,7 +18,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [models] example - waving cubes")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [models] example - waving cubes"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         half (* 0.5 (dec N) SPACING)
@@ -50,9 +52,15 @@
                                     (int (+ 128 (* 127 (Math/sin (+ (* 0.35 iz) t 2.0)))))
                                     (int (+ 128 (* 127 (Math/sin (+ (* 0.35 (+ ix iz)) t 4.0)))))
                                     255)]
-                  (rl/cube! :pos [wx (/ hgt 2.0) wz] :size [1.0 hgt 1.0] :color hue)))))
-          (rl/text! (str "waving cubes - " (* N N) " columns") :x 10 :y 10 :size 20 :color rl/RAYWHITE)
-          (rl/fps! :x 10 :y (- H 30))
+                  (rl/cube! {:pos [wx (/ hgt 2.0) wz]
+                             :size [1.0 hgt 1.0]
+                             :color hue})))))
+          (rl/text! (str "waving cubes - " (* N N) " columns") {:x 10
+                                                                :y 10
+                                                                :size 20
+                                                                :color rl/RAYWHITE})
+          (rl/fps! {:x 10
+                    :y (- H 30)})
           (rl/maybe-screenshot! frame 120)
           (rl/end-drawing)
           (recur (inc frame))))))

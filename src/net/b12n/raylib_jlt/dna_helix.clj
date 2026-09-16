@@ -42,21 +42,33 @@
           ;; major and minor grooves show up rather than a symmetric ladder.
           p2 (strand-point i turns (+ spin Math/PI))
           [a b] (nth bases i)]
-      (rl/sphere! :pos p1 :radius 0.34 :rings 8 :slices 12 :color (rl/rgba 200 200 210 255))
-      (rl/sphere! :pos p2 :radius 0.34 :rings 8 :slices 12 :color (rl/rgba 200 200 210 255))
+      (rl/sphere! {:pos p1
+                   :radius 0.34
+                   :rings 8
+                   :slices 12
+                   :color (rl/rgba 200 200 210 255)})
+      (rl/sphere! {:pos p2
+                   :radius 0.34
+                   :rings 8
+                   :slices 12
+                   :color (rl/rgba 200 200 210 255)})
       ;; Each rung is two half-length bars meeting in the middle, so the pair
       ;; reads as two bases rather than one bar.
       (dotimes [k 8]
         (let [t0 (/ (double k) 16.0)
               t1 (/ (double (+ k 8)) 16.0)]
-          (rl/cube! :pos (mapv (fn [c1 c2] (+ c1 (* t0 (- c2 c1)))) p1 p2)
-                    :size 0.2 :color (base-color a))
-          (rl/cube! :pos (mapv (fn [c1 c2] (+ c1 (* t1 (- c2 c1)))) p1 p2)
-                    :size 0.2 :color (base-color b)))))))
+          (rl/cube! {:pos (mapv (fn [c1 c2] (+ c1 (* t0 (- c2 c1)))) p1 p2)
+                     :size 0.2
+                     :color (base-color a)})
+          (rl/cube! {:pos (mapv (fn [c1 c2] (+ c1 (* t1 (- c2 c1)))) p1 p2)
+                     :size 0.2
+                     :color (base-color b)}))))))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [models] example - DNA helix")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [models] example - DNA helix"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         bases (mapv (fn [_] (nth base-pairs (rl/get-random-value 0 3))) (range RUNGS))]
@@ -84,16 +96,31 @@
              :target-z 0.0
              :fovy 45}
             (fn [] (draw-helix! turns spin bases)))
-          (rl/text! "DNA double helix" :x 20 :y 18 :size 22 :color rl/RAYWHITE)
+          (rl/text! "DNA double helix" {:x 20
+                                        :y 18
+                                        :size 22
+                                        :color rl/RAYWHITE})
           (rl/text! (format "%.2f rad between rungs   %d base pairs" turns RUNGS)
-                    :x 20 :y 46 :size 15 :color rl/SKYBLUE)
+                    {:x 20
+                     :y 46
+                     :size 15
+                     :color rl/SKYBLUE})
           (dotimes [i 4]
             (let [base (nth [:A :T :G :C] i)]
-              (rl/rect! :x (+ 20 (* i 56)) :y 76 :width 14 :height 14
-                        :color (base-color base))
-              (rl/text! (name base) :x (+ 40 (* i 56)) :y 76 :size 15 :color rl/LIGHTGRAY)))
+              (rl/rect! {:x (+ 20 (* i 56))
+                         :y 76
+                         :width 14
+                         :height 14
+                         :color (base-color base)})
+              (rl/text! (name base) {:x (+ 40 (* i 56))
+                                     :y 76
+                                     :size 15
+                                     :color rl/LIGHTGRAY})))
           (rl/text! (str "UP/DOWN coil   SPACE " (if spinning? "stop" "spin"))
-                    :x 20 :y (- H 30) :size 14 :color rl/GRAY)
+                    {:x 20
+                     :y (- H 30)
+                     :size 14
+                     :color rl/GRAY})
           (rl/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) turns spin spinning?)))))

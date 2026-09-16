@@ -22,7 +22,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - triangle strip")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - triangle strip"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         top 130.0 bot 320.0 step (/ (double W) SEGMENTS)]
@@ -37,7 +39,10 @@
             (rl/rl-vertex-2f x0 top) (rl/rl-vertex-2f x0 bot) (rl/rl-vertex-2f x1 top)
             (rl/rl-vertex-2f x1 top) (rl/rl-vertex-2f x0 bot) (rl/rl-vertex-2f x1 bot)))
         (rl/rl-end)
-        (rl/text! "a rainbow strip via rlgl immediate mode" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+        (rl/text! "a rainbow strip via rlgl immediate mode" {:x 10
+                                                             :y 10
+                                                             :size 20
+                                                             :color rl/DARKGRAY})
         (rl/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))

@@ -22,7 +22,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [models] example - point cloud")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [models] example - point cloud"})
   (rl/set-target-fps 60)
   (let [points (make-points)
         deadline (rl/auto-quit-deadline)]
@@ -37,10 +39,15 @@
             (rl/rl-push-matrix)
             (rl/rl-rotatef (* frame 0.3) 0.0 1.0 0.0)
             (doseq [[x y z col] points]
-              (rl/cube! :pos [x y z] :size 0.06 :color col))
+              (rl/cube! {:pos [x y z]
+                         :size 0.06
+                         :color col}))
             (rl/rl-pop-matrix)))
         (rl/text! (str n-points " points, each a tiny rlgl cube")
-                  :x 10 :y 10 :size 20 :color rl/RAYWHITE)
+                  {:x 10
+                   :y 10
+                   :size 20
+                   :color rl/RAYWHITE})
         (rl/maybe-screenshot! frame 10)
         (rl/end-drawing)
         (recur (inc frame)))))

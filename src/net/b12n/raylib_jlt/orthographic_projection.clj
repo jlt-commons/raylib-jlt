@@ -8,7 +8,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [core] example - orthographic projection")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [core] example - orthographic projection"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -24,11 +26,20 @@
                               :projection (if ortho? 1 0)}
             (fn []
               (rl/draw-grid 10 1.0)
-              (rl/cube! :pos [-1.5 0.5 0.0] :size 1.0 :color rl/RED)
-              (rl/cube! :pos [0.0 0.5 0.0]  :size 1.0 :color rl/GREEN)
-              (rl/cube! :pos [1.5 0.5 0.0]  :size 1.0 :color rl/BLUE)))
+              (rl/cube! {:pos [-1.5 0.5 0.0]
+                         :size 1.0
+                         :color rl/RED})
+              (rl/cube! {:pos [0.0 0.5 0.0]
+                         :size 1.0
+                         :color rl/GREEN})
+              (rl/cube! {:pos [1.5 0.5 0.0]
+                         :size 1.0
+                         :color rl/BLUE})))
           (rl/text! (if ortho? "ORTHOGRAPHIC  (SPACE to toggle)" "PERSPECTIVE  (SPACE to toggle)")
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) ortho?)))))

@@ -40,7 +40,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [models] example - bouncing spheres")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [models] example - bouncing spheres"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -55,9 +57,16 @@
             (fn []
               (rl/draw-grid 10 1.0)
               (doseq [{:keys [x y z r color]} spheres]
-                (rl/sphere! :pos [x y z] :radius r :rings 10 :slices 14 :color color))))
+                (rl/sphere! {:pos [x y z]
+                             :radius r
+                             :rings 10
+                             :slices 14
+                             :color color}))))
           (rl/text! "Spheres bouncing in a 3D box - SPACE respawns"
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) spheres)))))

@@ -24,7 +24,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - input multitouch")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - input multitouch"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -43,27 +45,57 @@
           (dotimes [i (count trail)]
             (let [[x y] (nth trail i)
                   a (int (* 160 (/ (double (inc i)) (count trail))))]
-              (rl/circle! :x x :y y :radius 6 :color (rl/rgba 0 121 241 a))))
+              (rl/circle! {:x x
+                           :y y
+                           :radius 6
+                           :color (rl/rgba 0 121 241 a)})))
           ;; The ring is where touch position 0 is, pressed or not.
-          (rl/circle-lines! :x tx :y ty :radius 26 :color rl/LIGHTGRAY)
-          (rl/circle! :x tx :y ty :radius 3 :color rl/GRAY)
+          (rl/circle-lines! {:x tx
+                             :y ty
+                             :radius 26
+                             :color rl/LIGHTGRAY})
+          (rl/circle! {:x tx
+                       :y ty
+                       :radius 3
+                       :color rl/GRAY})
           (when (pos? n)
-            (rl/circle! :x tx :y ty :radius 40 :color (rl/rgba 0 121 241 90))
-            (rl/circle-lines! :x tx :y ty :radius 40 :color rl/BLUE)
+            (rl/circle! {:x tx
+                         :y ty
+                         :radius 40
+                         :color (rl/rgba 0 121 241 90)})
+            (rl/circle-lines! {:x tx
+                               :y ty
+                               :radius 40
+                               :color rl/BLUE})
             (rl/text! (str "id " (rl/get-touch-point-id 0))
-                      :x (- tx 22) :y (- ty 8) :size 16 :color rl/DARKBLUE))
+                      {:x (- tx 22)
+                       :y (- ty 8)
+                       :size 16
+                       :color rl/DARKBLUE}))
           (rl/text! (str n " touch " (if (= 1 n) "point" "points"))
-                    :x 40 :y 30 :size 24 :color rl/DARKGRAY)
+                    {:x 40
+                     :y 30
+                     :size 24
+                     :color rl/DARKGRAY})
           (rl/text! "on a desktop raylib makes the mouse touch point 0 - hold and drag"
-                    :x 40 :y 62 :size 14 :color rl/GRAY)
+                    {:x 40
+                     :y 62
+                     :size 14
+                     :color rl/GRAY})
           (rl/text! (str "touch position 0: " tx ", " ty
                          "   (tracks the pointer even at 0 points)")
-                    :x 40 :y 86 :size 14 :color rl/LIGHTGRAY)
+                    {:x 40
+                     :y 86
+                     :size 14
+                     :color rl/LIGHTGRAY})
           (when (> n 1)
             (rl/text! (str "other point ids: "
                            (apply str (interpose ", " (map (fn [i] (rl/get-touch-point-id i))
                                                            (range 1 n)))))
-                      :x 40 :y 86 :size 14 :color rl/GRAY))
+                      {:x 40
+                       :y 86
+                       :size 14
+                       :color rl/GRAY}))
           (rl/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) trail)))))

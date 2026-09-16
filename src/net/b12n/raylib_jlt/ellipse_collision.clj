@@ -60,7 +60,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - ellipse collision")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - ellipse collision"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         a-rx 120.0 a-ry 70.0
@@ -80,16 +82,36 @@
               hit? (ellipses-overlap? ax ay a-rx a-ry bx by b-rx b-ry)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/ellipse! :x (int ax) :y (int ay) :rx a-rx :ry a-ry :color (if hit? rl/RED rl/BLUE))
-          (rl/ellipse! :x (int bx) :y (int by) :rx b-rx :ry b-ry :color (if hit? rl/RED rl/GREEN))
+          (rl/ellipse! {:x (int ax)
+                        :y (int ay)
+                        :rx a-rx
+                        :ry a-ry
+                        :color (if hit? rl/RED rl/BLUE)})
+          (rl/ellipse! {:x (int bx)
+                        :y (int by)
+                        :rx b-rx
+                        :ry b-ry
+                        :color (if hit? rl/RED rl/GREEN)})
           (ellipse-outline! ax ay a-rx a-ry rl/WHITE)
           (ellipse-outline! bx by b-rx b-ry rl/WHITE)
-          (rl/circle! :x (int ax) :y (int ay) :radius 4 :color rl/WHITE)
-          (rl/circle! :x (int bx) :y (int by) :radius 4 :color rl/WHITE)
+          (rl/circle! {:x (int ax)
+                       :y (int ay)
+                       :radius 4
+                       :color rl/WHITE})
+          (rl/circle! {:x (int bx)
+                       :y (int by)
+                       :radius 4
+                       :color rl/WHITE})
           (rl/text! (str "[A]/[B] pick an ellipse - steering " (name controlled))
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/text! (if hit? "OVERLAPPING" "apart")
-                    :x 10 :y 36 :size 20 :color (if hit? rl/RED rl/GRAY))
+                    {:x 10
+                     :y 36
+                     :size 20
+                     :color (if hit? rl/RED rl/GRAY)})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) controlled ax ay bx by)))))

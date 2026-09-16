@@ -30,7 +30,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "hilbert curve")
+  (rl/window! {:width W
+               :height H
+               :title "hilbert curve"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         size 400.0
@@ -48,8 +50,15 @@
                 hue (rl/rgba (int (* 255 (max 0.0 (Math/sin (* PI t)))))
                              (int (* 255 (max 0.0 (Math/sin (* PI (+ t 0.33))))))
                              (int (* 255 (max 0.0 (Math/sin (* PI (+ t 0.66)))))) 255)]
-            (rl/line! :x1 (int ax) :y1 (int ay) :x2 (int bx) :y2 (int by) :color hue)))
-        (rl/text! "a rainbow Hilbert curve" :x 10 :y 10 :size 20 :color rl/RAYWHITE)
+            (rl/line! {:x1 (int ax)
+                       :y1 (int ay)
+                       :x2 (int bx)
+                       :y2 (int by)
+                       :color hue})))
+        (rl/text! "a rainbow Hilbert curve" {:x 10
+                                             :y 10
+                                             :size 20
+                                             :color rl/RAYWHITE})
         (rl/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))

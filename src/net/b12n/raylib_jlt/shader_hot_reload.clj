@@ -65,7 +65,9 @@ void main() {
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - hot-reloading a shader")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - hot-reloading a shader"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -101,16 +103,38 @@ void main() {
           (if sh
             (do (rl/set-uniform-vec2! sh (rl/uniform-loc sh "uResolution") (double W) (double H))
                 (rl/set-uniform-float! sh (rl/uniform-loc sh "uTime") (rl/get-time))
-                (rl/with-shader sh (fn [] (rl/rect! :x 0 :y 0 :width W :height H :color rl/WHITE))))
-            (rl/text! "no shader compiled" :x 20 :y 200 :size 30 :color rl/MAROON))
-          (rl/rect! :x 0 :y 0 :width W :height 86 :color (rl/rgba 0 0 0 165))
-          (rl/text! (str "running: " label) :x 14 :y 10 :size 18 :color rl/RAYWHITE)
+                (rl/with-shader sh (fn [] (rl/rect! {:x 0
+                                                     :y 0
+                                                     :width W
+                                                     :height H
+                                                     :color rl/WHITE}))))
+            (rl/text! "no shader compiled" {:x 20
+                                            :y 200
+                                            :size 30
+                                            :color rl/MAROON}))
+          (rl/rect! {:x 0
+                     :y 0
+                     :width W
+                     :height 86
+                     :color (rl/rgba 0 0 0 165)})
+          (rl/text! (str "running: " label) {:x 14
+                                             :y 10
+                                             :size 18
+                                             :color rl/RAYWHITE})
           (rl/text! (str reloads " reloads   ·   " failures " rejected")
-                    :x 14 :y 34 :size 14 :color rl/LIGHTGRAY)
-          (rl/text! note :x 14 :y 56 :size 14
-                    :color (if (pos? failures) rl/GOLD rl/GREEN))
+                    {:x 14
+                     :y 34
+                     :size 14
+                     :color rl/LIGHTGRAY})
+          (rl/text! note {:x 14
+                          :y 56
+                          :size 14
+                          :color (if (pos? failures) rl/GOLD rl/GREEN)})
           (rl/text! "1 rings   ·   2 checker   ·   3 broken (stays on the last good one)"
-                    :x 14 :y (- H 28) :size 14 :color rl/LIGHTGRAY)
+                    {:x 14
+                     :y (- H 28)
+                     :size 14
+                     :color rl/LIGHTGRAY})
           (rl/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) sh label reloads failures note)))))

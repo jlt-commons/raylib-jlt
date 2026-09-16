@@ -11,7 +11,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [text] example - word alignment")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [text] example - word alignment"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         bx 150 by 180 bw 500 bh 90
@@ -27,9 +29,19 @@
               ty   (+ by (quot (- bh size) 2))]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/rect-lines! :x bx :y by :width bw :height bh :color rl/LIGHTGRAY)
-          (rl/text! word :x tx :y ty :size size :color rl/MAROON)
-          (rl/text! (str "alignment: " (name mode)) :x bx :y 110 :size 20 :color rl/DARKGRAY)
+          (rl/rect-lines! {:x bx
+                           :y by
+                           :width bw
+                           :height bh
+                           :color rl/LIGHTGRAY})
+          (rl/text! word {:x tx
+                          :y ty
+                          :size size
+                          :color rl/MAROON})
+          (rl/text! (str "alignment: " (name mode)) {:x bx
+                                                     :y 110
+                                                     :size 20
+                                                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame))))))

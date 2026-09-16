@@ -18,7 +18,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [core] example - 3d camera")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [core] example - 3d camera"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -38,9 +40,14 @@
                               :projection 0}
             (fn []
               (rl/draw-grid 20 1.0)
-              (rl/cube! :pos [0.0 1.0 0.0] :size 2.0 :color rl/RED)))
+              (rl/cube! {:pos [0.0 1.0 0.0]
+                         :size 2.0
+                         :color rl/RED})))
           (rl/text! "an orbiting 3D camera (Camera3D by value + rlgl cube)"
-                    :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+                    {:x 10
+                     :y 10
+                     :size 20
+                     :color rl/DARKGRAY})
           (rl/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame))))))

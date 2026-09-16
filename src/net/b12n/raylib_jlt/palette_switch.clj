@@ -72,7 +72,9 @@ void main() {
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shaders] example - palette switching")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shaders] example - palette switching"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
@@ -101,13 +103,27 @@ void main() {
                 (rl/set-uniform-float! sh loc-time (rl/get-time))
                 (rl/begin-drawing)
                 (rl/clear-background rl/BLACK)
-                (rl/with-shader sh (fn [] (rl/rect! :x 0 :y 0 :width W :height H :color rl/WHITE)))
-                (rl/rect! :x 0 :y 0 :width W :height 62 :color (rl/rgba 0 0 0 160))
+                (rl/with-shader sh (fn [] (rl/rect! {:x 0
+                                                     :y 0
+                                                     :width W
+                                                     :height H
+                                                     :color rl/WHITE})))
+                (rl/rect! {:x 0
+                           :y 0
+                           :width W
+                           :height 62
+                           :color (rl/rgba 0 0 0 160)})
                 (rl/text! (str "palette: " pal-name
                                (when cycling? (str "   cycling +" (mod shift SLOTS))))
-                          :x 14 :y 12 :size 18 :color rl/RAYWHITE)
+                          {:x 14
+                           :y 12
+                           :size 18
+                           :color rl/RAYWHITE})
                 (rl/text! "LEFT/RIGHT switch palette   ·   SPACE cycles the entries"
-                          :x 14 :y 38 :size 14 :color rl/LIGHTGRAY)
+                          {:x 14
+                           :y 38
+                           :size 14
+                           :color rl/LIGHTGRAY})
                 ;; The eight entries currently in force, so the indirection is
                 ;; visible rather than implied.
                 (let [sw (quot W SLOTS)]
@@ -115,10 +131,15 @@ void main() {
                     (let [r (nth entries (* 3 i))
                           g (nth entries (+ 1 (* 3 i)))
                           b (nth entries (+ 2 (* 3 i)))]
-                      (rl/rect! :x (* i sw) :y (- H 40) :width sw :height 40
-                                :color (rl/rgba r g b 255))
-                      (rl/text! (str i) :x (+ 6 (* i sw)) :y (- H 30) :size 16
-                                :color (if (> (+ r g b) 380) rl/BLACK rl/RAYWHITE)))))
+                      (rl/rect! {:x (* i sw)
+                                 :y (- H 40)
+                                 :width sw
+                                 :height 40
+                                 :color (rl/rgba r g b 255)})
+                      (rl/text! (str i) {:x (+ 6 (* i sw))
+                                         :y (- H 30)
+                                         :size 16
+                                         :color (if (> (+ r g b) 380) rl/BLACK rl/RAYWHITE)}))))
                 (rl/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) pick cycling?))))

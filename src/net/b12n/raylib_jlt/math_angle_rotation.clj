@@ -13,7 +13,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - angle rotation")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - angle rotation"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         cx (/ W 2.0) cy (/ H 2.0) r 160.0]
@@ -21,17 +23,27 @@
       (when (rl/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
-        (rl/circle-lines! :x (int cx) :y (int cy) :radius r :color rl/LIGHTGRAY)
+        (rl/circle-lines! {:x (int cx)
+                           :y (int cy)
+                           :radius r
+                           :color rl/LIGHTGRAY})
         (doseq [k (range SPOKES)]
           (let [a (* TAU (/ (double k) SPOKES))]
-            (rl/line! :x1 (int cx) :y1 (int cy)
-                      :x2 (int (+ cx (* r (Math/cos a)))) :y2 (int (+ cy (* r (Math/sin a))))
-                      :color rl/LIGHTGRAY)))
+            (rl/line! {:x1 (int cx)
+                       :y1 (int cy)
+                       :x2 (int (+ cx (* r (Math/cos a))))
+                       :y2 (int (+ cy (* r (Math/sin a))))
+                       :color rl/LIGHTGRAY})))
         (let [a (* 0.04 frame)]
-          (rl/line! :x1 (int cx) :y1 (int cy)
-                    :x2 (int (+ cx (* r (Math/cos a)))) :y2 (int (+ cy (* r (Math/sin a))))
-                    :color rl/MAROON))
-        (rl/text! "fixed spokes + one spinning line" :x 10 :y 10 :size 20 :color rl/DARKGRAY)
+          (rl/line! {:x1 (int cx)
+                     :y1 (int cy)
+                     :x2 (int (+ cx (* r (Math/cos a))))
+                     :y2 (int (+ cy (* r (Math/sin a))))
+                     :color rl/MAROON}))
+        (rl/text! "fixed spokes + one spinning line" {:x 10
+                                                      :y 10
+                                                      :size 20
+                                                      :color rl/DARKGRAY})
         (rl/maybe-screenshot! frame 20)
         (rl/end-drawing)
         (recur (inc frame)))))

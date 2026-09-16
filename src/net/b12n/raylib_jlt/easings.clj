@@ -45,7 +45,7 @@
 
 (defn -main
   [& _]
-  (rl/window! :title "raylib [shapes] example - easings")
+  (rl/window! {:title "raylib [shapes] example - easings"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)
         cols 3 track-w 190 x-pad 30]
@@ -55,7 +55,10 @@
               t (if (<= p 1.0) p (- 2.0 p))]         ; ping-pong 0..1..0
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/text! "easing functions" :x 10 :y 8 :size 20 :color rl/DARKGRAY)
+          (rl/text! "easing functions" {:x 10
+                                        :y 8
+                                        :size 20
+                                        :color rl/DARKGRAY})
           (dotimes [i (count easings)]
             (let [[label f] (nth easings i)
                   col (mod i cols)
@@ -64,9 +67,19 @@
                   y  (+ 70 (* row 92))
                   eased (f t)
                   bx (+ x0 (* eased track-w))]
-              (rl/text! label :x x0 :y (- y 22) :size 14 :color rl/DARKGRAY)
-              (rl/line! :x1 x0 :y1 y :x2 (+ x0 track-w) :y2 y :color rl/LIGHTGRAY)
-              (rl/circle! :x (int bx) :y y :radius 9 :color (nth lane-colors i))))
+              (rl/text! label {:x x0
+                               :y (- y 22)
+                               :size 14
+                               :color rl/DARKGRAY})
+              (rl/line! {:x1 x0
+                         :y1 y
+                         :x2 (+ x0 track-w)
+                         :y2 y
+                         :color rl/LIGHTGRAY})
+              (rl/circle! {:x (int bx)
+                           :y y
+                           :radius 9
+                           :color (nth lane-colors i)})))
           (rl/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame))))))

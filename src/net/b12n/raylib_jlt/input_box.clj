@@ -19,7 +19,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [text] example - input box")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [text] example - input box"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -33,11 +35,27 @@
               cursor? (even? (quot frame 30))]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/text! "Type something:" :x 200 :y 140 :size 20 :color rl/DARKGRAY)
-          (rl/rect-lines! :x 200 :y 180 :width 400 :height 50 :color rl/DARKGRAY)
-          (rl/text! (str text (if cursor? "_" "")) :x 210 :y 192 :size 30 :color rl/MAROON)
-          (rl/text! (str (count text) "/" max-len) :x 200 :y 245 :size 20 :color rl/GRAY)
-          (rl/text! "BACKSPACE deletes · ENTER clears" :x 200 :y 275 :size 16 :color rl/GRAY)
+          (rl/text! "Type something:" {:x 200
+                                       :y 140
+                                       :size 20
+                                       :color rl/DARKGRAY})
+          (rl/rect-lines! {:x 200
+                           :y 180
+                           :width 400
+                           :height 50
+                           :color rl/DARKGRAY})
+          (rl/text! (str text (if cursor? "_" "")) {:x 210
+                                                    :y 192
+                                                    :size 30
+                                                    :color rl/MAROON})
+          (rl/text! (str (count text) "/" max-len) {:x 200
+                                                    :y 245
+                                                    :size 20
+                                                    :color rl/GRAY})
+          (rl/text! "BACKSPACE deletes · ENTER clears" {:x 200
+                                                        :y 275
+                                                        :size 16
+                                                        :color rl/GRAY})
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) text)))))

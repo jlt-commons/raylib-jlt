@@ -53,7 +53,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [textures] example - procedural textures")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [textures] example - procedural textures"})
   (rl/set-target-fps 60)
   ;; Textures need the GL context, so they can only be built after the window
   ;; exists, the same rule raylib documents for LoadTexture.
@@ -71,16 +73,35 @@
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/text! "procedural textures: every texel from a fn of (x, y)"
-                  :x 40 :y 40 :size 20 :color rl/DARKGRAY)
+                  {:x 40
+                   :y 40
+                   :size 20
+                   :color rl/DARKGRAY})
         (rl/text! (str TEX "x" TEX " RGBA8, uploaded with rlLoadTexture")
-                  :x 40 :y 70 :size 16 :color rl/GRAY)
+                  {:x 40
+                   :y 70
+                   :size 16
+                   :color rl/GRAY})
         (dotimes [i 4]
           (let [x (nth xs i)]
-            (rl/texture! (nth ids i) :x x :y top :width CELL :height CELL)
-            (rl/rect-lines! :x x :y top :width CELL :height CELL :color rl/LIGHTGRAY)
+            (rl/texture! (nth ids i) {:x x
+                                      :y top
+                                      :width CELL
+                                      :height CELL})
+            (rl/rect-lines! {:x x
+                             :y top
+                             :width CELL
+                             :height CELL
+                             :color rl/LIGHTGRAY})
             (rl/text! (first (nth panels i))
-                      :x x :y (+ top CELL 8) :size 16 :color rl/DARKGRAY)))
-        (rl/text! "SPACE reseeds the noise" :x 40 :y (- H 34) :size 16 :color rl/GRAY)
+                      {:x x
+                       :y (+ top CELL 8)
+                       :size 16
+                       :color rl/DARKGRAY})))
+        (rl/text! "SPACE reseeds the noise" {:x 40
+                                             :y (- H 34)
+                                             :size 16
+                                             :color rl/GRAY})
         (rl/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame))))

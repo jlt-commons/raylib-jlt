@@ -34,7 +34,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - easings testbed")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - easings testbed"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -58,13 +60,22 @@
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           (rl/text! (str nm "   (" (inc idx) "/" (count curve-names) ")")
-                    :x 20 :y 20 :size 30 :color rl/MAROON)
+                    {:x 20
+                     :y 20
+                     :size 30
+                     :color rl/MAROON})
           (rl/text! "[LEFT]/[RIGHT] curve  -  [SPACE] replay  -  [D] plot"
-                    :x 20 :y 56 :size 20 :color rl/GRAY)
+                    {:x 20
+                     :y 56
+                     :size 20
+                     :color rl/GRAY})
           (when plot?
             ;; The [0,1] band. A curve that overshoots visibly leaves it.
-            (rl/rect-lines! :x PLOT-X :y PLOT-Y :width PLOT-W :height PLOT-H
-                            :color (rl/rgba 200 200 200 255))
+            (rl/rect-lines! {:x PLOT-X
+                             :y PLOT-Y
+                             :width PLOT-W
+                             :height PLOT-H
+                             :color (rl/rgba 200 200 200 255)})
             (rl/rl-begin rl/RL-LINES)
             (rl/rl-color! (rl/rgba 0 121 241 255))
             (dotimes [i PLOT-W]
@@ -78,10 +89,15 @@
             (rl/rl-end))
           ;; The ball runs the same curve horizontally, in real time.
           (let [x (f t (double PLOT-X) (double PLOT-W) DURATION)]
-            (rl/circle! :x x :y (+ PLOT-Y PLOT-H 60) :radius 18 :color rl/MAROON)
-            (rl/line! :x1 PLOT-X :y1 (+ PLOT-Y PLOT-H 60)
-                      :x2 (+ PLOT-X PLOT-W) :y2 (+ PLOT-Y PLOT-H 60)
-                      :color (rl/rgba 220 220 220 255)))
+            (rl/circle! {:x x
+                         :y (+ PLOT-Y PLOT-H 60)
+                         :radius 18
+                         :color rl/MAROON})
+            (rl/line! {:x1 PLOT-X
+                       :y1 (+ PLOT-Y PLOT-H 60)
+                       :x2 (+ PLOT-X PLOT-W)
+                       :y2 (+ PLOT-Y PLOT-H 60)
+                       :color (rl/rgba 220 220 220 255)}))
           (rl/maybe-screenshot! frame 70)
           (rl/end-drawing)
           (recur (inc frame) idx counter plot?)))))

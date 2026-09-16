@@ -59,14 +59,22 @@
           gx (+ x (* k 62))]
       (dotimes [b 3]
         (let [on (bit-and (bit-shift-right idx (- 2 b)) 1)]
-          (rl/rect! :x (+ gx (* b 13)) :y y :width 11 :height 11
-                    :color (if (= 1 on) rl/DARKGRAY rl/LIGHTGRAY))))
-      (rl/rect! :x (+ gx 13) :y (+ y 14) :width 11 :height 11
-                :color (if (= 1 out) rl/MAROON rl/LIGHTGRAY)))))
+          (rl/rect! {:x (+ gx (* b 13))
+                     :y y
+                     :width 11
+                     :height 11
+                     :color (if (= 1 on) rl/DARKGRAY rl/LIGHTGRAY)})))
+      (rl/rect! {:x (+ gx 13)
+                 :y (+ y 14)
+                 :width 11
+                 :height 11
+                 :color (if (= 1 out) rl/MAROON rl/LIGHTGRAY)}))))
 
 (defn -main
   [& _]
-  (rl/window! :width W :height H :title "raylib [shapes] example - cellular automata")
+  (rl/window! {:width W
+               :height H
+               :title "raylib [shapes] example - cellular automata"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -94,15 +102,31 @@
                   y (+ TOP (* g PX))]
               (dotimes [i COLS]
                 (when (= 1 (nth row i))
-                  (rl/rect! :x (* i PX) :y y :width PX :height PX
-                            :color (rl/rgba 20 30 60 255))))))
-          (rl/rect! :x 0 :y 0 :width W :height TOP :color rl/RAYWHITE)
-          (rl/text! (str "rule " rule) :x 20 :y 16 :size 24 :color rl/DARKGRAY)
+                  (rl/rect! {:x (* i PX)
+                             :y y
+                             :width PX
+                             :height PX
+                             :color (rl/rgba 20 30 60 255)})))))
+          (rl/rect! {:x 0
+                     :y 0
+                     :width W
+                     :height TOP
+                     :color rl/RAYWHITE})
+          (rl/text! (str "rule " rule) {:x 20
+                                        :y 16
+                                        :size 24
+                                        :color rl/DARKGRAY})
           (rl/text! (if random? "random first row" "one live cell")
-                    :x 150 :y 22 :size 16 :color rl/GRAY)
+                    {:x 150
+                     :y 22
+                     :size 16
+                     :color rl/GRAY})
           (rule-key! rule 20 52)
           (rl/text! "LEFT/RIGHT rule   UP/DOWN by ten   SPACE seed"
-                    :x 20 :y 88 :size 13 :color rl/GRAY)
+                    {:x 20
+                     :y 88
+                     :size 13
+                     :color rl/GRAY})
           (rl/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) rule random? rows)))))

@@ -10,7 +10,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [core] example - basic window")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [core] example - basic window"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0]
@@ -18,7 +20,10 @@
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/text! "Congrats! You created your first window!"
-                  :x 190 :y 200 :size 20 :color rl/LIGHTGRAY)
+                  {:x 190
+                   :y 200
+                   :size 20
+                   :color rl/LIGHTGRAY})
         (rl/maybe-screenshot! frame 10)
         (rl/end-drawing)
         (recur (inc frame)))))

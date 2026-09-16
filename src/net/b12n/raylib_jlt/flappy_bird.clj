@@ -61,7 +61,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width width :height height :title "raylib [games] example - flappy bird")
+  (rl/window! {:width width
+               :height height
+               :title "raylib [games] example - flappy bird"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -73,12 +75,28 @@
           (rl/begin-drawing)
           (rl/clear-background rl/SKYBLUE)
           (doseq [p (:pipes st)]
-            (rl/rect! :x (int (:x p)) :y 0 :width pipe-w :height (int (:gap p)) :color rl/DARKGREEN)
-            (rl/rect! :x (int (:x p)) :y (int (+ (:gap p) gap-h)) :width pipe-w
-                      :height (- height (int (+ (:gap p) gap-h))) :color rl/DARKGREEN))
-          (rl/circle! :x bird-x :y (int (:y st)) :radius bird-r :color rl/GOLD)
-          (rl/text! (str "score " (:score st)) :x 8 :y 8 :size 20 :color rl/DARKBLUE)
-          (when (:over? st) (rl/text! "GAME OVER - SPACE" :x 280 :y 200 :size 28 :color rl/MAROON))
+            (rl/rect! {:x (int (:x p))
+                       :y 0
+                       :width pipe-w
+                       :height (int (:gap p))
+                       :color rl/DARKGREEN})
+            (rl/rect! {:x (int (:x p))
+                       :y (int (+ (:gap p) gap-h))
+                       :width pipe-w
+                       :height (- height (int (+ (:gap p) gap-h)))
+                       :color rl/DARKGREEN}))
+          (rl/circle! {:x bird-x
+                       :y (int (:y st))
+                       :radius bird-r
+                       :color rl/GOLD})
+          (rl/text! (str "score " (:score st)) {:x 8
+                                                :y 8
+                                                :size 20
+                                                :color rl/DARKBLUE})
+          (when (:over? st) (rl/text! "GAME OVER - SPACE" {:x 280
+                                                           :y 200
+                                                           :size 28
+                                                           :color rl/MAROON}))
           (rl/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))

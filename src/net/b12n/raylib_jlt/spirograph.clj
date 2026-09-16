@@ -34,7 +34,9 @@
 
 (defn -main
   [& _]
-  (rl/window! :width 800 :height 450 :title "raylib [generative] example - spirograph")
+  (rl/window! {:width 800
+               :height 450
+               :title "raylib [generative] example - spirograph"})
   (rl/set-target-fps 60)
   (let [deadline (rl/auto-quit-deadline)]
     (loop [frame 0
@@ -48,7 +50,11 @@
           (rl/begin-drawing)
           (rl/clear-background rl/BLACK)
           (doseq [[i [[x1 y1] [x2 y2]]] (map-indexed vector (partition 2 1 (:points st)))]
-            (rl/line! :x1 (int x1) :y1 (int y1) :x2 (int x2) :y2 (int y2) :color (rainbow i)))
+            (rl/line! {:x1 (int x1)
+                       :y1 (int y1)
+                       :x2 (int x2)
+                       :y2 (int y2)
+                       :color (rainbow i)}))
           (rl/maybe-screenshot! frame 70)
           (rl/end-drawing)
           (recur (inc frame) st)))))
