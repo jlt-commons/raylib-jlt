@@ -1,6 +1,7 @@
 {
   "amp-envelope" {:sha "a5e3f02e69f49581edd9daa7bd847c4d8f8fa0e97163e7ae39e923a618169e16", :settings [6 10 480 "gif"], :bytes 30286, :at "2026-09-17T01:15:43.492345Z"}
   "analog-clock" {:sha "4ec4b0a9f0dc640c1376433d998661f4aff847170ad2760edcd2efa1dac9de76", :settings [6 10 480 "gif"], :bytes 58856, :at "2026-08-14T07:57:48.951424Z"}
+  "ascii-rendering" {:sha "1f70f847e47a0e957621b7a896cc09e203ca2173f6a3bf4b0aee79be87b1e76c", :settings [6 10 480 "gif"], :bytes 125646, :at "2026-09-17T05:11:17.286657Z"}
   "asteroids" {:sha "73faed10e33d6f21c29122c4efa34ef8931788f572b3b1b1ed98e650cd08851d", :settings [6 10 480 "gif"], :bytes 81575, :at "2026-08-14T07:57:48.951255Z"}
   "audio-raw-stream" {:sha "3a4a3416202ff250eb75c69660e8b134779172f831e3e43a7b29dffb28c29cf9", :settings [6 10 480 "gif"], :bytes 515394, :at "2026-09-16T04:38:28.233594Z"}
   "background-scrolling" {:sha "de41c5afb01265c260cef3594b8261fa65df2b974a08a1a1ee576778f31b89eb", :settings [6 10 480 "gif"], :bytes 137224, :at "2026-09-17T02:53:31.325764Z"}
@@ -37,6 +38,7 @@
   "dashed-line" {:sha "8993b6b8d4b22aa91c3c2a9c25cd58c7249c68de21dcad75f26d1cbc91824058", :settings [6 10 480 "gif"], :bytes 17545, :at "2026-08-14T07:57:48.951170Z"}
   "delta-time" {:sha "91493334a8cc862c67bf4ee31577ebc9e09325b89836452109cf7e8b28352c58", :settings [6 10 480 "gif"], :bytes 29737, :at "2026-08-14T07:57:48.951079Z"}
   "digital-clock" {:sha "50e6226ce8cf9dcf958c836f76a46133dbd9b61963849acb437fba8d9bd10734", :settings [6 10 480 "gif"], :bytes 21677, :at "2026-08-14T07:57:48.951431Z"}
+  "directional-billboard" {:sha "66af0af55c5fcc98cae1602fd025a767ed6f4704bfe1712117b0ea056b90ff14", :settings [6 10 480 "gif"], :bytes 363764, :at "2026-09-17T05:11:17.286652Z"}
   "dna-helix" {:sha "399702efef25febe859bb0def8344b759a2b3c55f8e226e16de3b305cc246e8c", :settings [8 10 480 "gif"], :bytes 781262, :at "2026-08-22T15:26:04.587736Z"}
   "double-pendulum" {:sha "0762a151830d30bfa96762ecbf0d7ca22d27117bda4a2c9bc0ef0e1d35972dcf", :settings [6 10 480 "gif"], :bytes 61115, :at "2026-08-14T07:57:48.951177Z"}
   "easings" {:sha "e6e03da8068ce84ff4a764778b8b68615d4de052e2ebbc394c30977faa2d0148", :settings [6 10 480 "gif"], :bytes 95787, :at "2026-08-14T07:57:48.951413Z"}
@@ -124,6 +126,7 @@
   "storage-values" {:sha "0382b5fa0d614e89daac3148766fd7e696615121457fb0bb136dfd63666fdfdb", :settings [8 10 480 "gif"], :bytes 25411, :at "2026-08-30T04:12:29.121505Z"}
   "tesseract-view" {:sha "1d65004a882a918e0c38b46aa2d2e1b8e8c5f83f77862611149ca8d16a894953", :settings [6 10 480 "gif"], :bytes 170394, :at "2026-08-14T07:57:48.951233Z"}
   "tetris" {:sha "043b6a75e21c84bd98b67231880113ef5e6c54aae0628066edcde8db5ae51e60", :settings [6 10 480 "gif"], :bytes 33751, :at "2026-08-14T07:57:48.951259Z"}
+  "texture-outline" {:sha "1f1a330f4c9d0e5de99923b20eace17b73eb8cd1d5a42424105548814c2b51af", :settings [6 10 480 "gif"], :bytes 76459, :at "2026-09-17T05:14:20.419299Z"}
   "texture-painting" {:sha "3aa2130ecc776db4b54f6e19f75b7cfb332020c2465a309e855ca2793649c594", :settings [6 10 480 "gif"], :bytes 131060, :at "2026-08-30T02:14:03.972718Z"}
   "texture-procedural" {:sha "52aeebb19e64951a2df06029b852f559e2a0e7dab4581c6c044c731673f75713", :settings [6 10 480 "gif"], :bytes 53838, :at "2026-08-22T15:26:04.587577Z"}
   "texture-rendering" {:sha "cf528eb0c6151525860ceaabdec6db0af93c54e899c80988e1e587e14e991660", :settings [6 10 480 "gif"], :bytes 1704248, :at "2026-09-17T01:15:43.491635Z"}

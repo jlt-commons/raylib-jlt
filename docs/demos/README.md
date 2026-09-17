@@ -678,6 +678,12 @@ camera-facing quads, one spins
 
 ![billboard-rendering](billboard-rendering.gif)
 
+### directional-billboard
+
+a billboard whose facing row turns with the camera
+
+![directional-billboard](directional-billboard.gif)
+
 ## generative
 
 ### game-of-life
@@ -893,6 +899,18 @@ a starfield rippled by a UV-displacement shader
 contrast/saturation/brightness shader
 
 ![color-correction](color-correction.gif)
+
+### texture-outline
+
+a shader outline around a sprite's alpha edge
+
+![texture-outline](texture-outline.gif)
+
+### ascii-rendering
+
+ascii art from a post-process shader
+
+![ascii-rendering](ascii-rendering.gif)
 
 ## audio
 

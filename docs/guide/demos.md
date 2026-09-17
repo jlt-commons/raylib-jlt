@@ -1,12 +1,12 @@
 # Full-size demo gallery
 
 Every recorded example at full size, linked from
-[the example catalog](example-catalog.md)'s preview thumbnails. All 148 recordings
-are here, covering 148 of the suite's 151 examples: `helitorus`, `doom` and
+[the example catalog](example-catalog.md)'s preview thumbnails. All 151 recordings
+are here, covering 151 of the suite's 154 examples: `helitorus`, `doom` and
 `pacman` have not been recorded yet, so run them with `bb helitorus`, `bb doom`
 or `bb pacman`.
 
-145 are animated GIFs. Three are still frames. `rectangle-advanced` and
+148 are animated GIFs. Three are still frames. `rectangle-advanced` and
 `rlgl-triangle` draw something fixed and only move when you drive them, so a
 recording of either would be a valid animation of one repeated image, and a still
 is the honest form for those two. `camera-2d-split-screen` needs a player moving
@@ -555,7 +555,7 @@ draggable word-wrap text container
 
 ![rectangle-bounds](../demos/rectangle-bounds.gif)
 
-## 3d (22)
+## 3d (23)
 
 ### camera-3d
 
@@ -689,6 +689,12 @@ camera-facing quads, one spins
 
 ![billboard-rendering](../demos/billboard-rendering.gif)
 
+### directional-billboard
+
+a billboard whose facing row turns with the camera
+
+![directional-billboard](../demos/directional-billboard.gif)
+
 ## generative (10)
 
 ### game-of-life
@@ -819,7 +825,7 @@ three parallax skyline layers, each scrolling
 
 ![background-scrolling](../demos/background-scrolling.gif)
 
-## shaders (14)
+## shaders (16)
 
 ### julia-set
 
@@ -904,6 +910,18 @@ a starfield rippled by a UV-displacement shader
 contrast/saturation/brightness shader
 
 ![color-correction](../demos/color-correction.gif)
+
+### texture-outline
+
+a shader outline around a sprite's alpha edge
+
+![texture-outline](../demos/texture-outline.gif)
+
+### ascii-rendering
+
+ascii art from a post-process shader
+
+![ascii-rendering](../demos/ascii-rendering.gif)
 
 ## audio (2)
 

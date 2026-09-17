@@ -4,7 +4,8 @@
   A fragment shader draws a red outline around a sprite's alpha edge: it
   samples the four diagonal texels around each pixel, and where any of them
   is opaque but the pixel itself is transparent, that pixel is outline.
-  MOUSE WHEEL grows/shrinks the outline in texel units.
+  MOUSE WHEEL grows/shrinks the outline in texel units, and a slow sine
+  drift keeps it breathing even with no one at the wheel.
 
   No new FFI: the same shader/uniform-loc/set-uniform-*!/with-shader every
   other shader example here uses. The sprite is a small procedural blob via
@@ -83,9 +84,13 @@ void main() {
         (rl/set-uniform-vec2! sh tsize-loc (double SPRITE) (double SPRITE))
         (try
           (loop [frame 0
-                 osize 2.0]
+                 base 2.0]
             (when (rl/keep-running? deadline)
-              (let [osize (max 1.0 (+ osize (rl/get-mouse-wheel)))]
+              (let [base (max 1.0 (+ base (rl/get-mouse-wheel)))
+                    ;; A slow breathing drift on top of the wheel-set base, so
+                    ;; the effect keeps moving even with no one at the wheel
+                    ;; (an unattended capture, or just watching it run).
+                    osize (max 1.0 (+ base (* 2.0 (Math/sin (* frame 0.03)))))]
                 (rl/set-uniform-float! sh size-loc osize)
 
                 (rl/begin-drawing)
@@ -114,7 +119,7 @@ void main() {
 
                 (rl/maybe-screenshot! frame 5)
                 (rl/end-drawing)
-                (recur (inc frame) osize))))
+                (recur (inc frame) base))))
           (finally (rl/unload-shader! sh)))))
     (rl/unload-texture! sprite))
   (rl/close-window))

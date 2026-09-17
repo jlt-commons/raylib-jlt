@@ -1,4 +1,4 @@
-# The example catalog: 151 raylib demos in jolt
+# The example catalog: 154 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -124,7 +124,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
 | [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
 
-## 3d (24)
+## 3d (25)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -150,6 +150,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/camera-3d-free.gif" width="80">](demos.md#camera-3d-free) | `camera-3d-free` | a free-look camera around a cube, UpdateCamera |
 | [<img src="../demos/textured-cube.gif" width="80">](demos.md#textured-cube) | `textured-cube` | two cubes, one textured atlas, one sub-rect |
 | [<img src="../demos/billboard-rendering.gif" width="80">](demos.md#billboard-rendering) | `billboard-rendering` | camera-facing quads, one spins |
+| [<img src="../demos/directional-billboard.gif" width="80">](demos.md#directional-billboard) | `directional-billboard` | a billboard whose facing row turns with the camera |
 | *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
 | *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
 
@@ -207,7 +208,7 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/screen-buffer.gif" width="80">](demos.md#screen-buffer) | `screen-buffer` | the classic DOS fire effect |
 | [<img src="../demos/background-scrolling.gif" width="80">](demos.md#background-scrolling) | `background-scrolling` | three parallax skyline layers, each scrolling |
 
-## shaders (14)
+## shaders (16)
 
 GLSL compiled at runtime and run over a full-screen quad. raylib's `LoadShader`
 returns a `Shader` by value, which needed jolt's `[:by-value [:struct ...]]` -
@@ -239,6 +240,8 @@ by-value API itself is not written yet.
 | [<img src="../demos/texture-rendering.gif" width="80">](demos.md#texture-rendering) | `texture-rendering` | a grid of squares painted entirely by a shader |
 | [<img src="../demos/texture-waves.gif" width="80">](demos.md#texture-waves) | `texture-waves` | a starfield rippled by a UV-displacement shader |
 | [<img src="../demos/color-correction.gif" width="80">](demos.md#color-correction) | `color-correction` | contrast/saturation/brightness shader |
+| [<img src="../demos/texture-outline.gif" width="80">](demos.md#texture-outline) | `texture-outline` | a shader outline around a sprite's alpha edge |
+| [<img src="../demos/ascii-rendering.gif" width="80">](demos.md#ascii-rendering) | `ascii-rendering` | ascii art from a post-process shader |
 
 ## audio (2)
 
