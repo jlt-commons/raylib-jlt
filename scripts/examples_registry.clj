@@ -158,7 +158,8 @@
    ["camera-3d-free"      "camera-3d-free" "3d" "a free-look camera around a cube, UpdateCamera"]
    ["screen-buffer"       "screen-buffer" "textures" "the classic DOS fire effect"]
    ["background-scrolling" "background-scrolling" "textures" "three parallax skyline layers, each scrolling"]
-   ["textured-cube"        "textured-cube" "3d" "two cubes, one textured atlas, one sub-rect"]])
+   ["textured-cube"        "textured-cube" "3d" "two cubes, one textured atlas, one sub-rect"]
+   ["billboard-rendering"  "billboard-rendering" "3d" "camera-facing quads, one spins"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
