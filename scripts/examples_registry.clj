@@ -156,7 +156,8 @@
    ["highdpi-testbed"     "highdpi-testbed" "core" "diagnostic overlay: monitors, DPI, crosshair"]
    ["compute-hash"        "compute-hash" "core" "CRC32/MD5/SHA1/SHA256 + Base64 of typed text"]
    ["camera-3d-free"      "camera-3d-free" "3d" "a free-look camera around a cube, UpdateCamera"]
-   ["screen-buffer"       "screen-buffer" "textures" "the classic DOS fire effect"]])
+   ["screen-buffer"       "screen-buffer" "textures" "the classic DOS fire effect"]
+   ["background-scrolling" "background-scrolling" "textures" "three parallax skyline layers, each scrolling"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

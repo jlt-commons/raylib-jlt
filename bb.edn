@@ -442,6 +442,7 @@
   compute-hash      {:doc "▶ CRC32/MD5/SHA1/SHA256 + Base64 of typed text" :task (run-example "compute-hash")}
   camera-3d-free    {:doc "▶ a free-look camera around a cube, UpdateCamera" :task (run-example "camera-3d-free")}
   screen-buffer     {:doc "▶ the classic DOS fire effect" :task (run-example "screen-buffer")}
+  background-scrolling {:doc "▶ three parallax skyline layers, each scrolling" :task (run-example "background-scrolling")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

@@ -11,6 +11,7 @@
    [net.b12n.raylib-jlt.analog-clock]
    [net.b12n.raylib-jlt.asteroids]
    [net.b12n.raylib-jlt.audio-raw-stream]
+   [net.b12n.raylib-jlt.background-scrolling]
    [net.b12n.raylib-jlt.ball-physics]
    [net.b12n.raylib-jlt.basic-screen-manager]
    [net.b12n.raylib-jlt.blend-modes]
