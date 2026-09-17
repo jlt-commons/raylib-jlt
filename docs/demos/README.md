@@ -660,6 +660,12 @@ two players, two render-texture halves
 
 ![camera-3d-split-screen](camera-3d-split-screen.gif)
 
+### camera-3d-free
+
+a free-look camera around a cube, UpdateCamera
+
+![camera-3d-free](camera-3d-free.gif)
+
 ## generative
 
 ### game-of-life
@@ -777,6 +783,18 @@ srcrec picks the frame, dstrec scales+spins it
 four 2D blend modes over a night skyline
 
 ![blend-modes](blend-modes.gif)
+
+### screen-buffer
+
+the classic DOS fire effect
+
+![screen-buffer](screen-buffer.gif)
+
+### background-scrolling
+
+three parallax skyline layers, each scrolling
+
+![background-scrolling](background-scrolling.gif)
 
 ## shaders
 

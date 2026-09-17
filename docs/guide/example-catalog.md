@@ -1,4 +1,4 @@
-# The example catalog: 146 raylib demos in jolt
+# The example catalog: 149 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -124,7 +124,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
 | [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
 
-## 3d (21)
+## 3d (22)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -147,6 +147,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/world-screen.gif" width="80">](demos.md#world-screen) | `world-screen` | a 2D label tracks a cube via `GetWorldToScreen` |
 | [<img src="../demos/geometric-shapes.gif" width="80">](demos.md#geometric-shapes) | `geometric-shapes` | cubes, spheres, cylinders, cones, capsules |
 | [<img src="../demos/camera-3d-split-screen.gif" width="80">](demos.md#camera-3d-split-screen) | `camera-3d-split-screen` | two players, two render-texture halves |
+| [<img src="../demos/camera-3d-free.gif" width="80">](demos.md#camera-3d-free) | `camera-3d-free` | a free-look camera around a cube, UpdateCamera |
 | *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
 | *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
 
@@ -183,7 +184,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (9)
+## textures (11)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -201,6 +202,8 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/polygon-drawing.gif" width="80">](demos.md#polygon-drawing) | `polygon-drawing` | hue-wheel texture on a spinning polygon |
 | [<img src="../demos/srcrec-dstrec.gif" width="80">](demos.md#srcrec-dstrec) | `srcrec-dstrec` | srcrec picks the frame, dstrec scales+spins it |
 | [<img src="../demos/blend-modes.gif" width="80">](demos.md#blend-modes) | `blend-modes` | four 2D blend modes over a night skyline |
+| [<img src="../demos/screen-buffer.gif" width="80">](demos.md#screen-buffer) | `screen-buffer` | the classic DOS fire effect |
+| [<img src="../demos/background-scrolling.gif" width="80">](demos.md#background-scrolling) | `background-scrolling` | three parallax skyline layers, each scrolling |
 
 ## shaders (14)
 

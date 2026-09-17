@@ -1,12 +1,12 @@
 # Full-size demo gallery
 
 Every recorded example at full size, linked from
-[the example catalog](example-catalog.md)'s preview thumbnails. All 143 recordings
-are here, covering 143 of the suite's 146 examples: `helitorus`, `doom` and
+[the example catalog](example-catalog.md)'s preview thumbnails. All 146 recordings
+are here, covering 146 of the suite's 149 examples: `helitorus`, `doom` and
 `pacman` have not been recorded yet, so run them with `bb helitorus`, `bb doom`
 or `bb pacman`.
 
-140 are animated GIFs. Three are still frames. `rectangle-advanced` and
+143 are animated GIFs. Three are still frames. `rectangle-advanced` and
 `rlgl-triangle` draw something fixed and only move when you drive them, so a
 recording of either would be a valid animation of one repeated image, and a still
 is the honest form for those two. `camera-2d-split-screen` needs a player moving
@@ -555,7 +555,7 @@ draggable word-wrap text container
 
 ![rectangle-bounds](../demos/rectangle-bounds.gif)
 
-## 3d (19)
+## 3d (20)
 
 ### camera-3d
 
@@ -671,6 +671,12 @@ two players, two render-texture halves
 
 ![camera-3d-split-screen](../demos/camera-3d-split-screen.gif)
 
+### camera-3d-free
+
+a free-look camera around a cube, UpdateCamera
+
+![camera-3d-free](../demos/camera-3d-free.gif)
+
 ## generative (10)
 
 ### game-of-life
@@ -733,7 +739,7 @@ water/smoke/fire particles follow the mouse
 
 ![particles](../demos/particles.gif)
 
-## textures (9)
+## textures (11)
 
 ### texture-procedural
 
@@ -788,6 +794,18 @@ srcrec picks the frame, dstrec scales+spins it
 four 2D blend modes over a night skyline
 
 ![blend-modes](../demos/blend-modes.gif)
+
+### screen-buffer
+
+the classic DOS fire effect
+
+![screen-buffer](../demos/screen-buffer.gif)
+
+### background-scrolling
+
+three parallax skyline layers, each scrolling
+
+![background-scrolling](../demos/background-scrolling.gif)
 
 ## shaders (14)
 

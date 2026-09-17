@@ -10,8 +10,33 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
-## Unreleased
+## 2026-09-17
 
+- **Three more examples, taking the suite to 149.** `camera-3d-free` is the
+  first example to use raylib's own `UpdateCamera`, which reads the
+  mouse/wheel/keys itself and writes position/target/up back into the
+  Camera3D it's given, so the free-look feel is one function call, nothing
+  reimplemented. That call mutates its struct in place across frames,
+  unlike `with-camera-3d`'s per-frame map, so three new bindings
+  (`camera3d-alloc`/`camera3d-free!`/`camera3d-set-target!`) manage a
+  persistent native buffer for it, and `begin-mode-3d-ptr` is now public
+  so an example can draw through that pointer directly.
+  `screen-buffer` is the classic DOS fire effect, zero new FFI: the ember
+  grid is a plain Clojure vector rather than a native buffer (matching
+  `doom.clj`'s own zbuffer), measured empirically at ~56fps average
+  running the simulation at 200x112 rather than the C's 400x225.
+  `background-scrolling` is three procedurally generated parallax
+  skyline layers, also zero new FFI; the first version drew every layer
+  fully opaque, which hid two of the three behind the front one almost
+  entirely, fixed by making each layer's sky transparent and giving each
+  a different building width so gaps let the layers behind show through.
+  Docs caught up to match: both demo galleries, the catalog, `README.md`,
+  `docs/site.edn`, `docs/guide/index.md` and the homepage template all
+  gained the new rows and counts. The homepage template also had a
+  `group-counts` summary line stale since `core` was 23 and `shapes` was
+  42 (long before this changelog's earliest entry) and an "117 animated
+  GIFs" comment stale at the same vintage; both corrected alongside the
+  three-example count bump they were sitting next to.
 - **Eight more examples, taking the suite to 146.** `texture-rendering` and
   `texture-waves` are shader-only ports (a grid of squares painted by an
   original fragment shader, and a procedural starfield rippled by a
@@ -64,6 +89,9 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   `docs/demos/README.md` needed its usual `bb record`-regeneration
   hand-patch, since the tool has no memory of the 3 hand-captured still
   frames (`camera-2d-split-screen`, `rectangle-advanced`, `rlgl-triangle`).
+
+## 2026-09-16
+
 - **Four more examples ported from the jank raylib port**, catching this suite
   up: `audio-raw-stream` (the first raudio binding, `AudioStream` passed by
   value, a sine wave streamed with zero bundled audio assets), `starfield-effect`,
@@ -77,6 +105,9 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   the capture tool's simulated key presses don't land for it yet, so it is a
   still frame like `rectangle-advanced` and `rlgl-triangle`, which the same
   hand-edit backfilled since they had never made it into that gallery).
+
+## 2026-09-05
+
 - **Relicensed from zlib to the Eclipse Public License 2.0**, matching the rest of
   jlt-commons and jolt itself. zlib was chosen to match raylib, since many examples
   are ports of raylib's own, but one exception across the organisation was harder to
@@ -84,6 +115,9 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   is relicensed: the ported examples remain derived from raylib's zlib originals,
   whose notice now travels in `NOTICE`, and the README table naming each upstream
   source is what satisfies zlib's altered-source marking.
+
+## 2026-09-02
+
 - **BREAKING: the suite now needs jolt 0.8.0 or newer.** `deps.edn` declares
   `:jolt/min-version "0.8.0"`, so a runtime that reads the key and sits below the
   floor refuses to load the project instead of running it. jolt 0.8.0 moved
@@ -118,6 +152,8 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   `set-mouse-position` with `hide-cursor` / `show-cursor` for `doom`'s
   mouse-look. None of the three is recorded yet, so the galleries still show 119
   recordings.
+
+## 2026-08-30
 
 - **The site's diagrams fit the column they are drawn in.** The homepage's
   "How it fits together" flowchart was laid out left to right and came out
@@ -157,6 +193,8 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   keeps the catalog a complete list, with `bb record` left an obvious gap to
   fill.
 
+## 2026-08-29
+
 - **The project moved to the jlt-commons organization**, from `burinc/b12n-raylib-jlt`
   to `jlt-commons/raylib-jlt`. GitHub redirects the old URLs, so existing clones and
   links keep working.
@@ -180,6 +218,9 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   `docs/guide/demos.md` showed 91 of 97 demos while claiming to show every one, so
   `julia-set`, `mandelbrot-set`, `raymarching`, `rounded-rect-shader`,
   `palette-switch` and `shader-hot-reload` never appeared. All 101 are there now.
+
+## 2026-08-23
+
 - **The suite tracks raylib 6.0**, up from 5.5, and `bb lib:check` now refuses
   anything older. macOS is `brew upgrade raylib`; Linux keeps the apt-or-source
   path with the CI pin moved to the 6.0 tag.
@@ -252,6 +293,8 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 - The registry moved to `scripts/examples_registry.clj` some time ago but
   the catalog still described it as a `bb.edn` row; adding an example is
   five touchpoints, not four, and the guide now says which.
+
+## 2026-08-22
 
 - `bb docs-sync` says which kind of deploy failure it hit, unreachable
   AWS, missing or expired credentials, a 403, or a genuinely absent
