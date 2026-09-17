@@ -63,6 +63,7 @@
    [net.b12n.raylib-jlt.geometric-shapes]
    [net.b12n.raylib-jlt.gradient]
    [net.b12n.raylib-jlt.helitorus]
+   [net.b12n.raylib-jlt.highdpi-testbed]
    [net.b12n.raylib-jlt.hilbert-curve]
    [net.b12n.raylib-jlt.input]
    [net.b12n.raylib-jlt.input-actions]

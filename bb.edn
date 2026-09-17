@@ -438,6 +438,7 @@
   amp-envelope      {:doc "▶ ADSR amplitude envelope on a 440Hz tone" :task (run-example "amp-envelope")}
   blend-modes       {:doc "▶ four 2D blend modes over a night skyline" :task (run-example "blend-modes")}
   color-correction  {:doc "▶ contrast/saturation/brightness shader" :task (run-example "color-correction")}
+  highdpi-testbed   {:doc "▶ diagnostic overlay: monitors, DPI, crosshair" :task (run-example "highdpi-testbed")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

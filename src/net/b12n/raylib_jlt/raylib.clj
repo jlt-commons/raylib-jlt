@@ -1690,3 +1690,34 @@
         s (vec2->ptr! size)]
     (try (draw-plane-raw p s color)
          (finally (ffi/free p) (ffi/free s)))))
+
+;; --- window/monitor diagnostics, genuinely by value (highdpi-testbed) ---
+(ffi/defcfn toggle-borderless-windowed! "ToggleBorderlessWindowed" [] :void)
+
+(ffi/defcfn ^:private get-window-scale-dpi-raw "GetWindowScaleDPI"
+  []
+  [:by-value [:struct [[:x :float] [:y :float]]]])
+
+(defn get-window-scale-dpi
+  "GetWindowScaleDPI. Returns [x y]."
+  []
+  (let [out (ffi/alloc (ffi/layout-size vector2-layout))]
+    (try
+      (get-window-scale-dpi-raw out)
+      [(ffi/read-field out vector2-layout :x)
+       (ffi/read-field out vector2-layout :y)]
+      (finally (ffi/free out)))))
+
+(ffi/defcfn ^:private get-window-position-raw "GetWindowPosition"
+  []
+  [:by-value [:struct [[:x :float] [:y :float]]]])
+
+(defn get-window-position
+  "GetWindowPosition. Returns [x y]."
+  []
+  (let [out (ffi/alloc (ffi/layout-size vector2-layout))]
+    (try
+      (get-window-position-raw out)
+      [(ffi/read-field out vector2-layout :x)
+       (ffi/read-field out vector2-layout :y)]
+      (finally (ffi/free out)))))

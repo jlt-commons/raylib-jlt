@@ -160,6 +160,7 @@
            :srcrec-dstrec {:main-opts ["-m" "net.b12n.raylib-jlt.srcrec-dstrec"]} ; srcrec picks the frame, dstrec scales+spins it
            :amp-envelope {:main-opts ["-m" "net.b12n.raylib-jlt.amp-envelope"]} ; ADSR amplitude envelope on a 440Hz tone
            :blend-modes {:main-opts ["-m" "net.b12n.raylib-jlt.blend-modes"]} ; four 2D blend modes over a night skyline
-           :color-correction {:main-opts ["-m" "net.b12n.raylib-jlt.color-correction"]}} ; contrast/saturation/brightness shader
+           :color-correction {:main-opts ["-m" "net.b12n.raylib-jlt.color-correction"]} ; contrast/saturation/brightness shader
+           :highdpi-testbed {:main-opts ["-m" "net.b12n.raylib-jlt.highdpi-testbed"]}} ; diagnostic overlay: monitors, DPI, crosshair
 
  :tasks {run "joltc -M:run"}}

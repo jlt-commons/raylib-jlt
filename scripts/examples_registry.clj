@@ -152,7 +152,8 @@
    ["srcrec-dstrec"       "srcrec-dstrec" "textures" "srcrec picks the frame, dstrec scales+spins it"]
    ["amp-envelope"        "amp-envelope" "audio" "ADSR amplitude envelope on a 440Hz tone"]
    ["blend-modes"         "blend-modes" "textures" "four 2D blend modes over a night skyline"]
-   ["color-correction"    "color-correction" "shaders" "contrast/saturation/brightness shader"]])
+   ["color-correction"    "color-correction" "shaders" "contrast/saturation/brightness shader"]
+   ["highdpi-testbed"     "highdpi-testbed" "core" "diagnostic overlay: monitors, DPI, crosshair"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
