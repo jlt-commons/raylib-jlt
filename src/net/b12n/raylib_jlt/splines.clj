@@ -1,38 +1,21 @@
 (ns net.b12n.raylib-jlt.splines
-  "raylib [shapes] example - spline drawing. Five control points bob vertically; a
-  spline is evaluated in pure Clojure (raylib's DrawSpline* take Vector2 arrays by
-  value, unbindable) and drawn as a line! polyline. SPACE cycles Catmull-Rom /
-  cubic Bezier / uniform B-spline. Port of shapes_splines_drawing (minus raygui)."
+  "raylib [shapes] example - spline drawing. Five control points bob
+  vertically; each spline is drawn as a chain of real DrawSplineSegment*
+  calls, one Vector2-by-value argument per point, rather than a from-scratch
+  math reimplementation. SPACE cycles Catmull-Rom / cubic Bezier / uniform
+  B-spline. Port of shapes_splines_drawing (minus raygui).
+
+  raylib's DrawSpline* take a Vector2 array by value, which jolt could not
+  bind before 0.7.23. The per-point DrawSplineSegment* calls used here are
+  the same decomposition raylib's own C example shows commented out: one
+  Vector2 per point, staged via rl/spline-segment-catmull-rom!/-basis!/
+  -bezier-cubic! (new FFI, shared with this session's splines-drawing work).
+  This replaces an earlier scalar-math version that predated by-value struct
+  support and, correctly at the time, called DrawSpline* unbindable."
   (:require
    [net.b12n.raylib-jlt.raylib :as rl]))
 
-;; scalar spline bases: (f a b c d t) over 4 successive control values, t in [0,1]
-(defn- cr
-  [a b c d t]
-  (let [t2 (* t t) t3 (* t2 t)]
-    (* 0.5 (+ (* 2.0 b)
-              (* (+ (- a) c) t)
-              (* (+ (* 2.0 a) (* -5.0 b) (* 4.0 c) (- d)) t2)
-              (* (+ (- a) (* 3.0 b) (* -3.0 c) d) t3)))))
-
-(defn- bez
-  [a b c d t]
-  (let [u (- 1.0 t)]
-    (+ (* u u u a) (* 3.0 u u t b) (* 3.0 u t t c) (* t t t d))))
-
-(defn- bspl
-  [a b c d t]
-  (let [t2 (* t t) t3 (* t2 t)]
-    (/ (+ (* (+ (- a) (* 3.0 b) (* -3.0 c) d) t3)
-          (* (+ (* 3.0 a) (* -6.0 b) (* 3.0 c)) t2)
-          (* (+ (* -3.0 a) (* 3.0 c)) t)
-          (+ a (* 4.0 b) c))
-       6.0)))
-
-(def ^:private modes
-  [[:catmull "Catmull-Rom" cr]
-   [:bezier  "cubic Bezier" bez]
-   [:bspline "uniform B-spline" bspl]])
+(def ^:private modes [[:catmull "Catmull-Rom"] [:bezier "cubic Bezier"] [:bspline "uniform B-spline"]])
 
 (defn- control-points
   [frame]
@@ -42,23 +25,37 @@
                y (+ 225 (* 70.0 (Math/sin (+ (* frame 0.03) (* i 1.3)))))]
            [x y]))))
 
-(defn- polyline
-  [f pts]
-  ;; pad ends so the curve spans all points, then sample each 4-window between its
-  ;; middle two control points
-  (let [padded (vec (concat [(first pts)] pts [(last pts)]))
-        steps 20]
-    (loop [i 0 out []]
-      (if (<= (+ i 3) (dec (count padded)))
-        (let [[ax ay] (nth padded i)
-              [bx by] (nth padded (+ i 1))
-              [cx cy] (nth padded (+ i 2))
-              [dx dy] (nth padded (+ i 3))
-              seg (vec (for [s (range (inc steps))]
-                         (let [t (/ (double s) steps)]
-                           [(f ax bx cx dx t) (f ay by cy dy t)])))]
-          (recur (inc i) (into out seg)))
-        out))))
+(defn- draw-segment!
+  [mode-id a b c d]
+  (case mode-id
+    :catmull (rl/spline-segment-catmull-rom! {:p1 a
+                                              :p2 b
+                                              :p3 c
+                                              :p4 d
+                                              :thick 3.0
+                                              :color rl/RED})
+    :bspline (rl/spline-segment-basis! {:p1 a
+                                        :p2 b
+                                        :p3 c
+                                        :p4 d
+                                        :thick 3.0
+                                        :color rl/RED})
+    :bezier (rl/spline-segment-bezier-cubic! {:p1 a
+                                              :c2 b
+                                              :c3 c
+                                              :p4 d
+                                              :thick 3.0
+                                              :color rl/RED})))
+
+(defn- draw-spline!
+  "Pad the endpoints so the curve spans all five points, then draw each
+  4-point window as one real DrawSplineSegment* call."
+  [mode-id pts]
+  (let [padded (vec (concat [(first pts)] pts [(last pts)]))]
+    (dotimes [i (- (count padded) 3)]
+      (draw-segment! mode-id
+                     (nth padded i) (nth padded (+ i 1))
+                     (nth padded (+ i 2)) (nth padded (+ i 3))))))
 
 (defn -main
   [& _]
@@ -70,9 +67,8 @@
         (let [mode-idx (if (rl/key-pressed? rl/KEY-SPACE)
                          (mod (inc mode-idx) (count modes))
                          mode-idx)
-              [_ label f] (nth modes mode-idx)
-              pts (control-points frame)
-              line-pts (polyline f pts)]
+              [mode-id label] (nth modes mode-idx)
+              pts (control-points frame)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
           ;; control polygon
@@ -83,14 +79,8 @@
                          :x2 (int x2)
                          :y2 (int y2)
                          :color rl/LIGHTGRAY})))
-          ;; the spline
-          (dotimes [i (dec (count line-pts))]
-            (let [[x1 y1] (nth line-pts i) [x2 y2] (nth line-pts (inc i))]
-              (rl/line! {:x1 (int x1)
-                         :y1 (int y1)
-                         :x2 (int x2)
-                         :y2 (int y2)
-                         :color rl/RED})))
+          ;; the spline itself, drawn by raylib's own DrawSplineSegment*
+          (draw-spline! mode-id pts)
           ;; control point handles
           (doseq [[x y] pts]
             (rl/circle-lines! {:x (int x)
