@@ -12,6 +12,34 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## Unreleased
 
+- **Eight more examples, taking the suite to 146.** `texture-rendering` and
+  `texture-waves` are shader-only ports (a grid of squares painted by an
+  original fragment shader, and a procedural starfield rippled by a
+  UV-displacement shader); `texture-rendering` needed `gl_FragCoord`
+  rather than `fragTexCoord`, since `rl/rect!`'s flat-color draw path
+  gives `fragTexCoord` a degenerate constant value across the whole
+  rect. `srcrec-dstrec` reimplements `DrawTexturePro` directly over rlgl
+  immediate mode, no binding for it existing. `amp-envelope` and
+  `blend-modes` are zero-new-FFI, reusing `audio-raw-stream`'s refill
+  pattern and `particles-blending`'s blend-mode bindings respectively.
+  `color-correction` is the standard contrast/saturation/brightness
+  grading formula over procedurally generated pictures. `highdpi-testbed`
+  needed three new bindings (`get-window-scale-dpi` and
+  `get-window-position`, genuinely by-value `Vector2` returns; a plain
+  `toggle-borderless-windowed!`), and deliberately skips
+  `FLAG_WINDOW_HIGHDPI` after that flag doubled the render scale on top
+  of an already-doubled headless screenshot capture in this suite's
+  verification environment. `compute-hash` needed five new bindings for
+  CRC32/MD5/SHA1/SHA256 and Base64, all scalar or raw-pointer reads, no
+  structs; verified against the canonical test vectors for its own input
+  string (MD5 intentionally reads in raylib's native word order, not the
+  usual byte-swapped hex). Docs caught up to match: both demo galleries,
+  the catalog, `README.md`, `docs/site.edn`, `docs/guide/index.md` and
+  the homepage template (`docs/templates/home.html`, stale at 122 since
+  before this changelog's earliest entries) all gained the new rows and
+  counts, and `docs/demos/README.md` got its usual `bb record`
+  hand-patch for the 3 still-frame entries the tool has no ledger memory
+  of.
 - **Twelve more examples, taking the suite to 138.** Eight are zero-new-FFI
   ports from the jank raylib port: `eratosthenes-sieve` (a fragment shader
   computing primality per pixel), `keyboard-testbed`, `mouse-painting`,

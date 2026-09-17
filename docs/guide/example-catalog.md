@@ -1,4 +1,4 @@
-# The example catalog: 138 raylib demos in jolt
+# The example catalog: 146 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -30,7 +30,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/minesweeper.gif" width="80">](demos.md#minesweeper) | `minesweeper` | reveal/flag grid (mouse L reveal, R flag) |
 | *not recorded yet* | `pacman` | the four classic ghost personalities, buffered turns |
 
-## core (28)
+## core (30)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -62,6 +62,8 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/input-actions.gif" width="80">](demos.md#input-actions) | `input-actions` | abstract input actions: keyboard + gamepad |
 | [<img src="../demos/smooth-pixelperfect.gif" width="80">](demos.md#smooth-pixelperfect) | `smooth-pixelperfect` | sub-pixel camera smoothing at 5x upscale |
 | [<img src="../demos/viewport-scaling.gif" width="80">](demos.md#viewport-scaling) | `viewport-scaling` | 6 viewport-scaling policies, resize live |
+| [<img src="../demos/highdpi-testbed.gif" width="80">](demos.md#highdpi-testbed) | `highdpi-testbed` | diagnostic overlay: monitors, DPI, crosshair |
+| [<img src="../demos/compute-hash.gif" width="80">](demos.md#compute-hash) | `compute-hash` | CRC32/MD5/SHA1/SHA256 + Base64 of typed text |
 
 ## shapes (43)
 
@@ -181,7 +183,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (7)
+## textures (9)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -197,8 +199,10 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/mouse-painting.gif" width="80">](demos.md#mouse-painting) | `mouse-painting` | a paint program on a render-texture canvas |
 | [<img src="../demos/particles-blending.gif" width="80">](demos.md#particles-blending) | `particles-blending` | 200 sparks trail the mouse, alpha vs additive |
 | [<img src="../demos/polygon-drawing.gif" width="80">](demos.md#polygon-drawing) | `polygon-drawing` | hue-wheel texture on a spinning polygon |
+| [<img src="../demos/srcrec-dstrec.gif" width="80">](demos.md#srcrec-dstrec) | `srcrec-dstrec` | srcrec picks the frame, dstrec scales+spins it |
+| [<img src="../demos/blend-modes.gif" width="80">](demos.md#blend-modes) | `blend-modes` | four 2D blend modes over a night skyline |
 
-## shaders (11)
+## shaders (14)
 
 GLSL compiled at runtime and run over a full-screen quad. raylib's `LoadShader`
 returns a `Shader` by value, which needed jolt's `[:by-value [:struct ...]]` -
@@ -227,8 +231,11 @@ by-value API itself is not written yet.
 | [<img src="../demos/texture-painting.gif" width="80">](demos.md#texture-painting) | `texture-painting` | a blank texture painted by a shader |
 | [<img src="../demos/multi-sampler.gif" width="80">](demos.md#multi-sampler) | `multi-sampler` | two textures blended by a second sampler |
 | [<img src="../demos/eratosthenes-sieve.gif" width="80">](demos.md#eratosthenes-sieve) | `eratosthenes-sieve` | the Sieve of Eratosthenes, one test per pixel |
+| [<img src="../demos/texture-rendering.gif" width="80">](demos.md#texture-rendering) | `texture-rendering` | a grid of squares painted entirely by a shader |
+| [<img src="../demos/texture-waves.gif" width="80">](demos.md#texture-waves) | `texture-waves` | a starfield rippled by a UV-displacement shader |
+| [<img src="../demos/color-correction.gif" width="80">](demos.md#color-correction) | `color-correction` | contrast/saturation/brightness shader |
 
-## audio (1)
+## audio (2)
 
 raylib's raudio, streamed by hand: a caller-managed ring buffer refilled every
 frame with `IsAudioStreamProcessed` / `UpdateAudioStream`, rather than a
@@ -237,6 +244,7 @@ one-shot `LoadSound`.
 | preview | `bb` name | shows |
 |---|---|---|
 | [<img src="../demos/audio-raw-stream.gif" width="80">](demos.md#audio-raw-stream) | `audio-raw-stream` | arrow keys steer a live sine tone's pitch/pan |
+| [<img src="../demos/amp-envelope.gif" width="80">](demos.md#amp-envelope) | `amp-envelope` | ADSR amplitude envelope on a 440Hz tone |
 
 ## Adding an example: the five touchpoints
 

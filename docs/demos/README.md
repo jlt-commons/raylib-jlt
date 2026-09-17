@@ -228,6 +228,18 @@ sub-pixel camera smoothing at 5x upscale
 
 ![viewport-scaling](viewport-scaling.gif)
 
+### highdpi-testbed
+
+diagnostic overlay: monitors, DPI, crosshair
+
+![highdpi-testbed](highdpi-testbed.gif)
+
+### compute-hash
+
+CRC32/MD5/SHA1/SHA256 + Base64 of typed text
+
+![compute-hash](compute-hash.gif)
+
 ### camera-2d-split-screen
 
 two players, two cameras, two render textures
@@ -754,6 +766,18 @@ hue-wheel texture on a spinning polygon
 
 ![polygon-drawing](polygon-drawing.gif)
 
+### srcrec-dstrec
+
+srcrec picks the frame, dstrec scales+spins it
+
+![srcrec-dstrec](srcrec-dstrec.gif)
+
+### blend-modes
+
+four 2D blend modes over a night skyline
+
+![blend-modes](blend-modes.gif)
+
 ## shaders
 
 ### julia-set
@@ -822,6 +846,24 @@ the Sieve of Eratosthenes, one test per pixel
 
 ![eratosthenes-sieve](eratosthenes-sieve.gif)
 
+### texture-rendering
+
+a grid of squares painted entirely by a shader
+
+![texture-rendering](texture-rendering.gif)
+
+### texture-waves
+
+a starfield rippled by a UV-displacement shader
+
+![texture-waves](texture-waves.gif)
+
+### color-correction
+
+contrast/saturation/brightness shader
+
+![color-correction](color-correction.gif)
+
 ## audio
 
 ### audio-raw-stream
@@ -829,4 +871,10 @@ the Sieve of Eratosthenes, one test per pixel
 arrow keys steer a live sine tone's pitch/pan
 
 ![audio-raw-stream](audio-raw-stream.gif)
+
+### amp-envelope
+
+ADSR amplitude envelope on a 440Hz tone
+
+![amp-envelope](amp-envelope.gif)
 

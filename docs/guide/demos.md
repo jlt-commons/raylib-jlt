@@ -1,12 +1,12 @@
 # Full-size demo gallery
 
 Every recorded example at full size, linked from
-[the example catalog](example-catalog.md)'s preview thumbnails. All 135 recordings
-are here, covering 135 of the suite's 138 examples: `helitorus`, `doom` and
+[the example catalog](example-catalog.md)'s preview thumbnails. All 143 recordings
+are here, covering 143 of the suite's 146 examples: `helitorus`, `doom` and
 `pacman` have not been recorded yet, so run them with `bb helitorus`, `bb doom`
 or `bb pacman`.
 
-132 are animated GIFs. Three are still frames. `rectangle-advanced` and
+140 are animated GIFs. Three are still frames. `rectangle-advanced` and
 `rlgl-triangle` draw something fixed and only move when you drive them, so a
 recording of either would be a valid animation of one repeated image, and a still
 is the honest form for those two. `camera-2d-split-screen` needs a player moving
@@ -75,7 +75,7 @@ reveal/flag grid (mouse L reveal, R flag)
 
 ![minesweeper](../demos/minesweeper.gif)
 
-## core (28)
+## core (30)
 
 ### basic-window
 
@@ -244,6 +244,18 @@ sub-pixel camera smoothing at 5x upscale
 6 viewport-scaling policies, resize live
 
 ![viewport-scaling](../demos/viewport-scaling.gif)
+
+### highdpi-testbed
+
+diagnostic overlay: monitors, DPI, crosshair
+
+![highdpi-testbed](../demos/highdpi-testbed.gif)
+
+### compute-hash
+
+CRC32/MD5/SHA1/SHA256 + Base64 of typed text
+
+![compute-hash](../demos/compute-hash.gif)
 
 ## shapes (43)
 
@@ -721,7 +733,7 @@ water/smoke/fire particles follow the mouse
 
 ![particles](../demos/particles.gif)
 
-## textures (7)
+## textures (9)
 
 ### texture-procedural
 
@@ -765,7 +777,19 @@ hue-wheel texture on a spinning polygon
 
 ![polygon-drawing](../demos/polygon-drawing.gif)
 
-## shaders (11)
+### srcrec-dstrec
+
+srcrec picks the frame, dstrec scales+spins it
+
+![srcrec-dstrec](../demos/srcrec-dstrec.gif)
+
+### blend-modes
+
+four 2D blend modes over a night skyline
+
+![blend-modes](../demos/blend-modes.gif)
+
+## shaders (14)
 
 ### julia-set
 
@@ -833,10 +857,34 @@ the Sieve of Eratosthenes, one test per pixel
 
 ![eratosthenes-sieve](../demos/eratosthenes-sieve.gif)
 
-## audio (1)
+### texture-rendering
+
+a grid of squares painted entirely by a shader
+
+![texture-rendering](../demos/texture-rendering.gif)
+
+### texture-waves
+
+a starfield rippled by a UV-displacement shader
+
+![texture-waves](../demos/texture-waves.gif)
+
+### color-correction
+
+contrast/saturation/brightness shader
+
+![color-correction](../demos/color-correction.gif)
+
+## audio (2)
 
 ### audio-raw-stream
 
 arrow keys steer a live sine tone's pitch/pan
 
 ![audio-raw-stream](../demos/audio-raw-stream.gif)
+
+### amp-envelope
+
+ADSR amplitude envelope on a 440Hz tone
+
+![amp-envelope](../demos/amp-envelope.gif)
