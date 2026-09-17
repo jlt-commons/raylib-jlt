@@ -443,6 +443,7 @@
   camera-3d-free    {:doc "▶ a free-look camera around a cube, UpdateCamera" :task (run-example "camera-3d-free")}
   screen-buffer     {:doc "▶ the classic DOS fire effect" :task (run-example "screen-buffer")}
   background-scrolling {:doc "▶ three parallax skyline layers, each scrolling" :task (run-example "background-scrolling")}
+  textured-cube     {:doc "▶ two cubes, one textured atlas, one sub-rect" :task (run-example "textured-cube")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

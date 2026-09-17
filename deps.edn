@@ -165,6 +165,7 @@
            :compute-hash {:main-opts ["-m" "net.b12n.raylib-jlt.compute-hash"]} ; CRC32/MD5/SHA1/SHA256 + Base64 of typed text
            :camera-3d-free {:main-opts ["-m" "net.b12n.raylib-jlt.camera-3d-free"]} ; a free-look camera around a cube, UpdateCamera
            :screen-buffer {:main-opts ["-m" "net.b12n.raylib-jlt.screen-buffer"]} ; the classic DOS fire effect
-           :background-scrolling {:main-opts ["-m" "net.b12n.raylib-jlt.background-scrolling"]}} ; three parallax skyline layers, each scrolling
+           :background-scrolling {:main-opts ["-m" "net.b12n.raylib-jlt.background-scrolling"]} ; three parallax skyline layers, each scrolling
+           :textured-cube {:main-opts ["-m" "net.b12n.raylib-jlt.textured-cube"]}} ; two cubes, one textured atlas, one sub-rect
 
  :tasks {run "joltc -M:run"}}

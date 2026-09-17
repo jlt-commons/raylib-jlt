@@ -143,6 +143,7 @@
    [net.b12n.raylib-jlt.texture-rendering]
    [net.b12n.raylib-jlt.texture-tiling]
    [net.b12n.raylib-jlt.texture-waves]
+   [net.b12n.raylib-jlt.textured-cube]
    [net.b12n.raylib-jlt.triangle-strip]
    [net.b12n.raylib-jlt.undo-redo]
    [net.b12n.raylib-jlt.vampire-survivors]
