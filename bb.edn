@@ -439,6 +439,7 @@
   blend-modes       {:doc "▶ four 2D blend modes over a night skyline" :task (run-example "blend-modes")}
   color-correction  {:doc "▶ contrast/saturation/brightness shader" :task (run-example "color-correction")}
   highdpi-testbed   {:doc "▶ diagnostic overlay: monitors, DPI, crosshair" :task (run-example "highdpi-testbed")}
+  compute-hash      {:doc "▶ CRC32/MD5/SHA1/SHA256 + Base64 of typed text" :task (run-example "compute-hash")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

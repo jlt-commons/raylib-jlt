@@ -1721,3 +1721,42 @@
       [(ffi/read-field out vector2-layout :x)
        (ffi/read-field out vector2-layout :y)]
       (finally (ffi/free out)))))
+
+;; --- hashing + base64 (compute-hash) --------------------------------------
+(ffi/defcfn compute-crc32 "ComputeCRC32" [:string :int] :uint)
+(ffi/defcfn ^:private compute-md5-raw "ComputeMD5" [:string :int] :pointer)
+(ffi/defcfn ^:private compute-sha1-raw "ComputeSHA1" [:string :int] :pointer)
+(ffi/defcfn ^:private compute-sha256-raw "ComputeSHA256" [:string :int] :pointer)
+(ffi/defcfn ^:private encode-base64-raw "EncodeDataBase64" [:string :int :pointer] :string)
+
+(defn- read-words
+  "n consecutive :uint (4-byte) words at ptr, as a vector. ComputeMD5/SHA1/
+  SHA256 return a pointer into raylib's own static buffer (per raylib.h's
+  own comment), so there's nothing to free here."
+  [ptr n]
+  (mapv (fn [i] (bit-and (ffi/read ptr :int (* i 4)) 0xffffffff)) (range n)))
+
+(defn compute-md5
+  "ComputeMD5. 4 u32 words."
+  [s]
+  (read-words (compute-md5-raw s (count s)) 4))
+
+(defn compute-sha1
+  "ComputeSHA1. 5 u32 words."
+  [s]
+  (read-words (compute-sha1-raw s (count s)) 5))
+
+(defn compute-sha256
+  "ComputeSHA256. 8 u32 words."
+  [s]
+  (read-words (compute-sha256-raw s (count s)) 8))
+
+(defn base64-encode
+  "EncodeDataBase64. The C's own comment admits every recompute leaks the
+  malloc'd result (\"memory must be MemFree()\", never called in the
+  upstream example either); a demo box's worth of Base64 text per ENTER
+  press is not worth chasing across this FFI boundary."
+  [s]
+  (let [out-size (ffi/alloc 4)]
+    (try (or (encode-base64-raw s (count s) out-size) "")
+         (finally (ffi/free out-size)))))

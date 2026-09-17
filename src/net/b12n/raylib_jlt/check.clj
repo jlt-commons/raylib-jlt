@@ -36,6 +36,7 @@
    [net.b12n.raylib-jlt.color-correction]
    [net.b12n.raylib-jlt.color-wheel]
    [net.b12n.raylib-jlt.colors]
+   [net.b12n.raylib-jlt.compute-hash]
    [net.b12n.raylib-jlt.core]
    [net.b12n.raylib-jlt.custom-uniform]
    [net.b12n.raylib-jlt.dashed-line]
