@@ -464,9 +464,9 @@ inline.
   - [`textures-via-rlgl.md`](docs/guide/textures-via-rlgl.md): why `LoadTexture` has no binding, and reaching textures and framebuffers from underneath it
   - [`kwarg-drawing-api.md`](docs/guide/kwarg-drawing-api.md): the positional-binds / keyword-wrappers two-layer design
   - [`headless-smoke-testing.md`](docs/guide/headless-smoke-testing.md): `RAYLIB_APP_AUTO_QUIT_MS` + `RAYLIB_APP_SHOT` proof without a person
-  - [`example-catalog.md`](docs/guide/example-catalog.md): a tour of all 149, and the five-touchpoint recipe for adding one
+  - [`example-catalog.md`](docs/guide/example-catalog.md): a tour of all 151, and the five-touchpoint recipe for adding one
 
-- Two galleries show the same 146 recordings for different purposes. 143 are
+- Two galleries show the same 148 recordings for different purposes. 145 are
   animated GIFs. Three are still frames: `rectangle-advanced` and `rlgl-triangle`
   do not move unless you drive them, and `camera-2d-split-screen` needs a player
   moving to show anything at all, which the capture tool's simulated key presses
@@ -477,7 +477,7 @@ inline.
   [`docs/guide/demos.md`](docs/guide/demos.md) is the full-size companion to the
   example catalog's thumbnails.
 
-  146 recordings against 149 examples is not a mismatch to fix in the docs.
+  148 recordings against 151 examples is not a mismatch to fix in the docs.
   `helitorus`, `doom` and `pacman` landed with their `demo_manifest.edn` entries
   but have not been recorded yet, and recording is a maintainer step that needs
   the unreleased capture tool. Run them with `bb helitorus`, `bb doom` or

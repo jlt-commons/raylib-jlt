@@ -666,6 +666,18 @@ a free-look camera around a cube, UpdateCamera
 
 ![camera-3d-free](camera-3d-free.gif)
 
+### textured-cube
+
+two cubes, one textured atlas, one sub-rect
+
+![textured-cube](textured-cube.gif)
+
+### billboard-rendering
+
+camera-facing quads, one spins
+
+![billboard-rendering](billboard-rendering.gif)
+
 ## generative
 
 ### game-of-life

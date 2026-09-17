@@ -8,6 +8,7 @@
   "basic-screen-manager" {:sha "8399e5d01aa4f245c61fd76b1b435ef24e9b19f2d9b7e8933d140fd5d8ba4aa3", :settings [8 10 480 "gif"], :bytes 43462, :at "2026-08-14T07:57:48.951089Z"}
   "basic-shapes" {:sha "5bebbe3568cafb494a473e3695127dc9918d23326d2ff5ba786ea3102b3974ee", :settings [6 10 480 "gif"], :bytes 7611, :at "2026-08-14T07:57:48.951105Z"}
   "basic-window" {:sha "697d536f77eb2cb0f56370f8d3757f3af33103fb58fae3ae843dae0c241cf751", :settings [6 10 480 "gif"], :bytes 6934, :at "2026-08-14T07:57:48.951007Z"}
+  "billboard-rendering" {:sha "32a812680041e430e441dca68c93a864d656c68bacdf125c89a4d23b6e36ec83", :settings [6 10 480 "gif"], :bytes 460619, :at "2026-09-17T04:14:48.994113Z"}
   "blend-modes" {:sha "e470ea634fdfc36d8c93ba8acc13e5f1608224d7a3bdd0d9e80e159f5610d660", :settings [6 10 480 "gif"], :bytes 20679, :at "2026-09-17T01:15:43.492347Z"}
   "boids" {:sha "ca58b561926ae7f687e9d51d9b3a4241938d7a826e0bfc48e6830a9014a5d78f", :settings [6 10 480 "gif"], :bytes 116198, :at "2026-08-14T07:57:48.951356Z"}
   "bouncing-ball" {:sha "ce095172f1cd11fefbf3e125d2d6e73e181725934e36e946ba86197978300bcd", :settings [6 10 480 "gif"], :bytes 26404, :at "2026-08-14T07:57:48.951101Z"}
@@ -128,6 +129,7 @@
   "texture-rendering" {:sha "cf528eb0c6151525860ceaabdec6db0af93c54e899c80988e1e587e14e991660", :settings [6 10 480 "gif"], :bytes 1704248, :at "2026-09-17T01:15:43.491635Z"}
   "texture-tiling" {:sha "2792f382a788c28fbcd99e67d12274d8c01967fb213fb21aac4bc323db56d58d", :settings [8 10 480 "gif"], :bytes 637285, :at "2026-08-22T15:26:04.587633Z"}
   "texture-waves" {:sha "273cd0defeb5f531de60cabce1ba73adb30e4a4d3925226a03fec4fff5d18b67", :settings [6 10 480 "gif"], :bytes 823025, :at "2026-09-17T01:15:43.492339Z"}
+  "textured-cube" {:sha "c6e2308bd0a04fb507d3874ea5617f308d64fd2c412ffe6e2b9891f8723836a9", :settings [6 10 480 "gif"], :bytes 377157, :at "2026-09-17T04:16:26.494133Z"}
   "triangle-strip" {:sha "ca87bc4439d67d634cb3dfe26ce60c37dfd47aefb9217e2c0ba0f3725858accd", :settings [6 10 480 "gif"], :bytes 10846, :at "2026-08-14T07:57:48.951160Z"}
   "undo-redo" {:sha "e63a403c03678b4e36bc12fed6e4c05b7d76aa78e1cf2738c33995b4497d27e1", :settings [10 10 480 "gif"], :bytes 34638, :at "2026-08-30T04:12:29.121510Z"}
   "vampire-survivors" {:sha "22083969d1f225ba65e768a4a305715d3ac8431b94acefa3768a468577fa8dd5", :settings [6 10 480 "gif"], :bytes 63529, :at "2026-08-14T07:57:48.951270Z"}

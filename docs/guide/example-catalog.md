@@ -1,4 +1,4 @@
-# The example catalog: 149 raylib demos in jolt
+# The example catalog: 151 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -124,7 +124,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
 | [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
 
-## 3d (22)
+## 3d (24)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -148,6 +148,8 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/geometric-shapes.gif" width="80">](demos.md#geometric-shapes) | `geometric-shapes` | cubes, spheres, cylinders, cones, capsules |
 | [<img src="../demos/camera-3d-split-screen.gif" width="80">](demos.md#camera-3d-split-screen) | `camera-3d-split-screen` | two players, two render-texture halves |
 | [<img src="../demos/camera-3d-free.gif" width="80">](demos.md#camera-3d-free) | `camera-3d-free` | a free-look camera around a cube, UpdateCamera |
+| [<img src="../demos/textured-cube.gif" width="80">](demos.md#textured-cube) | `textured-cube` | two cubes, one textured atlas, one sub-rect |
+| [<img src="../demos/billboard-rendering.gif" width="80">](demos.md#billboard-rendering) | `billboard-rendering` | camera-facing quads, one spins |
 | *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
 | *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
 

@@ -98,12 +98,12 @@
     (loop [frame 0]
       (if-not (rl/keep-running? deadline)
         (rl/unload-texture! atlas)
-        (do
+        (let [angle (* frame 0.01)]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
-          (rl/with-camera-3d {:pos-x 0.0
-                              :pos-y 10.0
-                              :pos-z 10.0}
+          (rl/with-camera-3d {:pos-x (* 14.0 (Math/cos angle))
+                              :pos-y 8.0
+                              :pos-z (* 14.0 (Math/sin angle))}
             (fn []
               (draw-cube-texture {:tex-id atlas
                                   :x -2.0

@@ -16,7 +16,7 @@ looks needlessly indirect and you want the ABI reason behind it.
 
 ## What raylib-jlt is
 
-A community suite of 149 raylib examples: the classic core/shapes/text demos, a
+A community suite of 151 raylib examples: the classic core/shapes/text demos, a
 handful of games (asteroids, tetris, pong, vampire-survivors), and a 3D set
 (orbiting cameras, waving cubes, an rlgl solar system), each a small Clojure
 namespace on top of one shared binding layer, `net.b12n.raylib-jlt.raylib`.
@@ -118,7 +118,7 @@ Nothing about `jolt.ffi` is raylib-specific: it binds any C ABI symbol. The
 
 ### Orientation
 
-- ✅ [`example-catalog.md`](example-catalog.md): a tour of all 149 examples grouped
+- ✅ [`example-catalog.md`](example-catalog.md): a tour of all 151 examples grouped
   games / core / shapes / text / 3d / generative / textures / shaders / audio, what each demonstrates, and the
   five-touchpoint recipe for adding one (source ns + `deps.edn` alias +
   `check.clj` require + `examples_registry.clj` row + `bb.edn` task). Read this
