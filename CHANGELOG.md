@@ -12,6 +12,40 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## 2026-09-17
 
+- **The splines example draws through raylib's own `DrawSplineSegment*`
+  now, not a math reimplementation.** It predated jolt's by-value struct
+  support and said so honestly: `DrawSpline*` take a `Vector2` array by
+  value, unbindable at the time, so the curve was evaluated in pure
+  Clojure and drawn as a `line!` polyline. jolt 0.7.23 changed that, so
+  four new bindings (`spline-segment-linear!`/`-basis!`/`-catmull-rom!`/
+  `-bezier-cubic!`) replace the old basis-function math with the real
+  calls, one `Vector2`-by-value argument per point staged through the
+  existing `vec2->ptr!` helper. Same control points, same three modes,
+  same control-polygon and drag targets.
+- **Three more examples, taking the suite to 154.** `texture-outline`
+  traces a sprite's alpha edge in a fragment shader by sampling the four
+  diagonal texels around each pixel. `directional-billboard` combines
+  this batch's own camera-facing quad math with the UV sub-rect slicing
+  `textured-cube` introduced, so a sprite-sheet character's facing row
+  turns with the orbiting camera while its column cycles a walk
+  animation. `ascii-rendering` re-renders a render-texture scene as
+  ASCII glyphs, each cell's character picked from one of eight 5x5
+  bitmaps packed as bits of an int. All three are zero new FFI.
+  `texture-outline`'s first recording came back a single frame, since
+  its only motion was mouse-wheel input the capture tool doesn't drive;
+  a slow sine drift on top of the wheel-set base fixed it, the same
+  class of gap `textured-cube` hit the round before.
+- **Two more examples, taking the suite to 151.** `textured-cube` draws
+  two rlgl-textured cubes from one shared atlas, one showing the whole
+  thing and one a source-rect slice (`DrawCubeTextureRec`'s idea).
+  `billboard-rendering` rebuilds a camera-facing quad from cross
+  products of the camera's own forward vector, one billboard spinning
+  via a Rodrigues rotation around that same normal. The first winding
+  order for that quad was geometrically correct and permanently
+  invisible, backface-culled from every angle because its
+  `cross(edge1, edge2)` pointed away from the camera instead of toward
+  it; caught by looking at the rendered PNG rather than trusting the
+  compile, fixed by reversing the draw order.
 - **Three more examples, taking the suite to 149.** `camera-3d-free` is the
   first example to use raylib's own `UpdateCamera`, which reads the
   mouse/wheel/keys itself and writes position/target/up back into the
