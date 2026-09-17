@@ -45,6 +45,7 @@
    [net.b12n.raylib-jlt.dashed-line]
    [net.b12n.raylib-jlt.delta-time]
    [net.b12n.raylib-jlt.digital-clock]
+   [net.b12n.raylib-jlt.directional-billboard]
    [net.b12n.raylib-jlt.dna-helix]
    [net.b12n.raylib-jlt.doom]
    [net.b12n.raylib-jlt.double-pendulum]

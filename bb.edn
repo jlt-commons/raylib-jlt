@@ -446,6 +446,7 @@
   textured-cube     {:doc "▶ two cubes, one textured atlas, one sub-rect" :task (run-example "textured-cube")}
   billboard-rendering {:doc "▶ camera-facing quads, one spins" :task (run-example "billboard-rendering")}
   texture-outline   {:doc "▶ a shader outline around a sprite's alpha edge" :task (run-example "texture-outline")}
+  directional-billboard {:doc "▶ a billboard whose facing row turns with the camera" :task (run-example "directional-billboard")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

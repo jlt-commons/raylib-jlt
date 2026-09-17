@@ -168,6 +168,7 @@
            :background-scrolling {:main-opts ["-m" "net.b12n.raylib-jlt.background-scrolling"]} ; three parallax skyline layers, each scrolling
            :textured-cube {:main-opts ["-m" "net.b12n.raylib-jlt.textured-cube"]} ; two cubes, one textured atlas, one sub-rect
            :billboard-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.billboard-rendering"]} ; camera-facing quads, one spins
-           :texture-outline {:main-opts ["-m" "net.b12n.raylib-jlt.texture-outline"]}} ; a shader outline around a sprite's alpha edge
+           :texture-outline {:main-opts ["-m" "net.b12n.raylib-jlt.texture-outline"]} ; a shader outline around a sprite's alpha edge
+           :directional-billboard {:main-opts ["-m" "net.b12n.raylib-jlt.directional-billboard"]}} ; a billboard whose facing row turns with the camera
 
  :tasks {run "joltc -M:run"}}

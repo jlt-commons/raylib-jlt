@@ -160,7 +160,8 @@
    ["background-scrolling" "background-scrolling" "textures" "three parallax skyline layers, each scrolling"]
    ["textured-cube"        "textured-cube" "3d" "two cubes, one textured atlas, one sub-rect"]
    ["billboard-rendering"  "billboard-rendering" "3d" "camera-facing quads, one spins"]
-   ["texture-outline"      "texture-outline" "shaders" "a shader outline around a sprite's alpha edge"]])
+   ["texture-outline"      "texture-outline" "shaders" "a shader outline around a sprite's alpha edge"]
+   ["directional-billboard" "directional-billboard" "3d" "a billboard whose facing row turns with the camera"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
