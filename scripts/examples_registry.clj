@@ -159,7 +159,8 @@
    ["screen-buffer"       "screen-buffer" "textures" "the classic DOS fire effect"]
    ["background-scrolling" "background-scrolling" "textures" "three parallax skyline layers, each scrolling"]
    ["textured-cube"        "textured-cube" "3d" "two cubes, one textured atlas, one sub-rect"]
-   ["billboard-rendering"  "billboard-rendering" "3d" "camera-facing quads, one spins"]])
+   ["billboard-rendering"  "billboard-rendering" "3d" "camera-facing quads, one spins"]
+   ["texture-outline"      "texture-outline" "shaders" "a shader outline around a sprite's alpha edge"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

@@ -139,6 +139,7 @@
    [net.b12n.raylib-jlt.tesseract-view]
    [net.b12n.raylib-jlt.tetris]
    [net.b12n.raylib-jlt.text]
+   [net.b12n.raylib-jlt.texture-outline]
    [net.b12n.raylib-jlt.texture-painting]
    [net.b12n.raylib-jlt.texture-procedural]
    [net.b12n.raylib-jlt.texture-rendering]

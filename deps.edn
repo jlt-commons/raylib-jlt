@@ -167,6 +167,7 @@
            :screen-buffer {:main-opts ["-m" "net.b12n.raylib-jlt.screen-buffer"]} ; the classic DOS fire effect
            :background-scrolling {:main-opts ["-m" "net.b12n.raylib-jlt.background-scrolling"]} ; three parallax skyline layers, each scrolling
            :textured-cube {:main-opts ["-m" "net.b12n.raylib-jlt.textured-cube"]} ; two cubes, one textured atlas, one sub-rect
-           :billboard-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.billboard-rendering"]}} ; camera-facing quads, one spins
+           :billboard-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.billboard-rendering"]} ; camera-facing quads, one spins
+           :texture-outline {:main-opts ["-m" "net.b12n.raylib-jlt.texture-outline"]}} ; a shader outline around a sprite's alpha edge
 
  :tasks {run "joltc -M:run"}}
