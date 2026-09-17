@@ -440,6 +440,7 @@
   color-correction  {:doc "▶ contrast/saturation/brightness shader" :task (run-example "color-correction")}
   highdpi-testbed   {:doc "▶ diagnostic overlay: monitors, DPI, crosshair" :task (run-example "highdpi-testbed")}
   compute-hash      {:doc "▶ CRC32/MD5/SHA1/SHA256 + Base64 of typed text" :task (run-example "compute-hash")}
+  camera-3d-free    {:doc "▶ a free-look camera around a cube, UpdateCamera" :task (run-example "camera-3d-free")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

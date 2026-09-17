@@ -26,6 +26,7 @@
    [net.b12n.raylib-jlt.camera-2d-split-screen]
    [net.b12n.raylib-jlt.camera-3d]
    [net.b12n.raylib-jlt.camera-3d-first-person]
+   [net.b12n.raylib-jlt.camera-3d-free]
    [net.b12n.raylib-jlt.camera-3d-split-screen]
    [net.b12n.raylib-jlt.camera2d]
    [net.b12n.raylib-jlt.cellular-automata]

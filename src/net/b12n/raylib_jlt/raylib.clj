@@ -162,7 +162,7 @@
   [a0 a1 a2]
   (rl-vertex-3f-raw (double a0) (double a1) (double a2)))
 
-(ffi/defcfn ^:private begin-mode-3d-ptr "BeginMode3D" [:pointer] :void)
+(ffi/defcfn begin-mode-3d-ptr "BeginMode3D" [:pointer] :void)
 (ffi/defcfn end-mode-3d "EndMode3D" [] :void)
 
 ;; rlgl matrix stack, nested transforms for immediate-mode geometry. rlgl applies
@@ -1760,3 +1760,56 @@
   (let [out-size (ffi/alloc 4)]
     (try (or (encode-base64-raw s (count s) out-size) "")
          (finally (ffi/free out-size)))))
+
+;; --- a persistent native Camera3D, mutated by UpdateCamera (camera-3d-free) --
+;; UpdateCamera reads the mouse/wheel/keys itself and writes position/target/up
+;; back into the SAME struct, so (unlike with-camera-3d's per-frame map) this
+;; buffer has to survive across frames -- allocate it once outside the loop.
+(ffi/defcfn update-camera! "UpdateCamera" [:pointer :int] :void)
+(ffi/defcfn disable-cursor! "DisableCursor" [] :void)
+(ffi/defcfn enable-cursor! "EnableCursor" [] :void)
+
+(def ^:const CAMERA-CUSTOM 0)
+(def ^:const CAMERA-FREE 1)
+(def ^:const CAMERA-ORBITAL 2)
+(def ^:const CAMERA-FIRST-PERSON 3)
+(def ^:const CAMERA-THIRD-PERSON 4)
+
+(defn camera3d-alloc
+  "A persistent native Camera3D from the same keys with-camera-3d takes.
+  Pair with camera3d-free!."
+  [& {:keys [pos-x pos-y pos-z target-x target-y target-z up-x up-y up-z fovy projection]
+      :or {pos-x 0
+           pos-y 0
+           pos-z 0
+           target-x 0
+           target-y 0
+           target-z 0
+           up-x 0
+           up-y 1
+           up-z 0
+           fovy 45
+           projection 0}}]
+  (let [cam (ffi/alloc (ffi/layout-size camera3d-layout))]
+    (ffi/write-field cam camera3d-layout [:position :x] (double pos-x))
+    (ffi/write-field cam camera3d-layout [:position :y] (double pos-y))
+    (ffi/write-field cam camera3d-layout [:position :z] (double pos-z))
+    (ffi/write-field cam camera3d-layout [:target :x] (double target-x))
+    (ffi/write-field cam camera3d-layout [:target :y] (double target-y))
+    (ffi/write-field cam camera3d-layout [:target :z] (double target-z))
+    (ffi/write-field cam camera3d-layout [:up :x] (double up-x))
+    (ffi/write-field cam camera3d-layout [:up :y] (double up-y))
+    (ffi/write-field cam camera3d-layout [:up :z] (double up-z))
+    (ffi/write-field cam camera3d-layout :fovy (double fovy))
+    (ffi/write-field cam camera3d-layout :projection (int projection))
+    cam))
+
+(defn camera3d-free!
+  [cam]
+  (ffi/free cam))
+
+(defn camera3d-set-target!
+  [cam [x y z]]
+  (ffi/write-field cam camera3d-layout [:target :x] (double x))
+  (ffi/write-field cam camera3d-layout [:target :y] (double y))
+  (ffi/write-field cam camera3d-layout [:target :z] (double z)))
