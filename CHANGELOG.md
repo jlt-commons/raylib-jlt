@@ -10,6 +10,181 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-18 (late)
+
+- **Three more textures examples, taking the suite to 171.** `image-kernel` runs
+  the same picture through a sharpen, a Sobel and six Gaussian passes;
+  `npatch-drawing` stretches panels whose corners hold their size; `sprite-button`
+  picks its state by moving a window down one sheet.
+- **raylib convolves the alpha channel, and does not clamp it.** A zero-sum
+  kernel like Sobel therefore drives alpha to zero across every flat region,
+  which is every interior pixel of an opaque picture: the edges are computed
+  perfectly and drawn completely transparent, so `image-kernel`'s third panel
+  came back blank white with the compile gate green. Dropping the image to
+  `PIXELFORMAT_UNCOMPRESSED_R8G8B8`, which has no alpha channel at all, and
+  converting back is the cheapest way to say opaque again. Found by looking at
+  the screenshot rather than by reading the header.
+- **`npatch!` is `DrawTextureNPatch` written out**, nine `texture!` quads whose
+  source rectangles carve the image into a 3x3 and whose destinations put the
+  corners back at their original size. Written that way the two three-patch
+  modes stop being separate modes: a horizontal one is the same routine with no
+  top or bottom border. It also needs CLAMP rather than the REPEAT
+  `texture-from-fn` leaves behind, since a stretched edge cell samples right up
+  to its border and REPEAT would wrap the far side of the image into it.
+- **`ImageKernelConvolution`, `ImageCrop` and `ImageResize` are bound**, all in
+  place on an `Image *`, with crop's `Rectangle` by value. The convolution takes
+  the kernel's COUNT rather than its side, so a 3x3 is passed as 9.
+
+## 2026-09-18 (evening)
+
+- **Six more examples, taking the suite to 168.** `inline-styling` parses a
+  colour markup that lives inside the string itself. `fog-of-war` lifts a fog
+  where the player has walked. `framebuffer-rendering` draws the same scene into
+  two framebuffers side by side, one of them showing the other camera as its own
+  view frustum. `highdpi-demo` lays a ruler of logical points over a ruler of
+  physical pixels. `image-generation` and `image-processing` are the first two
+  on the new Image bindings.
+- **raylib's `Image` is bound, and with it the nine `GenImage*` generators.**
+  `Image` is `{void *data; int width, height, mipmaps, format;}`, 24 bytes
+  returned by value and taken by value. The generators are why it was worth
+  binding: they ARE raylib's procedural textures, and a suite that ships no
+  image files has no other way to get a picture out of raylib. What
+  `rl/image-*` answers is an rlgl texture id rather than the `Image` or the
+  `Texture2D`, so `texture!`, `texture-filter!` and `unload-texture!` keep
+  working unchanged and a generated image draws through the same path a
+  `texture-from-fn` one does.
+- **The processors bind the other way round, and the contrast is the lesson.**
+  Every `Image*` operation works IN PLACE, so `ImageColorInvert`,
+  `ImageBlurGaussian`, both flips and the rest are plain pointer arguments with
+  no by-value dance at all. Only `ImageCopy` and `LoadImageFromTexture` move a
+  whole `Image` across the boundary.
+- **`LoadImageFromTexture` reads a texture back off the GPU**, which is the only
+  route by which something authored in Clojure reaches raylib's own pixel
+  operations. `image-processing` draws its source with `texture-from-fn`, pulls
+  it back to CPU memory and hands it to raylib from there, in place of the
+  `parrots.png` the C opens.
+- **`highdpi-demo` is the one example that sets `FLAG_WINDOW_HIGHDPI`.**
+  Measured rather than assumed: without the flag `GetScreenWidth` and
+  `GetRenderWidth` both answer 800 and the DPI scale is 1.0, so its two rulers
+  would be identical and there would be nothing to show. With it the render
+  target is 1600 against 800 logical points. The cost is a headless screenshot
+  that fills one quadrant, which `highdpi-testbed` already documents as a
+  property of the capture path rather than of the example.
+
+## 2026-09-18 (later still)
+
+- **A second callback into jolt, and a harder one: `audio-stream-callback`,
+  taking the suite to 162.** `custom-logging` gives raylib a pointer raylib
+  calls on the thread that called into it. raudio runs its own audio thread, so
+  this one needs jolt's `:collect-safe`, which reactivates the thread before any
+  jolt code runs on it; without it the process dies with a memory fault no
+  handler can catch. It was probed in isolation before a line of the example was
+  written: 20 calls, 8820 frames, clean exit.
+- **Being on the audio thread is a budget, not just a thread.** The callback
+  owes raudio its samples before the device underruns, so it writes floats
+  straight into raudio's buffer with `ffi/write` and allocates nothing per
+  sample. The scope under the waveform is the same discipline: a native ring
+  buffer the callback writes a second copy into, with its cursor in the last
+  four bytes of the same block, so drawing what played costs one more float
+  store. It shows about four cycles whatever the pitch, which is what keeps a
+  12kHz square from arriving as a picket fence.
+- **The audio group now shows raudio in both directions.** `audio-raw-stream`
+  and `amp-envelope` push, asking `IsAudioStreamProcessed` and refilling with
+  `UpdateAudioStream`; `audio-stream-callback` is pulled from. Same sound,
+  opposite direction, and the push versions never leave the main thread.
+
+## 2026-09-18 (later)
+
+- **Four more examples, taking the suite to 161**, all of them from the set that
+  loads nothing off disk. `picking-3d` clicks a box in a 3D scene,
+  `drop-files` catches files dragged onto the window, `directory-files` is a
+  file browser, and `custom-logging` shows raylib's own log captured by a jolt
+  function and drawn in the window.
+- **`GetScreenToWorldRay` is bound, and it is the exact inverse of the
+  `GetWorldToScreen` the suite already had.** A by-value Vector2 in, a by-value
+  Camera3D in, a by-value Ray out. `GetRayCollisionBox` follows it, taking that
+  Ray with a by-value BoundingBox and returning a by-value RayCollision, whose
+  first field is a one-byte C `_Bool`: declared `:bool` the layout puts
+  `distance` at offset 4, declared as an int it would not. `raylib.clj` asserts
+  both struct sizes at load rather than trusting that, because a wrong offset
+  reads a plausible float out of the wrong bytes and never errors. `DrawRay`
+  and `IsCursorHidden` came along with them.
+- **`FilePathList` is bound, and with it the `char **` behind it.** It is
+  `{unsigned int count; char **paths;}`, the same 16-byte shape as `Shader`, so
+  the by-value binding is the one the shader section already used. What is new
+  is that raylib owns that array and every string in it until the matching
+  Unload, so `rl/dropped-files` and `rl/directory-files` copy the strings into a
+  Clojure vector and unload inside the same call. The filter string's behaviour
+  is measured rather than read off the header: `"*.*"` answers directories and
+  files, `"DIRS*"` and `"FILES*"` answer one each, and an empty filter quietly
+  means files only.
+- **The first callback INTO jolt.** Every other binding here calls out of jolt
+  into C. `SetTraceLogCallback` hands raylib a function pointer built from an
+  ordinary jolt fn by `ffi/foreign-callable`, and raylib calls it for every
+  message it would otherwise print. The awkward part is that raylib's callback
+  signature ends in a `va_list`, which no FFI type describes, so it is taken as
+  an opaque pointer and handed to libc's `vsnprintf` with the format string.
+  That step is what turns `"Target time per frame: %02.03f milliseconds"` into
+  the line with the number in it. C can call the pointer until `free-callable`
+  runs and not one instruction longer, so it is freed after `CloseWindow`.
+- **`directory-files` draws its own list view.** The C builds its browser out of
+  raygui, a separate single-header library this suite does not bind. The list,
+  the selection, the scrollbar and the path bar are `rect!` and `text!` here,
+  which is a fair trade: a list view over a vector of strings is not what makes
+  the C example interesting.
+- **The headless-testing guide now says what a slept display looks like.**
+  raylib warns `Failed to initialize platform` and carries on, so the process
+  dies later with `invalid memory reference` pointing at whatever line was last,
+  which reads as a bug in the example you just wrote. It hits every example at
+  once, so the check is to re-run one that already worked.
+
+## 2026-09-18
+
+- **Three more examples, taking the suite to 157**, one each from the
+  categories the suite had thinnest cover of. `top-down-lights` is the
+  last of raylib's `shapes` examples to land here: nothing in it draws
+  light, every light renders a full-screen mask whose alpha is the whole
+  payload, the masks merge into one, and that one goes over the scene as
+  black, so alpha 0 reads as lit and alpha 1 as dark. `basic-voxel` is an
+  8x8x8 block you walk around and take apart a cube at a time.
+  `strings-management` is a sentence as a bouncing text particle you can
+  cut in half, shatter into characters, shake, and glue back together.
+- **`top-down-lights` and `basic-voxel` animate until you touch them.**
+  Neither moves on its own in the C, and `scripts/demo_manifest.edn` has the
+  measurement for why that matters here: no synthetic input actuates a
+  raylib/GLFW window, not clicks and not keys either, so an example with no
+  motion of its own records as a single frame. Light #1 now walks a slow
+  figure-eight that sweeps its shadows across most of the boxes, and the voxel
+  block is orbited from above. The first drag, WASD press or click hands
+  control over for good. A mouse move deliberately does not: `GetMouseX`
+  reports 0 on the first frame and the real position on the second, and the
+  window-relative coordinates shift again whenever the window is placed, so
+  "the pointer moved" is not evidence that a person moved it.
+- **`rlSetBlendFactors` is bound**, with `BLEND-CUSTOM` and the three GL
+  enums it takes. `top-down-lights` needs two custom blend equations that
+  work on alpha alone: `GL_MIN` punches a light's transparent centre into
+  a mask cleared to opaque white, and `GL_MAX` cuts the shadow volumes
+  back out of it. Both equations ignore the src/dst factors, which is why
+  the same `SRC_ALPHA` pair goes to each, and rlgl only re-reads the
+  factors when the blend mode changes, so the order is always set the
+  factors, then begin the mode.
+- **`strings-management` is the tour of raylib's string helpers, done in
+  Clojure.** The C exists because C has no string library, so it leans on
+  `TextCopy`, `TextSubtext`, `TextSplit`, `TextLength`, `TextFormat` and
+  the six `TextTo*` case conversions. All of those are `subs`, `count`,
+  `str` and `clojure.string` here, and the only raylib call left in the
+  text path is `MeasureText`, which has to be raylib's because only
+  raylib knows how wide its font draws.
+- **Both new 3D-ish examples avoid a binding rather than adding one.**
+  `basic-voxel` picks with a ray, but `GetScreenToWorldRay` is not bound
+  and does not need to be: a ray through the centre of the screen is the
+  look direction the camera was built from, and the hit test is the slab
+  clip `GetRayCollisionBox` does. It also keeps the suite's own yaw/pitch
+  walk instead of `UpdateCamera`'s first-person mode, which runs on raw
+  `GetMouseDelta` and drifts whenever the pointer moves at all, including
+  while the window is still taking focus, so no headless screenshot ever
+  landed on the same frame twice.
+
 ## 2026-09-17
 
 - **The splines example draws through raylib's own `DrawSplineSegment*`

@@ -383,6 +383,7 @@
 (def ^:const KEY-DOWN  264) (def ^:const KEY-UP    265)
 (def ^:const MOUSE-LEFT 0)
 (def ^:const MOUSE-RIGHT 1)
+(def ^:const MOUSE-MIDDLE 2)
 (def ^:const KEY-BACKSPACE 259) (def ^:const KEY-ENTER 257)
 
 ;; --- ergonomic keyword-argument drawing API ----------------------------------
@@ -811,6 +812,15 @@
 (def ^:const BLEND-ALPHA 0)      (def ^:const BLEND-ADDITIVE 1)
 (def ^:const BLEND-MULTIPLIED 2) (def ^:const BLEND-ADD-COLORS 3)
 (def ^:const BLEND-SUBTRACT-COLORS 4)
+(def ^:const BLEND-CUSTOM 6)     ; 5 is ALPHA_PREMULTIPLY, which nothing here uses
+
+;; rlSetBlendFactors hands its three arguments straight to glBlendFunc and
+;; glBlendEquation, so they are raw GL enums rather than raylib ones. rlgl only
+;; reads them while BLEND-CUSTOM is the current mode, and it re-applies on a mode
+;; change or a factor edit, so the order is: set the factors, then begin the mode.
+(ffi/defcfn set-blend-factors "rlSetBlendFactors" [:int :int :int] :void)
+(def ^:const GL-SRC-ALPHA 0x0302)
+(def ^:const GL-MIN 0x8007)      (def ^:const GL-MAX 0x8008)
 
 (defn circle-gradient!
   "DrawCircleGradient. :x :y :radius :inner :outer."
@@ -857,7 +867,7 @@
                            [(- width origin-x) (- height origin-y)]
                            [(- origin-x) (- height origin-y)]]]
               [(+ x (- (* dx cs) (* dy sn)))
-               (+ y (+ (* dx sn) (* dy cs)))])
+               (+ y (* dx sn) (* dy cs))])
         [a b c d] (vec pts)]
     (rl-begin RL-TRIANGLES)
     (rl-color! color)
@@ -919,6 +929,7 @@
 
 (def ^:const RL-QUADS 7)
 (def ^:const PIXELFORMAT-R8G8B8A8 7)          ; rlPixelFormat, 32bpp RGBA
+(def ^:const PIXELFORMAT-R8G8B8 4)            ; 24bpp, no alpha channel at all
 (def ^:const RL-TEXTURE-WRAP-S 0x2802)        (def ^:const RL-TEXTURE-WRAP-T 0x2803)
 (def ^:const RL-TEXTURE-WRAP-REPEAT 0x2901)   (def ^:const RL-TEXTURE-WRAP-CLAMP 0x812F)
 (def ^:const RL-TEXTURE-MAG-FILTER 0x2800)    (def ^:const RL-TEXTURE-MIN-FILTER 0x2801)
@@ -1915,3 +1926,581 @@
         d (vec2->ptr! p4)]
     (try (draw-spline-segment-bezier-cubic-raw a b c d (double thick) color)
          (finally (ffi/free a) (ffi/free b) (ffi/free c) (ffi/free d)))))
+
+;; --- rays: picking a point in the 3D scene, all by value -----------------
+;; GetScreenToWorldRay is the exact inverse of GetWorldToScreen above, and it is
+;; bound the same way: a by-value Vector2 in, a by-value Camera3D in, a by-value
+;; Ray out. GetRayCollisionBox then takes that Ray with an axis-aligned
+;; BoundingBox and hands back a RayCollision, whose first field is a one-byte C
+;; _Bool rather than an int. `:bool` is what reads that correctly, and it is also
+;; what makes the layout land `distance` at offset 4 instead of 1. Sizes are
+;; asserted at load rather than assumed, since a wrong offset here reads a
+;; plausible float out of the wrong bytes and never errors.
+(def ^:private ray-layout
+  (ffi/layout [:struct [[:position  [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:direction [:struct [[:x :float] [:y :float] [:z :float]]]]]]))
+
+(def ^:private ray-collision-layout
+  (ffi/layout [:struct [[:hit :bool]
+                        [:distance :float]
+                        [:point  [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:normal [:struct [[:x :float] [:y :float] [:z :float]]]]]]))
+
+(assert (= 24 (ffi/layout-size ray-layout)) "Ray is two Vector3s, 24 bytes")
+(assert (= 32 (ffi/layout-size ray-collision-layout))
+        "RayCollision is bool + pad + float + two Vector3s, 32 bytes")
+
+(ffi/defcfn ^:private get-screen-to-world-ray-raw "GetScreenToWorldRay"
+  [[:by-value [:struct [[:x :float] [:y :float]]]]
+   [:by-value [:struct [[:position [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:target   [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:up       [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:fovy :float]
+                        [:projection :int32]]]]]
+  [:by-value [:struct [[:position  [:struct [[:x :float] [:y :float] [:z :float]]]]
+                       [:direction [:struct [[:x :float] [:y :float] [:z :float]]]]]]])
+
+(ffi/defcfn ^:private get-ray-collision-box-raw "GetRayCollisionBox"
+  [[:by-value [:struct [[:position  [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:direction [:struct [[:x :float] [:y :float] [:z :float]]]]]]]
+   [:by-value [:struct [[:min [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:max [:struct [[:x :float] [:y :float] [:z :float]]]]]]]]
+  [:by-value [:struct [[:hit :bool]
+                       [:distance :float]
+                       [:point  [:struct [[:x :float] [:y :float] [:z :float]]]]
+                       [:normal [:struct [[:x :float] [:y :float] [:z :float]]]]]]])
+
+(ffi/defcfn ^:private draw-ray-raw "DrawRay"
+  [[:by-value [:struct [[:position  [:struct [[:x :float] [:y :float] [:z :float]]]]
+                        [:direction [:struct [[:x :float] [:y :float] [:z :float]]]]]]]
+   :uint]
+  :void)
+
+(ffi/defcfn ^:private cursor-hidden-raw "IsCursorHidden" [] :int)
+
+(defn cursor-hidden?
+  "IsCursorHidden, so an example can ask whether it currently owns the pointer
+  rather than tracking a flag of its own alongside disable-cursor!."
+  []
+  (not (zero? (bit-and (cursor-hidden-raw) 0xff))))
+
+(defn- ray->ptr!
+  "Allocate a ray-layout buffer from {:position [x y z] :direction [x y z]}.
+  Caller frees."
+  [{:keys [position direction]}]
+  (let [[px py pz] position
+        [dx dy dz] direction
+        p (ffi/alloc (ffi/layout-size ray-layout))]
+    (ffi/write-field p ray-layout [:position :x] (double px))
+    (ffi/write-field p ray-layout [:position :y] (double py))
+    (ffi/write-field p ray-layout [:position :z] (double pz))
+    (ffi/write-field p ray-layout [:direction :x] (double dx))
+    (ffi/write-field p ray-layout [:direction :y] (double dy))
+    (ffi/write-field p ray-layout [:direction :z] (double dz))
+    p))
+
+(defn screen-to-world-ray
+  "GetScreenToWorldRay. `screen` is [x y] in window coordinates and `camera`
+  takes the same keys as with-camera-3d's opts map, so one map can be shared
+  between the ray and the frame it is picking in. Returns
+  {:position [x y z] :direction [x y z]}, the unit direction included."
+  [[sx sy] camera]
+  (let [pos (ffi/alloc (ffi/layout-size vector2-layout))
+        cam (camera3d-alloc camera)
+        out (ffi/alloc (ffi/layout-size ray-layout))]
+    (try
+      (ffi/write-field pos vector2-layout :x (double sx))
+      (ffi/write-field pos vector2-layout :y (double sy))
+      (get-screen-to-world-ray-raw out pos cam)
+      {:position [(ffi/read-field out ray-layout [:position :x])
+                  (ffi/read-field out ray-layout [:position :y])
+                  (ffi/read-field out ray-layout [:position :z])]
+       :direction [(ffi/read-field out ray-layout [:direction :x])
+                   (ffi/read-field out ray-layout [:direction :y])
+                   (ffi/read-field out ray-layout [:direction :z])]}
+      (finally
+        (ffi/free pos)
+        (camera3d-free! cam)
+        (ffi/free out)))))
+
+(defn ray-collision-box
+  "GetRayCollisionBox against the axis-aligned box spanning `lo` to `hi`, both
+  [x y z]. Returns {:hit? :distance :point :normal}; everything but :hit? is
+  meaningless when :hit? is false, exactly as in the C."
+  [ray lo hi]
+  (let [r (ray->ptr! ray)
+        box (ffi/alloc (ffi/layout-size ray-layout))     ; BoundingBox is two Vector3s too
+        out (ffi/alloc (ffi/layout-size ray-collision-layout))
+        [lx ly lz] lo
+        [hx hy hz] hi]
+    (try
+      (ffi/write-field box ray-layout [:position :x] (double lx))
+      (ffi/write-field box ray-layout [:position :y] (double ly))
+      (ffi/write-field box ray-layout [:position :z] (double lz))
+      (ffi/write-field box ray-layout [:direction :x] (double hx))
+      (ffi/write-field box ray-layout [:direction :y] (double hy))
+      (ffi/write-field box ray-layout [:direction :z] (double hz))
+      (get-ray-collision-box-raw out r box)
+      {:hit? (ffi/read-field out ray-collision-layout :hit)
+       :distance (ffi/read-field out ray-collision-layout :distance)
+       :point [(ffi/read-field out ray-collision-layout [:point :x])
+               (ffi/read-field out ray-collision-layout [:point :y])
+               (ffi/read-field out ray-collision-layout [:point :z])]
+       :normal [(ffi/read-field out ray-collision-layout [:normal :x])
+                (ffi/read-field out ray-collision-layout [:normal :y])
+                (ffi/read-field out ray-collision-layout [:normal :z])]}
+      (finally
+        (ffi/free r)
+        (ffi/free box)
+        (ffi/free out)))))
+
+(defn draw-ray!
+  "DrawRay: the ray drawn as a long line from its origin. Inside a BeginMode3D
+  block, like the other draw-*! calls."
+  [ray color]
+  (let [r (ray->ptr! ray)]
+    (try (draw-ray-raw r color)
+         (finally (ffi/free r)))))
+
+;; --- files: FilePathList, another 16-byte struct returned by value -------
+;; FilePathList is {unsigned int count; char **paths;}, the same shape as Shader
+;; and so the same binding: 16 bytes, returned by value, handed straight back to
+;; its Unload by value. What is new is the char** on the other side of it. raylib
+;; owns that array and every string in it until the matching Unload runs, so the
+;; helpers below copy the strings out into a Clojure vector and unload inside the
+;; same call. Nothing a caller holds points into raylib's memory afterwards.
+(def ^:private file-path-list-layout
+  (ffi/layout [:struct [[:count :uint] [:paths :pointer]]]))
+
+(ffi/defcfn ^:private file-dropped-raw "IsFileDropped" [] :int)
+(ffi/defcfn ^:private load-dropped-files-raw "LoadDroppedFiles" []
+  [:by-value [:struct [[:count :uint] [:paths :pointer]]]])
+(ffi/defcfn ^:private unload-dropped-files-raw "UnloadDroppedFiles"
+  [[:by-value [:struct [[:count :uint] [:paths :pointer]]]]] :void)
+(ffi/defcfn ^:private load-directory-files-ex-raw "LoadDirectoryFilesEx"
+  [:string :string :bool]
+  [:by-value [:struct [[:count :uint] [:paths :pointer]]]])
+(ffi/defcfn ^:private unload-directory-files-raw "UnloadDirectoryFiles"
+  [[:by-value [:struct [[:count :uint] [:paths :pointer]]]]] :void)
+(ffi/defcfn ^:private directory-exists-raw "DirectoryExists" [:string] :int)
+(ffi/defcfn get-working-directory  "GetWorkingDirectory"  [] :string)
+(ffi/defcfn get-prev-directory-path "GetPrevDirectoryPath" [:string] :string)
+(ffi/defcfn get-file-name          "GetFileName"          [:string] :string)
+
+(defn- file-path-list->vec
+  "Copy the char** behind a filled FilePathList buffer into a vector of strings."
+  [out]
+  (let [n (ffi/read-field out file-path-list-layout :count)
+        base (ffi/read-field out file-path-list-layout :paths)
+        step (ffi/sizeof :pointer)]
+    (mapv (fn [i] (ffi/ptr->string (ffi/read base :pointer (* i step))))
+          (range n))))
+
+(defn file-dropped?
+  "IsFileDropped: whether files were dropped on the window since the last check."
+  []
+  (not (zero? (bit-and (file-dropped-raw) 0xff))))
+
+(defn directory-exists?
+  [path]
+  (not (zero? (bit-and (directory-exists-raw path) 0xff))))
+
+(defn dropped-files
+  "LoadDroppedFiles as a vector of path strings, unloaded before it returns.
+  Only meaningful right after file-dropped? answers true."
+  []
+  (let [out (ffi/alloc (ffi/layout-size file-path-list-layout))]
+    (try
+      (load-dropped-files-raw out)
+      (let [paths (file-path-list->vec out)]
+        (unload-dropped-files-raw out)
+        paths)
+      (finally (ffi/free out)))))
+
+(defn directory-files
+  "LoadDirectoryFilesEx as a vector of path strings, unloaded before it returns.
+  `scan-subdirs?` recurses.
+
+  `filter` is raylib's own filter string, and its behaviour is worth stating
+  because the header only hints at it. Measured against a directory holding 3
+  subdirectories and 2 files: \"*.*\" answers all 5, \"DIRS*\" the 3
+  directories, \"FILES*\" the 2 files, and an empty string or nil behaves as
+  \"FILES*\" rather than as everything. Extensions work too, \".png;.c\" for
+  those two, and they combine with the DIRS/FILES forms over a semicolon."
+  [dir filter scan-subdirs?]
+  (let [out (ffi/alloc (ffi/layout-size file-path-list-layout))]
+    (try
+      (load-directory-files-ex-raw out dir (or filter "") (boolean scan-subdirs?))
+      (let [paths (file-path-list->vec out)]
+        (unload-directory-files-raw out)
+        paths)
+      (finally (ffi/free out)))))
+
+;; --- the trace log, and the suite's first callback INTO jolt -------------
+;; Every binding above this one calls out of jolt into C. SetTraceLogCallback
+;; goes the other way: raylib is handed a function pointer and calls it for every
+;; message it would otherwise print. ffi/foreign-callable builds that pointer out
+;; of a jolt fn, and the pointer stays live until free-callable, which is why
+;; on-trace-log! hands it back rather than dropping it on the floor.
+;;
+;; The third parameter is the awkward one. raylib's callback signature ends in a
+;; va_list, which no FFI type describes, so it is taken as an opaque :pointer and
+;; handed straight to libc's vsnprintf along with the format string. That is what
+;; turns "Target time per frame: %02.03f milliseconds" into the line with the
+;; number in it. A va_list can be walked once, which is fine here because
+;; replacing the callback means raylib's own logger is no longer reading it.
+;; Verified against a real window: 43 messages captured through InitWindow, with
+;; every %i, %s and %f expanded.
+(ffi/defcfn set-trace-log-callback "SetTraceLogCallback" [:pointer] :void)
+(ffi/defcfn ^:private vsnprintf-raw "vsnprintf" [:pointer :uptr :pointer :pointer] :int)
+
+(def ^:const LOG-TRACE 1)   (def ^:const LOG-DEBUG 2)
+(def ^:const LOG-INFO 3)    (def ^:const LOG-WARNING 4)
+(def ^:const LOG-ERROR 5)   (def ^:const LOG-FATAL 6)
+
+(def ^:const TRACE-LOG-BUFFER 1024)
+
+(defn on-trace-log!
+  "SetTraceLogCallback with a jolt fn. `f` is called as (f level text) for every
+  message raylib logs, `level` one of the LOG-* constants and `text` the format
+  string already expanded by vsnprintf. Anything longer than TRACE-LOG-BUFFER is
+  truncated, which vsnprintf does for us rather than overrunning.
+
+  Returns the callable pointer. raylib keeps calling it until another callback
+  replaces it, so the pointer has to outlive the window; free it with
+  ffi/free-callable once the window is closed, not before. Install this BEFORE
+  init-window if the startup messages are wanted."
+  [f]
+  (let [entry (ffi/foreign-callable
+               (fn [level text-ptr va]
+                 (let [buf (ffi/alloc TRACE-LOG-BUFFER)]
+                   (try
+                     (vsnprintf-raw buf TRACE-LOG-BUFFER text-ptr va)
+                     (f level (ffi/ptr->string buf))
+                     (finally (ffi/free buf))))
+                 nil)
+               [:int :pointer :pointer] :void)]
+    (set-trace-log-callback entry)
+    entry))
+
+(defn free-callable!
+  "Release a callable entry point built by on-trace-log!. C can call the pointer
+  until this runs and not one instruction longer, so unregister it with the C
+  library first: for the trace log that means closing the window, since raylib
+  logs while it shuts down."
+  [entry]
+  (ffi/free-callable entry))
+
+;; --- the audio stream callback, on a thread jolt never started ----------
+;; on-trace-log! above is a callback raylib invokes on whichever thread called
+;; into it, which is this one. SetAudioStreamCallback is the harder case: raudio
+;; runs its own audio thread and calls back from there, so the entry point needs
+;; jolt's :collect-safe, which reactivates the thread before any jolt code runs
+;; on it. Without it the process dies with a memory fault no handler can catch.
+;;
+;; What happens inside is the caller's problem and a real-time one: the callback
+;; owes raudio `frames` samples before the device underruns. Write them straight
+;; into `buffer` with ffi/write and keep allocation out of the loop.
+(ffi/defcfn ^:private set-audio-stream-callback-raw "SetAudioStreamCallback"
+  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
+                        [:sample-rate :uint32] [:sample-size :uint32]
+                        [:channels :uint32]]]]
+   :pointer]
+  :void)
+
+(defn on-audio-stream!
+  "SetAudioStreamCallback with a jolt fn. `f` is called as (f buffer frames) on
+  raudio's audio thread and must fill `buffer` with `frames` samples, written as
+  :float at 4-byte strides for a 32-bit mono stream.
+
+  Returns the callable pointer. Clear the callback with
+  clear-audio-stream-callback! BEFORE freeing that pointer, or raudio is left
+  calling a dead address from another thread."
+  [stream f]
+  (let [entry (ffi/foreign-callable f [:pointer :uint32] :void :collect-safe)]
+    (set-audio-stream-callback-raw stream entry)
+    entry))
+
+(defn clear-audio-stream-callback!
+  "Hand raudio a NULL callback, so it goes back to waiting for
+  update-audio-stream refills and stops calling into jolt."
+  [stream]
+  (set-audio-stream-callback-raw stream ffi/null))
+
+;; --- window placement ----------------------------------------------------
+;; Both scalar, and both only meaningful after init-window. SetWindowMinSize
+;; needs FLAG_WINDOW_RESIZABLE to have any effect, since a fixed-size window has
+;; no minimum to enforce.
+(ffi/defcfn set-window-min-size "SetWindowMinSize" [:int :int] :void)
+(ffi/defcfn set-window-monitor  "SetWindowMonitor" [:int] :void)
+
+;; --- Image: raylib's CPU-side pixel buffer, by value ---------------------
+;; Image is {void *data; int width, height, mipmaps, format;}, 24 bytes, returned
+;; by value from every generator and taken by value by everything that consumes
+;; one. The generators are the reason to bind it at all: they are raylib's own
+;; procedural textures, checkerboards through Perlin and cellular noise, and this
+;; suite ships no image files, so generating is the only way it ever had.
+;;
+;; What comes back to the caller is an rlgl texture id, not the Image and not the
+;; Texture2D. That keeps the whole existing drawing surface usable unchanged:
+;; texture!, texture-filter!, texture-wrap! and unload-texture! all speak ids
+;; already, so an image generated here draws through the same path a
+;; texture-from-fn one does. The Image itself is freed inside each call, since
+;; its pixels have been copied to the GPU by then.
+(def ^:private image-layout
+  (ffi/layout [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]))
+
+;; texture2d-layout is already defined above, where the shader section needed it
+;; for SetShaderValueTexture; image->texture-id! reuses that one rather than
+;; shadowing it with a second copy of the same five fields.
+;;
+;; The five fields ARE written out again in every signature below, and that is
+;; forced rather than sloppy: a struct descriptor is a compile-time literal, so
+;; a def'd alias is rejected with "return type must be a keyword or [:by-value
+;; [:struct ...]]". Same constraint the shader section documents, same shape of
+;; repetition, and the layout above still earns its keep for reading fields back.
+(assert (= 24 (ffi/layout-size image-layout)) "Image is a pointer and four ints")
+(assert (= 20 (ffi/layout-size texture2d-layout)) "Texture2D is five 4-byte fields")
+
+(ffi/defcfn ^:private gen-image-color-raw "GenImageColor" [:int :int :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-checked-raw "GenImageChecked" [:int :int :int :int :uint :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-gradient-linear-raw "GenImageGradientLinear" [:int :int :int :uint :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-gradient-radial-raw "GenImageGradientRadial" [:int :int :float :uint :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-gradient-square-raw "GenImageGradientSquare" [:int :int :float :uint :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-white-noise-raw "GenImageWhiteNoise" [:int :int :float]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-perlin-noise-raw "GenImagePerlinNoise" [:int :int :int :int :float]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-cellular-raw "GenImageCellular" [:int :int :int]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-text-raw "GenImageText" [:int :int :string]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private unload-image-raw "UnloadImage"
+  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]]] :void)
+(ffi/defcfn ^:private load-texture-from-image-raw "LoadTextureFromImage"
+  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]]]
+  [:by-value [:struct [[:id :uint] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+
+(defn- image->texture-id!
+  "Upload a filled Image buffer to the GPU, free the Image, and answer the rlgl
+  texture id. 0 means the upload failed, which raylib has already logged."
+  [img]
+  (let [tex (ffi/alloc (ffi/layout-size texture2d-layout))]
+    (try
+      (load-texture-from-image-raw tex img)
+      (unload-image-raw img)
+      (ffi/read-field tex texture2d-layout :id)
+      (finally (ffi/free tex)))))
+
+(defn- with-image
+  "Run `f` against a freshly allocated Image buffer, then hand the result on.
+  `f` fills the buffer by calling one of the generators with it as the return
+  slot, which is jolt's convention for an aggregate return."
+  [f]
+  (let [img (ffi/alloc (ffi/layout-size image-layout))]
+    (try
+      (f img)
+      (image->texture-id! img)
+      (finally (ffi/free img)))))
+
+(defn image-color
+  "GenImageColor as a texture id: a plain `w` x `h` field of one colour."
+  [w h color]
+  (with-image (fn [img] (gen-image-color-raw img (int w) (int h) color))))
+
+(defn image-checked
+  "GenImageChecked as a texture id: `checks-x` by `checks-y` squares alternating
+  between two colours."
+  [w h checks-x checks-y c1 c2]
+  (with-image (fn [img] (gen-image-checked-raw img (int w) (int h)
+                                               (int checks-x) (int checks-y) c1 c2))))
+
+(defn image-gradient-linear
+  "GenImageGradientLinear as a texture id. `direction` is in degrees, 0 vertical."
+  [w h direction start end]
+  (with-image (fn [img] (gen-image-gradient-linear-raw img (int w) (int h)
+                                                       (int direction) start end))))
+
+(defn image-gradient-radial
+  "GenImageGradientRadial as a texture id, `density` shaping the falloff."
+  [w h density inner outer]
+  (with-image (fn [img] (gen-image-gradient-radial-raw img (int w) (int h)
+                                                       (double density) inner outer))))
+
+(defn image-gradient-square
+  "GenImageGradientSquare as a texture id, `density` shaping the falloff."
+  [w h density inner outer]
+  (with-image (fn [img] (gen-image-gradient-square-raw img (int w) (int h)
+                                                       (double density) inner outer))))
+
+(defn image-white-noise
+  "GenImageWhiteNoise as a texture id. `factor` is the fraction of white pixels."
+  [w h factor]
+  (with-image (fn [img] (gen-image-white-noise-raw img (int w) (int h) (double factor)))))
+
+(defn image-perlin-noise
+  "GenImagePerlinNoise as a texture id. The offsets slide the sample window, so
+  animating one of them scrolls the field rather than regenerating it."
+  [w h offset-x offset-y scale]
+  (with-image (fn [img] (gen-image-perlin-noise-raw img (int w) (int h)
+                                                    (int offset-x) (int offset-y) (double scale)))))
+
+(defn image-cellular
+  "GenImageCellular as a texture id. A bigger `tile-size` means bigger cells."
+  [w h tile-size]
+  (with-image (fn [img] (gen-image-cellular-raw img (int w) (int h) (int tile-size)))))
+
+(defn image-text
+  "GenImageText as a texture id: `text` rasterised with raylib's default font
+  into a `w` x `h` greyscale field."
+  [w h text]
+  (with-image (fn [img] (gen-image-text-raw img (int w) (int h) text))))
+
+;; --- Image processing: raylib's own pixel operations ---------------------
+;; The generators above make an Image; these change one. Note the asymmetry in
+;; raylib's own API, which is why these bind so differently: every processor
+;; takes `Image *` and works IN PLACE, so it is a plain :pointer argument and the
+;; 24-byte by-value dance does not arise. Only ImageCopy and LoadImageFromTexture
+;; move whole Images across the boundary.
+;;
+;; LoadImageFromTexture is what lets this suite process a picture at all. It
+;; reads a GPU texture back to CPU memory, so an image authored pixel by pixel
+;; with texture-from-fn can be handed to raylib's blur, its channel flips and its
+;; colour operations. Without it there is no source image here, since no example
+;; ships one on disk.
+(ffi/defcfn ^:private load-image-from-texture-raw "LoadImageFromTexture"
+  [[:by-value [:struct [[:id :uint] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]]]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private image-copy-raw "ImageCopy"
+  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]]]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private image-format-raw         "ImageFormat"          [:pointer :int] :void)
+(ffi/defcfn ^:private image-color-invert-raw   "ImageColorInvert"     [:pointer] :void)
+(ffi/defcfn ^:private image-color-grayscale-raw "ImageColorGrayscale" [:pointer] :void)
+(ffi/defcfn ^:private image-color-tint-raw     "ImageColorTint"       [:pointer :uint] :void)
+(ffi/defcfn ^:private image-color-contrast-raw "ImageColorContrast"   [:pointer :int] :void)
+(ffi/defcfn ^:private image-color-brightness-raw "ImageColorBrightness" [:pointer :int] :void)
+(ffi/defcfn ^:private image-flip-horizontal-raw "ImageFlipHorizontal" [:pointer] :void)
+(ffi/defcfn ^:private image-flip-vertical-raw  "ImageFlipVertical"    [:pointer] :void)
+(ffi/defcfn ^:private image-blur-gaussian-raw  "ImageBlurGaussian"    [:pointer :int] :void)
+
+(defn image-from-texture!
+  "LoadImageFromTexture: read an rlgl texture back off the GPU into a fresh
+  Image buffer, which the caller owns and must pass to unload-image!. The
+  texture is described truthfully from `w` and `h`; raylib reads the id, the
+  size and the format to work out how many bytes to pull back."
+  [tex-id w h]
+  (let [img (ffi/alloc (ffi/layout-size image-layout))]
+    (ffi/with-layout [t texture2d-layout]
+      (ffi/write-field t texture2d-layout :id tex-id)
+      (ffi/write-field t texture2d-layout :width (int w))
+      (ffi/write-field t texture2d-layout :height (int h))
+      (ffi/write-field t texture2d-layout :mipmaps 1)
+      (ffi/write-field t texture2d-layout :format PIXELFORMAT-R8G8B8A8)
+      (load-image-from-texture-raw img t))
+    img))
+
+(defn image-copy!
+  "ImageCopy: a duplicate the caller owns, so an original can be kept while a
+  processor chews through the copy."
+  [img]
+  (let [out (ffi/alloc (ffi/layout-size image-layout))]
+    (image-copy-raw out img)
+    out))
+
+(defn unload-image!
+  "UnloadImage, then release the 24-byte struct this side."
+  [img]
+  (unload-image-raw img)
+  (ffi/free img))
+
+(defn image->texture
+  "Upload an Image the caller still owns to the GPU and answer its rlgl texture
+  id. Unlike the generators, this does NOT consume the Image."
+  [img]
+  (let [tex (ffi/alloc (ffi/layout-size texture2d-layout))]
+    (try
+      (load-texture-from-image-raw tex img)
+      (ffi/read-field tex texture2d-layout :id)
+      (finally (ffi/free tex)))))
+
+(defn image-format!
+  "ImageFormat, in place. RGBA8 is PIXELFORMAT-R8G8B8A8; a processor that ran
+  on a narrower format needs putting back before it is uploaded."
+  [img format]
+  (image-format-raw img (int format)))
+
+(defn image-color-invert! [img] (image-color-invert-raw img))
+(defn image-color-grayscale! [img] (image-color-grayscale-raw img))
+(defn image-color-tint! [img color] (image-color-tint-raw img color))
+(defn image-color-contrast! [img contrast] (image-color-contrast-raw img (int contrast)))
+(defn image-color-brightness! [img brightness] (image-color-brightness-raw img (int brightness)))
+(defn image-flip-horizontal! [img] (image-flip-horizontal-raw img))
+(defn image-flip-vertical! [img] (image-flip-vertical-raw img))
+(defn image-blur-gaussian! [img size] (image-blur-gaussian-raw img (int size)))
+
+;; --- Image geometry and convolution --------------------------------------
+;; Both in place on an Image*, like the colour operations above, except that
+;; ImageCrop's Rectangle is by value: four floats, 16 bytes, which on arm64 fits
+;; in registers rather than going indirect. ImageKernelConvolution takes a flat
+;; float array and its LENGTH, not its side, so a 3x3 kernel is nine floats and
+;; the argument is 9.
+(def ^:private rectangle-layout
+  (ffi/layout [:struct [[:x :float] [:y :float] [:width :float] [:height :float]]]))
+
+(ffi/defcfn ^:private image-crop-raw "ImageCrop"
+  [:pointer [:by-value [:struct [[:x :float] [:y :float]
+                                 [:width :float] [:height :float]]]]] :void)
+(ffi/defcfn ^:private image-kernel-convolution-raw "ImageKernelConvolution"
+  [:pointer :pointer :int] :void)
+(ffi/defcfn ^:private image-resize-raw "ImageResize" [:pointer :int :int] :void)
+
+(defn image-crop!
+  "ImageCrop, in place. :x :y :width :height in pixels."
+  [img & {:keys [x y width height]
+          :or {x 0
+               y 0
+               width 1
+               height 1}}]
+  (let [r (ffi/alloc (ffi/layout-size rectangle-layout))]
+    (try
+      (ffi/write-field r rectangle-layout :x (double x))
+      (ffi/write-field r rectangle-layout :y (double y))
+      (ffi/write-field r rectangle-layout :width (double width))
+      (ffi/write-field r rectangle-layout :height (double height))
+      (image-crop-raw img r)
+      (finally (ffi/free r)))))
+
+(defn image-resize!
+  "ImageResize, in place, bicubic."
+  [img w h]
+  (image-resize-raw img (int w) (int h)))
+
+(defn image-convolve!
+  "ImageKernelConvolution, in place. `kernel` is a flat sequence of floats whose
+  count is a perfect square, so a 3x3 is nine of them. raylib takes the COUNT
+  rather than the side length."
+  [img kernel]
+  (staged :float kernel (fn [p] (image-kernel-convolution-raw img p (count kernel)))))

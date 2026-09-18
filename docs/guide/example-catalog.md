@@ -1,4 +1,4 @@
-# The example catalog: 154 raylib demos in jolt
+# The example catalog: 171 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -30,7 +30,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/minesweeper.gif" width="80">](demos.md#minesweeper) | `minesweeper` | reveal/flag grid (mouse L reveal, R flag) |
 | *not recorded yet* | `pacman` | the four classic ghost personalities, buffered turns |
 
-## core (30)
+## core (34)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -64,8 +64,12 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/viewport-scaling.gif" width="80">](demos.md#viewport-scaling) | `viewport-scaling` | 6 viewport-scaling policies, resize live |
 | [<img src="../demos/highdpi-testbed.gif" width="80">](demos.md#highdpi-testbed) | `highdpi-testbed` | diagnostic overlay: monitors, DPI, crosshair |
 | [<img src="../demos/compute-hash.gif" width="80">](demos.md#compute-hash) | `compute-hash` | CRC32/MD5/SHA1/SHA256 + Base64 of typed text |
+| *not recorded yet* | `drop-files` | drag files in: FilePathList by value |
+| *not recorded yet* | `directory-files` | a file browser over LoadDirectoryFilesEx |
+| *not recorded yet* | `custom-logging` | raylib's log captured by a jolt callback |
+| *not recorded yet* | `highdpi-demo` | logical points vs physical pixels, two rulers |
 
-## shapes (43)
+## shapes (44)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -112,8 +116,9 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/rectangle-advanced.png" width="80">](demos.md#rectangle-advanced) | `rectangle-advanced` | per-side roundness with a horizontal gradient |
 | [<img src="../demos/easings-testbed.gif" width="80">](demos.md#easings-testbed) | `easings-testbed` | one curve at a time, plotted and run |
 | [<img src="../demos/starfield-effect.gif" width="80">](demos.md#starfield-effect) | `starfield-effect` | flying starfield (wheel=speed, SPACE=mode) |
+| *not recorded yet* | `top-down-lights` | lights and shadow volumes in an alpha mask |
 
-## text (6)
+## text (8)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -123,8 +128,10 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/words-alignment.gif" width="80">](demos.md#words-alignment) | `words-alignment` | align a word inside a box with `MeasureText` |
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
 | [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
+| *not recorded yet* | `strings-management` | bouncing text you slice, shatter and glue |
+| *not recorded yet* | `inline-styling` | colour markup inside the string itself |
 
-## 3d (25)
+## 3d (27)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -153,6 +160,8 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/directional-billboard.gif" width="80">](demos.md#directional-billboard) | `directional-billboard` | a billboard whose facing row turns with the camera |
 | *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
 | *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
+| *not recorded yet* | `basic-voxel` | an 8x8x8 voxel block, click one out |
+| *not recorded yet* | `picking-3d` | click a box: a real GetScreenToWorldRay pick |
 
 Most of the 3D set stands on two building blocks from
 [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md) and
@@ -187,7 +196,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (11)
+## textures (18)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -207,6 +216,13 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/blend-modes.gif" width="80">](demos.md#blend-modes) | `blend-modes` | four 2D blend modes over a night skyline |
 | [<img src="../demos/screen-buffer.gif" width="80">](demos.md#screen-buffer) | `screen-buffer` | the classic DOS fire effect |
 | [<img src="../demos/background-scrolling.gif" width="80">](demos.md#background-scrolling) | `background-scrolling` | three parallax skyline layers, each scrolling |
+| *not recorded yet* | `fog-of-war` | fog lifted by a 25x15 render texture |
+| *not recorded yet* | `framebuffer-rendering` | two cameras, two framebuffers, one scene |
+| *not recorded yet* | `image-generation` | nine procedural textures, none of them loaded |
+| *not recorded yet* | `image-processing` | nine CPU-side image operations, picked live |
+| *not recorded yet* | `image-kernel` | sharpen, sobel and gaussian, one call each |
+| *not recorded yet* | `npatch-drawing` | nine-patch stretching, corners held fixed |
+| *not recorded yet* | `sprite-button` | one sheet, three states, sliced by v |
 
 ## shaders (16)
 
@@ -243,16 +259,19 @@ by-value API itself is not written yet.
 | [<img src="../demos/texture-outline.gif" width="80">](demos.md#texture-outline) | `texture-outline` | a shader outline around a sprite's alpha edge |
 | [<img src="../demos/ascii-rendering.gif" width="80">](demos.md#ascii-rendering) | `ascii-rendering` | ascii art from a post-process shader |
 
-## audio (2)
+## audio (3)
 
-raylib's raudio, streamed by hand: a caller-managed ring buffer refilled every
-frame with `IsAudioStreamProcessed` / `UpdateAudioStream`, rather than a
-one-shot `LoadSound`.
+raylib's raudio, in both directions. Two examples push, refilling a
+caller-managed ring buffer every frame with `IsAudioStreamProcessed` /
+`UpdateAudioStream`. The third lets raudio pull, from its own audio thread,
+through a jolt callback. None of them loads a file, so there is no `LoadSound`
+here yet.
 
 | preview | `bb` name | shows |
 |---|---|---|
 | [<img src="../demos/audio-raw-stream.gif" width="80">](demos.md#audio-raw-stream) | `audio-raw-stream` | arrow keys steer a live sine tone's pitch/pan |
 | [<img src="../demos/amp-envelope.gif" width="80">](demos.md#amp-envelope) | `amp-envelope` | ADSR amplitude envelope on a 440Hz tone |
+| *not recorded yet* | `audio-stream-callback` | raudio pulls samples from its own thread |
 
 ## Adding an example: the five touchpoints
 

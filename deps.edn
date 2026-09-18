@@ -170,6 +170,23 @@
            :billboard-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.billboard-rendering"]} ; camera-facing quads, one spins
            :texture-outline {:main-opts ["-m" "net.b12n.raylib-jlt.texture-outline"]} ; a shader outline around a sprite's alpha edge
            :directional-billboard {:main-opts ["-m" "net.b12n.raylib-jlt.directional-billboard"]} ; a billboard whose facing row turns with the camera
-           :ascii-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.ascii-rendering"]}} ; ascii art from a post-process shader
+           :ascii-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.ascii-rendering"]} ; ascii art from a post-process shader
+           :top-down-lights {:main-opts ["-m" "net.b12n.raylib-jlt.top-down-lights"]} ; lights and shadow volumes in an alpha mask
+           :basic-voxel {:main-opts ["-m" "net.b12n.raylib-jlt.basic-voxel"]} ; an 8x8x8 voxel block, click one out
+           :strings-management {:main-opts ["-m" "net.b12n.raylib-jlt.strings-management"]} ; bouncing text you slice, shatter and glue
+           :picking-3d {:main-opts ["-m" "net.b12n.raylib-jlt.picking-3d"]} ; click a box: a real GetScreenToWorldRay pick
+           :drop-files {:main-opts ["-m" "net.b12n.raylib-jlt.drop-files"]} ; drag files in: FilePathList by value
+           :directory-files {:main-opts ["-m" "net.b12n.raylib-jlt.directory-files"]} ; a file browser over LoadDirectoryFilesEx
+           :custom-logging {:main-opts ["-m" "net.b12n.raylib-jlt.custom-logging"]} ; raylib's log captured by a jolt callback
+           :audio-stream-callback {:main-opts ["-m" "net.b12n.raylib-jlt.audio-stream-callback"]} ; raudio pulls samples from its own thread
+           :inline-styling {:main-opts ["-m" "net.b12n.raylib-jlt.inline-styling"]} ; colour markup inside the string itself
+           :fog-of-war {:main-opts ["-m" "net.b12n.raylib-jlt.fog-of-war"]} ; fog lifted by a 25x15 render texture
+           :framebuffer-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.framebuffer-rendering"]} ; two cameras, two framebuffers, one scene
+           :highdpi-demo {:main-opts ["-m" "net.b12n.raylib-jlt.highdpi-demo"]} ; logical points vs physical pixels, two rulers
+           :image-generation {:main-opts ["-m" "net.b12n.raylib-jlt.image-generation"]} ; nine procedural textures, none of them loaded
+           :image-processing {:main-opts ["-m" "net.b12n.raylib-jlt.image-processing"]} ; nine CPU-side image operations, picked live
+           :image-kernel {:main-opts ["-m" "net.b12n.raylib-jlt.image-kernel"]} ; sharpen, sobel and gaussian, one call each
+           :npatch-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.npatch-drawing"]} ; nine-patch stretching, corners held fixed
+           :sprite-button {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-button"]}} ; one sheet, three states, sliced by v
 
  :tasks {run "joltc -M:run"}}

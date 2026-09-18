@@ -162,7 +162,24 @@
    ["billboard-rendering"  "billboard-rendering" "3d" "camera-facing quads, one spins"]
    ["texture-outline"      "texture-outline" "shaders" "a shader outline around a sprite's alpha edge"]
    ["directional-billboard" "directional-billboard" "3d" "a billboard whose facing row turns with the camera"]
-   ["ascii-rendering"      "ascii-rendering" "shaders" "ascii art from a post-process shader"]])
+   ["ascii-rendering"      "ascii-rendering" "shaders" "ascii art from a post-process shader"]
+   ["top-down-lights" "top-down-lights" "shapes" "lights and shadow volumes in an alpha mask"]
+   ["basic-voxel" "basic-voxel" "3d" "an 8x8x8 voxel block, click one out"]
+   ["strings-management" "strings-management" "text" "bouncing text you slice, shatter and glue"]
+   ["picking-3d" "picking-3d" "3d" "click a box: a real GetScreenToWorldRay pick"]
+   ["drop-files" "drop-files" "core" "drag files in: FilePathList by value"]
+   ["directory-files" "directory-files" "core" "a file browser over LoadDirectoryFilesEx"]
+   ["custom-logging" "custom-logging" "core" "raylib's log captured by a jolt callback"]
+   ["audio-stream-callback" "audio-stream-callback" "audio" "raudio pulls samples from its own thread"]
+   ["inline-styling" "inline-styling" "text" "colour markup inside the string itself"]
+   ["fog-of-war" "fog-of-war" "textures" "fog lifted by a 25x15 render texture"]
+   ["framebuffer-rendering" "framebuffer-rendering" "textures" "two cameras, two framebuffers, one scene"]
+   ["highdpi-demo" "highdpi-demo" "core" "logical points vs physical pixels, two rulers"]
+   ["image-generation" "image-generation" "textures" "nine procedural textures, none of them loaded"]
+   ["image-processing" "image-processing" "textures" "nine CPU-side image operations, picked live"]
+   ["image-kernel" "image-kernel" "textures" "sharpen, sobel and gaussian, one call each"]
+   ["npatch-drawing" "npatch-drawing" "textures" "nine-patch stretching, corners held fixed"]
+   ["sprite-button" "sprite-button" "textures" "one sheet, three states, sliced by v"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

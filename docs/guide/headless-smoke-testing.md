@@ -118,6 +118,16 @@ context. On a Mac whose display has slept, window creation can fail with "Failed
 determine Monitor" and then crash. `jolt -M:check` needs no display and always
 works; `RAYLIB_APP_SHOT` needs a live (awake) display.
 
+Worth knowing what that failure looks like, because it does not look like itself.
+raylib prints `WARNING: SYSTEM: Failed to initialize platform` and keeps going, so
+every call after it runs against an uninitialized platform and the process dies on
+the way out with `Unhandled exception (RuntimeException): invalid memory
+reference`, its trace pointing at whatever line happened to be last. That reads as
+a bug in the example you just wrote. It is not: it hits every example at once, so
+the check is to re-run one that already worked, say `jolt -M:run`, and look for
+`INFO: DISPLAY: Device initialized successfully`. If that line is missing too, the
+display is the problem and nothing in the source is.
+
 ## A C-truthiness footnote
 
 raylib's boolean-returning functions (`WindowShouldClose`, `IsKeyDown`) return a

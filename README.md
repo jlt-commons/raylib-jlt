@@ -464,7 +464,7 @@ inline.
   - [`textures-via-rlgl.md`](docs/guide/textures-via-rlgl.md): why `LoadTexture` has no binding, and reaching textures and framebuffers from underneath it
   - [`kwarg-drawing-api.md`](docs/guide/kwarg-drawing-api.md): the positional-binds / keyword-wrappers two-layer design
   - [`headless-smoke-testing.md`](docs/guide/headless-smoke-testing.md): `RAYLIB_APP_AUTO_QUIT_MS` + `RAYLIB_APP_SHOT` proof without a person
-  - [`example-catalog.md`](docs/guide/example-catalog.md): a tour of all 154, and the five-touchpoint recipe for adding one
+  - [`example-catalog.md`](docs/guide/example-catalog.md): a tour of all 171, and the five-touchpoint recipe for adding one
 
 - Two galleries show the same 151 recordings for different purposes. 148 are
   animated GIFs. Three are still frames: `rectangle-advanced` and `rlgl-triangle`
@@ -477,11 +477,19 @@ inline.
   [`docs/guide/demos.md`](docs/guide/demos.md) is the full-size companion to the
   example catalog's thumbnails.
 
-  151 recordings against 154 examples is not a mismatch to fix in the docs.
-  `helitorus`, `doom` and `pacman` landed with their `demo_manifest.edn` entries
-  but have not been recorded yet, and recording is a maintainer step that needs
-  the unreleased capture tool. Run them with `bb helitorus`, `bb doom` or
-  `bb pacman` in the meantime.
+  151 recordings against 171 examples is not a mismatch to fix in the docs.
+  Twenty have not been recorded yet: `helitorus`, `doom`, `pacman`,
+  `top-down-lights`, `basic-voxel`, `strings-management`, `picking-3d`,
+  `drop-files`, `directory-files`, `custom-logging`, `audio-stream-callback`,
+  `inline-styling`, `fog-of-war`, `framebuffer-rendering`, `highdpi-demo`,
+  `image-generation`, `image-processing`, `image-kernel`, `npatch-drawing` and
+  `sprite-button`. `highdpi-demo` will not record
+  usefully whatever happens to the tool, since FLAG_WINDOW_HIGHDPI and the
+  capture path double the scale independently. Recording is a
+  maintainer step that needs the unreleased capture tool, so run any of them
+  with `bb <name>` in the meantime. `drop-files` and `directory-files` will
+  never record well whatever happens to the tool: one waits on an
+  operating-system drop event and the other on someone navigating a tree.
 
 - Publishing is automatic. `.github/workflows/site.yml` builds the site on every
   pull request and deploys it from `main`, so a merged docs change is live without
