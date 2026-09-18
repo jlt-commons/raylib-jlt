@@ -208,6 +208,7 @@ bb check:positional-args:strict  # bb check:positional-args, but exit non-zero i
 bb check:kwarg-calls             # find flat :k v calls to a kwargs fn (report only)
 bb check:kwarg-calls:strict      # bb check:kwarg-calls, but exit non-zero if any found
 bb fix:kwarg-calls               # rewrite flat :k v call sites into an explicit {} map
+bb check:demos                   # galleries, ledger and stated counts agree with the registry
 ```
 
 `bb check`, `bb test` and `bb lint`/`bb lsp:format-check` are the gates worth
@@ -508,6 +509,7 @@ raylib-jlt/
 ├── docs/guide/              ; the pattern guides listed under Documentation above
 ├── scripts/                 ; check_positional_args.clj (bb check:positional-args)
 │                             ; kwarg_calls_to_maps.clj (bb check|fix:kwarg-calls)
+│                             ; check_demos.clj (bb check:demos)
 └── src/net/b12n/raylib_jlt/
     ├── raylib.clj           ; ALL bindings + the kwarg API + Color palette + guards
     ├── check.clj            ; headless compile-check of every example
