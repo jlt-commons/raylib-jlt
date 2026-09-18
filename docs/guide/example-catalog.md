@@ -1,4 +1,4 @@
-# The example catalog: 168 raylib demos in jolt
+# The example catalog: 171 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -196,7 +196,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (15)
+## textures (18)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -220,6 +220,9 @@ native memory rather than loaded from a file. See
 | *not recorded yet* | `framebuffer-rendering` | two cameras, two framebuffers, one scene |
 | *not recorded yet* | `image-generation` | nine procedural textures, none of them loaded |
 | *not recorded yet* | `image-processing` | nine CPU-side image operations, picked live |
+| *not recorded yet* | `image-kernel` | sharpen, sobel and gaussian, one call each |
+| *not recorded yet* | `npatch-drawing` | nine-patch stretching, corners held fixed |
+| *not recorded yet* | `sprite-button` | one sheet, three states, sliced by v |
 
 ## shaders (16)
 

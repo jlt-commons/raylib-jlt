@@ -2,12 +2,13 @@
 
 Every recorded example at full size, linked from
 [the example catalog](example-catalog.md)'s preview thumbnails. All 151 recordings
-are here, covering 151 of the suite's 168 examples. Seventeen have not been
+are here, covering 151 of the suite's 171 examples. Twenty have not been
 recorded yet: `helitorus`, `doom`, `pacman`, `top-down-lights`, `basic-voxel`,
 `strings-management`, `picking-3d`, `drop-files`, `directory-files`,
 `custom-logging`, `audio-stream-callback`, `inline-styling`, `fog-of-war`,
-`framebuffer-rendering`, `highdpi-demo`, `image-generation` and
-`image-processing`. Run those with `bb <name>` directly.
+`framebuffer-rendering`, `highdpi-demo`, `image-generation`,
+`image-processing`, `image-kernel`, `npatch-drawing` and `sprite-button`. Run
+those with `bb <name>` directly.
 
 148 are animated GIFs. Three are still frames. `rectangle-advanced` and
 `rlgl-triangle` draw something fixed and only move when you drive them, so a

@@ -10,6 +10,31 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-18 (late)
+
+- **Three more textures examples, taking the suite to 171.** `image-kernel` runs
+  the same picture through a sharpen, a Sobel and six Gaussian passes;
+  `npatch-drawing` stretches panels whose corners hold their size; `sprite-button`
+  picks its state by moving a window down one sheet.
+- **raylib convolves the alpha channel, and does not clamp it.** A zero-sum
+  kernel like Sobel therefore drives alpha to zero across every flat region,
+  which is every interior pixel of an opaque picture: the edges are computed
+  perfectly and drawn completely transparent, so `image-kernel`'s third panel
+  came back blank white with the compile gate green. Dropping the image to
+  `PIXELFORMAT_UNCOMPRESSED_R8G8B8`, which has no alpha channel at all, and
+  converting back is the cheapest way to say opaque again. Found by looking at
+  the screenshot rather than by reading the header.
+- **`npatch!` is `DrawTextureNPatch` written out**, nine `texture!` quads whose
+  source rectangles carve the image into a 3x3 and whose destinations put the
+  corners back at their original size. Written that way the two three-patch
+  modes stop being separate modes: a horizontal one is the same routine with no
+  top or bottom border. It also needs CLAMP rather than the REPEAT
+  `texture-from-fn` leaves behind, since a stretched edge cell samples right up
+  to its border and REPEAT would wrap the far side of the image into it.
+- **`ImageKernelConvolution`, `ImageCrop` and `ImageResize` are bound**, all in
+  place on an `Image *`, with crop's `Rectangle` by value. The convolution takes
+  the kernel's COUNT rather than its side, so a 3x3 is passed as 9.
+
 ## 2026-09-18 (evening)
 
 - **Six more examples, taking the suite to 168.** `inline-styling` parses a
