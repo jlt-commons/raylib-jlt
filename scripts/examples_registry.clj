@@ -169,7 +169,8 @@
    ["picking-3d" "picking-3d" "3d" "click a box: a real GetScreenToWorldRay pick"]
    ["drop-files" "drop-files" "core" "drag files in: FilePathList by value"]
    ["directory-files" "directory-files" "core" "a file browser over LoadDirectoryFilesEx"]
-   ["custom-logging" "custom-logging" "core" "raylib's log captured by a jolt callback"]])
+   ["custom-logging" "custom-logging" "core" "raylib's log captured by a jolt callback"]
+   ["audio-stream-callback" "audio-stream-callback" "audio" "raudio pulls samples from its own thread"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

@@ -12,6 +12,7 @@
    [net.b12n.raylib-jlt.ascii-rendering]
    [net.b12n.raylib-jlt.asteroids]
    [net.b12n.raylib-jlt.audio-raw-stream]
+   [net.b12n.raylib-jlt.audio-stream-callback]
    [net.b12n.raylib-jlt.background-scrolling]
    [net.b12n.raylib-jlt.ball-physics]
    [net.b12n.raylib-jlt.basic-screen-manager]

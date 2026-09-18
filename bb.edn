@@ -455,6 +455,7 @@
   drop-files {:doc "▶ drag files in: FilePathList by value" :task (run-example "drop-files")}
   directory-files {:doc "▶ a file browser over LoadDirectoryFilesEx" :task (run-example "directory-files")}
   custom-logging {:doc "▶ raylib's log captured by a jolt callback" :task (run-example "custom-logging")}
+  audio-stream-callback {:doc "▶ raudio pulls samples from its own thread" :task (run-example "audio-stream-callback")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

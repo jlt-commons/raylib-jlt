@@ -2189,3 +2189,39 @@
   logs while it shuts down."
   [entry]
   (ffi/free-callable entry))
+
+;; --- the audio stream callback, on a thread jolt never started ----------
+;; on-trace-log! above is a callback raylib invokes on whichever thread called
+;; into it, which is this one. SetAudioStreamCallback is the harder case: raudio
+;; runs its own audio thread and calls back from there, so the entry point needs
+;; jolt's :collect-safe, which reactivates the thread before any jolt code runs
+;; on it. Without it the process dies with a memory fault no handler can catch.
+;;
+;; What happens inside is the caller's problem and a real-time one: the callback
+;; owes raudio `frames` samples before the device underruns. Write them straight
+;; into `buffer` with ffi/write and keep allocation out of the loop.
+(ffi/defcfn ^:private set-audio-stream-callback-raw "SetAudioStreamCallback"
+  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
+                        [:sample-rate :uint32] [:sample-size :uint32]
+                        [:channels :uint32]]]]
+   :pointer]
+  :void)
+
+(defn on-audio-stream!
+  "SetAudioStreamCallback with a jolt fn. `f` is called as (f buffer frames) on
+  raudio's audio thread and must fill `buffer` with `frames` samples, written as
+  :float at 4-byte strides for a 32-bit mono stream.
+
+  Returns the callable pointer. Clear the callback with
+  clear-audio-stream-callback! BEFORE freeing that pointer, or raudio is left
+  calling a dead address from another thread."
+  [stream f]
+  (let [entry (ffi/foreign-callable f [:pointer :uint32] :void :collect-safe)]
+    (set-audio-stream-callback-raw stream entry)
+    entry))
+
+(defn clear-audio-stream-callback!
+  "Hand raudio a NULL callback, so it goes back to waiting for
+  update-audio-stream refills and stops calling into jolt."
+  [stream]
+  (set-audio-stream-callback-raw stream ffi/null))
