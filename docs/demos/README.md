@@ -64,6 +64,12 @@ reveal/flag grid (mouse L reveal, R flag)
 
 ![minesweeper](minesweeper.gif)
 
+### pacman
+
+pac-man, with the classic ghost personalities
+
+![pacman](pacman.gif)
+
 ## core
 
 ### basic-window
@@ -204,6 +210,12 @@ close is a question: ESC asks before it exits
 
 ![window-should-close](window-should-close.gif)
 
+### camera-2d-split-screen
+
+two players, two cameras, two render textures
+
+![camera-2d-split-screen](camera-2d-split-screen.gif)
+
 ### keyboard-testbed
 
 an on-screen ENG-US keyboard, every key lit
@@ -240,11 +252,29 @@ CRC32/MD5/SHA1/SHA256 + Base64 of typed text
 
 ![compute-hash](compute-hash.gif)
 
-### camera-2d-split-screen
+### drop-files
 
-two players, two cameras, two render textures
+drag files in: FilePathList by value
 
-![camera-2d-split-screen](camera-2d-split-screen.png)
+![drop-files](drop-files.gif)
+
+### directory-files
+
+a file browser over LoadDirectoryFilesEx
+
+![directory-files](directory-files.gif)
+
+### custom-logging
+
+raylib's log captured by a jolt callback
+
+![custom-logging](custom-logging.gif)
+
+### highdpi-demo
+
+logical points vs physical pixels, two rulers
+
+![highdpi-demo](highdpi-demo.gif)
 
 ## shapes
 
@@ -398,11 +428,23 @@ fixed spokes + a spinning line
 
 ![math-angle-rotation](math-angle-rotation.gif)
 
+### rectangle-advanced
+
+per-side roundness with a horizontal gradient
+
+![rectangle-advanced](rectangle-advanced.gif)
+
 ### rlgl-color-wheel
 
 a hue wheel as a triangle fan, per-vertex colour
 
 ![rlgl-color-wheel](rlgl-color-wheel.gif)
+
+### rlgl-triangle
+
+a Gouraud triangle with draggable corners
+
+![rlgl-triangle](rlgl-triangle.gif)
 
 ### ball-physics
 
@@ -494,17 +536,11 @@ flying starfield (wheel=speed, SPACE=mode)
 
 ![starfield-effect](starfield-effect.gif)
 
-### rectangle-advanced
+### top-down-lights
 
-per-side roundness with a horizontal gradient
+lights and shadow volumes in an alpha mask
 
-![rectangle-advanced](rectangle-advanced.png)
-
-### rlgl-triangle
-
-per-vertex colour interpolated across a face
-
-![rlgl-triangle](rlgl-triangle.png)
+![top-down-lights](top-down-lights.gif)
 
 ## text
 
@@ -543,6 +579,18 @@ type into a text box (GetCharPressed)
 draggable word-wrap text container
 
 ![rectangle-bounds](rectangle-bounds.gif)
+
+### strings-management
+
+bouncing text you slice, shatter and glue
+
+![strings-management](strings-management.gif)
+
+### inline-styling
+
+colour markup inside the string itself
+
+![inline-styling](inline-styling.gif)
 
 ## 3d
 
@@ -642,6 +690,18 @@ walk a grid maze, with a minimap
 
 ![first-person-maze](first-person-maze.gif)
 
+### helitorus
+
+a helix wound around a torus, swept into a tube
+
+![helitorus](helitorus.gif)
+
+### doom
+
+a textured raycaster: one ray per screen column
+
+![doom](doom.gif)
+
 ### world-screen
 
 a 2D label tracks a cube via GetWorldToScreen
@@ -683,6 +743,18 @@ camera-facing quads, one spins
 a billboard whose facing row turns with the camera
 
 ![directional-billboard](directional-billboard.gif)
+
+### basic-voxel
+
+an 8x8x8 voxel block, click one out
+
+![basic-voxel](basic-voxel.gif)
+
+### picking-3d
+
+click a box: a real GetScreenToWorldRay pick
+
+![picking-3d](picking-3d.gif)
 
 ## generative
 
@@ -814,6 +886,48 @@ three parallax skyline layers, each scrolling
 
 ![background-scrolling](background-scrolling.gif)
 
+### fog-of-war
+
+fog lifted by a 25x15 render texture
+
+![fog-of-war](fog-of-war.gif)
+
+### framebuffer-rendering
+
+two cameras, two framebuffers, one scene
+
+![framebuffer-rendering](framebuffer-rendering.gif)
+
+### image-generation
+
+nine procedural textures, none of them loaded
+
+![image-generation](image-generation.gif)
+
+### image-processing
+
+nine CPU-side image operations, picked live
+
+![image-processing](image-processing.gif)
+
+### image-kernel
+
+sharpen, sobel and gaussian, one call each
+
+![image-kernel](image-kernel.gif)
+
+### npatch-drawing
+
+nine-patch stretching, corners held fixed
+
+![npatch-drawing](npatch-drawing.gif)
+
+### sprite-button
+
+one sheet, three states, sliced by v
+
+![sprite-button](sprite-button.gif)
+
 ## shaders
 
 ### julia-set
@@ -925,4 +1039,10 @@ arrow keys steer a live sine tone's pitch/pan
 ADSR amplitude envelope on a 440Hz tone
 
 ![amp-envelope](amp-envelope.gif)
+
+### audio-stream-callback
+
+raudio pulls samples from its own thread
+
+![audio-stream-callback](audio-stream-callback.gif)
 

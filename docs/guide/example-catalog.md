@@ -28,7 +28,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/flappy-bird.gif" width="80">](demos.md#flappy-bird) | `flappy-bird` | flap through the pipe gaps (SPACE) |
 | [<img src="../demos/game-2048.gif" width="80">](demos.md#game-2048) | `game-2048` | 2048: 4x4 tile-merge puzzle (arrow keys) |
 | [<img src="../demos/minesweeper.gif" width="80">](demos.md#minesweeper) | `minesweeper` | reveal/flag grid (mouse L reveal, R flag) |
-| *not recorded yet* | `pacman` | the four classic ghost personalities, buffered turns |
+| [<img src="../demos/pacman.gif" width="80">](demos.md#pacman) | `pacman` | the four classic ghost personalities, buffered turns |
 
 ## core (34)
 
@@ -57,17 +57,17 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/camera-2d-mouse-zoom.gif" width="80">](demos.md#camera-2d-mouse-zoom) | `camera-2d-mouse-zoom` | zoom pinned to the point under the cursor |
 | [<img src="../demos/storage-values.gif" width="80">](demos.md#storage-values) | `storage-values` | values that survive a restart, via a file |
 | [<img src="../demos/camera-2d-platformer.gif" width="80">](demos.md#camera-2d-platformer) | `camera-2d-platformer` | five ways a camera can follow a jumping player |
-| [<img src="../demos/camera-2d-split-screen.png" width="80">](demos.md#camera-2d-split-screen) | `camera-2d-split-screen` | two players, two cameras, two render textures |
+| [<img src="../demos/camera-2d-split-screen.gif" width="80">](demos.md#camera-2d-split-screen) | `camera-2d-split-screen` | two players, two cameras, two render textures |
 | [<img src="../demos/keyboard-testbed.gif" width="80">](demos.md#keyboard-testbed) | `keyboard-testbed` | an on-screen ENG-US keyboard, every key lit |
 | [<img src="../demos/input-actions.gif" width="80">](demos.md#input-actions) | `input-actions` | abstract input actions: keyboard + gamepad |
 | [<img src="../demos/smooth-pixelperfect.gif" width="80">](demos.md#smooth-pixelperfect) | `smooth-pixelperfect` | sub-pixel camera smoothing at 5x upscale |
 | [<img src="../demos/viewport-scaling.gif" width="80">](demos.md#viewport-scaling) | `viewport-scaling` | 6 viewport-scaling policies, resize live |
 | [<img src="../demos/highdpi-testbed.gif" width="80">](demos.md#highdpi-testbed) | `highdpi-testbed` | diagnostic overlay: monitors, DPI, crosshair |
 | [<img src="../demos/compute-hash.gif" width="80">](demos.md#compute-hash) | `compute-hash` | CRC32/MD5/SHA1/SHA256 + Base64 of typed text |
-| *not recorded yet* | `drop-files` | drag files in: FilePathList by value |
-| *not recorded yet* | `directory-files` | a file browser over LoadDirectoryFilesEx |
-| *not recorded yet* | `custom-logging` | raylib's log captured by a jolt callback |
-| *not recorded yet* | `highdpi-demo` | logical points vs physical pixels, two rulers |
+| [<img src="../demos/drop-files.gif" width="80">](demos.md#drop-files) | `drop-files` | drag files in: FilePathList by value |
+| [<img src="../demos/directory-files.gif" width="80">](demos.md#directory-files) | `directory-files` | a file browser over LoadDirectoryFilesEx |
+| [<img src="../demos/custom-logging.gif" width="80">](demos.md#custom-logging) | `custom-logging` | raylib's log captured by a jolt callback |
+| [<img src="../demos/highdpi-demo.gif" width="80">](demos.md#highdpi-demo) | `highdpi-demo` | logical points vs physical pixels, two rulers |
 
 ## shapes (44)
 
@@ -106,17 +106,17 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/rectangle-scaling.gif" width="80">](demos.md#rectangle-scaling) | `rectangle-scaling` | drag the corner handle to resize a rect |
 | [<img src="../demos/lines-drawing.gif" width="80">](demos.md#lines-drawing) | `lines-drawing` | a rotating fan of thick `rl/line-ex!` lines |
 | [<img src="../demos/ellipse-collision.gif" width="80">](demos.md#ellipse-collision) | `ellipse-collision` | two ellipses reddening when they overlap |
-| [<img src="../demos/rlgl-triangle.png" width="80">](demos.md#rlgl-triangle) | `rlgl-triangle` | per-vertex colour interpolated across a face |
+| [<img src="../demos/rlgl-triangle.gif" width="80">](demos.md#rlgl-triangle) | `rlgl-triangle` | per-vertex colour interpolated across a face |
 | [<img src="../demos/rlgl-color-wheel.gif" width="80">](demos.md#rlgl-color-wheel) | `rlgl-color-wheel` | a hue wheel as a triangle fan |
 | [<img src="../demos/circle-sector-drawing.gif" width="80">](demos.md#circle-sector-drawing) | `circle-sector-drawing` | a sector starved of segments |
 | [<img src="../demos/easings-rectangles.gif" width="80">](demos.md#easings-rectangles) | `easings-rectangles` | size and rotation on one easing curve |
 | [<img src="../demos/easings-ball.gif" width="80">](demos.md#easings-ball) | `easings-ball` | slide, swell and fade, one curve each |
 | [<img src="../demos/easings-box.gif" width="80">](demos.md#easings-box) | `easings-box` | drop, flatten, spin, grow, fade: five curves |
 | [<img src="../demos/logo-anim.gif" width="80">](demos.md#logo-anim) | `logo-anim` | the raylib logo assembling itself, unsmoothed |
-| [<img src="../demos/rectangle-advanced.png" width="80">](demos.md#rectangle-advanced) | `rectangle-advanced` | per-side roundness with a horizontal gradient |
+| [<img src="../demos/rectangle-advanced.gif" width="80">](demos.md#rectangle-advanced) | `rectangle-advanced` | per-side roundness with a horizontal gradient |
 | [<img src="../demos/easings-testbed.gif" width="80">](demos.md#easings-testbed) | `easings-testbed` | one curve at a time, plotted and run |
 | [<img src="../demos/starfield-effect.gif" width="80">](demos.md#starfield-effect) | `starfield-effect` | flying starfield (wheel=speed, SPACE=mode) |
-| *not recorded yet* | `top-down-lights` | lights and shadow volumes in an alpha mask |
+| [<img src="../demos/top-down-lights.gif" width="80">](demos.md#top-down-lights) | `top-down-lights` | lights and shadow volumes in an alpha mask |
 
 ## text (8)
 
@@ -128,8 +128,8 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/words-alignment.gif" width="80">](demos.md#words-alignment) | `words-alignment` | align a word inside a box with `MeasureText` |
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
 | [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
-| *not recorded yet* | `strings-management` | bouncing text you slice, shatter and glue |
-| *not recorded yet* | `inline-styling` | colour markup inside the string itself |
+| [<img src="../demos/strings-management.gif" width="80">](demos.md#strings-management) | `strings-management` | bouncing text you slice, shatter and glue |
+| [<img src="../demos/inline-styling.gif" width="80">](demos.md#inline-styling) | `inline-styling` | colour markup inside the string itself |
 
 ## 3d (27)
 
@@ -158,10 +158,10 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/textured-cube.gif" width="80">](demos.md#textured-cube) | `textured-cube` | two cubes, one textured atlas, one sub-rect |
 | [<img src="../demos/billboard-rendering.gif" width="80">](demos.md#billboard-rendering) | `billboard-rendering` | camera-facing quads, one spins |
 | [<img src="../demos/directional-billboard.gif" width="80">](demos.md#directional-billboard) | `directional-billboard` | a billboard whose facing row turns with the camera |
-| *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
-| *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
-| *not recorded yet* | `basic-voxel` | an 8x8x8 voxel block, click one out |
-| *not recorded yet* | `picking-3d` | click a box: a real GetScreenToWorldRay pick |
+| [<img src="../demos/helitorus.gif" width="80">](demos.md#helitorus) | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
+| [<img src="../demos/doom.gif" width="80">](demos.md#doom) | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
+| [<img src="../demos/basic-voxel.gif" width="80">](demos.md#basic-voxel) | `basic-voxel` | an 8x8x8 voxel block, click one out |
+| [<img src="../demos/picking-3d.gif" width="80">](demos.md#picking-3d) | `picking-3d` | click a box: a real GetScreenToWorldRay pick |
 
 Most of the 3D set stands on two building blocks from
 [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md) and
@@ -216,13 +216,13 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/blend-modes.gif" width="80">](demos.md#blend-modes) | `blend-modes` | four 2D blend modes over a night skyline |
 | [<img src="../demos/screen-buffer.gif" width="80">](demos.md#screen-buffer) | `screen-buffer` | the classic DOS fire effect |
 | [<img src="../demos/background-scrolling.gif" width="80">](demos.md#background-scrolling) | `background-scrolling` | three parallax skyline layers, each scrolling |
-| *not recorded yet* | `fog-of-war` | fog lifted by a 25x15 render texture |
-| *not recorded yet* | `framebuffer-rendering` | two cameras, two framebuffers, one scene |
-| *not recorded yet* | `image-generation` | nine procedural textures, none of them loaded |
-| *not recorded yet* | `image-processing` | nine CPU-side image operations, picked live |
-| *not recorded yet* | `image-kernel` | sharpen, sobel and gaussian, one call each |
-| *not recorded yet* | `npatch-drawing` | nine-patch stretching, corners held fixed |
-| *not recorded yet* | `sprite-button` | one sheet, three states, sliced by v |
+| [<img src="../demos/fog-of-war.gif" width="80">](demos.md#fog-of-war) | `fog-of-war` | fog lifted by a 25x15 render texture |
+| [<img src="../demos/framebuffer-rendering.gif" width="80">](demos.md#framebuffer-rendering) | `framebuffer-rendering` | two cameras, two framebuffers, one scene |
+| [<img src="../demos/image-generation.gif" width="80">](demos.md#image-generation) | `image-generation` | nine procedural textures, none of them loaded |
+| [<img src="../demos/image-processing.gif" width="80">](demos.md#image-processing) | `image-processing` | nine CPU-side image operations, picked live |
+| [<img src="../demos/image-kernel.gif" width="80">](demos.md#image-kernel) | `image-kernel` | sharpen, sobel and gaussian, one call each |
+| [<img src="../demos/npatch-drawing.gif" width="80">](demos.md#npatch-drawing) | `npatch-drawing` | nine-patch stretching, corners held fixed |
+| [<img src="../demos/sprite-button.gif" width="80">](demos.md#sprite-button) | `sprite-button` | one sheet, three states, sliced by v |
 
 ## shaders (16)
 
@@ -271,7 +271,7 @@ here yet.
 |---|---|---|
 | [<img src="../demos/audio-raw-stream.gif" width="80">](demos.md#audio-raw-stream) | `audio-raw-stream` | arrow keys steer a live sine tone's pitch/pan |
 | [<img src="../demos/amp-envelope.gif" width="80">](demos.md#amp-envelope) | `amp-envelope` | ADSR amplitude envelope on a 440Hz tone |
-| *not recorded yet* | `audio-stream-callback` | raudio pulls samples from its own thread |
+| [<img src="../demos/audio-stream-callback.gif" width="80">](demos.md#audio-stream-callback) | `audio-stream-callback` | raudio pulls samples from its own thread |
 
 ## Adding an example: the five touchpoints
 

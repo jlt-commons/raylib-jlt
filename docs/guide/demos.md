@@ -1,23 +1,16 @@
 # Full-size demo gallery
 
-Every recorded example at full size, linked from
-[the example catalog](example-catalog.md)'s preview thumbnails. All 151 recordings
-are here, covering 151 of the suite's 171 examples. Twenty have not been
-recorded yet: `helitorus`, `doom`, `pacman`, `top-down-lights`, `basic-voxel`,
-`strings-management`, `picking-3d`, `drop-files`, `directory-files`,
-`custom-logging`, `audio-stream-callback`, `inline-styling`, `fog-of-war`,
-`framebuffer-rendering`, `highdpi-demo`, `image-generation`,
-`image-processing`, `image-kernel`, `npatch-drawing` and `sprite-button`. Run
-those with `bb <name>` directly.
+Every example at full size, linked from
+[the example catalog](example-catalog.md)'s preview thumbnails. All 171 of
+them are here, one recording each.
 
-148 are animated GIFs. Three are still frames. `rectangle-advanced` and
-`rlgl-triangle` draw something fixed and only move when you drive them, so a
-recording of either would be a valid animation of one repeated image, and a still
-is the honest form for those two. `camera-2d-split-screen` needs a player moving
-to show anything at all, and the capture tool's simulated key presses aren't
-landing for it yet, so a still stands in until that's sorted.
+Most are animated. Some examples draw something fixed and only move once you
+drive them, so their recording is a single frame, and that is the honest form
+for those. `drop-files` is the clearest case, because it waits on a real file
+drag that the capture tool cannot synthesize, so it shows the empty window it
+starts in.
 
-## games (10)
+## games (11)
 
 ### asteroids
 
@@ -79,7 +72,13 @@ reveal/flag grid (mouse L reveal, R flag)
 
 ![minesweeper](../demos/minesweeper.gif)
 
-## core (30)
+### pacman
+
+pac-man, with the classic ghost personalities
+
+![pacman](../demos/pacman.gif)
+
+## core (34)
 
 ### basic-window
 
@@ -223,7 +222,7 @@ five ways a camera can follow a jumping player
 
 two players, two cameras, two render textures
 
-![camera-2d-split-screen](../demos/camera-2d-split-screen.png)
+![camera-2d-split-screen](../demos/camera-2d-split-screen.gif)
 
 ### keyboard-testbed
 
@@ -261,7 +260,31 @@ CRC32/MD5/SHA1/SHA256 + Base64 of typed text
 
 ![compute-hash](../demos/compute-hash.gif)
 
-## shapes (43)
+### drop-files
+
+drag files in: FilePathList by value
+
+![drop-files](../demos/drop-files.gif)
+
+### directory-files
+
+a file browser over LoadDirectoryFilesEx
+
+![directory-files](../demos/directory-files.gif)
+
+### custom-logging
+
+raylib's log captured by a jolt callback
+
+![custom-logging](../demos/custom-logging.gif)
+
+### highdpi-demo
+
+logical points vs physical pixels, two rulers
+
+![highdpi-demo](../demos/highdpi-demo.gif)
+
+## shapes (44)
 
 ### bouncing-ball
 
@@ -465,7 +488,7 @@ two ellipses reddening when they overlap
 
 per-vertex colour interpolated across a face
 
-![rlgl-triangle](../demos/rlgl-triangle.png)
+![rlgl-triangle](../demos/rlgl-triangle.gif)
 
 ### rlgl-color-wheel
 
@@ -507,7 +530,7 @@ the raylib logo assembling itself, unsmoothed
 
 per-side roundness with a horizontal gradient
 
-![rectangle-advanced](../demos/rectangle-advanced.png)
+![rectangle-advanced](../demos/rectangle-advanced.gif)
 
 ### easings-testbed
 
@@ -521,7 +544,13 @@ flying starfield (wheel=speed, SPACE=mode)
 
 ![starfield-effect](../demos/starfield-effect.gif)
 
-## text (6)
+### top-down-lights
+
+lights and shadow volumes in an alpha mask
+
+![top-down-lights](../demos/top-down-lights.gif)
+
+## text (8)
 
 ### font-sizes
 
@@ -559,7 +588,19 @@ draggable word-wrap text container
 
 ![rectangle-bounds](../demos/rectangle-bounds.gif)
 
-## 3d (23)
+### strings-management
+
+bouncing text you slice, shatter and glue
+
+![strings-management](../demos/strings-management.gif)
+
+### inline-styling
+
+colour markup inside the string itself
+
+![inline-styling](../demos/inline-styling.gif)
+
+## 3d (27)
 
 ### camera-3d
 
@@ -699,6 +740,30 @@ a billboard whose facing row turns with the camera
 
 ![directional-billboard](../demos/directional-billboard.gif)
 
+### helitorus
+
+a helix wound around a torus, swept into a tube
+
+![helitorus](../demos/helitorus.gif)
+
+### doom
+
+a textured raycaster: one ray per screen column
+
+![doom](../demos/doom.gif)
+
+### basic-voxel
+
+an 8x8x8 voxel block, click one out
+
+![basic-voxel](../demos/basic-voxel.gif)
+
+### picking-3d
+
+click a box: a real GetScreenToWorldRay pick
+
+![picking-3d](../demos/picking-3d.gif)
+
 ## generative (10)
 
 ### game-of-life
@@ -761,7 +826,7 @@ water/smoke/fire particles follow the mouse
 
 ![particles](../demos/particles.gif)
 
-## textures (11)
+## textures (18)
 
 ### texture-procedural
 
@@ -828,6 +893,48 @@ the classic DOS fire effect
 three parallax skyline layers, each scrolling
 
 ![background-scrolling](../demos/background-scrolling.gif)
+
+### fog-of-war
+
+fog lifted by a 25x15 render texture
+
+![fog-of-war](../demos/fog-of-war.gif)
+
+### framebuffer-rendering
+
+two cameras, two framebuffers, one scene
+
+![framebuffer-rendering](../demos/framebuffer-rendering.gif)
+
+### image-generation
+
+nine procedural textures, none of them loaded
+
+![image-generation](../demos/image-generation.gif)
+
+### image-processing
+
+nine CPU-side image operations, picked live
+
+![image-processing](../demos/image-processing.gif)
+
+### image-kernel
+
+sharpen, sobel and gaussian, one call each
+
+![image-kernel](../demos/image-kernel.gif)
+
+### npatch-drawing
+
+nine-patch stretching, corners held fixed
+
+![npatch-drawing](../demos/npatch-drawing.gif)
+
+### sprite-button
+
+one sheet, three states, sliced by v
+
+![sprite-button](../demos/sprite-button.gif)
 
 ## shaders (16)
 
@@ -927,7 +1034,7 @@ ascii art from a post-process shader
 
 ![ascii-rendering](../demos/ascii-rendering.gif)
 
-## audio (2)
+## audio (3)
 
 ### audio-raw-stream
 
@@ -940,3 +1047,9 @@ arrow keys steer a live sine tone's pitch/pan
 ADSR amplitude envelope on a 440Hz tone
 
 ![amp-envelope](../demos/amp-envelope.gif)
+
+### audio-stream-callback
+
+raudio pulls samples from its own thread
+
+![audio-stream-callback](../demos/audio-stream-callback.gif)
