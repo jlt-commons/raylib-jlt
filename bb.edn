@@ -450,6 +450,7 @@
   ascii-rendering   {:doc "▶ ascii art from a post-process shader" :task (run-example "ascii-rendering")}
   top-down-lights {:doc "▶ lights and shadow volumes in an alpha mask" :task (run-example "top-down-lights")}
   basic-voxel {:doc "▶ an 8x8x8 voxel block, click one out" :task (run-example "basic-voxel")}
+  strings-management {:doc "▶ bouncing text you slice, shatter and glue" :task (run-example "strings-management")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

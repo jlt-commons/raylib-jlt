@@ -139,6 +139,7 @@
    [net.b12n.raylib-jlt.starfield-effect]
    [net.b12n.raylib-jlt.stars]
    [net.b12n.raylib-jlt.storage-values]
+   [net.b12n.raylib-jlt.strings-management]
    [net.b12n.raylib-jlt.tesseract-view]
    [net.b12n.raylib-jlt.tetris]
    [net.b12n.raylib-jlt.text]

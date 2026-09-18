@@ -172,6 +172,7 @@
            :directional-billboard {:main-opts ["-m" "net.b12n.raylib-jlt.directional-billboard"]} ; a billboard whose facing row turns with the camera
            :ascii-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.ascii-rendering"]} ; ascii art from a post-process shader
            :top-down-lights {:main-opts ["-m" "net.b12n.raylib-jlt.top-down-lights"]} ; lights and shadow volumes in an alpha mask
-           :basic-voxel {:main-opts ["-m" "net.b12n.raylib-jlt.basic-voxel"]}} ; an 8x8x8 voxel block, click one out
+           :basic-voxel {:main-opts ["-m" "net.b12n.raylib-jlt.basic-voxel"]} ; an 8x8x8 voxel block, click one out
+           :strings-management {:main-opts ["-m" "net.b12n.raylib-jlt.strings-management"]}} ; bouncing text you slice, shatter and glue
 
  :tasks {run "joltc -M:run"}}

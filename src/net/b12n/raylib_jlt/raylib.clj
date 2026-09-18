@@ -383,6 +383,7 @@
 (def ^:const KEY-DOWN  264) (def ^:const KEY-UP    265)
 (def ^:const MOUSE-LEFT 0)
 (def ^:const MOUSE-RIGHT 1)
+(def ^:const MOUSE-MIDDLE 2)
 (def ^:const KEY-BACKSPACE 259) (def ^:const KEY-ENTER 257)
 
 ;; --- ergonomic keyword-argument drawing API ----------------------------------
