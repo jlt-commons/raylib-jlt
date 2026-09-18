@@ -1,4 +1,4 @@
-# The example catalog: 162 raylib demos in jolt
+# The example catalog: 168 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -30,7 +30,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/minesweeper.gif" width="80">](demos.md#minesweeper) | `minesweeper` | reveal/flag grid (mouse L reveal, R flag) |
 | *not recorded yet* | `pacman` | the four classic ghost personalities, buffered turns |
 
-## core (33)
+## core (34)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -67,6 +67,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | *not recorded yet* | `drop-files` | drag files in: FilePathList by value |
 | *not recorded yet* | `directory-files` | a file browser over LoadDirectoryFilesEx |
 | *not recorded yet* | `custom-logging` | raylib's log captured by a jolt callback |
+| *not recorded yet* | `highdpi-demo` | logical points vs physical pixels, two rulers |
 
 ## shapes (44)
 
@@ -117,7 +118,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/starfield-effect.gif" width="80">](demos.md#starfield-effect) | `starfield-effect` | flying starfield (wheel=speed, SPACE=mode) |
 | *not recorded yet* | `top-down-lights` | lights and shadow volumes in an alpha mask |
 
-## text (7)
+## text (8)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -128,6 +129,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
 | [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
 | *not recorded yet* | `strings-management` | bouncing text you slice, shatter and glue |
+| *not recorded yet* | `inline-styling` | colour markup inside the string itself |
 
 ## 3d (27)
 
@@ -194,7 +196,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (11)
+## textures (15)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -214,6 +216,10 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/blend-modes.gif" width="80">](demos.md#blend-modes) | `blend-modes` | four 2D blend modes over a night skyline |
 | [<img src="../demos/screen-buffer.gif" width="80">](demos.md#screen-buffer) | `screen-buffer` | the classic DOS fire effect |
 | [<img src="../demos/background-scrolling.gif" width="80">](demos.md#background-scrolling) | `background-scrolling` | three parallax skyline layers, each scrolling |
+| *not recorded yet* | `fog-of-war` | fog lifted by a 25x15 render texture |
+| *not recorded yet* | `framebuffer-rendering` | two cameras, two framebuffers, one scene |
+| *not recorded yet* | `image-generation` | nine procedural textures, none of them loaded |
+| *not recorded yet* | `image-processing` | nine CPU-side image operations, picked live |
 
 ## shaders (16)
 

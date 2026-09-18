@@ -60,13 +60,13 @@
   <div class="hero-inner">
     <h1>raylib examples in Jolt</h1>
     <p class="tagline">
-      162 <strong>raylib</strong> examples written in <strong>Jolt</strong>,
+      168 <strong>raylib</strong> examples written in <strong>Jolt</strong>,
       native Clojure on Chez Scheme, no JVM. They call the real
       <code>libraylib</code> directly over its C ABI through
       <code>jolt.ffi</code>: no wrapper library, no codegen, no C shim.
     </p>
     <div class="hero-actions">
-      <a class="btn btn-primary" href="{{site-base}}/guide/example-catalog.html">Browse all 162</a>
+      <a class="btn btn-primary" href="{{site-base}}/guide/example-catalog.html">Browse all 168</a>
       <a class="btn" href="{{site-base}}/guide/index.html">Read the guide</a>
     </div>
   </div>
@@ -166,7 +166,7 @@
     <h2>How it fits together</h2>
     <pre class="mermaid">
 flowchart TB
-  subgraph ex["162 example namespaces"]
+  subgraph ex["168 example namespaces"]
     e["pong · boids · tetris<br/>camera-3d · penrose-tiling · …"]
   end
   subgraph shared["net.b12n.raylib-jlt.raylib: one shared layer"]
@@ -207,7 +207,7 @@ flowchart TB
         <p><code>RAYLIB_APP_AUTO_QUIT_MS</code> closes the window on a timer and <code>RAYLIB_APP_SHOT</code> dumps a frame to PNG, so a windowed example can prove itself unattended.</p>
       </div>
       <div class="feat">
-        <h4>A compile gate over all 162</h4>
+        <h4>A compile gate over all 168</h4>
         <p><code>bb check</code> requires every example namespace headlessly. No window, no JVM, and it catches a broken binding across the whole suite at once.</p>
       </div>
       <div class="feat">
@@ -231,7 +231,7 @@ bb lib:install     # …install it via brew / pacman / apt / dnf / zypper / apk
 bb info            # grouped cheat-sheet of every example
 bb tetris          # run one (opens a window)
 bb run-all 10      # demo reel: every example, 10s each
-bb check           # headless compile-check of all 162, no window</code></pre>
+bb check           # headless compile-check of all 168, no window</code></pre>
     <p>
       Needs <code>jolt</code> 0.8.0 or newer (<code>deps.edn</code> declares
       <code>:jolt/min-version</code>) and a system <code>libraylib</code> 6.0+.

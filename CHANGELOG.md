@@ -10,6 +10,42 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-18 (evening)
+
+- **Six more examples, taking the suite to 168.** `inline-styling` parses a
+  colour markup that lives inside the string itself. `fog-of-war` lifts a fog
+  where the player has walked. `framebuffer-rendering` draws the same scene into
+  two framebuffers side by side, one of them showing the other camera as its own
+  view frustum. `highdpi-demo` lays a ruler of logical points over a ruler of
+  physical pixels. `image-generation` and `image-processing` are the first two
+  on the new Image bindings.
+- **raylib's `Image` is bound, and with it the nine `GenImage*` generators.**
+  `Image` is `{void *data; int width, height, mipmaps, format;}`, 24 bytes
+  returned by value and taken by value. The generators are why it was worth
+  binding: they ARE raylib's procedural textures, and a suite that ships no
+  image files has no other way to get a picture out of raylib. What
+  `rl/image-*` answers is an rlgl texture id rather than the `Image` or the
+  `Texture2D`, so `texture!`, `texture-filter!` and `unload-texture!` keep
+  working unchanged and a generated image draws through the same path a
+  `texture-from-fn` one does.
+- **The processors bind the other way round, and the contrast is the lesson.**
+  Every `Image*` operation works IN PLACE, so `ImageColorInvert`,
+  `ImageBlurGaussian`, both flips and the rest are plain pointer arguments with
+  no by-value dance at all. Only `ImageCopy` and `LoadImageFromTexture` move a
+  whole `Image` across the boundary.
+- **`LoadImageFromTexture` reads a texture back off the GPU**, which is the only
+  route by which something authored in Clojure reaches raylib's own pixel
+  operations. `image-processing` draws its source with `texture-from-fn`, pulls
+  it back to CPU memory and hands it to raylib from there, in place of the
+  `parrots.png` the C opens.
+- **`highdpi-demo` is the one example that sets `FLAG_WINDOW_HIGHDPI`.**
+  Measured rather than assumed: without the flag `GetScreenWidth` and
+  `GetRenderWidth` both answer 800 and the DPI scale is 1.0, so its two rulers
+  would be identical and there would be nothing to show. With it the render
+  target is 1600 against 800 logical points. The cost is a headless screenshot
+  that fills one quadrant, which `highdpi-testbed` already documents as a
+  property of the capture path rather than of the example.
+
 ## 2026-09-18 (later still)
 
 - **A second callback into jolt, and a harder one: `audio-stream-callback`,
