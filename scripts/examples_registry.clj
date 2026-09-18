@@ -167,7 +167,8 @@
    ["basic-voxel" "basic-voxel" "3d" "an 8x8x8 voxel block, click one out"]
    ["strings-management" "strings-management" "text" "bouncing text you slice, shatter and glue"]
    ["picking-3d" "picking-3d" "3d" "click a box: a real GetScreenToWorldRay pick"]
-   ["drop-files" "drop-files" "core" "drag files in: FilePathList by value"]])
+   ["drop-files" "drop-files" "core" "drag files in: FilePathList by value"]
+   ["directory-files" "directory-files" "core" "a file browser over LoadDirectoryFilesEx"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
