@@ -184,6 +184,7 @@
            :framebuffer-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.framebuffer-rendering"]} ; two cameras, two framebuffers, one scene
            :highdpi-demo {:main-opts ["-m" "net.b12n.raylib-jlt.highdpi-demo"]} ; logical points vs physical pixels, two rulers
            :image-generation {:main-opts ["-m" "net.b12n.raylib-jlt.image-generation"]} ; nine procedural textures, none of them loaded
-           :image-processing {:main-opts ["-m" "net.b12n.raylib-jlt.image-processing"]}} ; nine CPU-side image operations, picked live
+           :image-processing {:main-opts ["-m" "net.b12n.raylib-jlt.image-processing"]} ; nine CPU-side image operations, picked live
+           :image-kernel {:main-opts ["-m" "net.b12n.raylib-jlt.image-kernel"]}} ; sharpen, sobel and gaussian, one call each
 
  :tasks {run "joltc -M:run"}}

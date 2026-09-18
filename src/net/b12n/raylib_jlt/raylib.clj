@@ -929,6 +929,7 @@
 
 (def ^:const RL-QUADS 7)
 (def ^:const PIXELFORMAT-R8G8B8A8 7)          ; rlPixelFormat, 32bpp RGBA
+(def ^:const PIXELFORMAT-R8G8B8 4)            ; 24bpp, no alpha channel at all
 (def ^:const RL-TEXTURE-WRAP-S 0x2802)        (def ^:const RL-TEXTURE-WRAP-T 0x2803)
 (def ^:const RL-TEXTURE-WRAP-REPEAT 0x2901)   (def ^:const RL-TEXTURE-WRAP-CLAMP 0x812F)
 (def ^:const RL-TEXTURE-MAG-FILTER 0x2800)    (def ^:const RL-TEXTURE-MIN-FILTER 0x2801)
@@ -2453,3 +2454,47 @@
 (defn image-flip-horizontal! [img] (image-flip-horizontal-raw img))
 (defn image-flip-vertical! [img] (image-flip-vertical-raw img))
 (defn image-blur-gaussian! [img size] (image-blur-gaussian-raw img (int size)))
+
+;; --- Image geometry and convolution --------------------------------------
+;; Both in place on an Image*, like the colour operations above, except that
+;; ImageCrop's Rectangle is by value: four floats, 16 bytes, which on arm64 fits
+;; in registers rather than going indirect. ImageKernelConvolution takes a flat
+;; float array and its LENGTH, not its side, so a 3x3 kernel is nine floats and
+;; the argument is 9.
+(def ^:private rectangle-layout
+  (ffi/layout [:struct [[:x :float] [:y :float] [:width :float] [:height :float]]]))
+
+(ffi/defcfn ^:private image-crop-raw "ImageCrop"
+  [:pointer [:by-value [:struct [[:x :float] [:y :float]
+                                 [:width :float] [:height :float]]]]] :void)
+(ffi/defcfn ^:private image-kernel-convolution-raw "ImageKernelConvolution"
+  [:pointer :pointer :int] :void)
+(ffi/defcfn ^:private image-resize-raw "ImageResize" [:pointer :int :int] :void)
+
+(defn image-crop!
+  "ImageCrop, in place. :x :y :width :height in pixels."
+  [img & {:keys [x y width height]
+          :or {x 0
+               y 0
+               width 1
+               height 1}}]
+  (let [r (ffi/alloc (ffi/layout-size rectangle-layout))]
+    (try
+      (ffi/write-field r rectangle-layout :x (double x))
+      (ffi/write-field r rectangle-layout :y (double y))
+      (ffi/write-field r rectangle-layout :width (double width))
+      (ffi/write-field r rectangle-layout :height (double height))
+      (image-crop-raw img r)
+      (finally (ffi/free r)))))
+
+(defn image-resize!
+  "ImageResize, in place, bicubic."
+  [img w h]
+  (image-resize-raw img (int w) (int h)))
+
+(defn image-convolve!
+  "ImageKernelConvolution, in place. `kernel` is a flat sequence of floats whose
+  count is a perfect square, so a 3x3 is nine of them. raylib takes the COUNT
+  rather than the side length."
+  [img kernel]
+  (staged :float kernel (fn [p] (image-kernel-convolution-raw img p (count kernel)))))

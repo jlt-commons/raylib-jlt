@@ -462,6 +462,7 @@
   highdpi-demo {:doc "▶ logical points vs physical pixels, two rulers" :task (run-example "highdpi-demo")}
   image-generation {:doc "▶ nine procedural textures, none of them loaded" :task (run-example "image-generation")}
   image-processing {:doc "▶ nine CPU-side image operations, picked live" :task (run-example "image-processing")}
+  image-kernel {:doc "▶ sharpen, sobel and gaussian, one call each" :task (run-example "image-kernel")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
