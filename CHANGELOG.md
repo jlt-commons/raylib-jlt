@@ -21,6 +21,17 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   8x8x8 block you walk around and take apart a cube at a time.
   `strings-management` is a sentence as a bouncing text particle you can
   cut in half, shatter into characters, shake, and glue back together.
+- **`top-down-lights` and `basic-voxel` animate until you touch them.**
+  Neither moves on its own in the C, and `scripts/demo_manifest.edn` has the
+  measurement for why that matters here: no synthetic input actuates a
+  raylib/GLFW window, not clicks and not keys either, so an example with no
+  motion of its own records as a single frame. Light #1 now walks a slow
+  figure-eight that sweeps its shadows across most of the boxes, and the voxel
+  block is orbited from above. The first drag, WASD press or click hands
+  control over for good. A mouse move deliberately does not: `GetMouseX`
+  reports 0 on the first frame and the real position on the second, and the
+  window-relative coordinates shift again whenever the window is placed, so
+  "the pointer moved" is not evidence that a person moved it.
 - **`rlSetBlendFactors` is bound**, with `BLEND-CUSTOM` and the three GL
   enums it takes. `top-down-lights` needs two custom blend equations that
   work on alpha alone: `GL_MIN` punches a light's transparent centre into
