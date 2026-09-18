@@ -182,6 +182,7 @@
            :inline-styling {:main-opts ["-m" "net.b12n.raylib-jlt.inline-styling"]} ; colour markup inside the string itself
            :fog-of-war {:main-opts ["-m" "net.b12n.raylib-jlt.fog-of-war"]} ; fog lifted by a 25x15 render texture
            :framebuffer-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.framebuffer-rendering"]} ; two cameras, two framebuffers, one scene
-           :highdpi-demo {:main-opts ["-m" "net.b12n.raylib-jlt.highdpi-demo"]}} ; logical points vs physical pixels, two rulers
+           :highdpi-demo {:main-opts ["-m" "net.b12n.raylib-jlt.highdpi-demo"]} ; logical points vs physical pixels, two rulers
+           :image-generation {:main-opts ["-m" "net.b12n.raylib-jlt.image-generation"]}} ; nine procedural textures, none of them loaded
 
  :tasks {run "joltc -M:run"}}

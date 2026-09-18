@@ -460,6 +460,7 @@
   fog-of-war {:doc "▶ fog lifted by a 25x15 render texture" :task (run-example "fog-of-war")}
   framebuffer-rendering {:doc "▶ two cameras, two framebuffers, one scene" :task (run-example "framebuffer-rendering")}
   highdpi-demo {:doc "▶ logical points vs physical pixels, two rulers" :task (run-example "highdpi-demo")}
+  image-generation {:doc "▶ nine procedural textures, none of them loaded" :task (run-example "image-generation")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

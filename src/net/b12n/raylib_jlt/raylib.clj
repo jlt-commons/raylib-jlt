@@ -2232,3 +2232,137 @@
 ;; no minimum to enforce.
 (ffi/defcfn set-window-min-size "SetWindowMinSize" [:int :int] :void)
 (ffi/defcfn set-window-monitor  "SetWindowMonitor" [:int] :void)
+
+;; --- Image: raylib's CPU-side pixel buffer, by value ---------------------
+;; Image is {void *data; int width, height, mipmaps, format;}, 24 bytes, returned
+;; by value from every generator and taken by value by everything that consumes
+;; one. The generators are the reason to bind it at all: they are raylib's own
+;; procedural textures, checkerboards through Perlin and cellular noise, and this
+;; suite ships no image files, so generating is the only way it ever had.
+;;
+;; What comes back to the caller is an rlgl texture id, not the Image and not the
+;; Texture2D. That keeps the whole existing drawing surface usable unchanged:
+;; texture!, texture-filter!, texture-wrap! and unload-texture! all speak ids
+;; already, so an image generated here draws through the same path a
+;; texture-from-fn one does. The Image itself is freed inside each call, since
+;; its pixels have been copied to the GPU by then.
+(def ^:private image-layout
+  (ffi/layout [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]))
+
+;; texture2d-layout is already defined above, where the shader section needed it
+;; for SetShaderValueTexture; image->texture-id! reuses that one rather than
+;; shadowing it with a second copy of the same five fields.
+(assert (= 24 (ffi/layout-size image-layout)) "Image is a pointer and four ints")
+(assert (= 20 (ffi/layout-size texture2d-layout)) "Texture2D is five 4-byte fields")
+
+(ffi/defcfn ^:private gen-image-color-raw "GenImageColor" [:int :int :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-checked-raw "GenImageChecked" [:int :int :int :int :uint :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-gradient-linear-raw "GenImageGradientLinear" [:int :int :int :uint :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-gradient-radial-raw "GenImageGradientRadial" [:int :int :float :uint :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-gradient-square-raw "GenImageGradientSquare" [:int :int :float :uint :uint]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-white-noise-raw "GenImageWhiteNoise" [:int :int :float]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-perlin-noise-raw "GenImagePerlinNoise" [:int :int :int :int :float]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-cellular-raw "GenImageCellular" [:int :int :int]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private gen-image-text-raw "GenImageText" [:int :int :string]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private unload-image-raw "UnloadImage"
+  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]]] :void)
+(ffi/defcfn ^:private load-texture-from-image-raw "LoadTextureFromImage"
+  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]]]
+  [:by-value [:struct [[:id :uint] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+
+(defn- image->texture-id!
+  "Upload a filled Image buffer to the GPU, free the Image, and answer the rlgl
+  texture id. 0 means the upload failed, which raylib has already logged."
+  [img]
+  (let [tex (ffi/alloc (ffi/layout-size texture2d-layout))]
+    (try
+      (load-texture-from-image-raw tex img)
+      (unload-image-raw img)
+      (ffi/read-field tex texture2d-layout :id)
+      (finally (ffi/free tex)))))
+
+(defn- with-image
+  "Run `f` against a freshly allocated Image buffer, then hand the result on.
+  `f` fills the buffer by calling one of the generators with it as the return
+  slot, which is jolt's convention for an aggregate return."
+  [f]
+  (let [img (ffi/alloc (ffi/layout-size image-layout))]
+    (try
+      (f img)
+      (image->texture-id! img)
+      (finally (ffi/free img)))))
+
+(defn image-color
+  "GenImageColor as a texture id: a plain `w` x `h` field of one colour."
+  [w h color]
+  (with-image (fn [img] (gen-image-color-raw img (int w) (int h) color))))
+
+(defn image-checked
+  "GenImageChecked as a texture id: `checks-x` by `checks-y` squares alternating
+  between two colours."
+  [w h checks-x checks-y c1 c2]
+  (with-image (fn [img] (gen-image-checked-raw img (int w) (int h)
+                                               (int checks-x) (int checks-y) c1 c2))))
+
+(defn image-gradient-linear
+  "GenImageGradientLinear as a texture id. `direction` is in degrees, 0 vertical."
+  [w h direction start end]
+  (with-image (fn [img] (gen-image-gradient-linear-raw img (int w) (int h)
+                                                       (int direction) start end))))
+
+(defn image-gradient-radial
+  "GenImageGradientRadial as a texture id, `density` shaping the falloff."
+  [w h density inner outer]
+  (with-image (fn [img] (gen-image-gradient-radial-raw img (int w) (int h)
+                                                       (double density) inner outer))))
+
+(defn image-gradient-square
+  "GenImageGradientSquare as a texture id, `density` shaping the falloff."
+  [w h density inner outer]
+  (with-image (fn [img] (gen-image-gradient-square-raw img (int w) (int h)
+                                                       (double density) inner outer))))
+
+(defn image-white-noise
+  "GenImageWhiteNoise as a texture id. `factor` is the fraction of white pixels."
+  [w h factor]
+  (with-image (fn [img] (gen-image-white-noise-raw img (int w) (int h) (double factor)))))
+
+(defn image-perlin-noise
+  "GenImagePerlinNoise as a texture id. The offsets slide the sample window, so
+  animating one of them scrolls the field rather than regenerating it."
+  [w h offset-x offset-y scale]
+  (with-image (fn [img] (gen-image-perlin-noise-raw img (int w) (int h)
+                                                    (int offset-x) (int offset-y) (double scale)))))
+
+(defn image-cellular
+  "GenImageCellular as a texture id. A bigger `tile-size` means bigger cells."
+  [w h tile-size]
+  (with-image (fn [img] (gen-image-cellular-raw img (int w) (int h) (int tile-size)))))
+
+(defn image-text
+  "GenImageText as a texture id: `text` rasterised with raylib's default font
+  into a `w` x `h` greyscale field."
+  [w h text]
+  (with-image (fn [img] (gen-image-text-raw img (int w) (int h) text))))

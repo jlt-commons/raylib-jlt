@@ -79,6 +79,7 @@
    [net.b12n.raylib-jlt.highdpi-demo]
    [net.b12n.raylib-jlt.highdpi-testbed]
    [net.b12n.raylib-jlt.hilbert-curve]
+   [net.b12n.raylib-jlt.image-generation]
    [net.b12n.raylib-jlt.inline-styling]
    [net.b12n.raylib-jlt.input]
    [net.b12n.raylib-jlt.input-actions]

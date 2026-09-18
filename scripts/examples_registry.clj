@@ -174,7 +174,8 @@
    ["inline-styling" "inline-styling" "text" "colour markup inside the string itself"]
    ["fog-of-war" "fog-of-war" "textures" "fog lifted by a 25x15 render texture"]
    ["framebuffer-rendering" "framebuffer-rendering" "textures" "two cameras, two framebuffers, one scene"]
-   ["highdpi-demo" "highdpi-demo" "core" "logical points vs physical pixels, two rulers"]])
+   ["highdpi-demo" "highdpi-demo" "core" "logical points vs physical pixels, two rulers"]
+   ["image-generation" "image-generation" "textures" "nine procedural textures, none of them loaded"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
