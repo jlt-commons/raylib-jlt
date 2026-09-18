@@ -15,6 +15,7 @@
    [net.b12n.raylib-jlt.background-scrolling]
    [net.b12n.raylib-jlt.ball-physics]
    [net.b12n.raylib-jlt.basic-screen-manager]
+   [net.b12n.raylib-jlt.basic-voxel]
    [net.b12n.raylib-jlt.billboard-rendering]
    [net.b12n.raylib-jlt.blend-modes]
    [net.b12n.raylib-jlt.boids]

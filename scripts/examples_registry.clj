@@ -163,7 +163,8 @@
    ["texture-outline"      "texture-outline" "shaders" "a shader outline around a sprite's alpha edge"]
    ["directional-billboard" "directional-billboard" "3d" "a billboard whose facing row turns with the camera"]
    ["ascii-rendering"      "ascii-rendering" "shaders" "ascii art from a post-process shader"]
-   ["top-down-lights" "top-down-lights" "shapes" "lights and shadow volumes in an alpha mask"]])
+   ["top-down-lights" "top-down-lights" "shapes" "lights and shadow volumes in an alpha mask"]
+   ["basic-voxel" "basic-voxel" "3d" "an 8x8x8 voxel block, click one out"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
