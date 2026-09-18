@@ -10,13 +10,17 @@
   DrawModel once per voxel, which for a unit cube is exactly what the by-value
   `rl/draw-cube!` already draws, with `rl/draw-cube-wires!` for the outline.
 
-  Two deviations, both about the camera. UpdateCamera's first-person mode turns
+  Three deviations, all about the camera. UpdateCamera's first-person mode turns
   on the raw GetMouseDelta, which means the view drifts whenever the pointer
   moves at all, including while the window is still taking focus, so a headless
   screenshot never lands on the same frame twice. This keeps the yaw/pitch walk
   camera-3d-first-person already uses: absolute GetMouseX/GetMouseY, no delta,
-  nothing to drift. And the eye starts backed off above the block rather than at
-  ground level beside it, so the opening frame shows what there is to click.
+  nothing to drift. The eye starts backed off above the block rather than at
+  ground level beside it, so the opening frame shows what there is to click. And
+  until you touch a key or the mouse it orbits the block on its own, because no
+  synthetic input actuates a raylib window (see the note in
+  scripts/demo_manifest.edn) and an example with no motion of its own records as
+  a single frame. The first WASD press or mouse move hands it over for good.
 
   The pick is the C's method, brute force over every remaining voxel rather than
   a DDA march through the grid. GetScreenToWorldRay is not bound, and for a ray
@@ -33,6 +37,10 @@
 (def ^:const HALF 0.5)
 (def ^:const SPEED 0.15)
 (def ^:const SENS 0.004)
+(def ^:const CENTRE (/ (dec SIZE) 2.0))
+(def ^:const ORBIT-RADIUS 22.0)
+(def ^:const ORBIT-HEIGHT 14.0)
+(def ^:const ORBIT-SPEED 0.006)
 
 (defn- slab
   "Clip [t0 t1] against one axis of the box, or nil once the interval is empty.
@@ -80,19 +88,36 @@
                :height H
                :title "raylib [models] example - basic voxel"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  ;; The idle orbit looks at the block's centre from ORBIT-HEIGHT, which fixes
+  ;; the pitch for as long as nobody has taken over.
+  (let [deadline (rl/auto-quit-deadline)
+        orbit-pitch (Math/atan2 (- CENTRE ORBIT-HEIGHT) ORBIT-RADIUS)]
     (loop [frame 0
            voxels (full-block)
-           px -8.0 py 10.0 pz -8.0
-           yaw (/ Math/PI 4.0) pitch -0.38
+           px -8.0 py ORBIT-HEIGHT pz -8.0
+           yaw (/ Math/PI 4.0) pitch orbit-pitch
+           angle 0.0 steered? false
            last-mx nil last-my nil]
       (when (rl/keep-running? deadline)
         (let [mx (rl/get-mouse-x)
               my (rl/get-mouse-y)
-              yaw (if last-mx (+ yaw (* SENS (- mx last-mx))) yaw)
-              pitch (if last-my
-                      (-> (- pitch (* SENS (- my last-my))) (max -1.4) (min 1.4))
-                      pitch)
+              ;; Only a key or a click hands the camera over, never a mouse
+              ;; move. GetMouseX reports 0 on the first frame and the real
+              ;; position on the second, and the window-relative coordinates
+              ;; shift again whenever the window itself is placed, so "the
+              ;; pointer moved" is not evidence that a person moved it.
+              took-over? (or (rl/key-down? rl/KEY-W) (rl/key-down? rl/KEY-A)
+                             (rl/key-down? rl/KEY-S) (rl/key-down? rl/KEY-D)
+                             (rl/mouse-pressed? rl/MOUSE-LEFT))
+              angle (if steered? angle (+ angle ORBIT-SPEED))
+              yaw (cond
+                    (not steered?) (+ angle Math/PI)         ; face back at the centre
+                    last-mx (+ yaw (* SENS (- mx last-mx)))
+                    :else yaw)
+              pitch (cond
+                      (not steered?) orbit-pitch
+                      last-my (-> (- pitch (* SENS (- my last-my))) (max -1.4) (min 1.4))
+                      :else pitch)
               cp (Math/cos pitch)
               ;; the look direction, which is also the ray under the crosshair
               dir [(* cp (Math/cos yaw)) (Math/sin pitch) (* cp (Math/sin yaw))]
@@ -102,8 +127,11 @@
                     (if (rl/key-down? rl/KEY-D) rgx 0.0) (if (rl/key-down? rl/KEY-A) (- rgx) 0.0))
               dz (+ (if (rl/key-down? rl/KEY-W) fwz 0.0) (if (rl/key-down? rl/KEY-S) (- fwz) 0.0)
                     (if (rl/key-down? rl/KEY-D) rgz 0.0) (if (rl/key-down? rl/KEY-A) (- rgz) 0.0))
-              px (+ px (* SPEED dx))
-              pz (+ pz (* SPEED dz))
+              [px py pz] (if steered?
+                           [(+ px (* SPEED dx)) py (+ pz (* SPEED dz))]
+                           [(+ CENTRE (* ORBIT-RADIUS (Math/cos angle)))
+                            ORBIT-HEIGHT
+                            (+ CENTRE (* ORBIT-RADIUS (Math/sin angle)))])
               origin [px py pz]
               voxels (if (rl/mouse-pressed? rl/MOUSE-LEFT)
                        (if-let [v (pick voxels origin dir)]
@@ -142,7 +170,10 @@
                                                        :y 10
                                                        :size 20
                                                        :color rl/DARKGRAY})
-          (rl/text! (str "WASD move, mouse look - " (count voxels) " voxels left")
+          (rl/text! (str (if (or steered? took-over?)
+                           "WASD move, mouse look"
+                           "orbiting until you press WASD or click")
+                         " - " (count voxels) " voxels left")
                     {:x 10
                      :y 35
                      :size 10
@@ -151,7 +182,7 @@
                     :y 10})
           (rl/maybe-screenshot! frame 20)
           (rl/end-drawing)
-          (recur (inc frame) voxels px py pz yaw pitch mx my)))))
+          (recur (inc frame) voxels px py pz yaw pitch angle (or steered? took-over?) mx my)))))
   (rl/close-window))
 
 ;; To run this from your editor

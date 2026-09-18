@@ -19,10 +19,14 @@
   src/dst factors entirely, which is why the same SRC_ALPHA pair is passed to
   both: only the equation is doing work.
 
-  Two deviations from the C. The shadow quads are two rlgl triangles wound
+  Three deviations from the C. The shadow quads are two rlgl triangles wound
   front-facing rather than a DrawTriangleFan, whose Vector2 array is by value.
-  And a light standing inside a box still redraws its mask, so it goes properly
-  dark; the C returns early there and leaves the previous frame's mask up."
+  A light standing inside a box still redraws its mask, so it goes properly
+  dark; the C returns early there and leaves the previous frame's mask up. And
+  light #1 walks a slow figure-eight until the first drag, because no synthetic
+  input actuates a raylib window (see the note in scripts/demo_manifest.edn), so
+  an example with no motion of its own records as a single frame. Touch the
+  light once and it stays wherever you leave it."
   (:require
    [net.b12n.raylib-jlt.raylib :as rl]))
 
@@ -163,6 +167,14 @@
      :valid? false
      :shadows []}))
 
+(defn- idle-path
+  "Where light #1 sits on frame `n` while nobody has touched it: a Lissajous
+  loop wide enough to sweep its shadows across most of the boxes."
+  [n]
+  (let [t (* n 0.012)]
+    [(+ (/ W 2.0) (* 0.34 W (Math/sin t)))
+     (+ (/ H 2.0) (* 0.30 H (Math/sin (* 2.0 t))))]))
+
 (defn- setup-boxes
   "The world. Two boxes are placed by hand so the opening frame always has
   something casting, the rest are scattered. The C's other three fixed boxes sit
@@ -205,15 +217,22 @@
       (let [remaining
             (loop [frame 0
                    lights (vec (keep identity [(make-light 600 400 300)]))
-                   show-lines? false]
+                   show-lines? false
+                   steered? false]
               (if-not (rl/keep-running? deadline)
                 lights
                 (let [mx (rl/get-mouse-x)
                       my (rl/get-mouse-y)
                       dragging? (and (seq lights) (rl/mouse-down? rl/MOUSE-LEFT))
-                      lights (if dragging?
+                      steered? (or steered? dragging?)
+                      lights (cond
+                               dragging?
                                (update lights 0 assoc :pos [(double mx) (double my)] :dirty? true)
-                               lights)
+
+                               (and (not steered?) (seq lights))
+                               (update lights 0 assoc :pos (idle-path frame) :dirty? true)
+
+                               :else lights)
                       lights (if (and (rl/mouse-pressed? rl/MOUSE-RIGHT)
                                       (< (count lights) MAX-LIGHTS))
                                (if-let [l (make-light mx my 200)]
@@ -287,7 +306,7 @@
                             :y 10})
                   (rl/maybe-screenshot! frame 20)
                   (rl/end-drawing)
-                  (recur (inc frame) lights show-lines?))))]
+                  (recur (inc frame) lights show-lines? steered?))))]
         (doseq [{:keys [mask]} remaining]
           (rl/unload-render-texture! mask))
         (rl/unload-render-texture! master)
