@@ -2366,3 +2366,90 @@
   into a `w` x `h` greyscale field."
   [w h text]
   (with-image (fn [img] (gen-image-text-raw img (int w) (int h) text))))
+
+;; --- Image processing: raylib's own pixel operations ---------------------
+;; The generators above make an Image; these change one. Note the asymmetry in
+;; raylib's own API, which is why these bind so differently: every processor
+;; takes `Image *` and works IN PLACE, so it is a plain :pointer argument and the
+;; 24-byte by-value dance does not arise. Only ImageCopy and LoadImageFromTexture
+;; move whole Images across the boundary.
+;;
+;; LoadImageFromTexture is what lets this suite process a picture at all. It
+;; reads a GPU texture back to CPU memory, so an image authored pixel by pixel
+;; with texture-from-fn can be handed to raylib's blur, its channel flips and its
+;; colour operations. Without it there is no source image here, since no example
+;; ships one on disk.
+(ffi/defcfn ^:private load-image-from-texture-raw "LoadImageFromTexture"
+  [[:by-value [:struct [[:id :uint] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]]]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private image-copy-raw "ImageCopy"
+  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]]]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private image-format-raw         "ImageFormat"          [:pointer :int] :void)
+(ffi/defcfn ^:private image-color-invert-raw   "ImageColorInvert"     [:pointer] :void)
+(ffi/defcfn ^:private image-color-grayscale-raw "ImageColorGrayscale" [:pointer] :void)
+(ffi/defcfn ^:private image-color-tint-raw     "ImageColorTint"       [:pointer :uint] :void)
+(ffi/defcfn ^:private image-color-contrast-raw "ImageColorContrast"   [:pointer :int] :void)
+(ffi/defcfn ^:private image-color-brightness-raw "ImageColorBrightness" [:pointer :int] :void)
+(ffi/defcfn ^:private image-flip-horizontal-raw "ImageFlipHorizontal" [:pointer] :void)
+(ffi/defcfn ^:private image-flip-vertical-raw  "ImageFlipVertical"    [:pointer] :void)
+(ffi/defcfn ^:private image-blur-gaussian-raw  "ImageBlurGaussian"    [:pointer :int] :void)
+
+(defn image-from-texture!
+  "LoadImageFromTexture: read an rlgl texture back off the GPU into a fresh
+  Image buffer, which the caller owns and must pass to unload-image!. The
+  texture is described truthfully from `w` and `h`; raylib reads the id, the
+  size and the format to work out how many bytes to pull back."
+  [tex-id w h]
+  (let [img (ffi/alloc (ffi/layout-size image-layout))]
+    (ffi/with-layout [t texture2d-layout]
+      (ffi/write-field t texture2d-layout :id tex-id)
+      (ffi/write-field t texture2d-layout :width (int w))
+      (ffi/write-field t texture2d-layout :height (int h))
+      (ffi/write-field t texture2d-layout :mipmaps 1)
+      (ffi/write-field t texture2d-layout :format PIXELFORMAT-R8G8B8A8)
+      (load-image-from-texture-raw img t))
+    img))
+
+(defn image-copy!
+  "ImageCopy: a duplicate the caller owns, so an original can be kept while a
+  processor chews through the copy."
+  [img]
+  (let [out (ffi/alloc (ffi/layout-size image-layout))]
+    (image-copy-raw out img)
+    out))
+
+(defn unload-image!
+  "UnloadImage, then release the 24-byte struct this side."
+  [img]
+  (unload-image-raw img)
+  (ffi/free img))
+
+(defn image->texture
+  "Upload an Image the caller still owns to the GPU and answer its rlgl texture
+  id. Unlike the generators, this does NOT consume the Image."
+  [img]
+  (let [tex (ffi/alloc (ffi/layout-size texture2d-layout))]
+    (try
+      (load-texture-from-image-raw tex img)
+      (ffi/read-field tex texture2d-layout :id)
+      (finally (ffi/free tex)))))
+
+(defn image-format!
+  "ImageFormat, in place. RGBA8 is PIXELFORMAT-R8G8B8A8; a processor that ran
+  on a narrower format needs putting back before it is uploaded."
+  [img format]
+  (image-format-raw img (int format)))
+
+(defn image-color-invert! [img] (image-color-invert-raw img))
+(defn image-color-grayscale! [img] (image-color-grayscale-raw img))
+(defn image-color-tint! [img color] (image-color-tint-raw img color))
+(defn image-color-contrast! [img contrast] (image-color-contrast-raw img (int contrast)))
+(defn image-color-brightness! [img brightness] (image-color-brightness-raw img (int brightness)))
+(defn image-flip-horizontal! [img] (image-flip-horizontal-raw img))
+(defn image-flip-vertical! [img] (image-flip-vertical-raw img))
+(defn image-blur-gaussian! [img size] (image-blur-gaussian-raw img (int size)))
