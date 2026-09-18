@@ -135,6 +135,14 @@ example would benefit from a specific input sequence in its demo, add an
 `:overrides` entry for it in the manifest and mention it in your PR; a maintainer
 will record it.
 
+`bb check:demos` runs in CI and does not ask you for a GIF. What it asks is that
+every surface agrees about which examples have one, so give your new example a
+row in `docs/guide/example-catalog.md` reading `*not recorded yet*` in the
+preview column and leave the full-size gallery alone. The gate names the exact
+row it wants if you forget. A maintainer records the GIF and flips the row in
+the same pass, and the stated counts follow from what is on disk rather than
+from anyone remembering to update them.
+
 Publishing the site is automatic. `.github/workflows/site.yml` builds it on every
 pull request and deploys it when your change lands on `main`, so a docs change goes
 live on merge without anyone running anything. You can preview it locally with

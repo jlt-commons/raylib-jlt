@@ -156,6 +156,9 @@ jobs:
       - name: Registration touchpoints
         run: bb check:registration
 
+      - name: Demo gallery and counts
+        run: bb check:demos
+
       - name: Compile every example (headless)
         run: |
           set +e
