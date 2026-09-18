@@ -1,4 +1,4 @@
-# The example catalog: 161 raylib demos in jolt
+# The example catalog: 162 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -250,16 +250,19 @@ by-value API itself is not written yet.
 | [<img src="../demos/texture-outline.gif" width="80">](demos.md#texture-outline) | `texture-outline` | a shader outline around a sprite's alpha edge |
 | [<img src="../demos/ascii-rendering.gif" width="80">](demos.md#ascii-rendering) | `ascii-rendering` | ascii art from a post-process shader |
 
-## audio (2)
+## audio (3)
 
-raylib's raudio, streamed by hand: a caller-managed ring buffer refilled every
-frame with `IsAudioStreamProcessed` / `UpdateAudioStream`, rather than a
-one-shot `LoadSound`.
+raylib's raudio, in both directions. Two examples push, refilling a
+caller-managed ring buffer every frame with `IsAudioStreamProcessed` /
+`UpdateAudioStream`. The third lets raudio pull, from its own audio thread,
+through a jolt callback. None of them loads a file, so there is no `LoadSound`
+here yet.
 
 | preview | `bb` name | shows |
 |---|---|---|
 | [<img src="../demos/audio-raw-stream.gif" width="80">](demos.md#audio-raw-stream) | `audio-raw-stream` | arrow keys steer a live sine tone's pitch/pan |
 | [<img src="../demos/amp-envelope.gif" width="80">](demos.md#amp-envelope) | `amp-envelope` | ADSR amplitude envelope on a 440Hz tone |
+| *not recorded yet* | `audio-stream-callback` | raudio pulls samples from its own thread |
 
 ## Adding an example: the five touchpoints
 

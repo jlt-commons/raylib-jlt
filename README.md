@@ -464,7 +464,7 @@ inline.
   - [`textures-via-rlgl.md`](docs/guide/textures-via-rlgl.md): why `LoadTexture` has no binding, and reaching textures and framebuffers from underneath it
   - [`kwarg-drawing-api.md`](docs/guide/kwarg-drawing-api.md): the positional-binds / keyword-wrappers two-layer design
   - [`headless-smoke-testing.md`](docs/guide/headless-smoke-testing.md): `RAYLIB_APP_AUTO_QUIT_MS` + `RAYLIB_APP_SHOT` proof without a person
-  - [`example-catalog.md`](docs/guide/example-catalog.md): a tour of all 161, and the five-touchpoint recipe for adding one
+  - [`example-catalog.md`](docs/guide/example-catalog.md): a tour of all 162, and the five-touchpoint recipe for adding one
 
 - Two galleries show the same 151 recordings for different purposes. 148 are
   animated GIFs. Three are still frames: `rectangle-advanced` and `rlgl-triangle`
@@ -477,10 +477,11 @@ inline.
   [`docs/guide/demos.md`](docs/guide/demos.md) is the full-size companion to the
   example catalog's thumbnails.
 
-  151 recordings against 161 examples is not a mismatch to fix in the docs.
-  Ten have not been recorded yet: `helitorus`, `doom`, `pacman`,
+  151 recordings against 162 examples is not a mismatch to fix in the docs.
+  Eleven have not been recorded yet: `helitorus`, `doom`, `pacman`,
   `top-down-lights`, `basic-voxel`, `strings-management`, `picking-3d`,
-  `drop-files`, `directory-files` and `custom-logging`. Recording is a
+  `drop-files`, `directory-files`, `custom-logging` and
+  `audio-stream-callback`. Recording is a
   maintainer step that needs the unreleased capture tool, so run any of them
   with `bb <name>` in the meantime. `drop-files` and `directory-files` will
   never record well whatever happens to the tool: one waits on an

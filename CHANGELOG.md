@@ -10,6 +10,28 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-18 (later still)
+
+- **A second callback into jolt, and a harder one: `audio-stream-callback`,
+  taking the suite to 162.** `custom-logging` gives raylib a pointer raylib
+  calls on the thread that called into it. raudio runs its own audio thread, so
+  this one needs jolt's `:collect-safe`, which reactivates the thread before any
+  jolt code runs on it; without it the process dies with a memory fault no
+  handler can catch. It was probed in isolation before a line of the example was
+  written: 20 calls, 8820 frames, clean exit.
+- **Being on the audio thread is a budget, not just a thread.** The callback
+  owes raudio its samples before the device underruns, so it writes floats
+  straight into raudio's buffer with `ffi/write` and allocates nothing per
+  sample. The scope under the waveform is the same discipline: a native ring
+  buffer the callback writes a second copy into, with its cursor in the last
+  four bytes of the same block, so drawing what played costs one more float
+  store. It shows about four cycles whatever the pitch, which is what keeps a
+  12kHz square from arriving as a picket fence.
+- **The audio group now shows raudio in both directions.** `audio-raw-stream`
+  and `amp-envelope` push, asking `IsAudioStreamProcessed` and refilling with
+  `UpdateAudioStream`; `audio-stream-callback` is pulled from. Same sound,
+  opposite direction, and the push versions never leave the main thread.
+
 ## 2026-09-18 (later)
 
 - **Four more examples, taking the suite to 161**, all of them from the set that
