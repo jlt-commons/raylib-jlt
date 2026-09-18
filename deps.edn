@@ -170,6 +170,7 @@
            :billboard-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.billboard-rendering"]} ; camera-facing quads, one spins
            :texture-outline {:main-opts ["-m" "net.b12n.raylib-jlt.texture-outline"]} ; a shader outline around a sprite's alpha edge
            :directional-billboard {:main-opts ["-m" "net.b12n.raylib-jlt.directional-billboard"]} ; a billboard whose facing row turns with the camera
-           :ascii-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.ascii-rendering"]}} ; ascii art from a post-process shader
+           :ascii-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.ascii-rendering"]} ; ascii art from a post-process shader
+           :top-down-lights {:main-opts ["-m" "net.b12n.raylib-jlt.top-down-lights"]}} ; lights and shadow volumes in an alpha mask
 
  :tasks {run "joltc -M:run"}}

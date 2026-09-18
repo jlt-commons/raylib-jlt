@@ -811,6 +811,15 @@
 (def ^:const BLEND-ALPHA 0)      (def ^:const BLEND-ADDITIVE 1)
 (def ^:const BLEND-MULTIPLIED 2) (def ^:const BLEND-ADD-COLORS 3)
 (def ^:const BLEND-SUBTRACT-COLORS 4)
+(def ^:const BLEND-CUSTOM 6)     ; 5 is ALPHA_PREMULTIPLY, which nothing here uses
+
+;; rlSetBlendFactors hands its three arguments straight to glBlendFunc and
+;; glBlendEquation, so they are raw GL enums rather than raylib ones. rlgl only
+;; reads them while BLEND-CUSTOM is the current mode, and it re-applies on a mode
+;; change or a factor edit, so the order is: set the factors, then begin the mode.
+(ffi/defcfn set-blend-factors "rlSetBlendFactors" [:int :int :int] :void)
+(def ^:const GL-SRC-ALPHA 0x0302)
+(def ^:const GL-MIN 0x8007)      (def ^:const GL-MAX 0x8008)
 
 (defn circle-gradient!
   "DrawCircleGradient. :x :y :radius :inner :outer."
