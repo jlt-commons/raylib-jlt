@@ -2225,3 +2225,10 @@
   update-audio-stream refills and stops calling into jolt."
   [stream]
   (set-audio-stream-callback-raw stream ffi/null))
+
+;; --- window placement ----------------------------------------------------
+;; Both scalar, and both only meaningful after init-window. SetWindowMinSize
+;; needs FLAG_WINDOW_RESIZABLE to have any effect, since a fixed-size window has
+;; no minimum to enforce.
+(ffi/defcfn set-window-min-size "SetWindowMinSize" [:int :int] :void)
+(ffi/defcfn set-window-monitor  "SetWindowMonitor" [:int] :void)

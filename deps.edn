@@ -178,6 +178,10 @@
            :drop-files {:main-opts ["-m" "net.b12n.raylib-jlt.drop-files"]} ; drag files in: FilePathList by value
            :directory-files {:main-opts ["-m" "net.b12n.raylib-jlt.directory-files"]} ; a file browser over LoadDirectoryFilesEx
            :custom-logging {:main-opts ["-m" "net.b12n.raylib-jlt.custom-logging"]} ; raylib's log captured by a jolt callback
-           :audio-stream-callback {:main-opts ["-m" "net.b12n.raylib-jlt.audio-stream-callback"]}} ; raudio pulls samples from its own thread
+           :audio-stream-callback {:main-opts ["-m" "net.b12n.raylib-jlt.audio-stream-callback"]} ; raudio pulls samples from its own thread
+           :inline-styling {:main-opts ["-m" "net.b12n.raylib-jlt.inline-styling"]} ; colour markup inside the string itself
+           :fog-of-war {:main-opts ["-m" "net.b12n.raylib-jlt.fog-of-war"]} ; fog lifted by a 25x15 render texture
+           :framebuffer-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.framebuffer-rendering"]} ; two cameras, two framebuffers, one scene
+           :highdpi-demo {:main-opts ["-m" "net.b12n.raylib-jlt.highdpi-demo"]}} ; logical points vs physical pixels, two rulers
 
  :tasks {run "joltc -M:run"}}

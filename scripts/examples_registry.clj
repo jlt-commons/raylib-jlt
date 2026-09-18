@@ -170,7 +170,11 @@
    ["drop-files" "drop-files" "core" "drag files in: FilePathList by value"]
    ["directory-files" "directory-files" "core" "a file browser over LoadDirectoryFilesEx"]
    ["custom-logging" "custom-logging" "core" "raylib's log captured by a jolt callback"]
-   ["audio-stream-callback" "audio-stream-callback" "audio" "raudio pulls samples from its own thread"]])
+   ["audio-stream-callback" "audio-stream-callback" "audio" "raudio pulls samples from its own thread"]
+   ["inline-styling" "inline-styling" "text" "colour markup inside the string itself"]
+   ["fog-of-war" "fog-of-war" "textures" "fog lifted by a 25x15 render texture"]
+   ["framebuffer-rendering" "framebuffer-rendering" "textures" "two cameras, two framebuffers, one scene"]
+   ["highdpi-demo" "highdpi-demo" "core" "logical points vs physical pixels, two rulers"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

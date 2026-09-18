@@ -456,6 +456,10 @@
   directory-files {:doc "▶ a file browser over LoadDirectoryFilesEx" :task (run-example "directory-files")}
   custom-logging {:doc "▶ raylib's log captured by a jolt callback" :task (run-example "custom-logging")}
   audio-stream-callback {:doc "▶ raudio pulls samples from its own thread" :task (run-example "audio-stream-callback")}
+  inline-styling {:doc "▶ colour markup inside the string itself" :task (run-example "inline-styling")}
+  fog-of-war {:doc "▶ fog lifted by a 25x15 render texture" :task (run-example "fog-of-war")}
+  framebuffer-rendering {:doc "▶ two cameras, two framebuffers, one scene" :task (run-example "framebuffer-rendering")}
+  highdpi-demo {:doc "▶ logical points vs physical pixels, two rulers" :task (run-example "highdpi-demo")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
