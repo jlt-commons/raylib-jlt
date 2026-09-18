@@ -10,6 +10,36 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-18 (night)
+
+- **Every example has an animated GIF now, so the gallery is 171 for 171.**
+  Twenty had no recording at all and three stood in with a PNG still. All 23
+  were recorded and the stills are gone, which means the site shows a preview
+  for every example rather than for 151 of them. Nineteen of the 171 come back
+  as a single frame, which is the honest result for an example that draws
+  something fixed and only moves once you drive it. `drop-files` is the one
+  that will not improve: it waits on an operating-system drop event that no
+  synthetic input produces.
+- **`splines` had been showing the wrong thing for a month.** Its recording was
+  made on 2026-08-14, and the change that made it call the real
+  `DrawSplineSegment*` functions instead of a hand-rolled reimplementation
+  landed on 2026-09-17. The GIF on the site was still the old maths.
+  Re-recorded.
+- **`bb check:demos` gates the gallery, and runs in CI.** It asserts that the
+  ledger, both galleries and every stated count agree about which examples have
+  a recording: each `## group (N)` heading matches the entries beneath it, every
+  image reference and catalog anchor resolves, and prose that counts GIFs says
+  what is on disk. It checks consistency rather than completeness, so an example
+  with no recording stays fine as long as the catalog marks it `*not recorded
+  yet*` and the counts leave it out. That matters because `bb record` needs an
+  unreleased capture tool: a gate demanding a GIF per example would fail every
+  outside contribution on a step CONTRIBUTING.md says to skip.
+- **`bb record` reports nothing to do when there is nothing to do.** It had been
+  offering to re-record 117 examples whose sources were touched only by the
+  kwargs codemod and some comment edits. Those ledger entries were refreshed
+  without re-recording, so a genuinely stale recording now stands out instead of
+  hiding among false positives.
+
 ## 2026-09-18 (late)
 
 - **Three more textures examples, taking the suite to 171.** `image-kernel` runs
