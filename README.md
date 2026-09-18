@@ -464,7 +464,7 @@ inline.
   - [`textures-via-rlgl.md`](docs/guide/textures-via-rlgl.md): why `LoadTexture` has no binding, and reaching textures and framebuffers from underneath it
   - [`kwarg-drawing-api.md`](docs/guide/kwarg-drawing-api.md): the positional-binds / keyword-wrappers two-layer design
   - [`headless-smoke-testing.md`](docs/guide/headless-smoke-testing.md): `RAYLIB_APP_AUTO_QUIT_MS` + `RAYLIB_APP_SHOT` proof without a person
-  - [`example-catalog.md`](docs/guide/example-catalog.md): a tour of all 154, and the five-touchpoint recipe for adding one
+  - [`example-catalog.md`](docs/guide/example-catalog.md): a tour of all 157, and the five-touchpoint recipe for adding one
 
 - Two galleries show the same 151 recordings for different purposes. 148 are
   animated GIFs. Three are still frames: `rectangle-advanced` and `rlgl-triangle`
@@ -477,11 +477,12 @@ inline.
   [`docs/guide/demos.md`](docs/guide/demos.md) is the full-size companion to the
   example catalog's thumbnails.
 
-  151 recordings against 154 examples is not a mismatch to fix in the docs.
-  `helitorus`, `doom` and `pacman` landed with their `demo_manifest.edn` entries
-  but have not been recorded yet, and recording is a maintainer step that needs
-  the unreleased capture tool. Run them with `bb helitorus`, `bb doom` or
-  `bb pacman` in the meantime.
+  151 recordings against 157 examples is not a mismatch to fix in the docs.
+  `helitorus`, `doom`, `pacman`, `top-down-lights`, `basic-voxel` and
+  `strings-management` have not been recorded yet, and recording is a maintainer
+  step that needs the unreleased capture tool. Run them with `bb helitorus`,
+  `bb doom`, `bb pacman`, `bb top-down-lights`, `bb basic-voxel` or
+  `bb strings-management` in the meantime.
 
 - Publishing is automatic. `.github/workflows/site.yml` builds the site on every
   pull request and deploys it from `main`, so a merged docs change is live without

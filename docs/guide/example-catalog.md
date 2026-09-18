@@ -1,4 +1,4 @@
-# The example catalog: 154 raylib demos in jolt
+# The example catalog: 157 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -65,7 +65,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/highdpi-testbed.gif" width="80">](demos.md#highdpi-testbed) | `highdpi-testbed` | diagnostic overlay: monitors, DPI, crosshair |
 | [<img src="../demos/compute-hash.gif" width="80">](demos.md#compute-hash) | `compute-hash` | CRC32/MD5/SHA1/SHA256 + Base64 of typed text |
 
-## shapes (43)
+## shapes (44)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -112,8 +112,9 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/rectangle-advanced.png" width="80">](demos.md#rectangle-advanced) | `rectangle-advanced` | per-side roundness with a horizontal gradient |
 | [<img src="../demos/easings-testbed.gif" width="80">](demos.md#easings-testbed) | `easings-testbed` | one curve at a time, plotted and run |
 | [<img src="../demos/starfield-effect.gif" width="80">](demos.md#starfield-effect) | `starfield-effect` | flying starfield (wheel=speed, SPACE=mode) |
+| *not recorded yet* | `top-down-lights` | lights and shadow volumes in an alpha mask |
 
-## text (6)
+## text (7)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -123,8 +124,9 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/words-alignment.gif" width="80">](demos.md#words-alignment) | `words-alignment` | align a word inside a box with `MeasureText` |
 | [<img src="../demos/input-box.gif" width="80">](demos.md#input-box) | `input-box` | type into a text box (GetCharPressed) |
 | [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
+| *not recorded yet* | `strings-management` | bouncing text you slice, shatter and glue |
 
-## 3d (25)
+## 3d (26)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -153,6 +155,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/directional-billboard.gif" width="80">](demos.md#directional-billboard) | `directional-billboard` | a billboard whose facing row turns with the camera |
 | *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
 | *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
+| *not recorded yet* | `basic-voxel` | an 8x8x8 voxel block, click one out |
 
 Most of the 3D set stands on two building blocks from
 [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md) and

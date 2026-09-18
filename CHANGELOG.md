@@ -10,6 +10,42 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-18
+
+- **Three more examples, taking the suite to 157**, one each from the
+  categories the suite had thinnest cover of. `top-down-lights` is the
+  last of raylib's `shapes` examples to land here: nothing in it draws
+  light, every light renders a full-screen mask whose alpha is the whole
+  payload, the masks merge into one, and that one goes over the scene as
+  black, so alpha 0 reads as lit and alpha 1 as dark. `basic-voxel` is an
+  8x8x8 block you walk around and take apart a cube at a time.
+  `strings-management` is a sentence as a bouncing text particle you can
+  cut in half, shatter into characters, shake, and glue back together.
+- **`rlSetBlendFactors` is bound**, with `BLEND-CUSTOM` and the three GL
+  enums it takes. `top-down-lights` needs two custom blend equations that
+  work on alpha alone: `GL_MIN` punches a light's transparent centre into
+  a mask cleared to opaque white, and `GL_MAX` cuts the shadow volumes
+  back out of it. Both equations ignore the src/dst factors, which is why
+  the same `SRC_ALPHA` pair goes to each, and rlgl only re-reads the
+  factors when the blend mode changes, so the order is always set the
+  factors, then begin the mode.
+- **`strings-management` is the tour of raylib's string helpers, done in
+  Clojure.** The C exists because C has no string library, so it leans on
+  `TextCopy`, `TextSubtext`, `TextSplit`, `TextLength`, `TextFormat` and
+  the six `TextTo*` case conversions. All of those are `subs`, `count`,
+  `str` and `clojure.string` here, and the only raylib call left in the
+  text path is `MeasureText`, which has to be raylib's because only
+  raylib knows how wide its font draws.
+- **Both new 3D-ish examples avoid a binding rather than adding one.**
+  `basic-voxel` picks with a ray, but `GetScreenToWorldRay` is not bound
+  and does not need to be: a ray through the centre of the screen is the
+  look direction the camera was built from, and the hit test is the slab
+  clip `GetRayCollisionBox` does. It also keeps the suite's own yaw/pitch
+  walk instead of `UpdateCamera`'s first-person mode, which runs on raw
+  `GetMouseDelta` and drifts whenever the pointer moves at all, including
+  while the window is still taking focus, so no headless screenshot ever
+  landed on the same frame twice.
+
 ## 2026-09-17
 
 - **The splines example draws through raylib's own `DrawSplineSegment*`
