@@ -177,7 +177,9 @@
    ["highdpi-demo" "highdpi-demo" "core" "logical points vs physical pixels, two rulers"]
    ["image-generation" "image-generation" "textures" "nine procedural textures, none of them loaded"]
    ["image-processing" "image-processing" "textures" "nine CPU-side image operations, picked live"]
-   ["image-kernel" "image-kernel" "textures" "sharpen, sobel and gaussian, one call each"]])
+   ["image-kernel" "image-kernel" "textures" "sharpen, sobel and gaussian, one call each"]
+   ["npatch-drawing" "npatch-drawing" "textures" "nine-patch stretching, corners held fixed"]
+   ["sprite-button" "sprite-button" "textures" "one sheet, three states, sliced by v"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

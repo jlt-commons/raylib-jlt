@@ -185,6 +185,8 @@
            :highdpi-demo {:main-opts ["-m" "net.b12n.raylib-jlt.highdpi-demo"]} ; logical points vs physical pixels, two rulers
            :image-generation {:main-opts ["-m" "net.b12n.raylib-jlt.image-generation"]} ; nine procedural textures, none of them loaded
            :image-processing {:main-opts ["-m" "net.b12n.raylib-jlt.image-processing"]} ; nine CPU-side image operations, picked live
-           :image-kernel {:main-opts ["-m" "net.b12n.raylib-jlt.image-kernel"]}} ; sharpen, sobel and gaussian, one call each
+           :image-kernel {:main-opts ["-m" "net.b12n.raylib-jlt.image-kernel"]} ; sharpen, sobel and gaussian, one call each
+           :npatch-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.npatch-drawing"]} ; nine-patch stretching, corners held fixed
+           :sprite-button {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-button"]}} ; one sheet, three states, sliced by v
 
  :tasks {run "joltc -M:run"}}
