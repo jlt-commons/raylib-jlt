@@ -51,6 +51,7 @@
    [net.b12n.raylib-jlt.dna-helix]
    [net.b12n.raylib-jlt.doom]
    [net.b12n.raylib-jlt.double-pendulum]
+   [net.b12n.raylib-jlt.drop-files]
    [net.b12n.raylib-jlt.easings]
    [net.b12n.raylib-jlt.easings-ball]
    [net.b12n.raylib-jlt.easings-box]
