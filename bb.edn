@@ -23,6 +23,7 @@
 ;;   bb check:positional-args:strict  bb check:positional-args, but exit non-zero if any found
 ;;   bb check:kwarg-calls             find flat :k v calls to a kwargs fn (report only)
 ;;   bb check:kwarg-calls:strict      bb check:kwarg-calls, but exit non-zero if any found
+;;   bb check:demos                   gallery, ledger and counts agree with the registry
 ;;   bb fix:kwarg-calls               rewrite flat :k v call sites into an explicit {} map
 ;;
 ;; ── Git hooks ──
@@ -573,6 +574,22 @@
          (System/exit 1))
        (println (str "registration ok, " (count reg/examples)
                      " examples across source, alias, check.clj and bb.edn"))))}
+
+  check:demos
+  {:doc "Every example has a GIF, both galleries carry it, and the counts agree"
+   ;; check:registration gates the example count across source, deps.edn,
+   ;; check.clj and bb.edn. This is the same idea for the gallery, which
+   ;; nothing gated: docs/guide/demos.md once opened with "All 151 recordings
+   ;; are here" while the suite had grown to 171, and AGENTS.md could only
+   ;; warn about it in prose.
+   ;;
+   ;; Every expected value is derived from the registry or from the file
+   ;; itself, so adding an example never means editing a number in here.
+   ;;
+   ;; Needs no jolt, no libraylib and no capture tool, so it runs on a bare
+   ;; checkout and in CI.
+   :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/check_demos.clj")]
+           (System/exit exit))}
 
   ;; --- quality: lint (clj-kondo) --------------------------------------------
   ;; Formatting lives under lsp:format below, not here. See the top-of-file
