@@ -451,6 +451,7 @@
   top-down-lights {:doc "▶ lights and shadow volumes in an alpha mask" :task (run-example "top-down-lights")}
   basic-voxel {:doc "▶ an 8x8x8 voxel block, click one out" :task (run-example "basic-voxel")}
   strings-management {:doc "▶ bouncing text you slice, shatter and glue" :task (run-example "strings-management")}
+  picking-3d {:doc "▶ click a box: a real GetScreenToWorldRay pick" :task (run-example "picking-3d")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

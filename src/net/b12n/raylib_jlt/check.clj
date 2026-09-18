@@ -103,6 +103,7 @@
    [net.b12n.raylib-jlt.particles]
    [net.b12n.raylib-jlt.particles-blending]
    [net.b12n.raylib-jlt.penrose-tiling]
+   [net.b12n.raylib-jlt.picking-3d]
    [net.b12n.raylib-jlt.pie-chart]
    [net.b12n.raylib-jlt.point-cloud]
    [net.b12n.raylib-jlt.polygon-drawing]

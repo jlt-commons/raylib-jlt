@@ -173,6 +173,7 @@
            :ascii-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.ascii-rendering"]} ; ascii art from a post-process shader
            :top-down-lights {:main-opts ["-m" "net.b12n.raylib-jlt.top-down-lights"]} ; lights and shadow volumes in an alpha mask
            :basic-voxel {:main-opts ["-m" "net.b12n.raylib-jlt.basic-voxel"]} ; an 8x8x8 voxel block, click one out
-           :strings-management {:main-opts ["-m" "net.b12n.raylib-jlt.strings-management"]}} ; bouncing text you slice, shatter and glue
+           :strings-management {:main-opts ["-m" "net.b12n.raylib-jlt.strings-management"]} ; bouncing text you slice, shatter and glue
+           :picking-3d {:main-opts ["-m" "net.b12n.raylib-jlt.picking-3d"]}} ; click a box: a real GetScreenToWorldRay pick
 
  :tasks {run "joltc -M:run"}}
