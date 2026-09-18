@@ -21,8 +21,7 @@
   incrementing; clamping here makes each function total.
 
   Named for the header rather than for Clojure, so the correspondence is obvious.
-  See easings for the curve family drawn side by side."
-  (:refer-clojure :exclude [name]))
+  See easings for the curve family drawn side by side.")
 
 (defn- norm
   "t/d clamped to [0,1]."

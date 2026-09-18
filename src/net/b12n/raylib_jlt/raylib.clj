@@ -867,7 +867,7 @@
                            [(- width origin-x) (- height origin-y)]
                            [(- origin-x) (- height origin-y)]]]
               [(+ x (- (* dx cs) (* dy sn)))
-               (+ y (+ (* dx sn) (* dy cs)))])
+               (+ y (* dx sn) (* dy cs))])
         [a b c d] (vec pts)]
     (rl-begin RL-TRIANGLES)
     (rl-color! color)
@@ -2254,6 +2254,12 @@
 ;; texture2d-layout is already defined above, where the shader section needed it
 ;; for SetShaderValueTexture; image->texture-id! reuses that one rather than
 ;; shadowing it with a second copy of the same five fields.
+;;
+;; The five fields ARE written out again in every signature below, and that is
+;; forced rather than sloppy: a struct descriptor is a compile-time literal, so
+;; a def'd alias is rejected with "return type must be a keyword or [:by-value
+;; [:struct ...]]". Same constraint the shader section documents, same shape of
+;; repetition, and the layout above still earns its keep for reading fields back.
 (assert (= 24 (ffi/layout-size image-layout)) "Image is a pointer and four ints")
 (assert (= 20 (ffi/layout-size texture2d-layout)) "Texture2D is five 4-byte fields")
 
