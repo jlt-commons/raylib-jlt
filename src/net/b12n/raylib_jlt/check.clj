@@ -43,6 +43,7 @@
    [net.b12n.raylib-jlt.colors]
    [net.b12n.raylib-jlt.compute-hash]
    [net.b12n.raylib-jlt.core]
+   [net.b12n.raylib-jlt.custom-logging]
    [net.b12n.raylib-jlt.custom-uniform]
    [net.b12n.raylib-jlt.dashed-line]
    [net.b12n.raylib-jlt.delta-time]

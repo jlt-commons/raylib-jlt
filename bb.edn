@@ -454,6 +454,7 @@
   picking-3d {:doc "▶ click a box: a real GetScreenToWorldRay pick" :task (run-example "picking-3d")}
   drop-files {:doc "▶ drag files in: FilePathList by value" :task (run-example "drop-files")}
   directory-files {:doc "▶ a file browser over LoadDirectoryFilesEx" :task (run-example "directory-files")}
+  custom-logging {:doc "▶ raylib's log captured by a jolt callback" :task (run-example "custom-logging")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

@@ -176,6 +176,7 @@
            :strings-management {:main-opts ["-m" "net.b12n.raylib-jlt.strings-management"]} ; bouncing text you slice, shatter and glue
            :picking-3d {:main-opts ["-m" "net.b12n.raylib-jlt.picking-3d"]} ; click a box: a real GetScreenToWorldRay pick
            :drop-files {:main-opts ["-m" "net.b12n.raylib-jlt.drop-files"]} ; drag files in: FilePathList by value
-           :directory-files {:main-opts ["-m" "net.b12n.raylib-jlt.directory-files"]}} ; a file browser over LoadDirectoryFilesEx
+           :directory-files {:main-opts ["-m" "net.b12n.raylib-jlt.directory-files"]} ; a file browser over LoadDirectoryFilesEx
+           :custom-logging {:main-opts ["-m" "net.b12n.raylib-jlt.custom-logging"]}} ; raylib's log captured by a jolt callback
 
  :tasks {run "joltc -M:run"}}
