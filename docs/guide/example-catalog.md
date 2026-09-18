@@ -1,4 +1,4 @@
-# The example catalog: 157 raylib demos in jolt
+# The example catalog: 161 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -30,7 +30,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/minesweeper.gif" width="80">](demos.md#minesweeper) | `minesweeper` | reveal/flag grid (mouse L reveal, R flag) |
 | *not recorded yet* | `pacman` | the four classic ghost personalities, buffered turns |
 
-## core (30)
+## core (33)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -64,6 +64,9 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/viewport-scaling.gif" width="80">](demos.md#viewport-scaling) | `viewport-scaling` | 6 viewport-scaling policies, resize live |
 | [<img src="../demos/highdpi-testbed.gif" width="80">](demos.md#highdpi-testbed) | `highdpi-testbed` | diagnostic overlay: monitors, DPI, crosshair |
 | [<img src="../demos/compute-hash.gif" width="80">](demos.md#compute-hash) | `compute-hash` | CRC32/MD5/SHA1/SHA256 + Base64 of typed text |
+| *not recorded yet* | `drop-files` | drag files in: FilePathList by value |
+| *not recorded yet* | `directory-files` | a file browser over LoadDirectoryFilesEx |
+| *not recorded yet* | `custom-logging` | raylib's log captured by a jolt callback |
 
 ## shapes (44)
 
@@ -126,7 +129,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/rectangle-bounds.gif" width="80">](demos.md#rectangle-bounds) | `rectangle-bounds` | draggable word-wrap text container |
 | *not recorded yet* | `strings-management` | bouncing text you slice, shatter and glue |
 
-## 3d (26)
+## 3d (27)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -156,6 +159,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | *not recorded yet* | `helitorus` | a helix wound around a torus, projected and depth-sorted in jolt |
 | *not recorded yet* | `doom` | a textured raycaster: one ray per screen column, no 3D geometry |
 | *not recorded yet* | `basic-voxel` | an 8x8x8 voxel block, click one out |
+| *not recorded yet* | `picking-3d` | click a box: a real GetScreenToWorldRay pick |
 
 Most of the 3D set stands on two building blocks from
 [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md) and

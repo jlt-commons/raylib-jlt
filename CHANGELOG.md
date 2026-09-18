@@ -10,6 +10,51 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-18 (later)
+
+- **Four more examples, taking the suite to 161**, all of them from the set that
+  loads nothing off disk. `picking-3d` clicks a box in a 3D scene,
+  `drop-files` catches files dragged onto the window, `directory-files` is a
+  file browser, and `custom-logging` shows raylib's own log captured by a jolt
+  function and drawn in the window.
+- **`GetScreenToWorldRay` is bound, and it is the exact inverse of the
+  `GetWorldToScreen` the suite already had.** A by-value Vector2 in, a by-value
+  Camera3D in, a by-value Ray out. `GetRayCollisionBox` follows it, taking that
+  Ray with a by-value BoundingBox and returning a by-value RayCollision, whose
+  first field is a one-byte C `_Bool`: declared `:bool` the layout puts
+  `distance` at offset 4, declared as an int it would not. `raylib.clj` asserts
+  both struct sizes at load rather than trusting that, because a wrong offset
+  reads a plausible float out of the wrong bytes and never errors. `DrawRay`
+  and `IsCursorHidden` came along with them.
+- **`FilePathList` is bound, and with it the `char **` behind it.** It is
+  `{unsigned int count; char **paths;}`, the same 16-byte shape as `Shader`, so
+  the by-value binding is the one the shader section already used. What is new
+  is that raylib owns that array and every string in it until the matching
+  Unload, so `rl/dropped-files` and `rl/directory-files` copy the strings into a
+  Clojure vector and unload inside the same call. The filter string's behaviour
+  is measured rather than read off the header: `"*.*"` answers directories and
+  files, `"DIRS*"` and `"FILES*"` answer one each, and an empty filter quietly
+  means files only.
+- **The first callback INTO jolt.** Every other binding here calls out of jolt
+  into C. `SetTraceLogCallback` hands raylib a function pointer built from an
+  ordinary jolt fn by `ffi/foreign-callable`, and raylib calls it for every
+  message it would otherwise print. The awkward part is that raylib's callback
+  signature ends in a `va_list`, which no FFI type describes, so it is taken as
+  an opaque pointer and handed to libc's `vsnprintf` with the format string.
+  That step is what turns `"Target time per frame: %02.03f milliseconds"` into
+  the line with the number in it. C can call the pointer until `free-callable`
+  runs and not one instruction longer, so it is freed after `CloseWindow`.
+- **`directory-files` draws its own list view.** The C builds its browser out of
+  raygui, a separate single-header library this suite does not bind. The list,
+  the selection, the scrollbar and the path bar are `rect!` and `text!` here,
+  which is a fair trade: a list view over a vector of strings is not what makes
+  the C example interesting.
+- **The headless-testing guide now says what a slept display looks like.**
+  raylib warns `Failed to initialize platform` and carries on, so the process
+  dies later with `invalid memory reference` pointing at whatever line was last,
+  which reads as a bug in the example you just wrote. It hits every example at
+  once, so the check is to re-run one that already worked.
+
 ## 2026-09-18
 
 - **Three more examples, taking the suite to 157**, one each from the

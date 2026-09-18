@@ -2,9 +2,10 @@
 
 Every recorded example at full size, linked from
 [the example catalog](example-catalog.md)'s preview thumbnails. All 151 recordings
-are here, covering 151 of the suite's 157 examples: `helitorus`, `doom`,
-`pacman`, `top-down-lights`, `basic-voxel` and `strings-management` have not
-been recorded yet, so run those with `bb <name>` directly.
+are here, covering 151 of the suite's 161 examples. Ten have not been recorded
+yet: `helitorus`, `doom`, `pacman`, `top-down-lights`, `basic-voxel`,
+`strings-management`, `picking-3d`, `drop-files`, `directory-files` and
+`custom-logging`. Run those with `bb <name>` directly.
 
 148 are animated GIFs. Three are still frames. `rectangle-advanced` and
 `rlgl-triangle` draw something fixed and only move when you drive them, so a
