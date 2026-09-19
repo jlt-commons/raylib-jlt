@@ -113,17 +113,27 @@
   (rl-unload-texture id))
 
 (defn texture!
-  "Draw a texture id as an axis-aligned quad, the immediate-mode stand-in for
-  DrawTexturePro (whose Rectangle/Vector2 args are by value). Emits the same
-  topLeft -> bottomLeft -> bottomRight -> topRight winding raylib's own
-  DrawTexturePro uses, so it batches identically.
-    :x :y :width :height   destination rectangle in screen space
+  "Draw a texture id as a quad, the immediate-mode stand-in for DrawTexturePro
+  (whose Rectangle/Vector2 args are by value). Emits the same topLeft ->
+  bottomLeft -> bottomRight -> topRight winding raylib's own DrawTexturePro
+  uses, so it batches identically.
+    :x :y                  where the origin lands in screen space
+    :width :height         destination rectangle size
     :u0 :v0 :u1 :v1        source texcoords (default the whole texture; values
                            past 1.0 tile when the wrap mode is REPEAT, and
                            v0 > v1 flips vertically, which is what a framebuffer
                            texture needs)
-    :tint                  packed Color multiplied into the texels (default WHITE)"
-  [id & {:keys [x y width height u0 v0 u1 v1 tint]
+    :rotation              degrees, clockwise, about the origin (default 0)
+    :origin-x :origin-y    the pivot, as an offset into the destination
+                           rectangle (default 0 0, meaning its top-left
+                           corner). Pass half the width and height to spin
+                           about the centre.
+    :tint                  packed Color multiplied into the texels (default WHITE)
+
+  At the default origin with no rotation the four corners come out at exactly
+  (x, y) through (x + width, y + height), so every axis-aligned call predating
+  the rotation support is unaffected."
+  [id & {:keys [x y width height u0 v0 u1 v1 tint rotation origin-x origin-y]
          :or {x 0
               y 0
               width 100
@@ -132,17 +142,29 @@
               v0 0.0
               u1 1.0
               v1 1.0
+              rotation 0.0
+              origin-x 0.0
+              origin-y 0.0
               tint color/WHITE}}]
-  (let [x0 (double x) y0 (double y)
-        x1 (double (+ x width)) y1 (double (+ y height))]
+  (let [px (double x) py (double y)
+        ox (double origin-x) oy (double origin-y)
+        ;; corner offsets from the pivot, before any rotation
+        lx (- ox) rx (- (double width) ox)
+        ty (- oy) by (- (double height) oy)
+        rad (Math/toRadians (double rotation))
+        c (Math/cos rad) s (Math/sin rad)
+        ;; y grows downward here, so [c -s; s c] turns clockwise on screen,
+        ;; which is the direction DrawTexturePro's positive rotation goes
+        vx (fn [dx dy] (+ px (- (* dx c) (* dy s))))
+        vy (fn [dx dy] (+ py (* dx s) (* dy c)))]
     (rl-set-texture id)
     (rlgl/rl-begin RL-QUADS)
     (rlgl/rl-color! tint)
     (rl-normal-3f 0.0 0.0 1.0)
-    (rl-tex-coord-2f (double u0) (double v0)) (rlgl/rl-vertex-2f x0 y0)
-    (rl-tex-coord-2f (double u0) (double v1)) (rlgl/rl-vertex-2f x0 y1)
-    (rl-tex-coord-2f (double u1) (double v1)) (rlgl/rl-vertex-2f x1 y1)
-    (rl-tex-coord-2f (double u1) (double v0)) (rlgl/rl-vertex-2f x1 y0)
+    (rl-tex-coord-2f (double u0) (double v0)) (rlgl/rl-vertex-2f (vx lx ty) (vy lx ty))
+    (rl-tex-coord-2f (double u0) (double v1)) (rlgl/rl-vertex-2f (vx lx by) (vy lx by))
+    (rl-tex-coord-2f (double u1) (double v1)) (rlgl/rl-vertex-2f (vx rx by) (vy rx by))
+    (rl-tex-coord-2f (double u1) (double v0)) (rlgl/rl-vertex-2f (vx rx ty) (vy rx ty))
     (rlgl/rl-end)
     (rl-set-texture 0)))
 

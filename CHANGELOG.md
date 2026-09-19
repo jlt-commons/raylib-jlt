@@ -12,6 +12,33 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## 2026-09-20
 
+- **`rl/texture!` can rotate.** It takes `:rotation` in degrees plus
+  `:origin-x`/`:origin-y` naming the pivot as an offset into the destination
+  rectangle, which is what `DrawTexturePro` means by those arguments. Until
+  now the rlgl stand-in only emitted axis-aligned quads, which put every
+  rotated-sprite example out of reach. Existing calls are unaffected: at the
+  default origin with no rotation the arithmetic collapses to the old corner
+  positions, checked by byte-comparing four texture-heavy examples against
+  the previous commit.
+- **Five more textures examples, taking the suite to 180.**
+  `sprite-stacking` fakes a 3D car out of 40 stacked slices, `sprite-animation`
+  walks a source rectangle along a six-pose strip, `raw-data` builds textures
+  from a byte buffer it fills itself, `to-image` walks one image from VRAM to
+  RAM and back, and `magnifying-glass` shows a round lens that reveals markers
+  drawn nowhere else.
+- **All five generate their own pixels.** No image files ship here, so the
+  sprite sheets, the walk cycle and the backdrop are all painted at startup
+  with the `ImageDraw*` family or computed per pixel. Upstream loads a `.png`
+  for each.
+- **`magnifying-glass` cuts its lens with a textured triangle fan**, not the
+  separate-blend-factor mask the C uses. `rlSetBlendFactorsSeparate` is not
+  bound, and a six-argument blend-factor call is a lot of surface to add for
+  one example. The disc is built from the render target's own texels instead,
+  so there is no mask and no square to hide.
+- **The gallery is nine examples behind the suite.** 171 GIFs against 180
+  examples, the nine newest marked "not recorded yet" in the catalog.
+  `bb record` needs the capture tool and takes the screen over, so recording
+  is its own pass.
 - **The raylib bindings are a library now, not one shared file in this repo.**
   `net.b12n.raylib` lives in `lib/` as its own jolt project: 19 focused
   modules, aggregated as `net.b12n.raylib.all` so a caller still only
