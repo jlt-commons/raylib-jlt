@@ -9,6 +9,7 @@
   (:require
    [net.b12n.raylib-jlt.amp-envelope]
    [net.b12n.raylib-jlt.analog-clock]
+   [net.b12n.raylib-jlt.app]
    [net.b12n.raylib-jlt.ascii-rendering]
    [net.b12n.raylib-jlt.asteroids]
    [net.b12n.raylib-jlt.audio-raw-stream]
