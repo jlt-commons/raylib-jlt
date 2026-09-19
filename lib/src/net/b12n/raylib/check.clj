@@ -7,6 +7,7 @@
   a real window, and the example suite's own screenshot smoke does it."
   (:require
    [net.b12n.raylib.color]
+   [net.b12n.raylib.core]
    [net.b12n.raylib.files]
    [net.b12n.raylib.input]
    [net.b12n.raylib.log]

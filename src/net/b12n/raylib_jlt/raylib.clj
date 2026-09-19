@@ -14,8 +14,8 @@
   (:refer-clojure :exclude [run!])
   (:require
    [jolt.ffi :as ffi]
-   [jolt.host]
    [net.b12n.raylib.color :as color]
+   [net.b12n.raylib.core :as core]
    [net.b12n.raylib.files :as files]
    [net.b12n.raylib.input :as input]
    [net.b12n.raylib.log :as log]
@@ -45,22 +45,22 @@
 (def RAYWHITE  color/RAYWHITE)
 
 ;; --- window / lifecycle ------------------------------------------------------
-(ffi/defcfn init-window    "InitWindow"   [:int :int :string] :void)
-(ffi/defcfn set-target-fps "SetTargetFPS" [:int] :void)
-;; Reassigns the key that closes the window. Passing KEY-NULL takes ESC away, so
-;; an example can put its own confirmation in front of a close request rather
-;; than being closed out from under it. See window-should-close.
-(ffi/defcfn set-exit-key   "SetExitKey"   [:int] :void)
-(ffi/defcfn close-window   "CloseWindow"  [] :void)
-(ffi/defcfn ^:private should-close-raw "WindowShouldClose" [] :int)
+;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
+;; rl/init-window or rl/close-window keeps working unchanged.
+(def init-window core/init-window)
+(def set-target-fps core/set-target-fps)
+(def set-exit-key core/set-exit-key)
+(def close-window core/close-window)
 
 ;; --- frame -------------------------------------------------------------------
-(ffi/defcfn begin-drawing      "BeginDrawing"     [] :void)
-(ffi/defcfn end-drawing        "EndDrawing"       [] :void)
-(ffi/defcfn clear-background   "ClearBackground"  [:uint] :void)       ; Color
-(ffi/defcfn get-frame-time     "GetFrameTime"     [] :float)           ; seconds since last frame
-(ffi/defcfn begin-scissor-mode "BeginScissorMode" [:int :int :int :int] :void)
-(ffi/defcfn end-scissor-mode   "EndScissorMode"   [] :void)
+;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
+;; rl/begin-drawing or rl/clear-background keeps working unchanged.
+(def begin-drawing core/begin-drawing)
+(def end-drawing core/end-drawing)
+(def clear-background core/clear-background)
+(def get-frame-time core/get-frame-time)
+(def begin-scissor-mode core/begin-scissor-mode)
+(def end-scissor-mode core/end-scissor-mode)
 
 ;; --- 2D shapes + text (scalar variants; Color is the only by-value struct) ---
 (ffi/defcfn draw-text            "DrawText"            [:string :int :int :int :uint] :void)
@@ -317,15 +317,13 @@
 (def local-time util/local-time)
 
 ;; --- screenshot hook plumbing (headless smoke tests) -------------------------
-;; take-screenshot moved to net.b12n.raylib.core in a later task; the four
-;; predicates moved to net.b12n.raylib.input and flush-batch to
-;; net.b12n.raylib.rlgl, both of which their banner never described.
-(ffi/defcfn take-screenshot "TakeScreenshot" [:string] :void)
+;; take-screenshot and window-should-close? moved to net.b12n.raylib.core, the
+;; four predicates to net.b12n.raylib.input and flush-batch to
+;; net.b12n.raylib.rlgl -- none of which this banner ever described.
+(def take-screenshot core/take-screenshot)
 (def ^:private flush-batch rlgl/flush-batch)
 
-(defn window-should-close?
-  []
-  (not (zero? (bit-and (should-close-raw) 0xff))))
+(def window-should-close? core/window-should-close?)
 
 (def key-down? input/key-down?)
 (def key-pressed? input/key-pressed?)
@@ -634,49 +632,39 @@
 ;; anything here.
 
 ;; --- window state / config flags ---------------------------------------------
-;; SetConfigFlags must be called BEFORE InitWindow; SetWindowState/ClearWindowState
-;; take the same FLAG-* bits at runtime.
-(ffi/defcfn set-config-flags   "SetConfigFlags"   [:uint] :void)
-(ffi/defcfn set-window-state   "SetWindowState"   [:uint] :void)
-(ffi/defcfn clear-window-state "ClearWindowState" [:uint] :void)
-(ffi/defcfn toggle-fullscreen  "ToggleFullscreen" [] :void)
-(ffi/defcfn get-screen-width   "GetScreenWidth"   [] :int)
-(ffi/defcfn get-screen-height  "GetScreenHeight"  [] :int)
-(ffi/defcfn get-time           "GetTime"          [] :double)
-(ffi/defcfn ^:private window-state-raw   "IsWindowState"   [:uint] :int)
-(ffi/defcfn ^:private window-resized-raw "IsWindowResized" [] :int)
-
-(def ^:const FLAG-WINDOW-RESIZABLE   0x00000004)
-(def ^:const FLAG-WINDOW-UNDECORATED 0x00000008)
-(def ^:const FLAG-MSAA-4X-HINT       0x00000020)
-(def ^:const FLAG-VSYNC-HINT         0x00000040)
-(def ^:const FLAG-WINDOW-TOPMOST     0x00001000)
-(def ^:const FLAG-WINDOW-HIGHDPI     0x00002000)
-
-(defn window-state?
-  "IsWindowState, is this FLAG-* bit currently set?"
-  [flag]
-  (not (zero? (bit-and (window-state-raw flag) 0xff))))
-
-(defn window-resized?
-  "IsWindowResized, did the window change size on the last frame?"
-  []
-  (not (zero? (bit-and (window-resized-raw) 0xff))))
+;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
+;; rl/set-config-flags or rl/window-state? keeps working unchanged.
+(def set-config-flags core/set-config-flags)
+(def set-window-state core/set-window-state)
+(def clear-window-state core/clear-window-state)
+(def toggle-fullscreen core/toggle-fullscreen)
+(def get-screen-width core/get-screen-width)
+(def get-screen-height core/get-screen-height)
+(def get-time core/get-time)
+(def FLAG-WINDOW-RESIZABLE core/FLAG-WINDOW-RESIZABLE)
+(def FLAG-WINDOW-UNDECORATED core/FLAG-WINDOW-UNDECORATED)
+(def FLAG-MSAA-4X-HINT core/FLAG-MSAA-4X-HINT)
+(def FLAG-VSYNC-HINT core/FLAG-VSYNC-HINT)
+(def FLAG-WINDOW-TOPMOST core/FLAG-WINDOW-TOPMOST)
+(def FLAG-WINDOW-HIGHDPI core/FLAG-WINDOW-HIGHDPI)
+(def window-state? core/window-state?)
+(def window-resized? core/window-resized?)
 
 ;; --- monitors ----------------------------------------------------------------
-;; GetMonitorPosition returns a Vector2 by value and so has no binding; the
-;; scalar width/height/refresh/name queries cover what a monitor listing needs.
-(ffi/defcfn get-monitor-count        "GetMonitorCount"       [] :int)
-(ffi/defcfn get-current-monitor      "GetCurrentMonitor"     [] :int)
-(ffi/defcfn get-monitor-width        "GetMonitorWidth"       [:int] :int)
-(ffi/defcfn get-monitor-height       "GetMonitorHeight"      [:int] :int)
-(ffi/defcfn get-monitor-refresh-rate "GetMonitorRefreshRate" [:int] :int)
-(ffi/defcfn get-monitor-name         "GetMonitorName"        [:int] :string)
+;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
+;; rl/get-monitor-count or rl/get-monitor-name keeps working unchanged.
+(def get-monitor-count core/get-monitor-count)
+(def get-current-monitor core/get-current-monitor)
+(def get-monitor-width core/get-monitor-width)
+(def get-monitor-height core/get-monitor-height)
+(def get-monitor-refresh-rate core/get-monitor-refresh-rate)
+(def get-monitor-name core/get-monitor-name)
 
 ;; --- clipboard ---------------------------------------------------------------
-;; GetClipboardText returns a const char* raylib owns; :string copies it out.
-(ffi/defcfn set-clipboard-text "SetClipboardText" [:string] :void)
-(ffi/defcfn get-clipboard-text "GetClipboardText" [] :string)
+;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
+;; rl/set-clipboard-text or rl/get-clipboard-text keeps working unchanged.
+(def set-clipboard-text core/set-clipboard-text)
+(def get-clipboard-text core/get-clipboard-text)
 
 ;; --- gamepad -----------------------------------------------------------------
 ;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
@@ -1280,34 +1268,9 @@
       (set-shader-value-texture-raw sh loc t))))
 
 ;; --- REPL entry point --------------------------------------------------------
-;; InitWindow reaches AppKit through GLFW, and macOS only lets NSApplication
-;; initialize on the process main thread. An nREPL eval runs on a worker thread,
-;; so calling an example's -main straight from a connected editor traps the whole
-;; process: EXC_BREAKPOINT inside -[NSApplication run], with no Clojure exception
-;; to catch and nothing in the REPL but a dropped connection.
-;;
-;; jolt.host/call-on-main-thread-async marshals the call onto the thread `jolt
-;; nrepl-server` parks in its main pump, and invokes it inline when no pump is
-;; running, which is what `bb <example>` does. So the one call is right from both.
-
-(defn run!
-  "Run an example's entry point `f` on the process main thread, the only thread
-  macOS lets raylib open a window from. This is how an example starts from a
-  connected editor:
-
-      (comment
-        (rl/run! -main))
-
-  Calling `(-main)` directly over nREPL instead kills the whole jolt process,
-  editor connection included, because the eval runs on a worker thread and macOS
-  traps any thread but the main one initializing AppKit.
-
-  Returns immediately under `jolt nrepl-server`: the window loop takes the main
-  thread and the REPL stays free. Under `bb <example>` there is no pump and the
-  caller is already the main thread, so `f` runs inline and this wrapper changes
-  nothing."
-  [f]
-  (jolt.host/call-on-main-thread-async f))
+;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
+;; (rl/run! -main) keeps working unchanged.
+(def run! core/run!)
 
 ;; --- backface culling --------------------------------------------------------
 ;; Moved to net.b12n.raylib.rlgl. Re-exported here so every example that says
@@ -1682,35 +1645,12 @@
          (finally (ffi/free p) (ffi/free s)))))
 
 ;; --- window/monitor diagnostics, genuinely by value (highdpi-testbed) ---
-(ffi/defcfn toggle-borderless-windowed! "ToggleBorderlessWindowed" [] :void)
-
-(ffi/defcfn ^:private get-window-scale-dpi-raw "GetWindowScaleDPI"
-  []
-  [:by-value [:struct [[:x :float] [:y :float]]]])
-
-(defn get-window-scale-dpi
-  "GetWindowScaleDPI. Returns [x y]."
-  []
-  (let [out (ffi/alloc (ffi/layout-size vector2-layout))]
-    (try
-      (get-window-scale-dpi-raw out)
-      [(ffi/read-field out vector2-layout :x)
-       (ffi/read-field out vector2-layout :y)]
-      (finally (ffi/free out)))))
-
-(ffi/defcfn ^:private get-window-position-raw "GetWindowPosition"
-  []
-  [:by-value [:struct [[:x :float] [:y :float]]]])
-
-(defn get-window-position
-  "GetWindowPosition. Returns [x y]."
-  []
-  (let [out (ffi/alloc (ffi/layout-size vector2-layout))]
-    (try
-      (get-window-position-raw out)
-      [(ffi/read-field out vector2-layout :x)
-       (ffi/read-field out vector2-layout :y)]
-      (finally (ffi/free out)))))
+;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
+;; rl/toggle-borderless-windowed! or rl/get-window-scale-dpi keeps working
+;; unchanged.
+(def toggle-borderless-windowed! core/toggle-borderless-windowed!)
+(def get-window-scale-dpi core/get-window-scale-dpi)
+(def get-window-position core/get-window-position)
 
 ;; --- hashing + base64 (compute-hash) --------------------------------------
 ;; Moved to net.b12n.raylib.util. Re-exported here so every example that says
@@ -2073,11 +2013,10 @@
   (set-audio-stream-callback-raw stream ffi/null))
 
 ;; --- window placement ----------------------------------------------------
-;; Both scalar, and both only meaningful after init-window. SetWindowMinSize
-;; needs FLAG_WINDOW_RESIZABLE to have any effect, since a fixed-size window has
-;; no minimum to enforce.
-(ffi/defcfn set-window-min-size "SetWindowMinSize" [:int :int] :void)
-(ffi/defcfn set-window-monitor  "SetWindowMonitor" [:int] :void)
+;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
+;; rl/set-window-min-size or rl/set-window-monitor keeps working unchanged.
+(def set-window-min-size core/set-window-min-size)
+(def set-window-monitor core/set-window-monitor)
 
 ;; --- Image: raylib's CPU-side pixel buffer, by value ---------------------
 ;; Image is {void *data; int width, height, mipmaps, format;}, 24 bytes, returned
