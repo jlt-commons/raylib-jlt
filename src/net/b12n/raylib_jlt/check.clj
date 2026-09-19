@@ -128,6 +128,7 @@
    [net.b12n.raylib-jlt.postprocessing]
    [net.b12n.raylib-jlt.random-sequence]
    [net.b12n.raylib-jlt.random-values]
+   [net.b12n.raylib-jlt.raw-data]
    [net.b12n.raylib-jlt.raymarching]
    [net.b12n.raylib-jlt.reasings]
    [net.b12n.raylib-jlt.rectangle-advanced]

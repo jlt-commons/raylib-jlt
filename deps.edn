@@ -187,6 +187,7 @@
            :npatch-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.npatch-drawing"]} ; nine-patch stretching, corners held fixed
            :sprite-button {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-button"]} ; one sheet, three states, sliced by v
            :sprite-stacking {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-stacking"]} ; 40 generated slices faking a 3D car
-           :to-image {:main-opts ["-m" "net.b12n.raylib-jlt.to-image"]}} ; one image, VRAM to RAM to VRAM and back up
+           :to-image {:main-opts ["-m" "net.b12n.raylib-jlt.to-image"]} ; one image, VRAM to RAM to VRAM and back up
+           :raw-data {:main-opts ["-m" "net.b12n.raylib-jlt.raw-data"]}} ; textures built from a hand-filled byte buffer
 
  :tasks {run "joltc -M:run"}}
