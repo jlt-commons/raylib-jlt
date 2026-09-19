@@ -20,6 +20,12 @@
   "The `ffi/layout` value for raylib's Vector3: {float x, y, z}."
   (ffi/layout [:struct [[:x :float] [:y :float] [:z :float]]]))
 
+(def rectangle-layout
+  "The `ffi/layout` value for raylib's Rectangle: {float x, y, width, height}.
+  Sixteen bytes, so on arm64 it travels in registers rather than indirectly."
+  (ffi/layout [:struct [[:x :float] [:y :float]
+                        [:width :float] [:height :float]]]))
+
 (def texture2d-layout
   "The `ffi/layout` value for raylib's Texture2D: {uint id; int width, height,
   mipmaps, format;}, 20 bytes. Shared by net.b12n.raylib.textures (upload),
@@ -52,6 +58,18 @@
   (let [p (ffi/alloc (ffi/layout-size vector2-layout))]
     (ffi/write-field p vector2-layout :x (double x))
     (ffi/write-field p vector2-layout :y (double y))
+    p))
+
+(defn rect->ptr!
+  "Allocate a rectangle-layout buffer and write [x y width height] into it.
+  Caller frees. Sibling of vec2->ptr!, for the several raylib calls that take a
+  Rectangle by value."
+  [[x y width height]]
+  (let [p (ffi/alloc (ffi/layout-size rectangle-layout))]
+    (ffi/write-field p rectangle-layout :x (double x))
+    (ffi/write-field p rectangle-layout :y (double y))
+    (ffi/write-field p rectangle-layout :width (double width))
+    (ffi/write-field p rectangle-layout :height (double height))
     p))
 
 (defn staged

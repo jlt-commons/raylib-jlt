@@ -1,4 +1,4 @@
-# The example catalog: 180 raylib demos in jolt
+# The example catalog: 182 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -69,7 +69,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/custom-logging.gif" width="80">](demos.md#custom-logging) | `custom-logging` | raylib's log captured by a jolt callback |
 | [<img src="../demos/highdpi-demo.gif" width="80">](demos.md#highdpi-demo) | `highdpi-demo` | logical points vs physical pixels, two rulers |
 
-## shapes (44)
+## shapes (45)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -99,6 +99,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/vector-angle.gif" width="80">](demos.md#vector-angle) | `vector-angle` | the signed angle between two vectors (`atan2`) |
 | [<img src="../demos/easings.gif" width="80">](demos.md#easings) | `easings` | a grid of balls, each on a different easing |
 | [<img src="../demos/penrose-tiling.gif" width="80">](demos.md#penrose-tiling) | `penrose-tiling` | a P3 Penrose tiling by golden-ratio deflation |
+| *not recorded yet* | `outlines-thickness` | thick outlines, and what a negative one does |
 | [<img src="../demos/analog-clock.gif" width="80">](demos.md#analog-clock) | `analog-clock` | a live analog clock (libc local time) |
 | [<img src="../demos/digital-clock.gif" width="80">](demos.md#digital-clock) | `digital-clock` | a seven-segment `HH:MM:SS` display |
 | [<img src="../demos/ring-drawing.gif" width="80">](demos.md#ring-drawing) | `ring-drawing` | an animated annulus via `rl/ring!` |
@@ -196,7 +197,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (27)
+## textures (28)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -232,6 +233,7 @@ native memory rather than loaded from a file. See
 | *not recorded yet* | `raw-data` | textures built from a hand-filled byte buffer |
 | *not recorded yet* | `sprite-animation` | six generated poses, one source rectangle |
 | *not recorded yet* | `magnifying-glass` | a round lens that reveals hidden markers |
+| *not recorded yet* | `textured-curve` | a texture laid along a cubic Bezier |
 
 ## shaders (16)
 
