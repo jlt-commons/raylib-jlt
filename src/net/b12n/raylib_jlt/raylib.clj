@@ -16,7 +16,10 @@
    [jolt.ffi :as ffi]
    [jolt.host]
    [net.b12n.raylib.color :as color]
-   [net.b12n.raylib.native :as native]))
+   [net.b12n.raylib.files :as files]
+   [net.b12n.raylib.log :as log]
+   [net.b12n.raylib.native :as native]
+   [net.b12n.raylib.util :as util]))
 
 ;; --- Color -------------------------------------------------------------------
 ;; Moved to net.b12n.raylib.color. Re-exported here so every example that says
@@ -325,22 +328,9 @@
 (ffi/defcfn get-key-pressed  "GetKeyPressed"     [] :int)   ; keycode; 0 = queue empty
 
 ;; --- libc time (the one NON-raylib FFI) --------------------------------------
-;; time()/localtime() live in libc (always loaded); jolt.ffi resolves them exactly
-;; like raylib's symbols. localtime returns a pointer to a struct tm whose first
-;; three ints are tm_sec, tm_min, tm_hour (offsets 0/4/8 on Darwin and glibc). This
-;; is the repo's only non-raylib FFI call, proof jolt binds any C ABI symbol.
-(ffi/defcfn ^:private c-time      "time"      [:pointer] :long)
-(ffi/defcfn ^:private c-localtime "localtime" [:pointer] :pointer)
-
-(defn local-time
-  "Current wall-clock local time as [hour minute second] via libc time()/localtime()."
-  []
-  (let [buf (ffi/alloc 8)]
-    (try
-      (c-time buf)
-      (let [tm (c-localtime buf)]
-        [(ffi/read tm :int 8) (ffi/read tm :int 4) (ffi/read tm :int 0)])
-      (finally (ffi/free buf)))))
+;; Moved to net.b12n.raylib.util. Re-exported here so every example that says
+;; rl/local-time keeps working unchanged.
+(def local-time util/local-time)
 
 ;; --- screenshot hook plumbing (headless smoke tests) -------------------------
 (ffi/defcfn take-screenshot       "TakeScreenshot"          [:string] :void)
@@ -1713,43 +1703,13 @@
       (finally (ffi/free out)))))
 
 ;; --- hashing + base64 (compute-hash) --------------------------------------
-(ffi/defcfn compute-crc32 "ComputeCRC32" [:string :int] :uint)
-(ffi/defcfn ^:private compute-md5-raw "ComputeMD5" [:string :int] :pointer)
-(ffi/defcfn ^:private compute-sha1-raw "ComputeSHA1" [:string :int] :pointer)
-(ffi/defcfn ^:private compute-sha256-raw "ComputeSHA256" [:string :int] :pointer)
-(ffi/defcfn ^:private encode-base64-raw "EncodeDataBase64" [:string :int :pointer] :string)
-
-(defn- read-words
-  "n consecutive :uint (4-byte) words at ptr, as a vector. ComputeMD5/SHA1/
-  SHA256 return a pointer into raylib's own static buffer (per raylib.h's
-  own comment), so there's nothing to free here."
-  [ptr n]
-  (mapv (fn [i] (bit-and (ffi/read ptr :int (* i 4)) 0xffffffff)) (range n)))
-
-(defn compute-md5
-  "ComputeMD5. 4 u32 words."
-  [s]
-  (read-words (compute-md5-raw s (count s)) 4))
-
-(defn compute-sha1
-  "ComputeSHA1. 5 u32 words."
-  [s]
-  (read-words (compute-sha1-raw s (count s)) 5))
-
-(defn compute-sha256
-  "ComputeSHA256. 8 u32 words."
-  [s]
-  (read-words (compute-sha256-raw s (count s)) 8))
-
-(defn base64-encode
-  "EncodeDataBase64. The C's own comment admits every recompute leaks the
-  malloc'd result (\"memory must be MemFree()\", never called in the
-  upstream example either); a demo box's worth of Base64 text per ENTER
-  press is not worth chasing across this FFI boundary."
-  [s]
-  (let [out-size (ffi/alloc 4)]
-    (try (or (encode-base64-raw s (count s) out-size) "")
-         (finally (ffi/free out-size)))))
+;; Moved to net.b12n.raylib.util. Re-exported here so every example that says
+;; rl/compute-md5 or rl/base64-encode keeps working unchanged.
+(def compute-crc32 util/compute-crc32)
+(def compute-md5 util/compute-md5)
+(def compute-sha1 util/compute-sha1)
+(def compute-sha256 util/compute-sha256)
+(def base64-encode util/base64-encode)
 
 ;; --- a persistent native Camera3D, mutated by UpdateCamera (camera-3d-free) --
 ;; UpdateCamera reads the mouse/wheel/keys itself and writes position/target/up
@@ -2042,133 +2002,29 @@
          (finally (ffi/free r)))))
 
 ;; --- files: FilePathList, another 16-byte struct returned by value -------
-;; FilePathList is {unsigned int count; char **paths;}, the same shape as Shader
-;; and so the same binding: 16 bytes, returned by value, handed straight back to
-;; its Unload by value. What is new is the char** on the other side of it. raylib
-;; owns that array and every string in it until the matching Unload runs, so the
-;; helpers below copy the strings out into a Clojure vector and unload inside the
-;; same call. Nothing a caller holds points into raylib's memory afterwards.
-(def ^:private file-path-list-layout
-  (ffi/layout [:struct [[:count :uint] [:paths :pointer]]]))
-
-(ffi/defcfn ^:private file-dropped-raw "IsFileDropped" [] :int)
-(ffi/defcfn ^:private load-dropped-files-raw "LoadDroppedFiles" []
-  [:by-value [:struct [[:count :uint] [:paths :pointer]]]])
-(ffi/defcfn ^:private unload-dropped-files-raw "UnloadDroppedFiles"
-  [[:by-value [:struct [[:count :uint] [:paths :pointer]]]]] :void)
-(ffi/defcfn ^:private load-directory-files-ex-raw "LoadDirectoryFilesEx"
-  [:string :string :bool]
-  [:by-value [:struct [[:count :uint] [:paths :pointer]]]])
-(ffi/defcfn ^:private unload-directory-files-raw "UnloadDirectoryFiles"
-  [[:by-value [:struct [[:count :uint] [:paths :pointer]]]]] :void)
-(ffi/defcfn ^:private directory-exists-raw "DirectoryExists" [:string] :int)
-(ffi/defcfn get-working-directory  "GetWorkingDirectory"  [] :string)
-(ffi/defcfn get-prev-directory-path "GetPrevDirectoryPath" [:string] :string)
-(ffi/defcfn get-file-name          "GetFileName"          [:string] :string)
-
-(defn- file-path-list->vec
-  "Copy the char** behind a filled FilePathList buffer into a vector of strings."
-  [out]
-  (let [n (ffi/read-field out file-path-list-layout :count)
-        base (ffi/read-field out file-path-list-layout :paths)
-        step (ffi/sizeof :pointer)]
-    (mapv (fn [i] (ffi/ptr->string (ffi/read base :pointer (* i step))))
-          (range n))))
-
-(defn file-dropped?
-  "IsFileDropped: whether files were dropped on the window since the last check."
-  []
-  (not (zero? (bit-and (file-dropped-raw) 0xff))))
-
-(defn directory-exists?
-  [path]
-  (not (zero? (bit-and (directory-exists-raw path) 0xff))))
-
-(defn dropped-files
-  "LoadDroppedFiles as a vector of path strings, unloaded before it returns.
-  Only meaningful right after file-dropped? answers true."
-  []
-  (let [out (ffi/alloc (ffi/layout-size file-path-list-layout))]
-    (try
-      (load-dropped-files-raw out)
-      (let [paths (file-path-list->vec out)]
-        (unload-dropped-files-raw out)
-        paths)
-      (finally (ffi/free out)))))
-
-(defn directory-files
-  "LoadDirectoryFilesEx as a vector of path strings, unloaded before it returns.
-  `scan-subdirs?` recurses.
-
-  `filter` is raylib's own filter string, and its behaviour is worth stating
-  because the header only hints at it. Measured against a directory holding 3
-  subdirectories and 2 files: \"*.*\" answers all 5, \"DIRS*\" the 3
-  directories, \"FILES*\" the 2 files, and an empty string or nil behaves as
-  \"FILES*\" rather than as everything. Extensions work too, \".png;.c\" for
-  those two, and they combine with the DIRS/FILES forms over a semicolon."
-  [dir filter scan-subdirs?]
-  (let [out (ffi/alloc (ffi/layout-size file-path-list-layout))]
-    (try
-      (load-directory-files-ex-raw out dir (or filter "") (boolean scan-subdirs?))
-      (let [paths (file-path-list->vec out)]
-        (unload-directory-files-raw out)
-        paths)
-      (finally (ffi/free out)))))
+;; Moved to net.b12n.raylib.files. Re-exported here so every example that says
+;; rl/dropped-files or rl/directory-files keeps working unchanged.
+(def get-working-directory files/get-working-directory)
+(def get-prev-directory-path files/get-prev-directory-path)
+(def get-file-name files/get-file-name)
+(def file-dropped? files/file-dropped?)
+(def directory-exists? files/directory-exists?)
+(def dropped-files files/dropped-files)
+(def directory-files files/directory-files)
 
 ;; --- the trace log, and the suite's first callback INTO jolt -------------
-;; Every binding above this one calls out of jolt into C. SetTraceLogCallback
-;; goes the other way: raylib is handed a function pointer and calls it for every
-;; message it would otherwise print. ffi/foreign-callable builds that pointer out
-;; of a jolt fn, and the pointer stays live until free-callable, which is why
-;; on-trace-log! hands it back rather than dropping it on the floor.
-;;
-;; The third parameter is the awkward one. raylib's callback signature ends in a
-;; va_list, which no FFI type describes, so it is taken as an opaque :pointer and
-;; handed straight to libc's vsnprintf along with the format string. That is what
-;; turns "Target time per frame: %02.03f milliseconds" into the line with the
-;; number in it. A va_list can be walked once, which is fine here because
-;; replacing the callback means raylib's own logger is no longer reading it.
-;; Verified against a real window: 43 messages captured through InitWindow, with
-;; every %i, %s and %f expanded.
-(ffi/defcfn set-trace-log-callback "SetTraceLogCallback" [:pointer] :void)
-(ffi/defcfn ^:private vsnprintf-raw "vsnprintf" [:pointer :uptr :pointer :pointer] :int)
-
-(def ^:const LOG-TRACE 1)   (def ^:const LOG-DEBUG 2)
-(def ^:const LOG-INFO 3)    (def ^:const LOG-WARNING 4)
-(def ^:const LOG-ERROR 5)   (def ^:const LOG-FATAL 6)
-
-(def ^:const TRACE-LOG-BUFFER 1024)
-
-(defn on-trace-log!
-  "SetTraceLogCallback with a jolt fn. `f` is called as (f level text) for every
-  message raylib logs, `level` one of the LOG-* constants and `text` the format
-  string already expanded by vsnprintf. Anything longer than TRACE-LOG-BUFFER is
-  truncated, which vsnprintf does for us rather than overrunning.
-
-  Returns the callable pointer. raylib keeps calling it until another callback
-  replaces it, so the pointer has to outlive the window; free it with
-  ffi/free-callable once the window is closed, not before. Install this BEFORE
-  init-window if the startup messages are wanted."
-  [f]
-  (let [entry (ffi/foreign-callable
-               (fn [level text-ptr va]
-                 (let [buf (ffi/alloc TRACE-LOG-BUFFER)]
-                   (try
-                     (vsnprintf-raw buf TRACE-LOG-BUFFER text-ptr va)
-                     (f level (ffi/ptr->string buf))
-                     (finally (ffi/free buf))))
-                 nil)
-               [:int :pointer :pointer] :void)]
-    (set-trace-log-callback entry)
-    entry))
-
-(defn free-callable!
-  "Release a callable entry point built by on-trace-log!. C can call the pointer
-  until this runs and not one instruction longer, so unregister it with the C
-  library first: for the trace log that means closing the window, since raylib
-  logs while it shuts down."
-  [entry]
-  (ffi/free-callable entry))
+;; Moved to net.b12n.raylib.log. Re-exported here so every example that says
+;; rl/on-trace-log! or rl/LOG-WARNING keeps working unchanged.
+(def set-trace-log-callback log/set-trace-log-callback)
+(def LOG-TRACE log/LOG-TRACE)
+(def LOG-DEBUG log/LOG-DEBUG)
+(def LOG-INFO log/LOG-INFO)
+(def LOG-WARNING log/LOG-WARNING)
+(def LOG-ERROR log/LOG-ERROR)
+(def LOG-FATAL log/LOG-FATAL)
+(def TRACE-LOG-BUFFER log/TRACE-LOG-BUFFER)
+(def on-trace-log! log/on-trace-log!)
+(def free-callable! log/free-callable!)
 
 ;; --- the audio stream callback, on a thread jolt never started ----------
 ;; on-trace-log! above is a callback raylib invokes on whichever thread called

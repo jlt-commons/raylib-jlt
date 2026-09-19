@@ -7,7 +7,10 @@
   a real window, and the example suite's own screenshot smoke does it."
   (:require
    [net.b12n.raylib.color]
-   [net.b12n.raylib.native]))
+   [net.b12n.raylib.files]
+   [net.b12n.raylib.log]
+   [net.b12n.raylib.native]
+   [net.b12n.raylib.util]))
 
 (defn -main [& _]
   (println "library namespaces loaded OK"))
