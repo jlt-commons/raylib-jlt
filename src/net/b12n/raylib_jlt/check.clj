@@ -104,6 +104,7 @@
    [net.b12n.raylib-jlt.logo]
    [net.b12n.raylib-jlt.logo-anim]
    [net.b12n.raylib-jlt.lorenz-attractor]
+   [net.b12n.raylib-jlt.magnifying-glass]
    [net.b12n.raylib-jlt.mandelbrot-set]
    [net.b12n.raylib-jlt.math-angle-rotation]
    [net.b12n.raylib-jlt.math-sine-cosine]

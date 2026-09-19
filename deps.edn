@@ -189,6 +189,7 @@
            :sprite-stacking {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-stacking"]} ; 40 generated slices faking a 3D car
            :to-image {:main-opts ["-m" "net.b12n.raylib-jlt.to-image"]} ; one image, VRAM to RAM to VRAM and back up
            :raw-data {:main-opts ["-m" "net.b12n.raylib-jlt.raw-data"]} ; textures built from a hand-filled byte buffer
-           :sprite-animation {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-animation"]}} ; six generated poses, one source rectangle
+           :sprite-animation {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-animation"]} ; six generated poses, one source rectangle
+           :magnifying-glass {:main-opts ["-m" "net.b12n.raylib-jlt.magnifying-glass"]}} ; a round lens that reveals hidden markers
 
  :tasks {run "joltc -M:run"}}
