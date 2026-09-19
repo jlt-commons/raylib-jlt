@@ -21,6 +21,7 @@
    [net.b12n.raylib.files :as files]
    [net.b12n.raylib.images :as images]
    [net.b12n.raylib.input :as input]
+   [net.b12n.raylib.kwargs :as kwargs]
    [net.b12n.raylib.log :as log]
    [net.b12n.raylib.models :as models]
    [net.b12n.raylib.native :as native]
@@ -182,235 +183,27 @@
 (def KEY-BACKSPACE input/KEY-BACKSPACE)
 (def KEY-ENTER input/KEY-ENTER)
 
-;; --- ergonomic keyword-argument drawing API ----------------------------------
-;; raylib's C functions are positional; these wrappers take keyword arguments so
-;; example code reads self-descriptively, e.g. (rl/text! "hi" :x 10 :y 20
-;; :color rl/RED) instead of (draw-text "hi" 10 20 20 rl/RED). The raw bindings
-;; above remain the FFI boundary; these just name the arguments.
+;; --- keyword-argument drawing API ---------------------------------------------
+;; Moved to net.b12n.raylib.kwargs, merging what were two banners here (an
+;; "ergonomic keyword-argument drawing API" and a "keyword-argument drawing
+;; API") describing the same layer. Re-exported here so every example that
+;; says rl/rect! or rl/text! keeps working unchanged.
+(def window! kwargs/window!)
+(def text! kwargs/text!)
+(def text-width kwargs/text-width)
+(def fps! kwargs/fps!)
 
-(defn window!
-  "InitWindow with keyword args. :width :height :title."
-  [& {:keys [width height title]
-      :or {width 800
-           height 450
-           title "raylib"}}]
-  (init-window width height title))
-
-(defn text!
-  "DrawText. :x :y :size :color."
-  [s & {:keys [x y size color]
-        :or {x 0
-             y 0
-             size 20
-             color BLACK}}]
-  (draw-text s (int x) (int y) (int size) color))
-
-(defn text-width
-  "MeasureText. :size."
-  [s & {:keys [size]
-        :or {size 20}}]
-  (measure-text s size))
-
-(defn fps!
-  "DrawFPS. :x :y."
-  [& {:keys [x y]
-      :or {x 10
-           y 10}}]
-  (draw-fps (int x) (int y)))
-
-;; --- keyword-argument drawing API --------------------------------------------
-;; The C functions behind these take their positions and sizes as int. A double
-;; reaching one throws "invalid foreign-procedure argument 0.0" on the first
-;; draw, which compiling, linting and formatting all miss: it surfaces only when
-;; a frame actually renders. Callers compute positions in floating point all the
-;; time (mouse deltas, interpolation, trigonometry), so the coercion lives here
-;; rather than at every call site.
-(defn rect!
-  "DrawRectangle. :x :y :width :height :color."
-  [& {:keys [x y width height color]
-      :or {x 0
-           y 0
-           width 10
-           height 10
-           color BLACK}}]
-  (draw-rectangle (int x) (int y) (int width) (int height) color))
-
-(defn rect-lines!
-  "DrawRectangleLines. :x :y :width :height :color."
-  [& {:keys [x y width height color]
-      :or {x 0
-           y 0
-           width 10
-           height 10
-           color BLACK}}]
-  (draw-rectangle-lines (int x) (int y) (int width) (int height) color))
-
-(defn rect-gradient!
-  "DrawRectangleGradientV (top->bottom). :x :y :width :height :top :bottom."
-  [& {:keys [x y width height top bottom]
-      :or {x 0
-           y 0
-           width 10
-           height 10
-           top WHITE
-           bottom BLACK}}]
-  (draw-rectangle-grad-v x y width height top bottom))
-
-(defn circle!
-  "DrawCircle. :x :y :radius :color."
-  [& {:keys [x y radius color]
-      :or {x 0
-           y 0
-           radius 10
-           color BLACK}}]
-  (draw-circle (int x) (int y) (double radius) color))
-
-(defn circle-lines!
-  "DrawCircleLines. :x :y :radius :color."
-  [& {:keys [x y radius color]
-      :or {x 0
-           y 0
-           radius 10
-           color BLACK}}]
-  (draw-circle-lines (int x) (int y) (double radius) color))
-
-(defn ellipse!
-  "DrawEllipse. :x :y :rx :ry :color."
-  [& {:keys [x y rx ry color]
-      :or {x 0
-           y 0
-           rx 10
-           ry 6
-           color BLACK}}]
-  (draw-ellipse (int x) (int y) (double rx) (double ry) color))
-
-(defn line!
-  "DrawLine. :x1 :y1 :x2 :y2 :color."
-  [& {:keys [x1 y1 x2 y2 color]
-      :or {x1 0
-           y1 0
-           x2 0
-           y2 0
-           color BLACK}}]
-  (draw-line (int x1) (int y1) (int x2) (int y2) color))
-
-(defn pixel!
-  "DrawPixel. :x :y :color."
-  [& {:keys [x y color]
-      :or {x 0
-           y 0
-           color BLACK}}]
-  (draw-pixel (int x) (int y) color))
-
-(defn sector!
-  "A filled circular sector (pie slice / arc) drawn as an rlgl triangle fan, the
-  immediate-mode stand-in for DrawCircleSector, whose Vector2 center is by-value and
-  so unbindable (see rlgl-immediate-mode.md). The fan runs from the center across
-  [start-deg, end-deg] in `segments` sub-triangles, a single packed `:color`.
-  0 deg points up and the angle increases clockwise (rim = (sin, -cos)); vertices are
-  emitted rim -> center -> rim so the fan carries raylib's front-facing winding and is
-  not backface-culled. Callers must pass start-deg < end-deg.
-    :cx :cy    center
-    :radius    outer radius
-    :start-deg :end-deg   sweep in degrees (0 = up, clockwise, increasing)
-    :segments  fan resolution (default 32)
-    :color     packed Color"
-  [& {:keys [cx cy radius start-deg end-deg segments color]
-      :or {cx 0
-           cy 0
-           radius 10
-           start-deg 0
-           end-deg 90
-           segments 32
-           color BLACK}}]
-  (let [d->r (/ Math/PI 180.0)
-        span (- end-deg start-deg)
-        rim (fn [deg]
-              (let [t (* deg d->r)]
-                [(+ cx (* radius (Math/sin t)))
-                 (- cy (* radius (Math/cos t)))]))]
-    (rl-begin RL-TRIANGLES)
-    (rl-color! color)
-    (dotimes [k segments]
-      (let [[x0 y0] (rim (+ start-deg (* span (/ (double k) segments))))
-            [x1 y1] (rim (+ start-deg (* span (/ (double (inc k)) segments))))]
-        (rl-vertex-2f (double x0) (double y0))
-        (rl-vertex-2f (double cx) (double cy))
-        (rl-vertex-2f (double x1) (double y1))))
-    (rl-end)))
-
-(defn ring!
-  "A filled annulus (donut sector) as an rlgl quad strip between :inner and :outer
-  radius over [start-deg, end-deg], the immediate-mode stand-in for DrawRing (Vector2
-  center by value). Same angle convention as sector! (0 deg up, clockwise, increasing).
-  Each segment is two front-wound triangles.
-    :cx :cy    center
-    :inner :outer   radii
-    :start-deg :end-deg   sweep in degrees (increasing)
-    :segments  resolution (default 48)
-    :color     packed Color"
-  [& {:keys [cx cy inner outer start-deg end-deg segments color]
-      :or {cx 0
-           cy 0
-           inner 20
-           outer 40
-           start-deg 0
-           end-deg 360
-           segments 48
-           color BLACK}}]
-  (let [d->r (/ Math/PI 180.0)
-        span (- end-deg start-deg)
-        pt (fn [deg r]
-             (let [t (* deg d->r)]
-               [(+ cx (* r (Math/sin t))) (- cy (* r (Math/cos t)))]))]
-    (rl-begin RL-TRIANGLES)
-    (rl-color! color)
-    (dotimes [k segments]
-      (let [d0 (+ start-deg (* span (/ (double k) segments)))
-            d1 (+ start-deg (* span (/ (double (inc k)) segments)))
-            [ix0 iy0] (pt d0 inner) [ox0 oy0] (pt d0 outer)
-            [ix1 iy1] (pt d1 inner) [ox1 oy1] (pt d1 outer)]
-        (rl-vertex-2f (double ox0) (double oy0))
-        (rl-vertex-2f (double ix0) (double iy0))
-        (rl-vertex-2f (double ix1) (double iy1))
-        (rl-vertex-2f (double ox0) (double oy0))
-        (rl-vertex-2f (double ix1) (double iy1))
-        (rl-vertex-2f (double ox1) (double oy1))))
-    (rl-end)))
-
-(defn line-ex!
-  "A thick line (rlgl quad) from (x1,y1) to (x2,y2), :thick pixels wide, the
-  immediate-mode stand-in for DrawLineEx (Vector2 endpoints by value). The quad is
-  front-wound at every line direction (perpendicular = (dy,-dx)/len).
-    :x1 :y1 :x2 :y2   endpoints
-    :thick   width in px (default 2)
-    :color   packed Color"
-  [& {:keys [x1 y1 x2 y2 thick color]
-      :or {x1 0
-           y1 0
-           x2 0
-           y2 0
-           thick 2
-           color BLACK}}]
-  (let [dx (- x2 x1) dy (- y2 y1)
-        len (Math/sqrt (+ (* dx dx) (* dy dy)))
-        len (if (zero? len) 1.0 len)
-        h  (/ thick 2.0)
-        px (* (/ dy len) h)        ; perpendicular (dy,-dx) * half-thick
-        py (* (/ (- dx) len) h)
-        ax (+ x1 px) ay (+ y1 py)
-        bx (- x1 px) by (- y1 py)
-        cx (- x2 px) cy (- y2 py)
-        ex (+ x2 px) ey (+ y2 py)]
-    (rl-begin RL-TRIANGLES)
-    (rl-color! color)
-    (rl-vertex-2f (double ax) (double ay))
-    (rl-vertex-2f (double bx) (double by))
-    (rl-vertex-2f (double cx) (double cy))
-    (rl-vertex-2f (double ax) (double ay))
-    (rl-vertex-2f (double cx) (double cy))
-    (rl-vertex-2f (double ex) (double ey))
-    (rl-end)))
+(def rect! kwargs/rect!)
+(def rect-lines! kwargs/rect-lines!)
+(def rect-gradient! kwargs/rect-gradient!)
+(def circle! kwargs/circle!)
+(def circle-lines! kwargs/circle-lines!)
+(def ellipse! kwargs/ellipse!)
+(def line! kwargs/line!)
+(def pixel! kwargs/pixel!)
+(def sector! kwargs/sector!)
+(def ring! kwargs/ring!)
+(def line-ex! kwargs/line-ex!)
 
 ;; --- smoke-test loop guards --------------------------------------------------
 ;; Moved to net.b12n.raylib-jlt.app. It is the example suite's own harness, not

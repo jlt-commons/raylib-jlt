@@ -13,6 +13,7 @@
    [net.b12n.raylib.files]
    [net.b12n.raylib.images]
    [net.b12n.raylib.input]
+   [net.b12n.raylib.kwargs]
    [net.b12n.raylib.log]
    [net.b12n.raylib.models]
    [net.b12n.raylib.native]
