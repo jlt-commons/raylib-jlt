@@ -132,11 +132,12 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/strings-management.gif" width="80">](demos.md#strings-management) | `strings-management` | bouncing text you slice, shatter and glue |
 | [<img src="../demos/inline-styling.gif" width="80">](demos.md#inline-styling) | `inline-styling` | colour markup inside the string itself |
 
-## 3d (27)
+## 3d (28)
 
 | preview | `bb` name | shows |
 |---|---|---|
 | [<img src="../demos/camera-3d.gif" width="80">](demos.md#camera-3d) | `camera-3d` | an orbiting 3D camera, `Camera3D` by value |
+| *not recorded yet* | `mesh-generation` | eight GenMesh shapes, drawn with DrawMesh |
 | [<img src="../demos/waving-cubes.gif" width="80">](demos.md#waving-cubes) | `waving-cubes` | 196 cubes rippling in 3D (shared `rl/cube!`) |
 | [<img src="../demos/camera-3d-first-person.gif" width="80">](demos.md#camera-3d-first-person) | `camera-3d-first-person` | WASD + mouse-look walk through columns |
 | [<img src="../demos/tesseract-view.gif" width="80">](demos.md#tesseract-view) | `tesseract-view` | a rotating 4D hypercube projected 4D→3D→2D |

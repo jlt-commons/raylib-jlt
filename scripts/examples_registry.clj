@@ -190,7 +190,8 @@
    ["sprite-animation" "sprite-animation" "textures" "six generated poses, one source rectangle"]
    ["magnifying-glass" "magnifying-glass" "textures" "a round lens that reveals hidden markers"]
    ["outlines-thickness" "outlines-thickness" "shapes" "thick outlines, and what a negative one does"]
-   ["textured-curve" "textured-curve" "textures" "a texture laid along a cubic Bezier"]])
+   ["textured-curve" "textured-curve" "textures" "a texture laid along a cubic Bezier"]
+   ["mesh-generation" "mesh-generation" "3d" "eight GenMesh shapes, drawn with DrawMesh"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

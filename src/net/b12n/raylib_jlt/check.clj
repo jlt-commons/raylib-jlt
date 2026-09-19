@@ -108,6 +108,7 @@
    [net.b12n.raylib-jlt.mandelbrot-set]
    [net.b12n.raylib-jlt.math-angle-rotation]
    [net.b12n.raylib-jlt.math-sine-cosine]
+   [net.b12n.raylib-jlt.mesh-generation]
    [net.b12n.raylib-jlt.minesweeper]
    [net.b12n.raylib-jlt.monitor-detector]
    [net.b12n.raylib-jlt.mouse]
