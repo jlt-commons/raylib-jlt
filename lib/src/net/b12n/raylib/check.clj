@@ -14,10 +14,13 @@
    [net.b12n.raylib.images]
    [net.b12n.raylib.input]
    [net.b12n.raylib.log]
+   [net.b12n.raylib.models]
    [net.b12n.raylib.native]
+   [net.b12n.raylib.rays]
    [net.b12n.raylib.rlgl]
    [net.b12n.raylib.shaders]
    [net.b12n.raylib.shapes]
+   [net.b12n.raylib.splines]
    [net.b12n.raylib.text]
    [net.b12n.raylib.textures]
    [net.b12n.raylib.util]))

@@ -13,7 +13,6 @@
   ;; clojure.core/run! is a reducing form this suite never uses.
   (:refer-clojure :exclude [run!])
   (:require
-   [jolt.ffi :as ffi]
    [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.audio :as audio]
    [net.b12n.raylib.camera :as camera]
@@ -23,10 +22,13 @@
    [net.b12n.raylib.images :as images]
    [net.b12n.raylib.input :as input]
    [net.b12n.raylib.log :as log]
+   [net.b12n.raylib.models :as models]
    [net.b12n.raylib.native :as native]
+   [net.b12n.raylib.rays :as rays]
    [net.b12n.raylib.rlgl :as rlgl]
    [net.b12n.raylib.shaders :as shaders]
    [net.b12n.raylib.shapes :as shapes]
+   [net.b12n.raylib.splines :as splines]
    [net.b12n.raylib.text :as text]
    [net.b12n.raylib.textures :as textures]
    [net.b12n.raylib.util :as util]))
@@ -108,148 +110,29 @@
 ;; #endregion
 
 ;; --- Camera3D + 3D geometry --------------------------------------------------
-;; Camera3D is 44 bytes (three Vector3 + a float + an int), passed BY VALUE to
-;; BeginMode3D, the same >16-byte-struct-by-pointer approach as Camera2D. 3D
-;; shape helpers like DrawCube take a Vector3 BY VALUE (a 12-byte float struct
-;; passed in FP registers, which the pointer trick does NOT cover), so draw 3D
-;; geometry with rlgl immediate mode (rl-vertex-3f) instead. DrawGrid is scalar.
-(ffi/defcfn draw-grid    "DrawGrid"    [:int :float] :void)
-(ffi/defcfn ^:private rl-vertex-3f-raw "rlVertex3f"  [:float :float :float] :void)
-
-(defn rl-vertex-3f
-  "One vertex in 3D.
-
-  Coerces to double, because the C takes floats and an integer argument
-  aborts the process on the first draw. The mirror of the int coercion
-  the kwarg drawing API does."
-  [a0 a1 a2]
-  (rl-vertex-3f-raw (double a0) (double a1) (double a2)))
+;; Camera3D plumbing moved to net.b12n.raylib.camera; the geometry a
+;; with-camera-3d block draws (draw-grid, rl-vertex-3f, the rlgl matrix
+;; stack, cube!, sphere!) moved to net.b12n.raylib.models. Re-exported here
+;; so every example that says rl/cube! or rl/with-camera-3d keeps working
+;; unchanged.
+(def draw-grid models/draw-grid)
+(def rl-vertex-3f models/rl-vertex-3f)
 
 ;; moved to net.b12n.raylib.camera
 (def begin-mode-3d-ptr camera/begin-mode-3d-ptr)
 (def end-mode-3d camera/end-mode-3d)
 
-;; rlgl matrix stack, nested transforms for immediate-mode geometry. rlgl applies
-;; the current transform to each rlVertex* at submit time, so push/rotate/translate
-;; around a cube! call moves it (used by rlgl-solar-system).
-(ffi/defcfn rl-push-matrix "rlPushMatrix" [] :void)
-(ffi/defcfn rl-pop-matrix  "rlPopMatrix"  [] :void)
-(ffi/defcfn ^:private rl-translatef-raw  "rlTranslatef" [:float :float :float] :void)
-
-(defn rl-translatef
-  "Translate the current matrix.
-
-  Coerces to double, because the C takes floats and an integer argument
-  aborts the process on the first draw. The mirror of the int coercion
-  the kwarg drawing API does."
-  [a0 a1 a2]
-  (rl-translatef-raw (double a0) (double a1) (double a2)))
-
-(ffi/defcfn ^:private rl-rotatef-raw     "rlRotatef"    [:float :float :float :float] :void)
-
-(defn rl-rotatef
-  "Rotate the current matrix, angle first.
-
-  Coerces to double, because the C takes floats and an integer argument
-  aborts the process on the first draw. The mirror of the int coercion
-  the kwarg drawing API does."
-  [a0 a1 a2 a3]
-  (rl-rotatef-raw (double a0) (double a1) (double a2) (double a3)))
-
-(ffi/defcfn ^:private rl-scalef-raw      "rlScalef"     [:float :float :float] :void)
-
-(defn rl-scalef
-  "Scale the current matrix.
-
-  Coerces to double, because the C takes floats and an integer argument
-  aborts the process on the first draw. The mirror of the int coercion
-  the kwarg drawing API does."
-  [a0 a1 a2]
-  (rl-scalef-raw (double a0) (double a1) (double a2)))
+(def rl-push-matrix models/rl-push-matrix)
+(def rl-pop-matrix models/rl-pop-matrix)
+(def rl-translatef models/rl-translatef)
+(def rl-rotatef models/rl-rotatef)
+(def rl-scalef models/rl-scalef)
 
 ;; moved to net.b12n.raylib.camera
 (def with-camera-3d camera/with-camera-3d)
 
-(defn- shade-color
-  "Darken a packed Color by factor f (fakes lighting so cube faces read as 3D)."
-  [color f]
-  (rgba (int (* f (bit-and color 0xff)))
-        (int (* f (bit-and (bit-shift-right color 8) 0xff)))
-        (int (* f (bit-and (bit-shift-right color 16) 0xff)))
-        255))
-
-(defn- quad-3f
-  "Two rlgl triangles for a quad, given a shaded color and a vector of its four
-  [x y z] corners in a→b→c→d winding order."
-  [color [a b c d]]
-  (rl-color! color)
-  (let [[ax ay az] a [bx by bz] b [cx cy cz] c [dx dy dz] d]
-    (rl-vertex-3f ax ay az) (rl-vertex-3f bx by bz) (rl-vertex-3f cx cy cz)
-    (rl-vertex-3f ax ay az) (rl-vertex-3f cx cy cz) (rl-vertex-3f dx dy dz)))
-
-(defn cube!
-  "Draw an axis-aligned box via rlgl immediate mode, its faces shaded from the
-  packed `:color` for depth. Must be called inside a BeginMode3D block (see
-  with-camera-3d). Keyword args:
-    :pos   [x y z] centre           (default [0 0 0])
-    :size  a number for a uniform cube, or [sx sy sz]  (default 1)
-    :color a packed Color           (default BLACK)"
-  [& {:keys [pos size color]
-      :or {pos [0.0 0.0 0.0]
-           size 1.0
-           color BLACK}}]
-  (let [[cx cy cz] pos
-        [sx sy sz] (if (number? size) [size size size] size)
-        hx (/ sx 2.0) hy (/ sy 2.0) hz (/ sz 2.0)
-        x0 (- cx hx) x1 (+ cx hx) y0 (- cy hy) y1 (+ cy hy) z0 (- cz hz) z1 (+ cz hz)
-        ;; the eight corners, named a<x><y><z> by which extreme each axis takes
-        a000 [x0 y0 z0] a100 [x1 y0 z0] a010 [x0 y1 z0] a110 [x1 y1 z0]
-        a001 [x0 y0 z1] a101 [x1 y0 z1] a011 [x0 y1 z1] a111 [x1 y1 z1]]
-    (rl-begin RL-TRIANGLES)
-    (quad-3f (shade-color color 1.0)  [a001 a101 a111 a011])   ; front  +z
-    (quad-3f (shade-color color 0.5)  [a100 a000 a010 a110])   ; back   -z
-    (quad-3f (shade-color color 0.7)  [a000 a001 a011 a010])   ; left   -x
-    (quad-3f (shade-color color 0.85) [a101 a100 a110 a111])   ; right  +x
-    (quad-3f (shade-color color 1.0)  [a011 a111 a110 a010])   ; top    +y
-    (quad-3f (shade-color color 0.4)  [a000 a100 a101 a001])   ; bottom -y
-    (rl-end)))
-
-(defn sphere!
-  "Draw a sphere via rlgl immediate mode (lat/long tessellation), faces shaded
-  from the packed `:color` for depth (brighter toward +y). Must be called inside
-  a BeginMode3D block (see with-camera-3d). Keyword args:
-    :pos    [x y z] centre        (default [0 0 0])
-    :radius a number              (default 0.5)
-    :rings  latitude bands        (default 12)
-    :slices longitude sectors     (default 16)
-    :color  a packed Color        (default BLACK)"
-  [& {:keys [pos radius rings slices color]
-      :or {pos [0.0 0.0 0.0]
-           radius 0.5
-           rings 12
-           slices 16
-           color BLACK}}]
-  (let [[cx cy cz] pos
-        two-pi (* 2.0 Math/PI)]
-    (rl-begin RL-TRIANGLES)
-    (dotimes [i rings]
-      (let [lat0 (- (* Math/PI (/ (double i) rings)) (/ Math/PI 2.0))
-            lat1 (- (* Math/PI (/ (double (inc i)) rings)) (/ Math/PI 2.0))
-            y0 (Math/sin lat0) y1 (Math/sin lat1)
-            r0 (Math/cos lat0) r1 (Math/cos lat1)
-            brightness (+ 0.45 (* 0.55 (/ (+ y0 y1 2.0) 4.0)))
-            shaded (shade-color color brightness)]
-        (dotimes [j slices]
-          (let [lon0 (* two-pi (/ (double j) slices))
-                lon1 (* two-pi (/ (double (inc j)) slices))
-                s0 (Math/sin lon0) c0 (Math/cos lon0)
-                s1 (Math/sin lon1) c1 (Math/cos lon1)
-                p00 [(+ cx (* radius r0 c0)) (+ cy (* radius y0)) (+ cz (* radius r0 s0))]
-                p01 [(+ cx (* radius r0 c1)) (+ cy (* radius y0)) (+ cz (* radius r0 s1))]
-                p10 [(+ cx (* radius r1 c0)) (+ cy (* radius y1)) (+ cz (* radius r1 s0))]
-                p11 [(+ cx (* radius r1 c1)) (+ cy (* radius y1)) (+ cz (* radius r1 s1))]]
-            (quad-3f shaded [p00 p10 p11 p01])))))
-    (rl-end)))
+(def cube! models/cube!)
+(def sphere! models/sphere!)
 
 ;; --- input -------------------------------------------------------------------
 ;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
@@ -681,11 +564,6 @@
 ;; --- extra scalar drawing ------------------------------------------------------
 ;; Moved to net.b12n.raylib.shapes. Re-exported here so every example that says
 ;; rl/circle-gradient! or rl/rect-pro! keeps working unchanged.
-;; vector2-layout stays a local alias: splines below still reads it bare, and
-;; that section hasn't been extracted yet. world <-> screen used to as well;
-;; it's now net.b12n.raylib.camera.
-;; moved to net.b12n.raylib.native
-(def ^:private vector2-layout native/vector2-layout)
 (def draw-rectangle-grad-h shapes/draw-rectangle-grad-h)
 (def begin-blend-mode shapes/begin-blend-mode)
 (def end-blend-mode shapes/end-blend-mode)
@@ -821,10 +699,6 @@
 ;; --- world <-> screen ------------------------------------------------------
 ;; Moved to net.b12n.raylib.camera. Re-exported here so every example that
 ;; says rl/world-to-screen keeps working unchanged.
-;; vector3-layout stays a local alias: geometric primitives below still reads
-;; it bare, and that section hasn't been extracted yet.
-;; moved to net.b12n.raylib.native
-(def ^:private vector3-layout native/vector3-layout)
 (def world-to-screen camera/world-to-screen)
 
 ;; --- more keyboard constants (keyboard-testbed) --------------------------
@@ -868,164 +742,20 @@
 (def KEY-RIGHT-ALT input/KEY-RIGHT-ALT)
 
 ;; --- geometric primitives, genuinely by value (geometric-shapes) --------
-;; raylib's real Draw{Cube,Sphere,Cylinder,Capsule}* calls, now that
-;; [:by-value [:struct ...]] works -- named draw-*! rather than reusing
-;; cube!/sphere! (the existing rlgl immediate-mode stand-ins), since these
-;; are a genuinely different code path, not a replacement for them.
-(defn- vec3->ptr!
-  "Allocate a vector3-layout buffer and write [x y z] into it. Caller frees."
-  [[x y z]]
-  (let [p (ffi/alloc (ffi/layout-size vector3-layout))]
-    (ffi/write-field p vector3-layout :x (double x))
-    (ffi/write-field p vector3-layout :y (double y))
-    (ffi/write-field p vector3-layout :z (double z))
-    p))
-
-(ffi/defcfn ^:private draw-cube-raw "DrawCube"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :float :float :uint]
-  :void)
-(ffi/defcfn ^:private draw-cube-wires-raw "DrawCubeWires"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :float :float :uint]
-  :void)
-(ffi/defcfn ^:private draw-sphere-raw "DrawSphere"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :uint]
-  :void)
-(ffi/defcfn ^:private draw-sphere-wires-raw "DrawSphereWires"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :int :int :uint]
-  :void)
-(ffi/defcfn ^:private draw-cylinder-raw "DrawCylinder"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :float :float :int :uint]
-  :void)
-(ffi/defcfn ^:private draw-cylinder-wires-raw "DrawCylinderWires"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :float :float :int :uint]
-  :void)
-(ffi/defcfn ^:private draw-capsule-raw "DrawCapsule"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :int :int :uint]
-  :void)
-(ffi/defcfn ^:private draw-capsule-wires-raw "DrawCapsuleWires"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float] [:z :float]]]] :float :int :int :uint]
-  :void)
-
-(defn draw-cube!
-  "DrawCube. :pos :width :height :length :color."
-  [& {:keys [pos width height length color]
-      :or {pos [0.0 0.0 0.0]
-           width 1.0
-           height 1.0
-           length 1.0
-           color BLACK}}]
-  (let [p (vec3->ptr! pos)]
-    (try (draw-cube-raw p (double width) (double height) (double length) color)
-         (finally (ffi/free p)))))
-
-(defn draw-cube-wires!
-  "DrawCubeWires. :pos :width :height :length :color."
-  [& {:keys [pos width height length color]
-      :or {pos [0.0 0.0 0.0]
-           width 1.0
-           height 1.0
-           length 1.0
-           color BLACK}}]
-  (let [p (vec3->ptr! pos)]
-    (try (draw-cube-wires-raw p (double width) (double height) (double length) color)
-         (finally (ffi/free p)))))
-
-(defn draw-sphere!
-  [pos radius color]
-  (let [p (vec3->ptr! pos)]
-    (try (draw-sphere-raw p (double radius) color)
-         (finally (ffi/free p)))))
-
-(defn draw-sphere-wires!
-  "DrawSphereWires. :pos :radius :rings :slices :color."
-  [& {:keys [pos radius rings slices color]
-      :or {pos [0.0 0.0 0.0]
-           radius 0.5
-           rings 16
-           slices 16
-           color BLACK}}]
-  (let [p (vec3->ptr! pos)]
-    (try (draw-sphere-wires-raw p (double radius) (int rings) (int slices) color)
-         (finally (ffi/free p)))))
-
-(defn draw-cylinder!
-  "DrawCylinder. :pos :radius-top :radius-bottom :height :slices :color."
-  [& {:keys [pos radius-top radius-bottom height slices color]
-      :or {pos [0.0 0.0 0.0]
-           radius-top 1.0
-           radius-bottom 1.0
-           height 1.0
-           slices 16
-           color BLACK}}]
-  (let [p (vec3->ptr! pos)]
-    (try (draw-cylinder-raw p (double radius-top) (double radius-bottom) (double height)
-                            (int slices) color)
-         (finally (ffi/free p)))))
-
-(defn draw-cylinder-wires!
-  "DrawCylinderWires. :pos :radius-top :radius-bottom :height :slices :color."
-  [& {:keys [pos radius-top radius-bottom height slices color]
-      :or {pos [0.0 0.0 0.0]
-           radius-top 1.0
-           radius-bottom 1.0
-           height 1.0
-           slices 16
-           color BLACK}}]
-  (let [p (vec3->ptr! pos)]
-    (try (draw-cylinder-wires-raw p (double radius-top) (double radius-bottom) (double height)
-                                  (int slices) color)
-         (finally (ffi/free p)))))
-
-(defn draw-capsule!
-  "DrawCapsule. :start-pos :end-pos :radius :slices :rings :color."
-  [& {:keys [start-pos end-pos radius slices rings color]
-      :or {start-pos [0.0 0.0 0.0]
-           end-pos [0.0 1.0 0.0]
-           radius 0.5
-           slices 8
-           rings 8
-           color BLACK}}]
-  (let [p1 (vec3->ptr! start-pos)
-        p2 (vec3->ptr! end-pos)]
-    (try (draw-capsule-raw p1 p2 (double radius) (int slices) (int rings) color)
-         (finally (ffi/free p1) (ffi/free p2)))))
-
-(defn draw-capsule-wires!
-  "DrawCapsuleWires. :start-pos :end-pos :radius :slices :rings :color."
-  [& {:keys [start-pos end-pos radius slices rings color]
-      :or {start-pos [0.0 0.0 0.0]
-           end-pos [0.0 1.0 0.0]
-           radius 0.5
-           slices 8
-           rings 8
-           color BLACK}}]
-  (let [p1 (vec3->ptr! start-pos)
-        p2 (vec3->ptr! end-pos)]
-    (try (draw-capsule-wires-raw p1 p2 (double radius) (int slices) (int rings) color)
-         (finally (ffi/free p1) (ffi/free p2)))))
+;; Moved to net.b12n.raylib.models, along with the ground plane below.
+;; Re-exported here so every example that says rl/draw-cube! or
+;; rl/draw-plane! keeps working unchanged.
+(def draw-cube! models/draw-cube!)
+(def draw-cube-wires! models/draw-cube-wires!)
+(def draw-sphere! models/draw-sphere!)
+(def draw-sphere-wires! models/draw-sphere-wires!)
+(def draw-cylinder! models/draw-cylinder!)
+(def draw-cylinder-wires! models/draw-cylinder-wires!)
+(def draw-capsule! models/draw-capsule!)
+(def draw-capsule-wires! models/draw-capsule-wires!)
 
 ;; --- ground plane, genuinely by value (camera-3d-split-screen) ----------
-;; moved to net.b12n.raylib.native
-(def ^:private vec2->ptr! native/vec2->ptr!)
-
-(ffi/defcfn ^:private draw-plane-raw "DrawPlane"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   :uint]
-  :void)
-
-(defn draw-plane!
-  "DrawPlane. :pos :size :color."
-  [& {:keys [pos size color]
-      :or {pos [0.0 0.0 0.0]
-           size [1.0 1.0]
-           color BLACK}}]
-  (let [p (vec3->ptr! pos)
-        s (vec2->ptr! size)]
-    (try (draw-plane-raw p s color)
-         (finally (ffi/free p) (ffi/free s)))))
+(def draw-plane! models/draw-plane!)
 
 ;; --- window/monitor diagnostics, genuinely by value (highdpi-testbed) ---
 ;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
@@ -1060,241 +790,20 @@
 (def camera3d-set-target! camera/camera3d-set-target!)
 
 ;; --- splines by Vector2, genuinely by value (splines-drawing) -----------
-;; DrawSplineSegment* takes every point as a Vector2 by value; each is staged
-;; via vec2->ptr! above, the same struct DrawPlane/DrawCircleGradient/
-;; GetWorldToScreen already use. Point-in-circle hit testing and drawing a
-;; line/circle from an [x y] pair have no genuine need for the Vector2 ABI
-;; here (a plain distance check, and the scalar rl/line!/rl/circle! already
-;; in this file), so this suite skips CheckCollisionPointCircle/DrawLineV/
-;; DrawCircleV rather than binding a redundant path to the same result.
-
-(ffi/defcfn ^:private draw-spline-segment-linear-raw "DrawSplineSegmentLinear"
-  [[:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   :float :uint]
-  :void)
-
-(defn spline-segment-linear!
-  "DrawSplineSegmentLinear. :p1 :p2 :thick :color."
-  [& {:keys [p1 p2 thick color]
-      :or {p1 [0.0 0.0]
-           p2 [0.0 0.0]
-           thick 1.0
-           color BLACK}}]
-  (let [a (vec2->ptr! p1)
-        b (vec2->ptr! p2)]
-    (try (draw-spline-segment-linear-raw a b (double thick) color)
-         (finally (ffi/free a) (ffi/free b)))))
-
-(ffi/defcfn ^:private draw-spline-segment-basis-raw "DrawSplineSegmentBasis"
-  [[:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   :float :uint]
-  :void)
-
-(defn spline-segment-basis!
-  "DrawSplineSegmentBasis. :p1 :p2 :p3 :p4 :thick :color, a B-spline segment
-  over four control points."
-  [& {:keys [p1 p2 p3 p4 thick color]
-      :or {p1 [0.0 0.0]
-           p2 [0.0 0.0]
-           p3 [0.0 0.0]
-           p4 [0.0 0.0]
-           thick 1.0
-           color BLACK}}]
-  (let [a (vec2->ptr! p1)
-        b (vec2->ptr! p2)
-        c (vec2->ptr! p3)
-        d (vec2->ptr! p4)]
-    (try (draw-spline-segment-basis-raw a b c d (double thick) color)
-         (finally (ffi/free a) (ffi/free b) (ffi/free c) (ffi/free d)))))
-
-(ffi/defcfn ^:private draw-spline-segment-catmullrom-raw "DrawSplineSegmentCatmullRom"
-  [[:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   :float :uint]
-  :void)
-
-(defn spline-segment-catmull-rom!
-  "DrawSplineSegmentCatmullRom. :p1 :p2 :p3 :p4 :thick :color, the curve
-  passing through p2..p3 shaped by the p1/p4 tangent points."
-  [& {:keys [p1 p2 p3 p4 thick color]
-      :or {p1 [0.0 0.0]
-           p2 [0.0 0.0]
-           p3 [0.0 0.0]
-           p4 [0.0 0.0]
-           thick 1.0
-           color BLACK}}]
-  (let [a (vec2->ptr! p1)
-        b (vec2->ptr! p2)
-        c (vec2->ptr! p3)
-        d (vec2->ptr! p4)]
-    (try (draw-spline-segment-catmullrom-raw a b c d (double thick) color)
-         (finally (ffi/free a) (ffi/free b) (ffi/free c) (ffi/free d)))))
-
-(ffi/defcfn ^:private draw-spline-segment-bezier-cubic-raw "DrawSplineSegmentBezierCubic"
-  [[:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:x :float] [:y :float]]]]
-   :float :uint]
-  :void)
-
-(defn spline-segment-bezier-cubic!
-  "DrawSplineSegmentBezierCubic. :p1 :c2 :c3 :p4 :thick :color, a cubic
-  Bezier segment from p1 to p4 with control points c2/c3."
-  [& {:keys [p1 c2 c3 p4 thick color]
-      :or {p1 [0.0 0.0]
-           c2 [0.0 0.0]
-           c3 [0.0 0.0]
-           p4 [0.0 0.0]
-           thick 1.0
-           color BLACK}}]
-  (let [a (vec2->ptr! p1)
-        b (vec2->ptr! c2)
-        c (vec2->ptr! c3)
-        d (vec2->ptr! p4)]
-    (try (draw-spline-segment-bezier-cubic-raw a b c d (double thick) color)
-         (finally (ffi/free a) (ffi/free b) (ffi/free c) (ffi/free d)))))
+;; Moved to net.b12n.raylib.splines. Re-exported here so every example that
+;; says rl/spline-segment-linear! keeps working unchanged.
+(def spline-segment-linear! splines/spline-segment-linear!)
+(def spline-segment-basis! splines/spline-segment-basis!)
+(def spline-segment-catmull-rom! splines/spline-segment-catmull-rom!)
+(def spline-segment-bezier-cubic! splines/spline-segment-bezier-cubic!)
 
 ;; --- rays: picking a point in the 3D scene, all by value -----------------
-;; GetScreenToWorldRay is the exact inverse of GetWorldToScreen above, and it is
-;; bound the same way: a by-value Vector2 in, a by-value Camera3D in, a by-value
-;; Ray out. GetRayCollisionBox then takes that Ray with an axis-aligned
-;; BoundingBox and hands back a RayCollision, whose first field is a one-byte C
-;; _Bool rather than an int. `:bool` is what reads that correctly, and it is also
-;; what makes the layout land `distance` at offset 4 instead of 1. Sizes are
-;; asserted at load rather than assumed, since a wrong offset here reads a
-;; plausible float out of the wrong bytes and never errors.
-(def ^:private ray-layout
-  (ffi/layout [:struct [[:position  [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:direction [:struct [[:x :float] [:y :float] [:z :float]]]]]]))
-
-(def ^:private ray-collision-layout
-  (ffi/layout [:struct [[:hit :bool]
-                        [:distance :float]
-                        [:point  [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:normal [:struct [[:x :float] [:y :float] [:z :float]]]]]]))
-
-(assert (= 24 (ffi/layout-size ray-layout)) "Ray is two Vector3s, 24 bytes")
-(assert (= 32 (ffi/layout-size ray-collision-layout))
-        "RayCollision is bool + pad + float + two Vector3s, 32 bytes")
-
-(ffi/defcfn ^:private get-screen-to-world-ray-raw "GetScreenToWorldRay"
-  [[:by-value [:struct [[:x :float] [:y :float]]]]
-   [:by-value [:struct [[:position [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:target   [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:up       [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:fovy :float]
-                        [:projection :int32]]]]]
-  [:by-value [:struct [[:position  [:struct [[:x :float] [:y :float] [:z :float]]]]
-                       [:direction [:struct [[:x :float] [:y :float] [:z :float]]]]]]])
-
-(ffi/defcfn ^:private get-ray-collision-box-raw "GetRayCollisionBox"
-  [[:by-value [:struct [[:position  [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:direction [:struct [[:x :float] [:y :float] [:z :float]]]]]]]
-   [:by-value [:struct [[:min [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:max [:struct [[:x :float] [:y :float] [:z :float]]]]]]]]
-  [:by-value [:struct [[:hit :bool]
-                       [:distance :float]
-                       [:point  [:struct [[:x :float] [:y :float] [:z :float]]]]
-                       [:normal [:struct [[:x :float] [:y :float] [:z :float]]]]]]])
-
-(ffi/defcfn ^:private draw-ray-raw "DrawRay"
-  [[:by-value [:struct [[:position  [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:direction [:struct [[:x :float] [:y :float] [:z :float]]]]]]]
-   :uint]
-  :void)
-
-(ffi/defcfn ^:private cursor-hidden-raw "IsCursorHidden" [] :int)
-
-(defn cursor-hidden?
-  "IsCursorHidden, so an example can ask whether it currently owns the pointer
-  rather than tracking a flag of its own alongside disable-cursor!."
-  []
-  (not (zero? (bit-and (cursor-hidden-raw) 0xff))))
-
-(defn- ray->ptr!
-  "Allocate a ray-layout buffer from {:position [x y z] :direction [x y z]}.
-  Caller frees."
-  [{:keys [position direction]}]
-  (let [[px py pz] position
-        [dx dy dz] direction
-        p (ffi/alloc (ffi/layout-size ray-layout))]
-    (ffi/write-field p ray-layout [:position :x] (double px))
-    (ffi/write-field p ray-layout [:position :y] (double py))
-    (ffi/write-field p ray-layout [:position :z] (double pz))
-    (ffi/write-field p ray-layout [:direction :x] (double dx))
-    (ffi/write-field p ray-layout [:direction :y] (double dy))
-    (ffi/write-field p ray-layout [:direction :z] (double dz))
-    p))
-
-(defn screen-to-world-ray
-  "GetScreenToWorldRay. `screen` is [x y] in window coordinates and `camera`
-  takes the same keys as with-camera-3d's opts map, so one map can be shared
-  between the ray and the frame it is picking in. Returns
-  {:position [x y z] :direction [x y z]}, the unit direction included."
-  [[sx sy] camera]
-  (let [pos (ffi/alloc (ffi/layout-size vector2-layout))
-        cam (camera3d-alloc camera)
-        out (ffi/alloc (ffi/layout-size ray-layout))]
-    (try
-      (ffi/write-field pos vector2-layout :x (double sx))
-      (ffi/write-field pos vector2-layout :y (double sy))
-      (get-screen-to-world-ray-raw out pos cam)
-      {:position [(ffi/read-field out ray-layout [:position :x])
-                  (ffi/read-field out ray-layout [:position :y])
-                  (ffi/read-field out ray-layout [:position :z])]
-       :direction [(ffi/read-field out ray-layout [:direction :x])
-                   (ffi/read-field out ray-layout [:direction :y])
-                   (ffi/read-field out ray-layout [:direction :z])]}
-      (finally
-        (ffi/free pos)
-        (camera3d-free! cam)
-        (ffi/free out)))))
-
-(defn ray-collision-box
-  "GetRayCollisionBox against the axis-aligned box spanning `lo` to `hi`, both
-  [x y z]. Returns {:hit? :distance :point :normal}; everything but :hit? is
-  meaningless when :hit? is false, exactly as in the C."
-  [ray lo hi]
-  (let [r (ray->ptr! ray)
-        box (ffi/alloc (ffi/layout-size ray-layout))     ; BoundingBox is two Vector3s too
-        out (ffi/alloc (ffi/layout-size ray-collision-layout))
-        [lx ly lz] lo
-        [hx hy hz] hi]
-    (try
-      (ffi/write-field box ray-layout [:position :x] (double lx))
-      (ffi/write-field box ray-layout [:position :y] (double ly))
-      (ffi/write-field box ray-layout [:position :z] (double lz))
-      (ffi/write-field box ray-layout [:direction :x] (double hx))
-      (ffi/write-field box ray-layout [:direction :y] (double hy))
-      (ffi/write-field box ray-layout [:direction :z] (double hz))
-      (get-ray-collision-box-raw out r box)
-      {:hit? (ffi/read-field out ray-collision-layout :hit)
-       :distance (ffi/read-field out ray-collision-layout :distance)
-       :point [(ffi/read-field out ray-collision-layout [:point :x])
-               (ffi/read-field out ray-collision-layout [:point :y])
-               (ffi/read-field out ray-collision-layout [:point :z])]
-       :normal [(ffi/read-field out ray-collision-layout [:normal :x])
-                (ffi/read-field out ray-collision-layout [:normal :y])
-                (ffi/read-field out ray-collision-layout [:normal :z])]}
-      (finally
-        (ffi/free r)
-        (ffi/free box)
-        (ffi/free out)))))
-
-(defn draw-ray!
-  "DrawRay: the ray drawn as a long line from its origin. Inside a BeginMode3D
-  block, like the other draw-*! calls."
-  [ray color]
-  (let [r (ray->ptr! ray)]
-    (try (draw-ray-raw r color)
-         (finally (ffi/free r)))))
+;; Moved to net.b12n.raylib.rays. Re-exported here so every example that
+;; says rl/screen-to-world-ray or rl/cursor-hidden? keeps working unchanged.
+(def cursor-hidden? rays/cursor-hidden?)
+(def screen-to-world-ray rays/screen-to-world-ray)
+(def ray-collision-box rays/ray-collision-box)
+(def draw-ray! rays/draw-ray!)
 
 ;; --- files: FilePathList, another 16-byte struct returned by value -------
 ;; Moved to net.b12n.raylib.files. Re-exported here so every example that says
