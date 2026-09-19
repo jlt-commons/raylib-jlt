@@ -1,0 +1,25 @@
+{:min-bb-version "1.3.0"
+ :tasks
+ {:requires ([babashka.fs :as fs])
+
+  :init
+  (do
+    ;; jolt's launcher was renamed `joltc` -> `jolt` in 0.5.0. Installs that
+    ;; predate the rename often still carry a `joltc` shim, which is why
+    ;; hardcoding `joltc` looks fine locally and fails on a fresh install.
+    ;; Prefer the modern name, fall back to the old one.
+    (def jolt-cmd (if (fs/which "jolt") "jolt" "joltc")))
+
+  check
+  {:doc "Headless load-check of every library namespace (no window)"
+   :task (shell jolt-cmd "-M:check")}
+
+  lint
+  {:doc "clj-kondo over the library source"
+   :task (shell "clj-kondo" "--lint" "src")}
+
+  test
+  {:doc "Unit suite (moves here in P5.T3; no-op until then)"
+   :task (if (fs/exists? "test")
+           (shell jolt-cmd "-M:test")
+           (println "no test/ directory yet; the suite moves here in P5.T3"))}}}

@@ -14,37 +14,29 @@
   (:refer-clojure :exclude [run!])
   (:require
    [jolt.ffi :as ffi]
-   [jolt.host]))
+   [jolt.host]
+   [net.b12n.raylib.color :as color]))
 
 ;; --- Color -------------------------------------------------------------------
-;; Defined first: every drawing binding below takes a packed Color :uint, and
-;; shade-color / cube! / sphere! reference `rgba` and the palette. Since jolt 0.4.0
-;; ("unresolved symbols are compile errors") a symbol must be defined before its
-;; first use in the file, in a fn body and in an :or destructuring default just as
-;; much as at top level. Keep this section above its first use.
-;; #region rgba
-(defn rgba
-  "Pack an RGBA color into the little-endian uint32 that raylib's `Color` struct
-  is (r | g<<8 | b<<16 | a<<24), so it can cross the FFI boundary as a :uint."
-  [r g b a]
-  (bit-or (int r) (bit-shift-left (int g) 8)
-          (bit-shift-left (int b) 16) (bit-shift-left (int a) 24)))
-;; #endregion
+;; Moved to net.b12n.raylib.color. Re-exported here so every example that says
+;; rl/rgba or rl/RAYWHITE keeps working unchanged. This whole file becomes
+;; aliases like these, and is then replaced by the generated
+;; net.b12n.raylib.all.
+(def rgba color/rgba)
 
-;; raylib's named color palette (values from src/raylib.h).
-(def LIGHTGRAY (rgba 200 200 200 255))   (def GRAY       (rgba 130 130 130 255))
-(def DARKGRAY  (rgba 80 80 80 255))      (def YELLOW     (rgba 253 249 0 255))
-(def GOLD      (rgba 255 203 0 255))     (def ORANGE     (rgba 255 161 0 255))
-(def PINK      (rgba 255 109 194 255))   (def RED        (rgba 230 41 55 255))
-(def MAROON    (rgba 190 33 55 255))     (def GREEN      (rgba 0 228 48 255))
-(def LIME      (rgba 0 158 47 255))      (def DARKGREEN  (rgba 0 117 44 255))
-(def SKYBLUE   (rgba 102 191 255 255))   (def BLUE       (rgba 0 121 241 255))
-(def DARKBLUE  (rgba 0 82 172 255))      (def PURPLE     (rgba 200 122 255 255))
-(def VIOLET    (rgba 135 60 190 255))    (def DARKPURPLE (rgba 112 31 126 255))
-(def BEIGE     (rgba 211 176 131 255))   (def BROWN      (rgba 127 106 79 255))
-(def DARKBROWN (rgba 76 63 47 255))      (def WHITE      (rgba 255 255 255 255))
-(def BLACK     (rgba 0 0 0 255))         (def MAGENTA    (rgba 255 0 255 255))
-(def RAYWHITE  (rgba 245 245 245 255))
+(def LIGHTGRAY color/LIGHTGRAY)   (def GRAY       color/GRAY)
+(def DARKGRAY  color/DARKGRAY)    (def YELLOW     color/YELLOW)
+(def GOLD      color/GOLD)        (def ORANGE     color/ORANGE)
+(def PINK      color/PINK)        (def RED        color/RED)
+(def MAROON    color/MAROON)      (def GREEN      color/GREEN)
+(def LIME      color/LIME)        (def DARKGREEN  color/DARKGREEN)
+(def SKYBLUE   color/SKYBLUE)     (def BLUE       color/BLUE)
+(def DARKBLUE  color/DARKBLUE)    (def PURPLE     color/PURPLE)
+(def VIOLET    color/VIOLET)      (def DARKPURPLE color/DARKPURPLE)
+(def BEIGE     color/BEIGE)       (def BROWN      color/BROWN)
+(def DARKBROWN color/DARKBROWN)   (def WHITE      color/WHITE)
+(def BLACK     color/BLACK)       (def MAGENTA    color/MAGENTA)
+(def RAYWHITE  color/RAYWHITE)
 
 ;; --- window / lifecycle ------------------------------------------------------
 (ffi/defcfn init-window    "InitWindow"   [:int :int :string] :void)

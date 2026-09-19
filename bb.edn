@@ -591,6 +591,10 @@
    :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/check_demos.clj")]
            (System/exit exit))}
 
+  check:lib
+  {:doc "Headless load-check of every library namespace in lib/"
+   :task (shell {:dir "lib"} jolt-cmd "-M:check")}
+
   ;; --- quality: lint (clj-kondo) --------------------------------------------
   ;; Formatting lives under lsp:format below, not here. See the top-of-file
   ;; note on why clojure-lsp (not cljfmt) owns formatting in this project.
