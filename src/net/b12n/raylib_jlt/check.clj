@@ -169,6 +169,7 @@
    [net.b12n.raylib-jlt.texture-tiling]
    [net.b12n.raylib-jlt.texture-waves]
    [net.b12n.raylib-jlt.textured-cube]
+   [net.b12n.raylib-jlt.to-image]
    [net.b12n.raylib-jlt.top-down-lights]
    [net.b12n.raylib-jlt.triangle-strip]
    [net.b12n.raylib-jlt.undo-redo]

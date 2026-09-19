@@ -471,6 +471,7 @@
   npatch-drawing {:doc "▶ nine-patch stretching, corners held fixed" :task (run-example "npatch-drawing")}
   sprite-button {:doc "▶ one sheet, three states, sliced by v" :task (run-example "sprite-button")}
   sprite-stacking {:doc "▶ 40 generated slices faking a 3D car" :task (run-example "sprite-stacking")}
+  to-image {:doc "▶ one image, VRAM to RAM to VRAM and back up" :task (run-example "to-image")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
