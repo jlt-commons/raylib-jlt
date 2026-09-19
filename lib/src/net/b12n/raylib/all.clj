@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 459 public vars total across 19 modules, zero name collisions,
+;; 464 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
 ;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 459 concrete-module surface, re-exported
+  "Every public var of this library's 464 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -725,11 +725,15 @@
 (def sphere! models/sphere!)
 (alter-meta! #'sphere! merge (select-keys (meta #'models/sphere!) [:doc :arglists :const]))
 
-;; --- native (7) --------------------------------------------------------
+;; --- native (9) --------------------------------------------------------
 (def PIXELFORMAT-R8G8B8 native/PIXELFORMAT-R8G8B8)
 (alter-meta! #'PIXELFORMAT-R8G8B8 merge (select-keys (meta #'native/PIXELFORMAT-R8G8B8) [:doc :arglists :const]))
 (def PIXELFORMAT-R8G8B8A8 native/PIXELFORMAT-R8G8B8A8)
 (alter-meta! #'PIXELFORMAT-R8G8B8A8 merge (select-keys (meta #'native/PIXELFORMAT-R8G8B8A8) [:doc :arglists :const]))
+(def rect->ptr! native/rect->ptr!)
+(alter-meta! #'rect->ptr! merge (select-keys (meta #'native/rect->ptr!) [:doc :arglists :const]))
+(def rectangle-layout native/rectangle-layout)
+(alter-meta! #'rectangle-layout merge (select-keys (meta #'native/rectangle-layout) [:doc :arglists :const]))
 (def staged native/staged)
 (alter-meta! #'staged merge (select-keys (meta #'native/staged) [:doc :arglists :const]))
 (def texture2d-layout native/texture2d-layout)
@@ -819,7 +823,7 @@
 (def with-shader shaders/with-shader)
 (alter-meta! #'with-shader merge (select-keys (meta #'shaders/with-shader) [:doc :arglists :const]))
 
-;; --- shapes (24) --------------------------------------------------------
+;; --- shapes (27) --------------------------------------------------------
 (def BLEND-ADD-COLORS shapes/BLEND-ADD-COLORS)
 (alter-meta! #'BLEND-ADD-COLORS merge (select-keys (meta #'shapes/BLEND-ADD-COLORS) [:doc :arglists :const]))
 (def BLEND-ADDITIVE shapes/BLEND-ADDITIVE)
@@ -864,8 +868,14 @@
 (alter-meta! #'end-blend-mode merge (select-keys (meta #'shapes/end-blend-mode) [:doc :arglists :const]))
 (def rect-gradient-h! shapes/rect-gradient-h!)
 (alter-meta! #'rect-gradient-h! merge (select-keys (meta #'shapes/rect-gradient-h!) [:doc :arglists :const]))
+(def rect-lines-ex! shapes/rect-lines-ex!)
+(alter-meta! #'rect-lines-ex! merge (select-keys (meta #'shapes/rect-lines-ex!) [:doc :arglists :const]))
 (def rect-pro! shapes/rect-pro!)
 (alter-meta! #'rect-pro! merge (select-keys (meta #'shapes/rect-pro!) [:doc :arglists :const]))
+(def rect-rounded! shapes/rect-rounded!)
+(alter-meta! #'rect-rounded! merge (select-keys (meta #'shapes/rect-rounded!) [:doc :arglists :const]))
+(def rect-rounded-lines-ex! shapes/rect-rounded-lines-ex!)
+(alter-meta! #'rect-rounded-lines-ex! merge (select-keys (meta #'shapes/rect-rounded-lines-ex!) [:doc :arglists :const]))
 (def set-blend-factors shapes/set-blend-factors)
 (alter-meta! #'set-blend-factors merge (select-keys (meta #'shapes/set-blend-factors) [:doc :arglists :const]))
 

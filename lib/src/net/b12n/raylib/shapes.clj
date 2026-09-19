@@ -115,3 +115,98 @@
            left color/WHITE
            right color/BLACK}}]
   (draw-rectangle-grad-h x y width height left right))
+
+;; --- thick and rounded outlines ----------------------------------------------
+;; These four take their Rectangle or Vector2 by value, which is why the suite
+;; went without them for so long and why rounded-rectangle hand-rolls its corners
+;; out of sectors. jolt 0.7.23 made [:by-value [:struct ...]] work, so new code
+;; can call them directly. The descriptor has to be spelled out per signature: a
+;; def'd alias is rejected, because it must be a compile-time literal.
+;;
+;; The struct itself is staged into a native buffer and passed by pointer, the
+;; way net.b12n.raylib.splines stages its control points. Handing the raw call a
+;; Clojure map instead fails at RUN time with a ClassCastException, not at
+;; compile time, so the descriptor in the signature says nothing about how the
+;; argument has to be built.
+;;
+;; No docstrings on these forms. The clj-kondo hook at .clj-kondo/hooks/jolt_ffi.clj
+;; destructures ffi/defcfn positionally, so a docstring shifts the children along
+;; and the var never gets interned. Documentation goes on the wrapper below.
+(ffi/defcfn ^:private draw-rectangle-lines-ex-raw "DrawRectangleLinesEx"
+  [[:by-value [:struct [[:x :float] [:y :float] [:width :float] [:height :float]]]]
+   :float :uint] :void)
+
+(ffi/defcfn ^:private draw-rectangle-rounded-raw "DrawRectangleRounded"
+  [[:by-value [:struct [[:x :float] [:y :float] [:width :float] [:height :float]]]]
+   :float :int :uint] :void)
+
+(ffi/defcfn ^:private draw-rectangle-rounded-lines-ex-raw "DrawRectangleRoundedLinesEx"
+  [[:by-value [:struct [[:x :float] [:y :float] [:width :float] [:height :float]]]]
+   :float :int :float :uint] :void)
+
+;; No DrawCircleLinesEx here. raylib's own header declares it, but the released
+;; 6.0 this suite links does not export it: it arrived after the tag. Callers
+;; wanting a thick circle outline use ring! with inner and outer radii, which is
+;; what raylib implements DrawCircleLinesEx as anyway.
+
+(defn rect-lines-ex!
+  "DrawRectangleLinesEx: a rectangle outline `:thick` pixels wide, drawn inward
+  from the edge. raylib clamps the thickness to half the shorter side, and
+  guards the whole body with `if (thick > 0)`, so zero or less draws nothing at
+  all rather than an outward band.
+    :x :y :width :height   the rectangle
+    :thick                 band width, inward; nothing is drawn at <= 0
+    :color"
+  [& {:keys [x y width height thick color]
+      :or {x 0
+           y 0
+           width 10
+           height 10
+           thick 1.0
+           color color/BLACK}}]
+  (let [r (native/rect->ptr! [x y width height])]
+    (try (draw-rectangle-lines-ex-raw r (double thick) color)
+         (finally (ffi/free r)))))
+
+(defn rect-rounded!
+  "DrawRectangleRounded: a filled rectangle with rounded corners. `:roundness`
+  runs 0.0 (square) to 1.0 (the corner radius is half the shorter side), and
+  `:segments` is how many triangles each corner arc is built from.
+    :x :y :width :height   the rectangle
+    :roundness :segments   corner shape
+    :color"
+  [& {:keys [x y width height roundness segments color]
+      :or {x 0
+           y 0
+           width 10
+           height 10
+           roundness 0.2
+           segments 9
+           color color/BLACK}}]
+  (let [r (native/rect->ptr! [x y width height])]
+    (try (draw-rectangle-rounded-raw r (double roundness) (int segments) color)
+         (finally (ffi/free r)))))
+
+(defn rect-rounded-lines-ex!
+  "DrawRectangleRoundedLinesEx: the outline of a rounded rectangle, `:thick`
+  pixels wide, drawn inward. Guarded by `if (thick >= 0)` the same way
+  rect-lines-ex! is, so a negative thickness collapses to a hairline rather than
+  growing outward. A `:roundness` of 0 delegates to DrawRectangleLinesEx.
+    :x :y :width :height   the rectangle
+    :roundness :segments   corner shape
+    :thick                 band width, inward; degenerate at < 0
+    :color"
+  [& {:keys [x y width height roundness segments thick color]
+      :or {x 0
+           y 0
+           width 10
+           height 10
+           roundness 0.2
+           segments 9
+           thick 1.0
+           color color/BLACK}}]
+  (let [r (native/rect->ptr! [x y width height])]
+    (try (draw-rectangle-rounded-lines-ex-raw r (double roundness) (int segments)
+                                              (double thick) color)
+         (finally (ffi/free r)))))
+

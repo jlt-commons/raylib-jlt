@@ -345,8 +345,6 @@
 ;; in registers rather than going indirect. ImageKernelConvolution takes a flat
 ;; float array and its LENGTH, not its side, so a 3x3 kernel is nine floats and
 ;; the argument is 9.
-(def ^:private rectangle-layout
-  (ffi/layout [:struct [[:x :float] [:y :float] [:width :float] [:height :float]]]))
 
 (ffi/defcfn ^:private image-crop-raw "ImageCrop"
   [:pointer [:by-value [:struct [[:x :float] [:y :float]
@@ -362,12 +360,12 @@
                y 0
                width 1
                height 1}}]
-  (let [r (ffi/alloc (ffi/layout-size rectangle-layout))]
+  (let [r (ffi/alloc (ffi/layout-size native/rectangle-layout))]
     (try
-      (ffi/write-field r rectangle-layout :x (double x))
-      (ffi/write-field r rectangle-layout :y (double y))
-      (ffi/write-field r rectangle-layout :width (double width))
-      (ffi/write-field r rectangle-layout :height (double height))
+      (ffi/write-field r native/rectangle-layout :x (double x))
+      (ffi/write-field r native/rectangle-layout :y (double y))
+      (ffi/write-field r native/rectangle-layout :width (double width))
+      (ffi/write-field r native/rectangle-layout :height (double height))
       (image-crop-raw img r)
       (finally (ffi/free r)))))
 
