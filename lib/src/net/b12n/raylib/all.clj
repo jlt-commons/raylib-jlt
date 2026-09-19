@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 446 public vars total across 19 modules, zero name collisions,
+;; 459 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
 ;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 446 concrete-module surface, re-exported
+  "Every public var of this library's 459 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -259,15 +259,19 @@
 (def get-working-directory files/get-working-directory)
 (alter-meta! #'get-working-directory merge (select-keys (meta #'files/get-working-directory) [:doc :arglists :const]))
 
-;; --- images (25) --------------------------------------------------------
+;; --- images (38) --------------------------------------------------------
 (def image->texture images/image->texture)
 (alter-meta! #'image->texture merge (select-keys (meta #'images/image->texture) [:doc :arglists :const]))
+(def image-alpha-mask! images/image-alpha-mask!)
+(alter-meta! #'image-alpha-mask! merge (select-keys (meta #'images/image-alpha-mask!) [:doc :arglists :const]))
 (def image-blur-gaussian! images/image-blur-gaussian!)
 (alter-meta! #'image-blur-gaussian! merge (select-keys (meta #'images/image-blur-gaussian!) [:doc :arglists :const]))
 (def image-cellular images/image-cellular)
 (alter-meta! #'image-cellular merge (select-keys (meta #'images/image-cellular) [:doc :arglists :const]))
 (def image-checked images/image-checked)
 (alter-meta! #'image-checked merge (select-keys (meta #'images/image-checked) [:doc :arglists :const]))
+(def image-clear-background! images/image-clear-background!)
+(alter-meta! #'image-clear-background! merge (select-keys (meta #'images/image-clear-background!) [:doc :arglists :const]))
 (def image-color images/image-color)
 (alter-meta! #'image-color merge (select-keys (meta #'images/image-color) [:doc :arglists :const]))
 (def image-color-brightness! images/image-color-brightness!)
@@ -286,12 +290,24 @@
 (alter-meta! #'image-copy! merge (select-keys (meta #'images/image-copy!) [:doc :arglists :const]))
 (def image-crop! images/image-crop!)
 (alter-meta! #'image-crop! merge (select-keys (meta #'images/image-crop!) [:doc :arglists :const]))
+(def image-draw-circle! images/image-draw-circle!)
+(alter-meta! #'image-draw-circle! merge (select-keys (meta #'images/image-draw-circle!) [:doc :arglists :const]))
+(def image-draw-line! images/image-draw-line!)
+(alter-meta! #'image-draw-line! merge (select-keys (meta #'images/image-draw-line!) [:doc :arglists :const]))
+(def image-draw-pixel! images/image-draw-pixel!)
+(alter-meta! #'image-draw-pixel! merge (select-keys (meta #'images/image-draw-pixel!) [:doc :arglists :const]))
+(def image-draw-rectangle! images/image-draw-rectangle!)
+(alter-meta! #'image-draw-rectangle! merge (select-keys (meta #'images/image-draw-rectangle!) [:doc :arglists :const]))
+(def image-draw-text! images/image-draw-text!)
+(alter-meta! #'image-draw-text! merge (select-keys (meta #'images/image-draw-text!) [:doc :arglists :const]))
 (def image-flip-horizontal! images/image-flip-horizontal!)
 (alter-meta! #'image-flip-horizontal! merge (select-keys (meta #'images/image-flip-horizontal!) [:doc :arglists :const]))
 (def image-flip-vertical! images/image-flip-vertical!)
 (alter-meta! #'image-flip-vertical! merge (select-keys (meta #'images/image-flip-vertical!) [:doc :arglists :const]))
 (def image-format! images/image-format!)
 (alter-meta! #'image-format! merge (select-keys (meta #'images/image-format!) [:doc :arglists :const]))
+(def image-from-channel images/image-from-channel)
+(alter-meta! #'image-from-channel merge (select-keys (meta #'images/image-from-channel) [:doc :arglists :const]))
 (def image-from-texture! images/image-from-texture!)
 (alter-meta! #'image-from-texture! merge (select-keys (meta #'images/image-from-texture!) [:doc :arglists :const]))
 (def image-gradient-linear images/image-gradient-linear)
@@ -300,14 +316,24 @@
 (alter-meta! #'image-gradient-radial merge (select-keys (meta #'images/image-gradient-radial) [:doc :arglists :const]))
 (def image-gradient-square images/image-gradient-square)
 (alter-meta! #'image-gradient-square merge (select-keys (meta #'images/image-gradient-square) [:doc :arglists :const]))
+(def image-height images/image-height)
+(alter-meta! #'image-height merge (select-keys (meta #'images/image-height) [:doc :arglists :const]))
 (def image-perlin-noise images/image-perlin-noise)
 (alter-meta! #'image-perlin-noise merge (select-keys (meta #'images/image-perlin-noise) [:doc :arglists :const]))
 (def image-resize! images/image-resize!)
 (alter-meta! #'image-resize! merge (select-keys (meta #'images/image-resize!) [:doc :arglists :const]))
+(def image-rotate! images/image-rotate!)
+(alter-meta! #'image-rotate! merge (select-keys (meta #'images/image-rotate!) [:doc :arglists :const]))
+(def image-rotate-ccw! images/image-rotate-ccw!)
+(alter-meta! #'image-rotate-ccw! merge (select-keys (meta #'images/image-rotate-ccw!) [:doc :arglists :const]))
+(def image-rotate-cw! images/image-rotate-cw!)
+(alter-meta! #'image-rotate-cw! merge (select-keys (meta #'images/image-rotate-cw!) [:doc :arglists :const]))
 (def image-text images/image-text)
 (alter-meta! #'image-text merge (select-keys (meta #'images/image-text) [:doc :arglists :const]))
 (def image-white-noise images/image-white-noise)
 (alter-meta! #'image-white-noise merge (select-keys (meta #'images/image-white-noise) [:doc :arglists :const]))
+(def image-width images/image-width)
+(alter-meta! #'image-width merge (select-keys (meta #'images/image-width) [:doc :arglists :const]))
 (def unload-image! images/unload-image!)
 (alter-meta! #'unload-image! merge (select-keys (meta #'images/unload-image!) [:doc :arglists :const]))
 

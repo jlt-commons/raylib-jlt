@@ -45,7 +45,7 @@ bb test     # the ffi/write argument-order suite
 
 ## Where the examples went
 
-The 171 example programs that use these bindings live one directory up, in the
+The 175 example programs that use these bindings live one directory up, in the
 same repository, and are documented at
 <https://jlt-commons.github.io/raylib-jlt/>.
 

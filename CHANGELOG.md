@@ -41,6 +41,26 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   229-line `raylib.clj` of its own, duplicated rather than shared because
   there was nothing to depend on before. Pulling the library out is what
   makes sharing it possible, which was the whole point of this arc.
+- **Four examples show raylib's CPU-side Image API for the first time, taking
+  the suite to 175.** `image-drawing`, `image-text`, `image-rotate` and
+  `image-channel` composite pixels into an `Image` buffer before any of them
+  reach the GPU, something nothing else in the suite did. Binding the
+  `ImageDraw*` family added eleven signatures: the five `ImageDraw*`
+  shape/text calls plus `ImageClearBackground`, `ImageRotate`/
+  `ImageRotateCW`/`ImageRotateCCW`, `ImageFromChannel` and `ImageAlphaMask`.
+- **All four are adaptations, not ports.** Their upstream originals load a
+  `.png` from disk, and this repo ships no image files at all, so each one
+  generates its own source with a `GenImage*` call instead and says so on
+  screen, the same substitution every textures example here already makes.
+- **`image-rotate` at a non-multiple of 90 changes the image's own size.**
+  raylib grows the buffer to fit the rotated bounds rather than cropping it,
+  so that panel comes back wider and taller than it went in. The example
+  measures and displays the change, since that is the point of the panel
+  rather than something to hide.
+- **`net.b12n.raylib.images` gained `image-width` and `image-height`.**
+  Reading an `Image`'s own dimensions used to mean hand-rolling an
+  `ffi/layout` and `ffi/read-field`, which `image-rotate` did until this
+  library gap closed underneath it.
 
 ## 2026-09-18 (night)
 

@@ -1,4 +1,4 @@
-# The example catalog: 171 raylib demos in jolt
+# The example catalog: 175 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -196,7 +196,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (18)
+## textures (22)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -221,6 +221,10 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/image-generation.gif" width="80">](demos.md#image-generation) | `image-generation` | nine procedural textures, none of them loaded |
 | [<img src="../demos/image-processing.gif" width="80">](demos.md#image-processing) | `image-processing` | nine CPU-side image operations, picked live |
 | [<img src="../demos/image-kernel.gif" width="80">](demos.md#image-kernel) | `image-kernel` | sharpen, sobel and gaussian, one call each |
+| *not recorded yet* | `image-drawing` | shapes baked once, then drawn live each frame |
+| *not recorded yet* | `image-text` | text baked into the image, pixelates at 4x |
+| *not recorded yet* | `image-rotate` | 0/90/180/270 exact, one angle grows the buffer |
+| *not recorded yet* | `image-channel` | R/G/B/A split; alpha masked to show structure |
 | [<img src="../demos/npatch-drawing.gif" width="80">](demos.md#npatch-drawing) | `npatch-drawing` | nine-patch stretching, corners held fixed |
 | [<img src="../demos/sprite-button.gif" width="80">](demos.md#sprite-button) | `sprite-button` | one sheet, three states, sliced by v |
 

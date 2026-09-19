@@ -1,11 +1,12 @@
 (ns net.b12n.raylib.images
   "raylib's CPU-side Image: the procedural generators (GenImageColor through
   GenImageText), the processing family (colour, flip, blur, format, the
-  GPU round trip through LoadImageFromTexture/LoadTextureFromImage), and
-  geometry/convolution (crop, resize, kernel convolution). Every generator
-  hands back an rlgl texture id rather than the Image, so the result draws
-  through the same net.b12n.raylib.textures surface a texture-from-fn
-  texture does."
+  GPU round trip through LoadImageFromTexture/LoadTextureFromImage), a
+  software-renderer drawing family (ImageDrawPixel through ImageDrawText,
+  plus rotate, channel split and alpha masking), and geometry/convolution
+  (crop, resize, kernel convolution). Every generator hands back an rlgl
+  texture id rather than the Image, so the result draws through the same
+  net.b12n.raylib.textures surface a texture-from-fn texture does."
   (:require
    [jolt.ffi :as ffi]
    [net.b12n.raylib.native :as native]))
@@ -40,6 +41,20 @@
 ;; repetition, and native/texture2d-layout still earns its keep for reading
 ;; fields back.
 (assert (= 24 (ffi/layout-size image-layout)) "Image is a pointer and four ints")
+
+(defn image-width
+  "The Image struct's own :width field, read straight off `img`. Needed after
+  any in-place operation (ImageRotate at a non-multiple-of-90 angle,
+  ImageResize) that can change it, since the caller's original arguments no
+  longer describe the buffer."
+  [img]
+  (ffi/read-field img image-layout :width))
+
+(defn image-height
+  "The Image struct's own :height field, read straight off `img`. See
+  image-width."
+  [img]
+  (ffi/read-field img image-layout :height))
 
 (ffi/defcfn ^:private gen-image-color-raw "GenImageColor" [:int :int :uint]
   [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
@@ -238,6 +253,91 @@
 (defn image-flip-horizontal! [img] (image-flip-horizontal-raw img))
 (defn image-flip-vertical! [img] (image-flip-vertical-raw img))
 (defn image-blur-gaussian! [img size] (image-blur-gaussian-raw img (int size)))
+
+;; --- Image drawing: a software renderer with the GPU one's vocabulary ----
+;; The ImageDraw* family works in place on an Image*, the same shape as the
+;; colour operations above: shapes and text land on the CPU-side pixel buffer
+;; rather than the screen, so what comes out of image->texture-id!/
+;; image->texture already has them baked in. ImageRotate/ImageRotateCW/
+;; ImageRotateCCW transform an existing Image in place; ImageFromChannel and
+;; ImageAlphaMask move a second Image across the boundary by value, the same
+;; 24-byte dance ImageCopy does above.
+(ffi/defcfn ^:private image-clear-background-raw "ImageClearBackground" [:pointer :uint] :void)
+(ffi/defcfn ^:private image-draw-pixel-raw     "ImageDrawPixel"     [:pointer :int :int :uint] :void)
+(ffi/defcfn ^:private image-draw-line-raw      "ImageDrawLine"      [:pointer :int :int :int :int :uint] :void)
+(ffi/defcfn ^:private image-draw-circle-raw    "ImageDrawCircle"    [:pointer :int :int :int :uint] :void)
+(ffi/defcfn ^:private image-draw-rectangle-raw "ImageDrawRectangle" [:pointer :int :int :int :int :uint] :void)
+(ffi/defcfn ^:private image-draw-text-raw      "ImageDrawText"      [:pointer :string :int :int :int :uint] :void)
+(ffi/defcfn ^:private image-rotate-raw    "ImageRotate"    [:pointer :int] :void)
+(ffi/defcfn ^:private image-rotate-cw-raw  "ImageRotateCW"  [:pointer] :void)
+(ffi/defcfn ^:private image-rotate-ccw-raw "ImageRotateCCW" [:pointer] :void)
+(ffi/defcfn ^:private image-from-channel-raw "ImageFromChannel"
+  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]] :int]
+  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                       [:mipmaps :int] [:format :int]]]])
+(ffi/defcfn ^:private image-alpha-mask-raw "ImageAlphaMask"
+  [:pointer [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
+                                 [:mipmaps :int] [:format :int]]]]] :void)
+
+(defn image-clear-background!
+  "ImageClearBackground, in place: fill the whole buffer with `color`."
+  [img color]
+  (image-clear-background-raw img color))
+
+(defn image-draw-pixel!
+  "ImageDrawPixel, in place, at (`x`,`y`)."
+  [img x y color]
+  (image-draw-pixel-raw img (int x) (int y) color))
+
+(defn image-draw-line!
+  "ImageDrawLine, in place, from (`start-x`,`start-y`) to (`end-x`,`end-y`)."
+  [img start-x start-y end-x end-y color]
+  (image-draw-line-raw img (int start-x) (int start-y) (int end-x) (int end-y) color))
+
+(defn image-draw-circle!
+  "ImageDrawCircle, in place: a filled circle centred at (`center-x`,`center-y`)."
+  [img center-x center-y radius color]
+  (image-draw-circle-raw img (int center-x) (int center-y) (int radius) color))
+
+(defn image-draw-rectangle!
+  "ImageDrawRectangle, in place, top-left at (`x`,`y`)."
+  [img x y width height color]
+  (image-draw-rectangle-raw img (int x) (int y) (int width) (int height) color))
+
+(defn image-draw-text!
+  "ImageDrawText, in place: `text` rasterised with raylib's default font at
+  (`x`,`y`), baked into the pixels rather than drawn over them the way
+  net.b12n.raylib.text's text! is."
+  [img text x y font-size color]
+  (image-draw-text-raw img text (int x) (int y) (int font-size) color))
+
+(defn image-rotate!
+  "ImageRotate, in place, by `degrees` (-359 to 359). A `degrees` that is not a
+  multiple of 90 changes the image's width and height; read them back from the
+  buffer afterwards rather than assuming the originals still hold."
+  [img degrees]
+  (image-rotate-raw img (int degrees)))
+
+(defn image-rotate-cw! [img] (image-rotate-cw-raw img))
+(defn image-rotate-ccw! [img] (image-rotate-ccw-raw img))
+
+(defn image-from-channel
+  "ImageFromChannel: a new greyscale Image built from one channel of `img`
+  (0=red, 1=green, 2=blue, 3=alpha). The caller owns the result and must pass
+  it to unload-image!; `img` itself is read, not consumed, and still needs its
+  own release."
+  [img selected-channel]
+  (let [out (ffi/alloc (ffi/layout-size image-layout))]
+    (image-from-channel-raw out img (int selected-channel))
+    out))
+
+(defn image-alpha-mask!
+  "ImageAlphaMask, in place on `img`: copies `mask`'s pixels into `img`'s alpha
+  channel. `mask` is read, not consumed or freed by this call; the caller
+  still owns it and must unload-image! it separately, same as `img`."
+  [img mask]
+  (image-alpha-mask-raw img mask))
 
 ;; --- Image geometry and convolution --------------------------------------
 ;; Both in place on an Image*, like the colour operations above, except that
