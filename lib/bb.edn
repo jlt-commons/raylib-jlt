@@ -14,6 +14,17 @@
   {:doc "Headless load-check of every library namespace (no window)"
    :task (shell jolt-cmd "-M:check")}
 
+  gen:all
+  {:doc "Regenerate src/net/b12n/raylib/all.clj from the module namespaces"
+   :task (let [gen (fs/file ".." "scripts" "gen_aggregator.clj")]
+           (if (fs/exists? gen)
+             (shell "bb" (str gen))
+             (do
+               (println "The generator lives one level up, at ../scripts/gen_aggregator.clj,")
+               (println "which this checkout does not have (it is not a standalone lib/ clone).")
+               (println "Run `bb gen:all` from the raylib-jlt repo root instead.")
+               (System/exit 1))))}
+
   lint
   {:doc "clj-kondo over the library source"
    :task (shell "clj-kondo" "--lint" "src")}
