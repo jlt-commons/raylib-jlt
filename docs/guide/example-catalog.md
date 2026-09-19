@@ -221,6 +221,8 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/image-generation.gif" width="80">](demos.md#image-generation) | `image-generation` | nine procedural textures, none of them loaded |
 | [<img src="../demos/image-processing.gif" width="80">](demos.md#image-processing) | `image-processing` | nine CPU-side image operations, picked live |
 | [<img src="../demos/image-kernel.gif" width="80">](demos.md#image-kernel) | `image-kernel` | sharpen, sobel and gaussian, one call each |
+| *not recorded yet* | `image-drawing` | shapes baked once, then drawn live each frame |
+| *not recorded yet* | `image-text` | text baked into the image, pixelates at 4x |
 | [<img src="../demos/npatch-drawing.gif" width="80">](demos.md#npatch-drawing) | `npatch-drawing` | nine-patch stretching, corners held fixed |
 | [<img src="../demos/sprite-button.gif" width="80">](demos.md#sprite-button) | `sprite-button` | one sheet, three states, sliced by v |
 

@@ -178,6 +178,8 @@
    ["image-generation" "image-generation" "textures" "nine procedural textures, none of them loaded"]
    ["image-processing" "image-processing" "textures" "nine CPU-side image operations, picked live"]
    ["image-kernel" "image-kernel" "textures" "sharpen, sobel and gaussian, one call each"]
+   ["image-drawing" "image-drawing" "textures" "shapes baked once, then drawn live each frame"]
+   ["image-text" "image-text" "textures" "text baked into the image, pixelates at 4x"]
    ["npatch-drawing" "npatch-drawing" "textures" "nine-patch stretching, corners held fixed"]
    ["sprite-button" "sprite-button" "textures" "one sheet, three states, sliced by v"]])
 

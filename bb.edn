@@ -464,6 +464,8 @@
   image-generation {:doc "▶ nine procedural textures, none of them loaded" :task (run-example "image-generation")}
   image-processing {:doc "▶ nine CPU-side image operations, picked live" :task (run-example "image-processing")}
   image-kernel {:doc "▶ sharpen, sobel and gaussian, one call each" :task (run-example "image-kernel")}
+  image-drawing {:doc "▶ shapes baked once, then drawn live each frame" :task (run-example "image-drawing")}
+  image-text {:doc "▶ text baked into the image, pixelates at 4x" :task (run-example "image-text")}
   npatch-drawing {:doc "▶ nine-patch stretching, corners held fixed" :task (run-example "npatch-drawing")}
   sprite-button {:doc "▶ one sheet, three states, sliced by v" :task (run-example "sprite-button")}
 
