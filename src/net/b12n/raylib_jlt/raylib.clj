@@ -15,6 +15,7 @@
   (:require
    [jolt.ffi :as ffi]
    [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.audio :as audio]
    [net.b12n.raylib.color :as color]
    [net.b12n.raylib.core :as core]
    [net.b12n.raylib.files :as files]
@@ -23,6 +24,7 @@
    [net.b12n.raylib.log :as log]
    [net.b12n.raylib.native :as native]
    [net.b12n.raylib.rlgl :as rlgl]
+   [net.b12n.raylib.shaders :as shaders]
    [net.b12n.raylib.shapes :as shapes]
    [net.b12n.raylib.text :as text]
    [net.b12n.raylib.textures :as textures]
@@ -819,154 +821,30 @@
 (def with-render-texture textures/with-render-texture)
 
 ;; --- shaders -----------------------------------------------------------------
-;; raylib's Shader is {unsigned int id; int *locs;} - 16 bytes, passed and
-;; returned BY VALUE. jolt 0.7.23's [:by-value [:struct ...]] expresses that
-;; directly, so this calls raylib's real shader API rather than reaching under it
-;; to rlgl the way the texture section above has to. In particular
-;; LoadShaderFromMemory fills the locations array itself; nothing here builds one.
-;;
-;; The struct descriptor is spelled out in every signature on purpose: it is a
-;; compile-time literal and a def'd alias is rejected with
-;;   jolt.ffi return type must be a keyword or [:by-value [:struct ...]], got V2
-(ffi/defcfn ^:private load-shader-from-memory "LoadShaderFromMemory" [:pointer :string]
-  [:by-value [:struct [[:id :uint] [:locs :pointer]]]])
-(ffi/defcfn ^:private begin-shader-mode "BeginShaderMode"
-  [[:by-value [:struct [[:id :uint] [:locs :pointer]]]]] :void)
-(ffi/defcfn end-shader-mode "EndShaderMode" [] :void)
-(ffi/defcfn ^:private get-shader-location "GetShaderLocation"
-  [[:by-value [:struct [[:id :uint] [:locs :pointer]]]] :string] :int)
-(ffi/defcfn ^:private set-shader-value-raw "SetShaderValue"
-  [[:by-value [:struct [[:id :uint] [:locs :pointer]]]] :int :pointer :int] :void)
-(ffi/defcfn ^:private set-shader-value-v-raw "SetShaderValueV"
-  [[:by-value [:struct [[:id :uint] [:locs :pointer]]]] :int :pointer :int :int] :void)
-(ffi/defcfn ^:private unload-shader-raw "UnloadShader"
-  [[:by-value [:struct [[:id :uint] [:locs :pointer]]]]] :void)
-
-;; Two by-value structs in one signature, and they take different ABI paths on
-;; arm64: Shader is 16 bytes and rides in general-purpose registers, Texture2D is
-;; 20 and so is passed INDIRECTLY, by a pointer the caller supplies. Both
-;; measured with clang, not assumed.
-(ffi/defcfn ^:private set-shader-value-texture-raw "SetShaderValueTexture"
-  [[:by-value [:struct [[:id :uint] [:locs :pointer]]]]
-   :int
-   [:by-value [:struct [[:id :uint] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]]] :void)
-
-(def shader-layout (ffi/layout [:struct [[:id :uint] [:locs :pointer]]]))
-
-;; ShaderUniformDataType, raylib 6.0. The UINT variants at 8-11 are new in 6.0
-;; and pushed SAMPLER2D from 8 to 12 - a silent break for anything carrying the
-;; 5.5 value, since a wrong type tag binds the wrong slot without erroring.
-(def ^:const UNIFORM-FLOAT 0)  (def ^:const UNIFORM-VEC2 1)
-(def ^:const UNIFORM-VEC3 2)   (def ^:const UNIFORM-VEC4 3)
-(def ^:const UNIFORM-INT 4)    (def ^:const UNIFORM-IVEC2 5)
-(def ^:const UNIFORM-IVEC3 6)  (def ^:const UNIFORM-IVEC4 7)
-(def ^:const UNIFORM-SAMPLER2D 12)
-
-(defn shader
-  "Compile `fs-source` as a fragment shader against raylib's default vertex
-  shader. Returns a pointer to the Shader struct, or nil if the program did not
-  link (raylib prints the compiler log to stderr). Pair with `unload-shader!`.
-
-  GLSL is a string here rather than a file, because LoadShaderFromMemory takes
-  source: nothing is read from disk, so each example stays self-contained and the
-  demo recorder never has a working-directory question. The source must open with
-  `#version 330` - the desktop backend is GL 3.3 core.
-
-  ffi/null rather than nil for the vertex stage, meaning \"use raylib's default\".
-  jolt carries nil across a :string as NULL only since jolt#708, which is merged
-  but not in a release, so the :pointer spelling keeps this working on a stock
-  0.7.23."
-  [fs-source]
-  (let [p (ffi/alloc (ffi/layout-size shader-layout))]
-    (load-shader-from-memory p ffi/null fs-source)
-    (if (pos? (ffi/read-field p shader-layout :id))
-      p
-      (do (ffi/free p) nil))))
-
-(defn unload-shader!
-  "UnloadShader, then release the struct this side."
-  [sh]
-  (unload-shader-raw sh)
-  (ffi/free sh))
-
-(defn uniform-loc
-  "The location of a named uniform, or -1 if the shader does not declare it (or
-  the compiler optimised it away). Look these up once, outside the frame loop -
-  each call is a GL query."
-  [sh name]
-  (get-shader-location sh name))
-
-(defn with-shader
-  "Run (f) with `sh` active. BeginShaderMode / EndShaderMode, so raylib does the
-  batch flush on both edges."
-  [sh f]
-  (begin-shader-mode sh)
-  (try
-    (f)
-    (finally (end-shader-mode))))
-
-;; SetShaderValue takes a POINTER to the value, so each setter stages its floats
-;; or ints in native memory for the length of the call. An undeclared uniform
-;; gives -1, which the nat-int? guards skip: an example whose shader drops an
-;; unused uniform keeps working rather than erroring.
-;; moved to net.b12n.raylib.native
-(def ^:private staged native/staged)
-
-(defn set-uniform-float!
-  [sh loc v]
-  (when (nat-int? loc)
-    (staged :float [v] (fn [p] (set-shader-value-raw sh loc p UNIFORM-FLOAT)))))
-
-(defn set-uniform-vec2!
-  [sh loc x y]
-  (when (nat-int? loc)
-    (staged :float [x y] (fn [p] (set-shader-value-raw sh loc p UNIFORM-VEC2)))))
-
-(defn set-uniform-vec3!
-  [sh loc x y z]
-  (when (nat-int? loc)
-    (staged :float [x y z] (fn [p] (set-shader-value-raw sh loc p UNIFORM-VEC3)))))
-
-(defn set-uniform-vec4!
-  [sh loc x y z w]
-  (when (nat-int? loc)
-    (staged :float [x y z w] (fn [p] (set-shader-value-raw sh loc p UNIFORM-VEC4)))))
-
-(defn set-uniform-int!
-  [sh loc v]
-  (when (nat-int? loc)
-    (staged :int [v] (fn [p] (set-shader-value-raw sh loc p UNIFORM-INT)))))
-
-(defn set-uniform-ivec3-array!
-  "An array of `n` ivec3s from a flat sequence of 3n ints - how a palette reaches
-  a shader as `uniform ivec3 palette[8]`."
-  [sh loc ints n]
-  (when (nat-int? loc)
-    (staged :int ints (fn [p] (set-shader-value-v-raw sh loc p UNIFORM-IVEC3 n)))))
-
-;; texture2d-layout stays a local alias: set-uniform-texture! below still reads
-;; it bare, and shaders hasn't been extracted yet.
-;; moved to net.b12n.raylib.native
-(def ^:private texture2d-layout native/texture2d-layout)
-
-(defn set-uniform-texture!
-  "Bind a texture id to a `sampler2D` uniform - the second and later samplers,
-  since raylib binds the drawn texture to slot 0 itself.
-
-  This suite carries textures as bare rlgl ids, so the Texture2D raylib wants is
-  staged here from the id plus its dimensions. mipmaps 1 and format RGBA8 match
-  what `texture-from-fn` uploads; raylib only reads `id` for this call, but the
-  rest is filled in truthfully rather than left as whatever the allocation held."
-  [sh loc tex-id w h]
-  (when (nat-int? loc)
-    (ffi/with-layout [t texture2d-layout]
-      (ffi/write-field t texture2d-layout :id tex-id)
-      (ffi/write-field t texture2d-layout :width (int w))
-      (ffi/write-field t texture2d-layout :height (int h))
-      (ffi/write-field t texture2d-layout :mipmaps 1)
-      (ffi/write-field t texture2d-layout :format PIXELFORMAT-R8G8B8A8)
-      (set-shader-value-texture-raw sh loc t))))
+;; Moved to net.b12n.raylib.shaders. Re-exported here so every example that says
+;; rl/shader or rl/with-shader keeps working unchanged.
+(def end-shader-mode shaders/end-shader-mode)
+(def shader-layout shaders/shader-layout)
+(def UNIFORM-FLOAT shaders/UNIFORM-FLOAT)
+(def UNIFORM-VEC2 shaders/UNIFORM-VEC2)
+(def UNIFORM-VEC3 shaders/UNIFORM-VEC3)
+(def UNIFORM-VEC4 shaders/UNIFORM-VEC4)
+(def UNIFORM-INT shaders/UNIFORM-INT)
+(def UNIFORM-IVEC2 shaders/UNIFORM-IVEC2)
+(def UNIFORM-IVEC3 shaders/UNIFORM-IVEC3)
+(def UNIFORM-IVEC4 shaders/UNIFORM-IVEC4)
+(def UNIFORM-SAMPLER2D shaders/UNIFORM-SAMPLER2D)
+(def shader shaders/shader)
+(def unload-shader! shaders/unload-shader!)
+(def uniform-loc shaders/uniform-loc)
+(def with-shader shaders/with-shader)
+(def set-uniform-float! shaders/set-uniform-float!)
+(def set-uniform-vec2! shaders/set-uniform-vec2!)
+(def set-uniform-vec3! shaders/set-uniform-vec3!)
+(def set-uniform-vec4! shaders/set-uniform-vec4!)
+(def set-uniform-int! shaders/set-uniform-int!)
+(def set-uniform-ivec3-array! shaders/set-uniform-ivec3-array!)
+(def set-uniform-texture! shaders/set-uniform-texture!)
 
 ;; --- REPL entry point --------------------------------------------------------
 ;; Moved to net.b12n.raylib.core. Re-exported here so every example that says
@@ -987,90 +865,17 @@
 (def show-cursor input/show-cursor)
 
 ;; --- audio (raudio) -----------------------------------------------------
-;; AudioStream is {rAudioBuffer* buffer; rAudioProcessor* processor; uint
-;; sampleRate; uint sampleSize; uint channels} -- two pointers and three u32s,
-;; passed BY VALUE everywhere raudio touches it. That is the same [:by-value
-;; [:struct ...]] mechanism circle-gradient! already uses for its Vector2
-;; centre; LoadAudioStream also RETURNS one by value, so its binding takes a
-;; caller-allocated destination pointer FIRST (jolt's calling convention for
-;; an aggregate return) and hands that same pointer back.
-(def ^:private audio-stream-layout
-  (ffi/layout [:struct [[:buffer :pointer]
-                        [:processor :pointer]
-                        [:sample-rate :uint32]
-                        [:sample-size :uint32]
-                        [:channels :uint32]]]))
-
-(ffi/defcfn init-audio-device  "InitAudioDevice"  [] :void)
-(ffi/defcfn close-audio-device "CloseAudioDevice" [] :void)
-(ffi/defcfn set-audio-stream-buffer-size-default
-  "SetAudioStreamBufferSizeDefault" [:int] :void)
-
-(ffi/defcfn ^:private load-audio-stream-raw "LoadAudioStream"
-  [:uint32 :uint32 :uint32]
-  [:by-value [:struct [[:buffer :pointer] [:processor :pointer]
-                       [:sample-rate :uint32] [:sample-size :uint32]
-                       [:channels :uint32]]]])
-(ffi/defcfn ^:private unload-audio-stream-raw "UnloadAudioStream"
-  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
-                        [:sample-rate :uint32] [:sample-size :uint32]
-                        [:channels :uint32]]]]]
-  :void)
-(ffi/defcfn ^:private play-audio-stream-raw "PlayAudioStream"
-  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
-                        [:sample-rate :uint32] [:sample-size :uint32]
-                        [:channels :uint32]]]]]
-  :void)
-(ffi/defcfn ^:private is-audio-stream-processed-raw "IsAudioStreamProcessed"
-  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
-                        [:sample-rate :uint32] [:sample-size :uint32]
-                        [:channels :uint32]]]]]
-  :int)
-(ffi/defcfn ^:private update-audio-stream-raw "UpdateAudioStream"
-  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
-                        [:sample-rate :uint32] [:sample-size :uint32]
-                        [:channels :uint32]]]]
-   :pointer :int]
-  :void)
-(ffi/defcfn ^:private set-audio-stream-pan-raw "SetAudioStreamPan"
-  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
-                        [:sample-rate :uint32] [:sample-size :uint32]
-                        [:channels :uint32]]]]
-   :float]
-  :void)
-
-(defn load-audio-stream
-  "LoadAudioStream. Returns an opaque native pointer to the by-value AudioStream
-  -- pass it to every other audio-stream fn below and release it with
-  unload-audio-stream."
-  [sample-rate sample-size channels]
-  (let [stream (ffi/alloc (ffi/layout-size audio-stream-layout))]
-    (load-audio-stream-raw stream sample-rate sample-size channels)))
-
-(defn unload-audio-stream
-  [stream]
-  (unload-audio-stream-raw stream)
-  (ffi/free stream))
-
-(defn play-audio-stream
-  [stream]
-  (play-audio-stream-raw stream))
-
-(defn audio-stream-processed?
-  [stream]
-  (not (zero? (bit-and (is-audio-stream-processed-raw stream) 0xff))))
-
-(defn update-audio-stream
-  "UpdateAudioStream. `samples` is a seq of floats for one refill; its count
-  must match the stream's own frame-count-per-channel (mono here). Stages a
-  scratch native buffer via `staged` the same way the shader uniform setters
-  do -- a few refills a second is not a hot path."
-  [stream samples]
-  (staged :float samples (fn [p] (update-audio-stream-raw stream p (count samples)))))
-
-(defn set-audio-stream-pan
-  [stream pan]
-  (set-audio-stream-pan-raw stream (double pan)))
+;; Moved to net.b12n.raylib.audio. Re-exported here so every example that says
+;; rl/load-audio-stream or rl/play-audio-stream keeps working unchanged.
+(def init-audio-device audio/init-audio-device)
+(def close-audio-device audio/close-audio-device)
+(def set-audio-stream-buffer-size-default audio/set-audio-stream-buffer-size-default)
+(def load-audio-stream audio/load-audio-stream)
+(def unload-audio-stream audio/unload-audio-stream)
+(def play-audio-stream audio/play-audio-stream)
+(def audio-stream-processed? audio/audio-stream-processed?)
+(def update-audio-stream audio/update-audio-stream)
+(def set-audio-stream-pan audio/set-audio-stream-pan)
 
 ;; --- world <-> screen (genuine by-value Camera3D) -----------------------
 ;; with-camera-3d's Camera3D pointer trick above is correct on AArch64 by
@@ -1678,40 +1483,11 @@
 (def free-callable! log/free-callable!)
 
 ;; --- the audio stream callback, on a thread jolt never started ----------
-;; on-trace-log! above is a callback raylib invokes on whichever thread called
-;; into it, which is this one. SetAudioStreamCallback is the harder case: raudio
-;; runs its own audio thread and calls back from there, so the entry point needs
-;; jolt's :collect-safe, which reactivates the thread before any jolt code runs
-;; on it. Without it the process dies with a memory fault no handler can catch.
-;;
-;; What happens inside is the caller's problem and a real-time one: the callback
-;; owes raudio `frames` samples before the device underruns. Write them straight
-;; into `buffer` with ffi/write and keep allocation out of the loop.
-(ffi/defcfn ^:private set-audio-stream-callback-raw "SetAudioStreamCallback"
-  [[:by-value [:struct [[:buffer :pointer] [:processor :pointer]
-                        [:sample-rate :uint32] [:sample-size :uint32]
-                        [:channels :uint32]]]]
-   :pointer]
-  :void)
-
-(defn on-audio-stream!
-  "SetAudioStreamCallback with a jolt fn. `f` is called as (f buffer frames) on
-  raudio's audio thread and must fill `buffer` with `frames` samples, written as
-  :float at 4-byte strides for a 32-bit mono stream.
-
-  Returns the callable pointer. Clear the callback with
-  clear-audio-stream-callback! BEFORE freeing that pointer, or raudio is left
-  calling a dead address from another thread."
-  [stream f]
-  (let [entry (ffi/foreign-callable f [:pointer :uint32] :void :collect-safe)]
-    (set-audio-stream-callback-raw stream entry)
-    entry))
-
-(defn clear-audio-stream-callback!
-  "Hand raudio a NULL callback, so it goes back to waiting for
-  update-audio-stream refills and stops calling into jolt."
-  [stream]
-  (set-audio-stream-callback-raw stream ffi/null))
+;; Moved to net.b12n.raylib.audio. Re-exported here so every example that says
+;; rl/on-audio-stream! or rl/clear-audio-stream-callback! keeps working
+;; unchanged.
+(def on-audio-stream! audio/on-audio-stream!)
+(def clear-audio-stream-callback! audio/clear-audio-stream-callback!)
 
 ;; --- window placement ----------------------------------------------------
 ;; Moved to net.b12n.raylib.core. Re-exported here so every example that says

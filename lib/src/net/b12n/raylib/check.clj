@@ -6,6 +6,7 @@
   verified with no display attached. It does not exercise rendering; that needs
   a real window, and the example suite's own screenshot smoke does it."
   (:require
+   [net.b12n.raylib.audio]
    [net.b12n.raylib.color]
    [net.b12n.raylib.core]
    [net.b12n.raylib.files]
@@ -14,6 +15,7 @@
    [net.b12n.raylib.log]
    [net.b12n.raylib.native]
    [net.b12n.raylib.rlgl]
+   [net.b12n.raylib.shaders]
    [net.b12n.raylib.shapes]
    [net.b12n.raylib.text]
    [net.b12n.raylib.textures]
