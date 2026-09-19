@@ -9,12 +9,14 @@
    [net.b12n.raylib.color]
    [net.b12n.raylib.core]
    [net.b12n.raylib.files]
+   [net.b12n.raylib.images]
    [net.b12n.raylib.input]
    [net.b12n.raylib.log]
    [net.b12n.raylib.native]
    [net.b12n.raylib.rlgl]
    [net.b12n.raylib.shapes]
    [net.b12n.raylib.text]
+   [net.b12n.raylib.textures]
    [net.b12n.raylib.util]))
 
 (defn -main [& _]

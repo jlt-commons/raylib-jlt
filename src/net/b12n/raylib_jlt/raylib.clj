@@ -18,12 +18,14 @@
    [net.b12n.raylib.color :as color]
    [net.b12n.raylib.core :as core]
    [net.b12n.raylib.files :as files]
+   [net.b12n.raylib.images :as images]
    [net.b12n.raylib.input :as input]
    [net.b12n.raylib.log :as log]
    [net.b12n.raylib.native :as native]
    [net.b12n.raylib.rlgl :as rlgl]
    [net.b12n.raylib.shapes :as shapes]
    [net.b12n.raylib.text :as text]
+   [net.b12n.raylib.textures :as textures]
    [net.b12n.raylib.util :as util]))
 
 ;; --- Color -------------------------------------------------------------------
@@ -327,7 +329,6 @@
 ;; four predicates to net.b12n.raylib.input and flush-batch to
 ;; net.b12n.raylib.rlgl -- none of which this banner ever described.
 (def take-screenshot core/take-screenshot)
-(def ^:private flush-batch rlgl/flush-batch)
 
 (def window-should-close? core/window-should-close?)
 
@@ -760,264 +761,62 @@
 (def rect-gradient-h! shapes/rect-gradient-h!)
 
 ;; --- rlgl textures -----------------------------------------------------------
-;; raylib's own texture API is unreachable from jolt: LoadTexture returns a
-;; 20-byte Texture2D BY VALUE, which the AArch64 ABI hands back through the x8
-;; indirect-result register, and Chez's foreign-procedure cannot express that.
-;; rlgl's layer underneath it is entirely scalar, though, rlLoadTexture takes a
-;; raw pixel pointer and returns the GL texture id as an unsigned int, and
-;; rlSetTexture/rlTexCoord2f draw with it in immediate mode. So a texture here is
-;; just that id: an int, no struct anywhere. What is lost is raylib's file
-;; loaders (LoadTexture/LoadImage decode PNGs into an Image struct); textures in
-;; this suite are therefore built pixel by pixel in native memory instead.
-(ffi/defcfn rl-load-texture       "rlLoadTexture"       [:pointer :int :int :int :int] :uint)
-(ffi/defcfn rl-unload-texture     "rlUnloadTexture"     [:uint] :void)
-(ffi/defcfn rl-update-texture     "rlUpdateTexture"     [:uint :int :int :int :int :int :pointer] :void)
-(ffi/defcfn rl-texture-parameters "rlTextureParameters" [:uint :int :int] :void)
-(ffi/defcfn rl-set-texture        "rlSetTexture"        [:uint] :void)
-(ffi/defcfn ^:private rl-tex-coord-2f-raw       "rlTexCoord2f"        [:float :float] :void)
-
-(defn rl-tex-coord-2f
-  "Texture coordinate for the next vertex.
-
-  Coerces to double, because the C takes floats and an integer argument
-  aborts the process on the first draw. The mirror of the int coercion
-  the kwarg drawing API does."
-  [a0 a1]
-  (rl-tex-coord-2f-raw (double a0) (double a1)))
-
-(ffi/defcfn ^:private rl-normal-3f-raw          "rlNormal3f"          [:float :float :float] :void)
-
-(defn rl-normal-3f
-  "Normal for the next vertex.
-
-  Coerces to double, because the C takes floats and an integer argument
-  aborts the process on the first draw. The mirror of the int coercion
-  the kwarg drawing API does."
-  [a0 a1 a2]
-  (rl-normal-3f-raw (double a0) (double a1) (double a2)))
-
-(def ^:const RL-QUADS 7)
-(def ^:const PIXELFORMAT-R8G8B8A8 7)          ; rlPixelFormat, 32bpp RGBA
-(def ^:const PIXELFORMAT-R8G8B8 4)            ; 24bpp, no alpha channel at all
-(def ^:const RL-TEXTURE-WRAP-S 0x2802)        (def ^:const RL-TEXTURE-WRAP-T 0x2803)
-(def ^:const RL-TEXTURE-WRAP-REPEAT 0x2901)   (def ^:const RL-TEXTURE-WRAP-CLAMP 0x812F)
-(def ^:const RL-TEXTURE-MAG-FILTER 0x2800)    (def ^:const RL-TEXTURE-MIN-FILTER 0x2801)
-(def ^:const RL-TEXTURE-FILTER-NEAREST 0x2600)
-(def ^:const RL-TEXTURE-FILTER-LINEAR 0x2601)
-
-(defn texture-filter!
-  "Set both min and mag filters on a texture id (RL-TEXTURE-FILTER-NEAREST for
-  crisp pixel art, RL-TEXTURE-FILTER-LINEAR for smooth scaling)."
-  [id filter]
-  (rl-texture-parameters id RL-TEXTURE-MIN-FILTER filter)
-  (rl-texture-parameters id RL-TEXTURE-MAG-FILTER filter))
-
-(defn texture-wrap!
-  "Set both S and T wrap modes on a texture id (REPEAT lets texcoords past 1.0
-  tile the image, CLAMP stretches the edge pixel)."
-  [id wrap]
-  (rl-texture-parameters id RL-TEXTURE-WRAP-S wrap)
-  (rl-texture-parameters id RL-TEXTURE-WRAP-T wrap))
-
-(defn texture-from-fn
-  "Build a `w` x `h` RGBA8 texture on the GPU from (f x y) -> packed Color, and
-  return its rlgl texture id. Frees the staging buffer once rlLoadTexture has
-  copied it to the GPU. Pair with `unload-texture!` when done.
-
-  A packed Color is already r | g<<8 | b<<16 | a<<24, which is byte-for-byte what
-  RGBA8 wants on a little-endian machine, so each pixel is one :uint write."
-  [w h f]
-  (let [buf (ffi/alloc (* w h 4))]
-    (try
-      (dotimes [y h]
-        (dotimes [x w]
-          (ffi/write buf :uint (f x y) (* 4 (+ x (* y w))))))
-      (let [id (rl-load-texture buf w h PIXELFORMAT-R8G8B8A8 1)]
-        (texture-filter! id RL-TEXTURE-FILTER-NEAREST)
-        (texture-wrap! id RL-TEXTURE-WRAP-REPEAT)
-        id)
-      (finally (ffi/free buf)))))
-
-(defn update-texture-from-fn!
-  "rlUpdateTexture - re-upload the whole `w` x `h` RGBA8 surface behind an
-  existing texture id from (f x y) -> packed Color. Cheaper than unloading and
-  reloading, and every quad already drawing that id picks the new texels up with
-  no change of its own."
-  [id w h f]
-  (let [buf (ffi/alloc (* w h 4))]
-    (try
-      (dotimes [y h]
-        (dotimes [x w]
-          (ffi/write buf :uint (f x y) (* 4 (+ x (* y w))))))
-      (rl-update-texture id 0 0 w h PIXELFORMAT-R8G8B8A8 buf)
-      (finally (ffi/free buf)))))
-
-(defn unload-texture!
-  "rlUnloadTexture, release a texture id created by texture-from-fn."
-  [id]
-  (rl-unload-texture id))
-
-(defn texture!
-  "Draw a texture id as an axis-aligned quad, the immediate-mode stand-in for
-  DrawTexturePro (whose Rectangle/Vector2 args are by value). Emits the same
-  topLeft -> bottomLeft -> bottomRight -> topRight winding raylib's own
-  DrawTexturePro uses, so it batches identically.
-    :x :y :width :height   destination rectangle in screen space
-    :u0 :v0 :u1 :v1        source texcoords (default the whole texture; values
-                           past 1.0 tile when the wrap mode is REPEAT, and
-                           v0 > v1 flips vertically, which is what a framebuffer
-                           texture needs)
-    :tint                  packed Color multiplied into the texels (default WHITE)"
-  [id & {:keys [x y width height u0 v0 u1 v1 tint]
-         :or {x 0
-              y 0
-              width 100
-              height 100
-              u0 0.0
-              v0 0.0
-              u1 1.0
-              v1 1.0
-              tint WHITE}}]
-  (let [x0 (double x) y0 (double y)
-        x1 (double (+ x width)) y1 (double (+ y height))]
-    (rl-set-texture id)
-    (rl-begin RL-QUADS)
-    (rl-color! tint)
-    (rl-normal-3f 0.0 0.0 1.0)
-    (rl-tex-coord-2f (double u0) (double v0)) (rl-vertex-2f x0 y0)
-    (rl-tex-coord-2f (double u0) (double v1)) (rl-vertex-2f x0 y1)
-    (rl-tex-coord-2f (double u1) (double v1)) (rl-vertex-2f x1 y1)
-    (rl-tex-coord-2f (double u1) (double v0)) (rl-vertex-2f x1 y0)
-    (rl-end)
-    (rl-set-texture 0)))
+;; Moved to net.b12n.raylib.textures. Re-exported here so every example that
+;; says rl/texture! or rl/texture-from-fn keeps working unchanged.
+(def rl-load-texture textures/rl-load-texture)
+(def rl-unload-texture textures/rl-unload-texture)
+(def rl-update-texture textures/rl-update-texture)
+(def rl-texture-parameters textures/rl-texture-parameters)
+(def rl-set-texture textures/rl-set-texture)
+(def rl-tex-coord-2f textures/rl-tex-coord-2f)
+(def rl-normal-3f textures/rl-normal-3f)
+(def RL-QUADS textures/RL-QUADS)
+(def PIXELFORMAT-R8G8B8A8 textures/PIXELFORMAT-R8G8B8A8)
+(def PIXELFORMAT-R8G8B8 textures/PIXELFORMAT-R8G8B8)
+(def RL-TEXTURE-WRAP-S textures/RL-TEXTURE-WRAP-S)
+(def RL-TEXTURE-WRAP-T textures/RL-TEXTURE-WRAP-T)
+(def RL-TEXTURE-WRAP-REPEAT textures/RL-TEXTURE-WRAP-REPEAT)
+(def RL-TEXTURE-WRAP-CLAMP textures/RL-TEXTURE-WRAP-CLAMP)
+(def RL-TEXTURE-MAG-FILTER textures/RL-TEXTURE-MAG-FILTER)
+(def RL-TEXTURE-MIN-FILTER textures/RL-TEXTURE-MIN-FILTER)
+(def RL-TEXTURE-FILTER-NEAREST textures/RL-TEXTURE-FILTER-NEAREST)
+(def RL-TEXTURE-FILTER-LINEAR textures/RL-TEXTURE-FILTER-LINEAR)
+(def texture-filter! textures/texture-filter!)
+(def texture-wrap! textures/texture-wrap!)
+(def texture-from-fn textures/texture-from-fn)
+(def update-texture-from-fn! textures/update-texture-from-fn!)
+(def unload-texture! textures/unload-texture!)
+(def texture! textures/texture!)
 
 ;; --- rlgl framebuffers (render textures) -------------------------------------
-;; raylib's LoadRenderTexture returns a RenderTexture2D by value and so is out of
-;; reach for the same reason LoadTexture is, but rlgl's framebuffer calls are all
-;; scalar: rlLoadFramebuffer returns the FBO id, rlFramebufferAttach wires a color
-;; texture and a depth renderbuffer to it, and rlEnableFramebuffer binds it. What
-;; BeginTextureMode adds on top is viewport and projection bookkeeping, which
-;; with-render-texture replicates below.
-(ffi/defcfn rl-load-framebuffer      "rlLoadFramebuffer"      [] :uint)
-(ffi/defcfn rl-framebuffer-attach    "rlFramebufferAttach"    [:uint :uint :int :int :int] :void)
-(ffi/defcfn rl-enable-framebuffer    "rlEnableFramebuffer"    [:uint] :void)
-(ffi/defcfn rl-disable-framebuffer   "rlDisableFramebuffer"   [] :void)
-(ffi/defcfn rl-unload-framebuffer    "rlUnloadFramebuffer"    [:uint] :void)
-(ffi/defcfn rl-load-texture-depth    "rlLoadTextureDepth"     [:int :int :int] :uint)
-(ffi/defcfn rl-viewport              "rlViewport"             [:int :int :int :int] :void)
-(ffi/defcfn rl-matrix-mode           "rlMatrixMode"           [:int] :void)
-(ffi/defcfn rl-load-identity         "rlLoadIdentity"         [] :void)
-(ffi/defcfn rl-ortho                 "rlOrtho"                [:double :double :double :double :double :double] :void)
-(ffi/defcfn rl-set-framebuffer-width  "rlSetFramebufferWidth"  [:int] :void)
-(ffi/defcfn rl-set-framebuffer-height "rlSetFramebufferHeight" [:int] :void)
-(ffi/defcfn rl-get-framebuffer-width  "rlGetFramebufferWidth"  [] :int)
-(ffi/defcfn rl-get-framebuffer-height "rlGetFramebufferHeight" [] :int)
-(ffi/defcfn rl-mult-matrix-f         "rlMultMatrixf"          [:pointer] :void)
-(ffi/defcfn get-render-width         "GetRenderWidth"         [] :int)
-(ffi/defcfn get-render-height        "GetRenderHeight"        [] :int)
-(ffi/defcfn ^:private framebuffer-complete-raw "rlFramebufferComplete" [:uint] :int)
-
-(def ^:const RL-PROJECTION 0x1701)
-(def ^:const RL-MODELVIEW  0x1700)
-(def ^:const RL-ATTACHMENT-COLOR-CHANNEL0 0)
-(def ^:const RL-ATTACHMENT-DEPTH 100)
-(def ^:const RL-ATTACHMENT-TEXTURE2D 100)
-(def ^:const RL-ATTACHMENT-RENDERBUFFER 200)
-
-(defn render-texture
-  "Create an off-screen render target: an FBO with a `w` x `h` RGBA8 color
-  texture and a depth renderbuffer. Returns {:fbo :texture :width :height}, or
-  nil if the driver reports the framebuffer incomplete. Pair with
-  `unload-render-texture!`.
-
-  The color texture starts as an uninitialised buffer of the right size, rgba
-  black is written so a target that is drawn before it is first rendered into
-  reads as transparent rather than as whatever was in that allocation."
-  [w h]
-  (let [fbo (rl-load-framebuffer)
-        tex (texture-from-fn w h (fn [_ _] (rgba 0 0 0 0)))
-        depth (rl-load-texture-depth w h 1)]     ; useRenderBuffer = true
-    (texture-filter! tex RL-TEXTURE-FILTER-LINEAR)
-    (texture-wrap! tex RL-TEXTURE-WRAP-CLAMP)
-    (rl-framebuffer-attach fbo tex RL-ATTACHMENT-COLOR-CHANNEL0 RL-ATTACHMENT-TEXTURE2D 0)
-    (rl-framebuffer-attach fbo depth RL-ATTACHMENT-DEPTH RL-ATTACHMENT-RENDERBUFFER 0)
-    (when-not (zero? (bit-and (framebuffer-complete-raw fbo) 0xff))
-      {:fbo fbo
-       :texture tex
-       :width w
-       :height h})))
-
-(defn unload-render-texture!
-  "Release the FBO and its color texture. The depth renderbuffer goes with the
-  FBO, so it needs no separate call."
-  [{:keys [fbo texture]}]
-  (rl-unload-texture texture)
-  (rl-unload-framebuffer fbo))
-
-(defn- restore-screen-projection!
-  "Put the viewport and both matrices back the way raylib leaves them for window
-  drawing. This is EndTextureMode's SetupViewport call plus the screen-scale
-  matrix BeginDrawing multiplies in, reproduced from the two scalar getters that
-  expose what CORE holds privately.
-
-  The scale matters and is easy to miss. On a HiDPI display raylib keeps the
-  window at its logical size (GetScreenWidth) while rendering at the physical one
-  (GetRenderWidth), projects in physical pixels, and bridges the two with a
-  modelview scale of render/screen. Restoring only the viewport and the
-  projection leaves that scale at identity, and every subsequent frame draws at
-  half size in the lower-left corner. rlGetFramebufferWidth is NOT that number:
-  it reports the logical size, so it cannot stand in for GetRenderWidth here."
-  []
-  (let [rw (get-render-width)
-        rh (get-render-height)
-        sx (/ (double rw) (max 1 (get-screen-width)))
-        sy (/ (double rh) (max 1 (get-screen-height)))
-        m (ffi/alloc 64)]                       ; 16 floats, column-major
-    (try
-      (rl-viewport 0 0 rw rh)
-      (rl-set-framebuffer-width rw)
-      (rl-set-framebuffer-height rh)
-      (rl-matrix-mode RL-PROJECTION)
-      (rl-load-identity)
-      (rl-ortho 0.0 (double rw) (double rh) 0.0 0.0 1.0)
-      (rl-matrix-mode RL-MODELVIEW)
-      (rl-load-identity)
-      (dotimes [i 16] (ffi/write m :float 0.0 (* 4 i)))
-      (ffi/write m :float sx 0)
-      (ffi/write m :float sy 20)
-      (ffi/write m :float 1.0 40)
-      (ffi/write m :float 1.0 60)
-      (rl-mult-matrix-f m)
-      (finally (ffi/free m)))))
-
-(defn with-render-texture
-  "Run (f) with drawing redirected into `rt`, then restore the screen - the
-  BeginTextureMode/EndTextureMode pair, spelled out in scalar rlgl calls.
-
-  Both halves flush the batch first: rlgl defers geometry until a draw call is
-  forced, so without the flush the shapes queued before the switch would be
-  rendered into whichever target happens to be bound afterwards.
-
-  Note the resulting texture is bottom-up in GL's convention: draw it back with
-  :v0 1.0 :v1 0.0 (as `texture!`'s docstring notes) or the image appears
-  upside down."
-  [{:keys [fbo width height]} f]
-  (flush-batch)
-  (rl-enable-framebuffer fbo)
-  (rl-viewport 0 0 width height)
-  (rl-set-framebuffer-width width)
-  (rl-set-framebuffer-height height)
-  (rl-matrix-mode RL-PROJECTION)
-  (rl-load-identity)
-  (rl-ortho 0.0 (double width) (double height) 0.0 0.0 1.0)
-  (rl-matrix-mode RL-MODELVIEW)
-  (rl-load-identity)
-  (try
-    (f)
-    (finally
-      (flush-batch)
-      (rl-disable-framebuffer)
-      (restore-screen-projection!))))
+;; Moved to net.b12n.raylib.textures. Re-exported here so every example that
+;; says rl/render-texture or rl/with-render-texture keeps working unchanged.
+(def rl-load-framebuffer textures/rl-load-framebuffer)
+(def rl-framebuffer-attach textures/rl-framebuffer-attach)
+(def rl-enable-framebuffer textures/rl-enable-framebuffer)
+(def rl-disable-framebuffer textures/rl-disable-framebuffer)
+(def rl-unload-framebuffer textures/rl-unload-framebuffer)
+(def rl-load-texture-depth textures/rl-load-texture-depth)
+(def rl-viewport textures/rl-viewport)
+(def rl-matrix-mode textures/rl-matrix-mode)
+(def rl-load-identity textures/rl-load-identity)
+(def rl-ortho textures/rl-ortho)
+(def rl-set-framebuffer-width textures/rl-set-framebuffer-width)
+(def rl-set-framebuffer-height textures/rl-set-framebuffer-height)
+(def rl-get-framebuffer-width textures/rl-get-framebuffer-width)
+(def rl-get-framebuffer-height textures/rl-get-framebuffer-height)
+(def rl-mult-matrix-f textures/rl-mult-matrix-f)
+(def get-render-width textures/get-render-width)
+(def get-render-height textures/get-render-height)
+(def RL-PROJECTION textures/RL-PROJECTION)
+(def RL-MODELVIEW textures/RL-MODELVIEW)
+(def RL-ATTACHMENT-COLOR-CHANNEL0 textures/RL-ATTACHMENT-COLOR-CHANNEL0)
+(def RL-ATTACHMENT-DEPTH textures/RL-ATTACHMENT-DEPTH)
+(def RL-ATTACHMENT-TEXTURE2D textures/RL-ATTACHMENT-TEXTURE2D)
+(def RL-ATTACHMENT-RENDERBUFFER textures/RL-ATTACHMENT-RENDERBUFFER)
+(def render-texture textures/render-texture)
+(def unload-render-texture! textures/unload-render-texture!)
+(def with-render-texture textures/with-render-texture)
 
 ;; --- shaders -----------------------------------------------------------------
 ;; raylib's Shader is {unsigned int id; int *locs;} - 16 bytes, passed and
@@ -1146,9 +945,10 @@
   (when (nat-int? loc)
     (staged :int ints (fn [p] (set-shader-value-v-raw sh loc p UNIFORM-IVEC3 n)))))
 
-(def texture2d-layout
-  (ffi/layout [:struct [[:id :uint] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]))
+;; texture2d-layout stays a local alias: set-uniform-texture! below still reads
+;; it bare, and shaders hasn't been extracted yet.
+;; moved to net.b12n.raylib.images
+(def ^:private texture2d-layout images/texture2d-layout)
 
 (defn set-uniform-texture!
   "Bind a texture id to a `sampler2D` uniform - the second and later samplers,
@@ -1920,272 +1720,38 @@
 (def set-window-monitor core/set-window-monitor)
 
 ;; --- Image: raylib's CPU-side pixel buffer, by value ---------------------
-;; Image is {void *data; int width, height, mipmaps, format;}, 24 bytes, returned
-;; by value from every generator and taken by value by everything that consumes
-;; one. The generators are the reason to bind it at all: they are raylib's own
-;; procedural textures, checkerboards through Perlin and cellular noise, and this
-;; suite ships no image files, so generating is the only way it ever had.
-;;
-;; What comes back to the caller is an rlgl texture id, not the Image and not the
-;; Texture2D. That keeps the whole existing drawing surface usable unchanged:
-;; texture!, texture-filter!, texture-wrap! and unload-texture! all speak ids
-;; already, so an image generated here draws through the same path a
-;; texture-from-fn one does. The Image itself is freed inside each call, since
-;; its pixels have been copied to the GPU by then.
-(def ^:private image-layout
-  (ffi/layout [:struct [[:data :pointer] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]))
-
-;; texture2d-layout is already defined above, where the shader section needed it
-;; for SetShaderValueTexture; image->texture-id! reuses that one rather than
-;; shadowing it with a second copy of the same five fields.
-;;
-;; The five fields ARE written out again in every signature below, and that is
-;; forced rather than sloppy: a struct descriptor is a compile-time literal, so
-;; a def'd alias is rejected with "return type must be a keyword or [:by-value
-;; [:struct ...]]". Same constraint the shader section documents, same shape of
-;; repetition, and the layout above still earns its keep for reading fields back.
-(assert (= 24 (ffi/layout-size image-layout)) "Image is a pointer and four ints")
-(assert (= 20 (ffi/layout-size texture2d-layout)) "Texture2D is five 4-byte fields")
-
-(ffi/defcfn ^:private gen-image-color-raw "GenImageColor" [:int :int :uint]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private gen-image-checked-raw "GenImageChecked" [:int :int :int :int :uint :uint]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private gen-image-gradient-linear-raw "GenImageGradientLinear" [:int :int :int :uint :uint]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private gen-image-gradient-radial-raw "GenImageGradientRadial" [:int :int :float :uint :uint]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private gen-image-gradient-square-raw "GenImageGradientSquare" [:int :int :float :uint :uint]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private gen-image-white-noise-raw "GenImageWhiteNoise" [:int :int :float]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private gen-image-perlin-noise-raw "GenImagePerlinNoise" [:int :int :int :int :float]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private gen-image-cellular-raw "GenImageCellular" [:int :int :int]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private gen-image-text-raw "GenImageText" [:int :int :string]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private unload-image-raw "UnloadImage"
-  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]]] :void)
-(ffi/defcfn ^:private load-texture-from-image-raw "LoadTextureFromImage"
-  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]]]
-  [:by-value [:struct [[:id :uint] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-
-(defn- image->texture-id!
-  "Upload a filled Image buffer to the GPU, free the Image, and answer the rlgl
-  texture id. 0 means the upload failed, which raylib has already logged."
-  [img]
-  (let [tex (ffi/alloc (ffi/layout-size texture2d-layout))]
-    (try
-      (load-texture-from-image-raw tex img)
-      (unload-image-raw img)
-      (ffi/read-field tex texture2d-layout :id)
-      (finally (ffi/free tex)))))
-
-(defn- with-image
-  "Run `f` against a freshly allocated Image buffer, then hand the result on.
-  `f` fills the buffer by calling one of the generators with it as the return
-  slot, which is jolt's convention for an aggregate return."
-  [f]
-  (let [img (ffi/alloc (ffi/layout-size image-layout))]
-    (try
-      (f img)
-      (image->texture-id! img)
-      (finally (ffi/free img)))))
-
-(defn image-color
-  "GenImageColor as a texture id: a plain `w` x `h` field of one colour."
-  [w h color]
-  (with-image (fn [img] (gen-image-color-raw img (int w) (int h) color))))
-
-(defn image-checked
-  "GenImageChecked as a texture id: `checks-x` by `checks-y` squares alternating
-  between two colours."
-  [w h checks-x checks-y c1 c2]
-  (with-image (fn [img] (gen-image-checked-raw img (int w) (int h)
-                                               (int checks-x) (int checks-y) c1 c2))))
-
-(defn image-gradient-linear
-  "GenImageGradientLinear as a texture id. `direction` is in degrees, 0 vertical."
-  [w h direction start end]
-  (with-image (fn [img] (gen-image-gradient-linear-raw img (int w) (int h)
-                                                       (int direction) start end))))
-
-(defn image-gradient-radial
-  "GenImageGradientRadial as a texture id, `density` shaping the falloff."
-  [w h density inner outer]
-  (with-image (fn [img] (gen-image-gradient-radial-raw img (int w) (int h)
-                                                       (double density) inner outer))))
-
-(defn image-gradient-square
-  "GenImageGradientSquare as a texture id, `density` shaping the falloff."
-  [w h density inner outer]
-  (with-image (fn [img] (gen-image-gradient-square-raw img (int w) (int h)
-                                                       (double density) inner outer))))
-
-(defn image-white-noise
-  "GenImageWhiteNoise as a texture id. `factor` is the fraction of white pixels."
-  [w h factor]
-  (with-image (fn [img] (gen-image-white-noise-raw img (int w) (int h) (double factor)))))
-
-(defn image-perlin-noise
-  "GenImagePerlinNoise as a texture id. The offsets slide the sample window, so
-  animating one of them scrolls the field rather than regenerating it."
-  [w h offset-x offset-y scale]
-  (with-image (fn [img] (gen-image-perlin-noise-raw img (int w) (int h)
-                                                    (int offset-x) (int offset-y) (double scale)))))
-
-(defn image-cellular
-  "GenImageCellular as a texture id. A bigger `tile-size` means bigger cells."
-  [w h tile-size]
-  (with-image (fn [img] (gen-image-cellular-raw img (int w) (int h) (int tile-size)))))
-
-(defn image-text
-  "GenImageText as a texture id: `text` rasterised with raylib's default font
-  into a `w` x `h` greyscale field."
-  [w h text]
-  (with-image (fn [img] (gen-image-text-raw img (int w) (int h) text))))
+;; Moved to net.b12n.raylib.images. Re-exported here so every example that says
+;; rl/image-color or rl/image-text keeps working unchanged.
+(def image-color images/image-color)
+(def image-checked images/image-checked)
+(def image-gradient-linear images/image-gradient-linear)
+(def image-gradient-radial images/image-gradient-radial)
+(def image-gradient-square images/image-gradient-square)
+(def image-white-noise images/image-white-noise)
+(def image-perlin-noise images/image-perlin-noise)
+(def image-cellular images/image-cellular)
+(def image-text images/image-text)
 
 ;; --- Image processing: raylib's own pixel operations ---------------------
-;; The generators above make an Image; these change one. Note the asymmetry in
-;; raylib's own API, which is why these bind so differently: every processor
-;; takes `Image *` and works IN PLACE, so it is a plain :pointer argument and the
-;; 24-byte by-value dance does not arise. Only ImageCopy and LoadImageFromTexture
-;; move whole Images across the boundary.
-;;
-;; LoadImageFromTexture is what lets this suite process a picture at all. It
-;; reads a GPU texture back to CPU memory, so an image authored pixel by pixel
-;; with texture-from-fn can be handed to raylib's blur, its channel flips and its
-;; colour operations. Without it there is no source image here, since no example
-;; ships one on disk.
-(ffi/defcfn ^:private load-image-from-texture-raw "LoadImageFromTexture"
-  [[:by-value [:struct [[:id :uint] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]]]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private image-copy-raw "ImageCopy"
-  [[:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]]]
-  [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
-                       [:mipmaps :int] [:format :int]]]])
-(ffi/defcfn ^:private image-format-raw         "ImageFormat"          [:pointer :int] :void)
-(ffi/defcfn ^:private image-color-invert-raw   "ImageColorInvert"     [:pointer] :void)
-(ffi/defcfn ^:private image-color-grayscale-raw "ImageColorGrayscale" [:pointer] :void)
-(ffi/defcfn ^:private image-color-tint-raw     "ImageColorTint"       [:pointer :uint] :void)
-(ffi/defcfn ^:private image-color-contrast-raw "ImageColorContrast"   [:pointer :int] :void)
-(ffi/defcfn ^:private image-color-brightness-raw "ImageColorBrightness" [:pointer :int] :void)
-(ffi/defcfn ^:private image-flip-horizontal-raw "ImageFlipHorizontal" [:pointer] :void)
-(ffi/defcfn ^:private image-flip-vertical-raw  "ImageFlipVertical"    [:pointer] :void)
-(ffi/defcfn ^:private image-blur-gaussian-raw  "ImageBlurGaussian"    [:pointer :int] :void)
-
-(defn image-from-texture!
-  "LoadImageFromTexture: read an rlgl texture back off the GPU into a fresh
-  Image buffer, which the caller owns and must pass to unload-image!. The
-  texture is described truthfully from `w` and `h`; raylib reads the id, the
-  size and the format to work out how many bytes to pull back."
-  [tex-id w h]
-  (let [img (ffi/alloc (ffi/layout-size image-layout))]
-    (ffi/with-layout [t texture2d-layout]
-      (ffi/write-field t texture2d-layout :id tex-id)
-      (ffi/write-field t texture2d-layout :width (int w))
-      (ffi/write-field t texture2d-layout :height (int h))
-      (ffi/write-field t texture2d-layout :mipmaps 1)
-      (ffi/write-field t texture2d-layout :format PIXELFORMAT-R8G8B8A8)
-      (load-image-from-texture-raw img t))
-    img))
-
-(defn image-copy!
-  "ImageCopy: a duplicate the caller owns, so an original can be kept while a
-  processor chews through the copy."
-  [img]
-  (let [out (ffi/alloc (ffi/layout-size image-layout))]
-    (image-copy-raw out img)
-    out))
-
-(defn unload-image!
-  "UnloadImage, then release the 24-byte struct this side."
-  [img]
-  (unload-image-raw img)
-  (ffi/free img))
-
-(defn image->texture
-  "Upload an Image the caller still owns to the GPU and answer its rlgl texture
-  id. Unlike the generators, this does NOT consume the Image."
-  [img]
-  (let [tex (ffi/alloc (ffi/layout-size texture2d-layout))]
-    (try
-      (load-texture-from-image-raw tex img)
-      (ffi/read-field tex texture2d-layout :id)
-      (finally (ffi/free tex)))))
-
-(defn image-format!
-  "ImageFormat, in place. RGBA8 is PIXELFORMAT-R8G8B8A8; a processor that ran
-  on a narrower format needs putting back before it is uploaded."
-  [img format]
-  (image-format-raw img (int format)))
-
-(defn image-color-invert! [img] (image-color-invert-raw img))
-(defn image-color-grayscale! [img] (image-color-grayscale-raw img))
-(defn image-color-tint! [img color] (image-color-tint-raw img color))
-(defn image-color-contrast! [img contrast] (image-color-contrast-raw img (int contrast)))
-(defn image-color-brightness! [img brightness] (image-color-brightness-raw img (int brightness)))
-(defn image-flip-horizontal! [img] (image-flip-horizontal-raw img))
-(defn image-flip-vertical! [img] (image-flip-vertical-raw img))
-(defn image-blur-gaussian! [img size] (image-blur-gaussian-raw img (int size)))
+;; Moved to net.b12n.raylib.images. Re-exported here so every example that says
+;; rl/image-from-texture! or rl/image->texture keeps working unchanged.
+(def image-from-texture! images/image-from-texture!)
+(def image-copy! images/image-copy!)
+(def unload-image! images/unload-image!)
+(def image->texture images/image->texture)
+(def image-format! images/image-format!)
+(def image-color-invert! images/image-color-invert!)
+(def image-color-grayscale! images/image-color-grayscale!)
+(def image-color-tint! images/image-color-tint!)
+(def image-color-contrast! images/image-color-contrast!)
+(def image-color-brightness! images/image-color-brightness!)
+(def image-flip-horizontal! images/image-flip-horizontal!)
+(def image-flip-vertical! images/image-flip-vertical!)
+(def image-blur-gaussian! images/image-blur-gaussian!)
 
 ;; --- Image geometry and convolution --------------------------------------
-;; Both in place on an Image*, like the colour operations above, except that
-;; ImageCrop's Rectangle is by value: four floats, 16 bytes, which on arm64 fits
-;; in registers rather than going indirect. ImageKernelConvolution takes a flat
-;; float array and its LENGTH, not its side, so a 3x3 kernel is nine floats and
-;; the argument is 9.
-(def ^:private rectangle-layout
-  (ffi/layout [:struct [[:x :float] [:y :float] [:width :float] [:height :float]]]))
-
-(ffi/defcfn ^:private image-crop-raw "ImageCrop"
-  [:pointer [:by-value [:struct [[:x :float] [:y :float]
-                                 [:width :float] [:height :float]]]]] :void)
-(ffi/defcfn ^:private image-kernel-convolution-raw "ImageKernelConvolution"
-  [:pointer :pointer :int] :void)
-(ffi/defcfn ^:private image-resize-raw "ImageResize" [:pointer :int :int] :void)
-
-(defn image-crop!
-  "ImageCrop, in place. :x :y :width :height in pixels."
-  [img & {:keys [x y width height]
-          :or {x 0
-               y 0
-               width 1
-               height 1}}]
-  (let [r (ffi/alloc (ffi/layout-size rectangle-layout))]
-    (try
-      (ffi/write-field r rectangle-layout :x (double x))
-      (ffi/write-field r rectangle-layout :y (double y))
-      (ffi/write-field r rectangle-layout :width (double width))
-      (ffi/write-field r rectangle-layout :height (double height))
-      (image-crop-raw img r)
-      (finally (ffi/free r)))))
-
-(defn image-resize!
-  "ImageResize, in place, bicubic."
-  [img w h]
-  (image-resize-raw img (int w) (int h)))
-
-(defn image-convolve!
-  "ImageKernelConvolution, in place. `kernel` is a flat sequence of floats whose
-  count is a perfect square, so a 3x3 is nine of them. raylib takes the COUNT
-  rather than the side length."
-  [img kernel]
-  (staged :float kernel (fn [p] (image-kernel-convolution-raw img p (count kernel)))))
+;; Moved to net.b12n.raylib.images. Re-exported here so every example that says
+;; rl/image-crop! or rl/image-convolve! keeps working unchanged.
+(def image-crop! images/image-crop!)
+(def image-resize! images/image-resize!)
+(def image-convolve! images/image-convolve!)
