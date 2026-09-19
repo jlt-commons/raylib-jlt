@@ -3,7 +3,8 @@
   (GetCharPressed), backspace deletes, a blinking cursor blinks, ENTER clears.
   Uses the get-char-pressed / get-key-pressed binds. See README.md."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def max-len 20)
 
@@ -23,10 +24,10 @@
                :height 450
                :title "raylib [text] example - input box"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            text ""]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [text (drain-chars text)
               text (if (rl/key-pressed? rl/KEY-BACKSPACE)
                      (subs text 0 (max 0 (dec (count text))))
@@ -56,7 +57,7 @@
                                                         :y 275
                                                         :size 16
                                                         :color rl/GRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) text)))))
   (rl/close-window))

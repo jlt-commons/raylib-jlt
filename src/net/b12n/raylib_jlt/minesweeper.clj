@@ -3,7 +3,8 @@
   right-click flags; find every safe cell without hitting a mine (SPACE restarts).
   Exercises the mouse-pressed? / MOUSE-RIGHT toolkit binds."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def cols 16)
 (def rows 12)
@@ -75,10 +76,10 @@
                :height (+ top (* rows cell))
                :title "raylib [games] example - minesweeper"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            st (new-game)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [done? (or (:over? st) (:won? st))
               st (cond
                    done? (if (rl/key-pressed? rl/KEY-SPACE) (new-game) st)
@@ -147,7 +148,7 @@
                      :y 10
                      :size 20
                      :color (if (:won? st) rl/DARKGREEN rl/MAROON)})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))
   (rl/close-window))

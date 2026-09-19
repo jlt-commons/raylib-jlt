@@ -29,7 +29,8 @@
   GetRayCollisionBox does, clipping the ray against each axis pair in turn and
   keeping the voxel whose surviving interval starts nearest."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -90,7 +91,7 @@
   (rl/set-target-fps 60)
   ;; The idle orbit looks at the block's centre from ORBIT-HEIGHT, which fixes
   ;; the pitch for as long as nobody has taken over.
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         orbit-pitch (Math/atan2 (- CENTRE ORBIT-HEIGHT) ORBIT-RADIUS)]
     (loop [frame 0
            voxels (full-block)
@@ -98,7 +99,7 @@
            yaw (/ Math/PI 4.0) pitch orbit-pitch
            angle 0.0 steered? false
            last-mx nil last-my nil]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (rl/get-mouse-x)
               my (rl/get-mouse-y)
               ;; Only a key or a click hands the camera over, never a mouse
@@ -180,7 +181,7 @@
                      :color rl/GRAY})
           (rl/fps! {:x (- W 80)
                     :y 10})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) voxels px py pz yaw pitch angle (or steered? took-over?) mx my)))))
   (rl/close-window))

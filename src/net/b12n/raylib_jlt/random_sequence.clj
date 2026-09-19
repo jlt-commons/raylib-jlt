@@ -17,7 +17,8 @@
   keep their heights and hues across a SPACE, which is the property the example
   is demonstrating."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -45,11 +46,11 @@
                :height H
                :title "raylib [core] example - random sequence"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            n 20
            bars (make-bars 20)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [up?   (rl/key-pressed? rl/KEY-UP)
               down? (rl/key-pressed? rl/KEY-DOWN)
               n'    (cond
@@ -88,7 +89,7 @@
                      :size 20
                      :color rl/BLACK})
 
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) n' bars)))))
   (rl/close-window))

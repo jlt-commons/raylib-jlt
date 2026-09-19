@@ -4,7 +4,8 @@
   rl/sector! and read out in degrees. Port of shapes_vector_angle (B is time-driven
   rather than mouse-driven). Screen-space clockwise-from-up angle uses atan2(vx,-vy)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private r->d (/ 180.0 Math/PI))
 
@@ -23,14 +24,14 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - vector angle"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         ox 400 oy 235 len 150.0
         ;; A fixed, pointing up-right
         a-deg 35.0
         ad (* a-deg (/ Math/PI 180.0))
         ax (* len (Math/sin ad)) ay (- (* len (Math/cos ad)))]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [b-rad (* frame 0.02)
               bx (* len (Math/sin b-rad)) by (- (* len (Math/cos b-rad)))
               da (screen-deg ax ay)
@@ -84,7 +85,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 110)
+          (app/maybe-screenshot! frame 110)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

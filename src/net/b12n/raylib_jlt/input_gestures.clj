@@ -13,7 +13,8 @@
 
   See input-multitouch for the raw touch points underneath these."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -48,11 +49,11 @@
                :title "raylib [core] example - input gestures"})
   (rl/set-gestures-enabled 0x0fff)   ; every gesture flag raylib knows
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            last-gesture rl/GESTURE-NONE
            log []]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [gesture (rl/get-gesture-detected)
               tx      (rl/get-touch-x)
               ty      (rl/get-touch-y)
@@ -103,7 +104,7 @@
                          :y ty
                          :radius 30
                          :color rl/MAROON}))
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) gesture log)))))
   (rl/close-window))

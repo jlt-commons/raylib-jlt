@@ -17,7 +17,8 @@
   print).
   Ported from raylib's examples/core/core_compute_hash.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -83,9 +84,9 @@
                :height H
                :title "raylib [core] example - compute hash"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 text DEFAULT-TEXT hashes nil]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [text (drain-chars text)
               text (if (and (rl/key-pressed? rl/KEY-BACKSPACE) (pos? (count text)))
                      (subs text 0 (dec (count text)))
@@ -154,7 +155,7 @@
                                                       :color rl/DARKBLUE})
           (row! 380 "BASE64 ENCODING:" (:b64 h))
 
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) text hashes)))))
   (rl/close-window))

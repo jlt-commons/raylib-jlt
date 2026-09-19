@@ -5,7 +5,8 @@
   the centre. A bounded trail of stroke points is redrawn each frame so the pattern
   reads as a symmetric whole without needing a render texture."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -18,10 +19,10 @@
                :height H
                :title "kaleidoscope"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx (/ W 2.0) cy (/ H 2.0)]
     (loop [frame 0 trail []]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [t     (* 0.08 frame)
               px    (* 160 (Math/cos t))
               py    (* 160 (Math/sin (* 1.7 t)))
@@ -51,7 +52,7 @@
                              :x2 (int mx2)
                              :y2 (int my2)
                              :color hue})))))
-          (rl/maybe-screenshot! frame 120)
+          (app/maybe-screenshot! frame 120)
           (rl/end-drawing)
           (recur (inc frame) trail)))))
   (rl/close-window))

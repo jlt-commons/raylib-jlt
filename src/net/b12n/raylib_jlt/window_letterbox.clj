@@ -18,7 +18,8 @@
   up with, and every capture of this example failed on a mid-recording size
   change."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const VW 480)               ; the virtual resolution everything is drawn at
 (def ^:const VH 360)
@@ -81,14 +82,14 @@
                :height 450
                :title "raylib [core] example - window letterbox"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         rt (rl/render-texture VW VH)]
     (if-not rt
       (binding [*out* *err*]
         (println "window-letterbox: the driver reported an incomplete framebuffer"))
       (do
         (loop [frame 0]
-          (when (rl/keep-running? deadline)
+          (when (app/keep-running? deadline)
             ;; Resizability is switched on at runtime rather than through
             ;; SetConfigFlags before InitWindow. Same end state, but a window that
             ;; is resizable from creation reports a frame the demo recorder cannot
@@ -136,7 +137,7 @@
                          :y (- h 19)
                          :size 14
                          :color (if (rl/window-state? rl/FLAG-WINDOW-RESIZABLE) rl/GREEN rl/GRAY)})
-              (rl/maybe-screenshot! frame 5)
+              (app/maybe-screenshot! frame 5)
               (rl/end-drawing))
             (recur (inc frame))))
         (rl/unload-render-texture! rt))))

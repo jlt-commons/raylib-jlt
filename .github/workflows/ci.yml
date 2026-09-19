@@ -159,6 +159,21 @@ jobs:
       - name: Demo gallery and counts
         run: bb check:demos
 
+      # The library's load gate: prove every namespace under lib/src loads without
+      # compile errors. If the library fails to load, report one failure instead of
+      # 171 example compile errors.
+      - name: Library load gate
+        run: bb check:lib
+
+      # Guards what no other gate here can see: `all.clj` is a large generated
+      # file, hand-editable like any other file even though nothing should touch
+      # it by hand. This fails the build if it no longer matches what `bb gen:all`
+      # would produce right now, so a module that grows (or loses) a public var
+      # without a regenerate is caught here instead of shipping a stale or leaky
+      # aggregator.
+      - name: Aggregator matches the generator
+        run: bb check:aggregator
+
       - name: Compile every example (headless)
         run: |
           set +e

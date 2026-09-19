@@ -49,7 +49,7 @@ in the raw OpenGL object: an `unsigned int` name. Every call in the path is
 scalar.
 
 ```clojure
-;; src/net/b12n/raylib_jlt/raylib.clj
+;; lib/src/net/b12n/raylib/textures.clj
 (ffi/defcfn rl-load-texture       "rlLoadTexture"       [:pointer :int :int :int :int] :uint)
 (ffi/defcfn rl-unload-texture     "rlUnloadTexture"     [:uint] :void)
 (ffi/defcfn rl-update-texture     "rlUpdateTexture"     [:uint :int :int :int :int :int :pointer] :void)

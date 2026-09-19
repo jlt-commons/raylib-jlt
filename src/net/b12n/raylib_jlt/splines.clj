@@ -13,7 +13,8 @@
   This replaces an earlier scalar-math version that predated by-value struct
   support and, correctly at the time, called DrawSpline* unbindable."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private modes [[:catmull "Catmull-Rom"] [:bezier "cubic Bezier"] [:bspline "uniform B-spline"]])
 
@@ -61,9 +62,9 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - splines drawing"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 mode-idx 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mode-idx (if (rl/key-pressed? rl/KEY-SPACE)
                          (mod (inc mode-idx) (count modes))
                          mode-idx)
@@ -91,7 +92,7 @@
                                                          :y 10
                                                          :size 20
                                                          :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 12)
+          (app/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame) mode-idx)))))
   (rl/close-window))

@@ -2,10 +2,11 @@
   "raylib named-colors showcase (`joltc -M:colors`).
 
   Not a 1:1 port of one raylib example, a 5x5 grid that draws every named color
-  from net.b12n.raylib-jlt.raylib as a labelled swatch, exercising the `rgba` Color packing across
+  from net.b12n.raylib.color as a labelled swatch, exercising the `rgba` Color packing across
   the whole palette."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private palette
   [["LIGHTGRAY" rl/LIGHTGRAY] ["GRAY" rl/GRAY]     ["DARKGRAY" rl/DARKGRAY]
@@ -51,9 +52,9 @@
   [& _]
   (rl/window! {:title "raylib named colors"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/text! "raylib named colors" {:x 12
@@ -62,7 +63,7 @@
                                          :color rl/DARKGRAY})
         (doseq [i (range (count palette))]
           (draw-swatch i (nth palette i)))
-        (rl/maybe-screenshot! frame 5)
+        (app/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

@@ -539,8 +539,8 @@
            (println "Git hooks: `bb hooks:install` (fast) · `bb hooks:install:full` · nREPL: `bb nrepl [port]`"))}
 
   test
-  {:doc "Unit suite: ffi/write argument order"
-   :task (shell "jolt" "-M:test")}
+  {:doc "Unit suite: ffi/write argument order (runs in lib/)"
+   :task (shell {:dir "lib"} jolt-cmd "-M:test")}
 
   check
   {:doc "Headless compile-check of every example (no window)"
@@ -591,17 +591,30 @@
    :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/check_demos.clj")]
            (System/exit exit))}
 
+  check:lib
+  {:doc "Headless load-check of every library namespace in lib/"
+   :task (shell {:dir "lib"} jolt-cmd "-M:check")}
+
+  gen:all
+  {:doc "Regenerate lib/src/net/b12n/raylib/all.clj from the module namespaces"
+   :task (shell "bb" "scripts/gen_aggregator.clj")}
+
+  check:aggregator
+  {:doc "all.clj matches what the generator produces, and leaks nothing private"
+   :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/gen_aggregator.clj" "--check")]
+           (System/exit exit))}
+
   ;; --- quality: lint (clj-kondo) --------------------------------------------
   ;; Formatting lives under lsp:format below, not here. See the top-of-file
   ;; note on why clojure-lsp (not cljfmt) owns formatting in this project.
   lint
-  {:doc "clj-kondo over src (report only, always exits 0); strict: bb lint:strict"
-   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src"]))]
+  {:doc "clj-kondo over src and lib/src (report only, always exits 0); strict: bb lint:strict"
+   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src" "lib/src"]))]
            (println (if (zero? exit) "✓ clj-kondo: no errors or warnings" "✗ clj-kondo: see findings above")))}
 
   lint:strict
   {:doc "bb lint, but exit non-zero if clj-kondo reports any findings (2=warnings, 3=errors)"
-   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src"]))]
+   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src" "lib/src"]))]
            (System/exit exit))}
 
   ;; --- quality: clojure-lsp (format + clean-ns + diagnostics) ---------------

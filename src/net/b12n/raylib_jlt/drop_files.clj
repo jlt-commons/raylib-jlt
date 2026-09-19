@@ -18,7 +18,8 @@
   something the app polls for, so no synthetic input reaches it and the gallery
   frame shows the empty state. Run it and drag something in."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -31,10 +32,10 @@
                :height H
                :title "raylib [core] example - drop files"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            paths []]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [paths (cond
                       (rl/file-dropped?) (into paths (rl/dropped-files))
                       (rl/key-pressed? rl/KEY-BACKSPACE) []
@@ -75,7 +76,7 @@
                          :y (+ 95 (* ROW-H (count shown)))
                          :size 20
                          :color rl/DARKGRAY})))
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) paths)))))
   (rl/close-window))

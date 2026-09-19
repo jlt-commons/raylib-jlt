@@ -23,7 +23,10 @@
 
 (def source-dirs
   "Directories to scan"
-  ["src"])
+  ;; lib/src holds the binding library now that the extraction arc has moved
+  ;; every module (kwargs included) out of src; without it this gate would
+  ;; stop seeing the functions it is meant to check.
+  ["src" "lib/src"])
 
 (def file-pattern
   "Glob pattern for files to check. \"**\" requires at least one directory

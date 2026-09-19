@@ -4,12 +4,13 @@
   An N×N grid of cubes whose heights ripple like water via a sine wave of position
   + time, coloured by position, under a slowly orbiting 3D camera. Same 3D path as
   camera-3d: Camera3D by value (pointer) + rlgl immediate-mode geometry
-  (net.b12n.raylib-jlt.raylib/cube!), since raylib's DrawCube takes a by-value Vector3.
+  (net.b12n.raylib.models/cube!), since raylib's DrawCube takes a by-value Vector3.
 
   Each cube is 36 rlVertex3f FFI calls, so the grid is kept modest (N=14 → 196
   columns) to stay smooth; DrawFPS shows the real rate."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -22,11 +23,11 @@
                :height H
                :title "raylib [models] example - waving cubes"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         half (* 0.5 (dec N) SPACING)
         span (* SPACING N)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [t     (* 0.06 frame)
               a     (* 0.012 frame)                  ; slow camera orbit
               cam-x (* span 1.3 (Math/cos a))
@@ -61,7 +62,7 @@
                                                                 :color rl/RAYWHITE})
           (rl/fps! {:x 10
                     :y (- H 30)})
-          (rl/maybe-screenshot! frame 120)
+          (app/maybe-screenshot! frame 120)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

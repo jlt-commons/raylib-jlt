@@ -8,10 +8,11 @@
 
   raylib spells this BeginTextureMode / EndTextureMode over a RenderTexture2D
   struct; rl/with-render-texture is the same thing in scalar rlgl calls (see
-  raylib.clj). One wrinkle carries over from OpenGL: a framebuffer texture is
+  net.b12n.raylib.textures). One wrinkle carries over from OpenGL: a framebuffer texture is
   stored bottom-up, so it is drawn back with :v0 1.0 :v1 0.0 to flip it."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -51,14 +52,14 @@
                :height H
                :title "raylib [textures] example - render texture"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         rt (rl/render-texture RT-W RT-H)]
     (if-not rt
       (binding [*out* *err*]
         (println "render-texture: the driver reported an incomplete framebuffer"))
       (do
         (loop [frame 0]
-          (when (rl/keep-running? deadline)
+          (when (app/keep-running? deadline)
             (let [t (rl/get-time)]
               (rl/begin-drawing)
               ;; The scene is rendered once, before anything touches the window.
@@ -86,7 +87,7 @@
                                    :y (+ y h 4)
                                    :size 14
                                    :color rl/GRAY})))
-              (rl/maybe-screenshot! frame 5)
+              (app/maybe-screenshot! frame 5)
               (rl/end-drawing))
             (recur (inc frame))))
         (rl/unload-render-texture! rt))))

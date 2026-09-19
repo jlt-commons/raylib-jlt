@@ -9,6 +9,7 @@
   (:require
    [net.b12n.raylib-jlt.amp-envelope]
    [net.b12n.raylib-jlt.analog-clock]
+   [net.b12n.raylib-jlt.app]
    [net.b12n.raylib-jlt.ascii-rendering]
    [net.b12n.raylib-jlt.asteroids]
    [net.b12n.raylib-jlt.audio-raw-stream]
@@ -123,7 +124,6 @@
    [net.b12n.raylib-jlt.postprocessing]
    [net.b12n.raylib-jlt.random-sequence]
    [net.b12n.raylib-jlt.random-values]
-   [net.b12n.raylib-jlt.raylib]
    [net.b12n.raylib-jlt.raymarching]
    [net.b12n.raylib-jlt.reasings]
    [net.b12n.raylib-jlt.rectangle-advanced]
@@ -179,7 +179,8 @@
    [net.b12n.raylib-jlt.words-alignment]
    [net.b12n.raylib-jlt.world-screen]
    [net.b12n.raylib-jlt.writing-anim]
-   [net.b12n.raylib-jlt.yaw-pitch-roll]))
+   [net.b12n.raylib-jlt.yaw-pitch-roll]
+   [net.b12n.raylib.all]))
 
 (defn -main
   [& _]

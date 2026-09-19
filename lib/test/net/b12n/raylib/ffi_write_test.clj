@@ -1,4 +1,4 @@
-(ns net.b12n.raylib-jlt.ffi-write-test
+(ns net.b12n.raylib.ffi-write-test
   "The one property every binding in this project silently depends on:
   `jolt.ffi/write` puts the VALUE where the OFFSET says.
 

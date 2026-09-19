@@ -6,7 +6,8 @@
   immediate mode in RL_LINES mode (rl-vertex-3f pairs); rotation/position come from
   the rlgl matrix stack, the same 3D path as camera-3d and rlgl-solar-system."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -75,9 +76,9 @@
                :height H
                :title "wireframe shapes"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [spin (* 0.9 frame)]                              ; degrees
           (rl/begin-drawing)
           (rl/clear-background (rl/rgba 12 12 20 255))
@@ -101,7 +102,7 @@
                      :y 12
                      :size 18
                      :color rl/RAYWHITE})
-          (rl/maybe-screenshot! frame 40)
+          (app/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

@@ -4,7 +4,8 @@
   A dashed line from the screen centre to the mouse, drawn as a series of short
   segments with gaps (every other segment)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -16,10 +17,10 @@
                :height H
                :title "raylib [shapes] example - dashed line"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx (/ W 2.0) cy (/ H 2.0)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx  (rl/get-mouse-x) my (rl/get-mouse-y)
               dx  (- mx cx) dy (- my cy)
               len (Math/sqrt (+ (* dx dx) (* dy dy)))
@@ -42,7 +43,7 @@
                                                        :y 10
                                                        :size 20
                                                        :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

@@ -10,7 +10,8 @@
   counter climbs to whatever the machine can manage, and the box moves by delta
   time so its speed does not change with it."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -30,11 +31,11 @@
                :height H
                :title "raylib [core] example - window flags"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            x 60.0
            vx 220.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (dotimes [i 4]
           (when (rl/key-pressed? (nth keys-for-toggles i))
             (let [flag (nth (nth toggles i) 2)]
@@ -85,7 +86,7 @@
                      :color rl/GRAY})
           (rl/fps! {:x 30
                     :y 280})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) nx vx)))))
   (rl/close-window))

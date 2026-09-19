@@ -15,7 +15,8 @@
   approximate, and the sample count is the accuracy. Point-in-ellipse itself is
   exact, being the unit-circle test after dividing out each radius."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -64,14 +65,14 @@
                :height H
                :title "raylib [shapes] example - ellipse collision"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         a-rx 120.0 a-ry 70.0
         b-rx 90.0  b-ry 140.0]
     (loop [frame 0
            controlled :a
            ax (/ (double W) 4.0) ay (/ (double H) 2.0)
            bx (* (double W) 0.75) by (/ (double H) 2.0)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [controlled (cond (rl/key-pressed? rl/KEY-A) :a
                                (rl/key-pressed? rl/KEY-B) :b
                                :else controlled)
@@ -112,7 +113,7 @@
                      :y 36
                      :size 20
                      :color (if hit? rl/RED rl/GRAY)})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) controlled ax ay bx by)))))
   (rl/close-window))

@@ -11,7 +11,8 @@
   a wall works instead of sticking. Walls are rl/cube! columns, so the whole scene
   is rlgl immediate-mode geometry under a Camera3D."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -107,12 +108,12 @@
                :height H
                :title "raylib [models] example - first person maze"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            px (* 1.5 CELL)
            pz (* 1.5 CELL)
            heading 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [dt (rl/get-frame-time)
               heading (+ heading (* 2.2 dt (+ (if (rl/key-down? rl/KEY-LEFT) 1 0)
                                               (if (rl/key-down? rl/KEY-RIGHT) -1 0))))
@@ -150,7 +151,7 @@
                      :y (- H 30)
                      :size 14
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) nx nz heading)))))
   (rl/close-window))

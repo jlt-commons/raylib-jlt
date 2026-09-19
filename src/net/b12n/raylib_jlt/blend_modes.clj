@@ -18,7 +18,8 @@
   surprising) behavior of that mode.
   Loosely based on raylib/examples/textures/textures_blend_modes.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -91,11 +92,11 @@
                :height H
                :title "raylib [textures] example - blend modes"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         bg (rl/texture-from-fn TEX-W TEX-H sky-pixel)
         fg (rl/texture-from-fn TEX-W TEX-H glow-pixel)]
     (loop [frame 0 mode-idx 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mode-idx (if (rl/key-pressed? rl/KEY-SPACE)
                          (mod (inc mode-idx) (count MODES))
                          mode-idx)
@@ -122,7 +123,7 @@
                      :y 370
                      :size 10
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) mode-idx))))
     (rl/unload-texture! bg)

@@ -18,7 +18,8 @@
   it writes, so the redo tail becomes unreachable; here the tail is dropped
   outright."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -83,7 +84,7 @@
                :height H
                :title "raylib [core] example - undo redo"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         start    {:x 10
                   :y 10
                   :color 0}]
@@ -92,7 +93,7 @@
            history [start]
            cursor  0
            ticks   0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [ctrl?   (rl/key-down? rl/KEY-LEFT-CONTROL)
               undo?   (and ctrl? (rl/key-pressed? rl/KEY-Z))
               redo?   (and ctrl? (rl/key-pressed? rl/KEY-Y))
@@ -159,7 +160,7 @@
                        :height CELL
                        :color (rl/rgba r g b a)}))
           (draw-history! 110 400 history cursor)
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) player history cursor ticks)))))
   (rl/close-window))

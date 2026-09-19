@@ -12,7 +12,8 @@
   render-texture) whenever the window or the chosen mode changes.
   Ported from raylib's examples/core/core_viewport_scaling.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -93,11 +94,11 @@
                :height H
                :title "raylib [core] example - viewport scaling"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         r0 (compute-rects 0 (rl/get-screen-width) (rl/get-screen-height) 64 64)
         t0 (rl/render-texture (int (:sw r0)) (int (- (:sh r0))))]
     (loop [frame 0 ri 0 vtype 0 rects r0 target t0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (double (rl/get-mouse-x))
               my (double (rl/get-mouse-y))
               resized? (rl/window-resized?)
@@ -226,7 +227,7 @@
                          :y 46
                          :size 10
                          :color rl/BLACK})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) ri vtype rects target)))))
   (rl/close-window))

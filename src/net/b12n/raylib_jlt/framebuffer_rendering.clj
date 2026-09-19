@@ -25,7 +25,8 @@
   input actuates a raylib window (see scripts/demo_manifest.edn) and the C's
   subject camera is on CAMERA_ORBITAL anyway, which takes no input either."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -118,7 +119,7 @@
                :height H
                :title "raylib [textures] example - framebuffer rendering"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         observer-rt (rl/render-texture HALF-W H)
         subject-rt (rl/render-texture HALF-W H)
         aspect (/ (double HALF-W) H)]
@@ -127,7 +128,7 @@
         (println "framebuffer-rendering: the driver reported an incomplete framebuffer"))
       (do
         (loop [frame 0]
-          (when (rl/keep-running? deadline)
+          (when (app/keep-running? deadline)
             (let [origin [0.0 0.0 0.0]
                   subject-pos (orbit origin 5.0 2.0 0.012 frame)
                   observer-pos (orbit origin 14.0 10.0 0.004 frame)
@@ -216,7 +217,7 @@
                          :color rl/DARKGRAY})
               (rl/fps! {:x 10
                         :y 10})
-              (rl/maybe-screenshot! frame 60)
+              (app/maybe-screenshot! frame 60)
               (rl/end-drawing)
               (recur (inc frame)))))
         (rl/unload-render-texture! observer-rt)

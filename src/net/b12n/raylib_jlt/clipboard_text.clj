@@ -10,7 +10,8 @@
   NULL when the clipboard holds something that is not text, so the read is
   guarded rather than trusted."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -42,12 +43,12 @@
                :height H
                :title "raylib [core] example - clipboard text"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            typed "jolt talks to the system clipboard"
            pasted ""
            note ""]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [typed (type-into typed)
               copy? (rl/key-pressed? rl/KEY-C)
               paste? (rl/key-pressed? rl/KEY-V)
@@ -106,7 +107,7 @@
                           :y 300
                           :size 16
                           :color rl/GREEN})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) typed pasted note)))))
   (rl/close-window))

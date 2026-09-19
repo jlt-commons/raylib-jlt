@@ -5,7 +5,8 @@
   their edges stroked. Each fill triangle is winding-normalized to the front face so
   none are backface-culled. In the spirit of shapes_penrose_tile."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private phi (/ (+ 1.0 (Math/sqrt 5.0)) 2.0))
 (def ^:private inv (/ 1.0 phi))
@@ -57,10 +58,10 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - penrose tiling"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         tris (mapv front (deflate (wheel 400 230 235.0) 5))]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background (rl/rgba 18 18 24 255))
         ;; fills (one rlgl batch)
@@ -92,7 +93,7 @@
                                                    :y 10
                                                    :size 20
                                                    :color rl/RAYWHITE})
-        (rl/maybe-screenshot! frame 12)
+        (app/maybe-screenshot! frame 12)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

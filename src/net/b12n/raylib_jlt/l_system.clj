@@ -3,7 +3,8 @@
   production rules, then drawn with turtle graphics (F=forward, +/-=turn, []=branch);
   the plant reveals itself segment by segment, then regrows."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def rules {\X "F+[[X]-X]-F[-FX]+X"
             \F "FF"})
@@ -45,9 +46,9 @@
   (rl/set-target-fps 60)
   (let [segs (build-segments (lsystem-string))
         total (count segs)
-        deadline (rl/auto-quit-deadline)]
+        deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         ;; grow over ~33 frames, hold full, regrow every 360 frames
         (let [shown (min total (* (mod frame 360) 45))]
           (rl/begin-drawing)
@@ -63,7 +64,7 @@
                                              :y 6
                                              :size 18
                                              :color rl/GRAY})
-          (rl/maybe-screenshot! frame 45)
+          (app/maybe-screenshot! frame 45)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

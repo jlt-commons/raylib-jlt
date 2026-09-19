@@ -4,7 +4,8 @@
   RL_POINTS mode, so points are drawn as small cubes.) See
   docs/guide/rlgl-immediate-mode.md."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def n-points 1500)
 
@@ -27,9 +28,9 @@
                :title "raylib [models] example - point cloud"})
   (rl/set-target-fps 60)
   (let [points (make-points)
-        deadline (rl/auto-quit-deadline)]
+        deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/BLACK)
         (rl/with-camera-3d {:pos-x 0.0
@@ -48,7 +49,7 @@
                    :y 10
                    :size 20
                    :color rl/RAYWHITE})
-        (rl/maybe-screenshot! frame 10)
+        (app/maybe-screenshot! frame 10)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

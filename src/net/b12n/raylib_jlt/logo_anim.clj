@@ -17,7 +17,8 @@
 
   See logo-raylib for the finished logo drawn in one pass."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -37,14 +38,14 @@
                :height H
                :title "raylib [shapes] example - raylib logo animation"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            state 0
            counter 0
            top-w 16 left-h 16 bottom-w 16 right-h 16
            letters 0
            alpha 1.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [replay? (and (= state 4) (rl/key-pressed? rl/KEY-R))
               ;; Fixed steps, exact thresholds: no easing anywhere.
               [state counter top-w left-h bottom-w right-h letters alpha]
@@ -142,7 +143,7 @@
                                     :y 200
                                     :size 20
                                     :color rl/GRAY}))
-          (rl/maybe-screenshot! frame 150)
+          (app/maybe-screenshot! frame 150)
           (rl/end-drawing)
           (recur (inc frame) state counter top-w left-h bottom-w right-h letters alpha)))))
   (rl/close-window))

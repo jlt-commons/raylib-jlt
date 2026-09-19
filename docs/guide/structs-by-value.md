@@ -94,7 +94,7 @@ Unhandled exception: jolt.ffi layout descriptor must be
 
 An `:analysis-error`, so it fails at compile time rather than at the call - the
 good outcome. The cost is that the struct shape is repeated at every binding
-site, which is why `raylib.clj` keeps a `shader-layout` next to them: the
+site, which is why `net.b12n.raylib.shaders` keeps a `shader-layout` next to them: the
 `ffi/layout` value cannot be shared with the `defcfn` forms, but it is what
 every field access goes through.
 
@@ -179,7 +179,7 @@ rlgl.h   RL_SHADER_UNIFORM_SAMPLER2D = 12
 ```
 
 Never copy the value from the other header, from a tutorial, or from memory.
-`raylib.clj` carries `UNIFORM-SAMPLER2D` as 12 with a comment naming the
+`net.b12n.raylib.shaders` carries `UNIFORM-SAMPLER2D` as 12 with a comment naming the
 version it came from, so the next version bump has something to check against.
 
 ## Why this generalizes

@@ -20,7 +20,8 @@
   back with :v0 1.0 :v1 0.0 - and the brush's y is mirrored on the way in for
   the same reason."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -59,7 +60,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - painting a texture"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sh (rl/shader fragment-shader)
         rt (rl/render-texture W H)]
     (cond
@@ -77,7 +78,7 @@ void main() {
         (rl/with-render-texture rt (fn [] (rl/clear-background (rl/rgba 12 12 18 255))))
         (try
           (loop [frame 0]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [t (rl/get-time)
                     mx (rl/get-mouse-x)
                     my (rl/get-mouse-y)
@@ -132,7 +133,7 @@ void main() {
                 ;; Frame 110 rather than the suite's usual 5: this example has
                 ;; nothing to show until the canvas has accumulated a stroke, and
                 ;; frame 5 captures a single dab.
-                (rl/maybe-screenshot! frame 110)
+                (app/maybe-screenshot! frame 110)
                 (rl/end-drawing)
                 (recur (inc frame)))))
           (finally

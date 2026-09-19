@@ -7,7 +7,8 @@
   inside-out through the outer one. Pure math + 2D lines, no camera. Inner cube is
   red, outer cube blue, the connecting edges green."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -54,9 +55,9 @@
                :height H
                :title "tesseract"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [a   (* 0.02 frame)
               pts (mapv (fn [v] (project (rot4 v a (* a 0.6)))) verts4)]
           (rl/begin-drawing)
@@ -73,7 +74,7 @@
                                                            :y 12
                                                            :size 20
                                                            :color rl/RAYWHITE})
-          (rl/maybe-screenshot! frame 40)
+          (app/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

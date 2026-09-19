@@ -4,7 +4,8 @@
   A message types itself out one character at a time, pauses at the end, then
   restarts. A growing substring of the full text driven by the frame counter."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const msg "This message types itself out, one character at a time...")
@@ -15,10 +16,10 @@
                :height 450
                :title "raylib [text] example - writing animation"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         n (count msg)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [chars (mod (quot frame 3) (+ n 40))   ; +40-frame pause at the end
               shown (subs msg 0 (min n chars))]
           (rl/begin-drawing)
@@ -31,7 +32,7 @@
                            :y 200
                            :size 24
                            :color rl/DARKBLUE})
-          (rl/maybe-screenshot! frame 60)
+          (app/maybe-screenshot! frame 60)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

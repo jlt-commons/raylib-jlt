@@ -4,12 +4,13 @@
   A static 3D scene of cubes, spheres, cylinders, cones and capsules (solid
   + wireframe) over a grid, viewed through a fixed perspective camera. The
   first example to use the genuine by-value Draw{Cube,Sphere,Cylinder,
-  Capsule}* calls (draw-cube!, draw-sphere!, etc. in raylib.clj) rather than
-  the rlgl immediate-mode stand-ins rl/cube!/rl/sphere! use -- a cone here
+  Capsule}* calls (draw-cube!, draw-sphere!, etc. in net.b12n.raylib.models)
+  rather than the rlgl immediate-mode stand-ins rl/cube!/rl/sphere! use -- a cone here
   is a cylinder with a zero top radius, the same trick raylib's own example
   uses. Ported from raylib's examples/models/models_geometric_shapes.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -20,7 +21,7 @@
                :height H
                :title "raylib [models] example - geometric shapes"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cam {:pos-x 0.0
              :pos-y 10.0
              :pos-z 10.0
@@ -33,7 +34,7 @@
              :fovy 45.0
              :projection 0}]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/with-camera-3d
@@ -115,7 +116,7 @@
                                       :y 40
                                       :size 10
                                       :color rl/GRAY})
-        (rl/maybe-screenshot! frame 5)
+        (app/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

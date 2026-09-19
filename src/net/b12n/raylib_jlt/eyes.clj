@@ -5,7 +5,8 @@
   the mouse cursor, each pupil clamped to stay inside its eye. Uses scalar
   GetMouseX / GetMouseY + DrawCircle and a little trig for the pupil offset."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -28,11 +29,11 @@
                :height H
                :title "raylib [shapes] example - following eyes"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         er 60.0 pr 22.0
         lx 300.0 rx 500.0 cy 225.0]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (rl/get-mouse-x)
               my (rl/get-mouse-y)
               [lpx lpy] (pupil lx cy er pr mx my)
@@ -59,7 +60,7 @@
                                                  :y 10
                                                  :size 20
                                                  :color rl/GRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

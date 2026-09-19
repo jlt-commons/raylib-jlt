@@ -27,7 +27,8 @@
   3. `MeasureText` and `DrawText` are already bound and answer the same question
   for the default font, so the labels are centred with those."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -58,9 +59,9 @@
                :title "raylib [core] example - highdpi demo"})
   (rl/set-window-min-size 450 450)
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [monitors (rl/get-monitor-count)
               current (rl/get-current-monitor)]
           (when (and (> monitors 1) (rl/key-pressed? rl/KEY-N))
@@ -120,7 +121,7 @@
                                            :y (- (rl/get-screen-height) 25)
                                            :size 20
                                            :color rl/LIGHTGRAY})
-            (rl/maybe-screenshot! frame 20)
+            (app/maybe-screenshot! frame 20)
             (rl/end-drawing)
             (recur (inc frame))))))
     (rl/close-window)))

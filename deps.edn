@@ -5,18 +5,12 @@
 
  :paths ["src"]
 
- ;; raylib is called directly over its C ABI via jolt.ffi (see src/net/b12n/raylib_jlt/core.clj).
- ;; The shared library is the system libraylib 6.0+, install with `brew install raylib`
- ;; on macOS, or your distro's raylib package on Linux. Chez's dlopen default search
- ;; path doesn't include Homebrew's lib dir, so the absolute path is listed first
- ;; (same reason glimmer-gl lists the OpenGL framework path first).
- :jolt/native [{:name "raylib"
-                :darwin ["/opt/homebrew/lib/libraylib.dylib" "libraylib.dylib"]
-                :linux  ["libraylib.so.6" "libraylib.so"]}]
+ ;; The raylib bindings live in lib/ as their own project so they can be
+ ;; consumed by something other than this example suite. :jolt/native for
+ ;; libraylib is declared there and inherited here.
+ :deps {net.b12n/raylib {:local/root "lib"}}
 
- :aliases {:test   {:extra-paths ["test"]
-                    :main-opts   ["-m" "net.b12n.raylib-jlt.test-runner"]}   ; unit suite: ffi/write argument order
-           :check  {:main-opts ["-m" "net.b12n.raylib-jlt.check"]}   ; headless: compile every example
+ :aliases {:check  {:main-opts ["-m" "net.b12n.raylib-jlt.check"]}   ; headless: compile every example
            :run    {:main-opts ["-m" "net.b12n.raylib-jlt.core"]}    ; basic window (default)
            :input  {:main-opts ["-m" "net.b12n.raylib-jlt.input"]}   ; move a circle with arrow keys
            :bounce {:main-opts ["-m" "net.b12n.raylib-jlt.bounce"]}   ; bouncing ball, SPACE pauses

@@ -5,7 +5,8 @@
   'raylib' tucked into the bottom-right corner, built from two rectangles and a
   text label positioned with MeasureText."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -18,13 +19,13 @@
                :height H
                :title "raylib logo"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         x  (int (/ (- W SIZE) 2))
         y  (int (/ (- H SIZE) 2))
         ls 40
         lw (rl/text-width "raylib" :size ls)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         ;; thick border = a black square with an inner background-colored square
@@ -43,7 +44,7 @@
                    :y (- (+ y SIZE) ls BORDER 4)
                    :size ls
                    :color rl/BLACK})
-        (rl/maybe-screenshot! frame 5)
+        (app/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

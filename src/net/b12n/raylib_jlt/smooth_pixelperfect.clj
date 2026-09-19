@@ -10,7 +10,8 @@
   same DrawRectanglePro stand-in easings-rectangles.clj already uses.
   Ported from raylib's examples/core/core_smooth_pixelperfect.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -24,14 +25,14 @@
                :height H
                :title "raylib [core] example - smooth pixelperfect"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         target (rl/render-texture VW VH)]
     (if-not target
       (binding [*out* *err*]
         (println "smooth-pixelperfect: the driver reported an incomplete framebuffer"))
       (do
         (loop [frame 0 rot 0.0 smooth? true overscan? false]
-          (when (rl/keep-running? deadline)
+          (when (app/keep-running? deadline)
             (let [rot (+ rot (* 60.0 (rl/get-frame-time)))
                   t (rl/get-time)
                   cx (- (* (Math/sin t) 50.0) 10.0)
@@ -109,7 +110,7 @@
                          :color rl/RED})
               (rl/fps! {:x (- W 95)
                         :y 10})
-              (rl/maybe-screenshot! frame 30)
+              (app/maybe-screenshot! frame 30)
               (rl/end-drawing)
               (recur (inc frame) rot smooth? overscan?))))
         (rl/unload-render-texture! target))))

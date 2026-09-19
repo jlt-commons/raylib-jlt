@@ -21,7 +21,8 @@
   round to the near side, so the mouth is the missing wedge. The rest is
   rectangles, circles and text."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 ;; --- the maze ----------------------------------------------------------------
 ;; # wall, . dot, o power pellet, - ghost-house door, P pac-man start,
@@ -564,15 +565,15 @@
                :height H
                :title "pac-man"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         final (loop [frame 0
                      s (new-game)]
-                (if-not (rl/keep-running? deadline)
+                (if-not (app/keep-running? deadline)
                   s
                   (let [s' (step s)]
                     (rl/begin-drawing)
                     (draw-state! s')
-                    (rl/maybe-screenshot! frame 60)
+                    (app/maybe-screenshot! frame 60)
                     (rl/end-drawing)
                     (recur (inc frame) s'))))]
     (rl/close-window)

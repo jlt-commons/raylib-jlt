@@ -9,7 +9,8 @@
   Scrolling is just an offset added to both texcoords, which is why the seam never
   shows: a REPEAT sampler treats 4.25 and 0.25 identically."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -35,7 +36,7 @@
                :height H
                :title "raylib [textures] example - texture tiling"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         id (rl/texture-from-fn TEX TEX tile)]
     ;; REPEAT is what makes texcoords past 1.0 tile instead of smearing the edge
     ;; texel; texture-from-fn already sets it, but the example depends on it, so
@@ -44,7 +45,7 @@
     (loop [frame 0
            tiles 6.0
            scroll 0.0]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (rl/unload-texture! id)
         (let [tiles (cond
                       (rl/key-down? rl/KEY-UP) (min 24.0 (+ tiles 0.08))
@@ -79,7 +80,7 @@
                                               :y 36
                                               :size 14
                                               :color rl/LIGHTGRAY})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) tiles scroll)))))
   (rl/close-window))

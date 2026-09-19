@@ -15,7 +15,8 @@
   the auto-quit deadline is checked alongside its own flag. Without that the
   headless smoke would never terminate."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -28,7 +29,7 @@
   ;; Take ESC away from raylib so the confirmation below can answer for it.
   (rl/set-exit-key rl/KEY-NULL)
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            asked? false
            exit? false]
@@ -62,7 +63,7 @@
                        :y 200
                        :size 20
                        :color rl/LIGHTGRAY}))
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) asked? exit?)))))
   (rl/close-window))

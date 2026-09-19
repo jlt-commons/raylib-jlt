@@ -9,7 +9,8 @@
   one that does not: it returns a Vector2 by value, which is why the layout below
   is a list rather than a to-scale map of where the displays sit."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -20,9 +21,9 @@
                :height H
                :title "raylib [core] example - monitor detector"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [n (rl/get-monitor-count)
               current (rl/get-current-monitor)]
           (rl/begin-drawing)
@@ -67,7 +68,7 @@
                      :y (- H 34)
                      :size 14
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing))
         (recur (inc frame)))))
   (rl/close-window))

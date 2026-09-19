@@ -12,7 +12,7 @@ The FFI boundary stays a faithful, positional mirror of the C signature: that's 
 contract with the library and the thing to check against `raylib.h`:
 
 ```clojure
-;; src/net/b12n/raylib_jlt/raylib.clj, the FFI boundary (positional, mirrors C)
+;; net.b12n.raylib.text / net.b12n.raylib.shapes, the FFI boundary (positional, mirrors C)
 (ffi/defcfn draw-text      "DrawText"      [:string :int :int :int :uint] :void)
 (ffi/defcfn draw-rectangle "DrawRectangle" [:int :int :int :int :uint] :void)
 (ffi/defcfn draw-circle    "DrawCircle"    [:int :int :float :uint] :void)

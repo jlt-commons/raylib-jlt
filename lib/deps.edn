@@ -1,0 +1,23 @@
+{;; jolt.ffi/write takes the value BEFORE the offset as of jolt 0.8.0, and the
+ ;; two spellings are both integers, so an older runtime writes to the wrong
+ ;; place rather than failing. Declare the floor so it refuses instead.
+ :jolt/min-version "0.8.0"
+
+ :paths ["src"]
+
+ ;; raylib is called directly over its C ABI via jolt.ffi. The shared library is
+ ;; the system libraylib 6.0+, installed with `brew install raylib` on macOS or
+ ;; your distro's raylib package on Linux. Chez's dlopen default search path does
+ ;; not include Homebrew's lib dir, so the absolute path is listed first.
+ ;;
+ ;; This declaration lives here rather than in the consuming project, so a
+ ;; project depending on this library inherits the lookup instead of restating
+ ;; it. jolt resolves a dependency's native candidates against the declaring
+ ;; root.
+ :jolt/native [{:name "raylib"
+                :darwin ["/opt/homebrew/lib/libraylib.dylib" "libraylib.dylib"]
+                :linux  ["libraylib.so.6" "libraylib.so"]}]
+
+ :aliases {:check {:main-opts ["-m" "net.b12n.raylib.check"]}
+           :test  {:extra-paths ["test"]
+                   :main-opts   ["-m" "net.b12n.raylib.test-runner"]}}}

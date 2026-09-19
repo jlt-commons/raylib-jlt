@@ -169,23 +169,33 @@ flowchart TB
   subgraph ex["171 example namespaces"]
     e["pong · boids · tetris<br/>camera-3d · penrose-tiling · …"]
   end
-  subgraph shared["net.b12n.raylib-jlt.raylib: one shared layer"]
-    kw["keyword-argument drawing API<br/>text! · rect! · circle! · cube!"]
-    fb["jolt.ffi/defcfn binds<br/>positional, mirroring C"]
-    kw --> fb
+  door["net.b12n.raylib.all<br/>generated aggregator (bb gen:all)"]
+  subgraph raylib["net.b12n.raylib: 19 modules"]
+    plat["window &amp; platform<br/>core · input · log · files · util"]
+    draw["drawing<br/>color · shapes · text · kwargs · rlgl"]
+    d3["3D<br/>camera · models · rays · splines"]
+    media["media<br/>images · textures · shaders · audio"]
+    native["native<br/>FFI plumbing shared by the rest"]
   end
   lib["system libraylib<br/>dlopened at runtime, C ABI"]
-  e --> kw
-  fb -->|"Color as a packed :uint"| lib
-  fb -->|"Camera2D/3D by pointer"| lib
-  fb -->|"rlgl scalar immediate mode"| lib
+  e --> door
+  door --> plat
+  door --> draw
+  door --> d3
+  door --> media
+  door --> native
+  plat -->|"Color as a packed :uint"| lib
+  d3 -->|"Camera2D/3D by pointer"| lib
+  draw -->|"rlgl scalar immediate mode"| lib
+  media --> lib
     </pre>
     <p>
-      Every example is a small namespace over that one shared layer. Adding
-      one touches exactly five places: the source namespace, a
-      <code>deps.edn</code> alias, a <code>check.clj</code> require, a
-      registry row in <code>scripts/examples_registry.clj</code>, and a
-      <code>bb.edn</code> task.
+      Every example is a small namespace over that library, requiring only
+      <code>net.b12n.raylib.all</code>. Adding one touches exactly five
+      places: the source namespace, a <code>deps.edn</code> alias, a
+      <code>check.clj</code> require, a registry row in
+      <code>scripts/examples_registry.clj</code>, and a <code>bb.edn</code>
+      task.
     </p>
   </div>
 </section>
@@ -195,8 +205,8 @@ flowchart TB
     <h2>What's here</h2>
     <div class="feature-grid">
       <div class="feat">
-        <h4>One binding layer</h4>
-        <p>All the FFI binds, the keyword-argument drawing API, and the named color palette live in a single namespace. Examples stay small enough to read in one sitting.</p>
+        <h4>One library to depend on</h4>
+        <p>All the FFI binds, the keyword-argument drawing API, and the named color palette live in <code>net.b12n.raylib</code>, a library of 19 focused modules aggregated as <code>net.b12n.raylib.all</code>. Examples stay small enough to read in one sitting.</p>
       </div>
       <div class="feat">
         <h4>Reads like Clojure, not like C</h4>

@@ -6,7 +6,8 @@
   stars.clj (a static per-star twinkle, not a raylib example port). Ported
   from raylib's examples/shapes/shapes_starfield_effect.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -63,12 +64,12 @@
                :height H
                :title "raylib [shapes] example - starfield effect"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            stars (mapv (fn [_] (new-star)) (range STAR-COUNT))
            speed (/ 10.0 9.0)
            lines? true]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [wheel  (rl/get-mouse-wheel)
               speed  (clamp (+ speed (* 2.0 (/ wheel 9.0))) 0.1 2.0)
               lines? (if (rl/key-pressed? rl/KEY-SPACE) (not lines?) lines?)
@@ -89,7 +90,7 @@
                      :color rl/RAYWHITE})
           (rl/fps! {:x 10
                     :y 10})
-          (rl/maybe-screenshot! frame 60)
+          (app/maybe-screenshot! frame 60)
           (rl/end-drawing)
           (recur (inc frame) stars speed lines?)))))
   (rl/close-window))

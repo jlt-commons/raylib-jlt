@@ -17,7 +17,8 @@
   is pressed, because no synthetic input actuates a raylib window (see the note
   in scripts/demo_manifest.edn) and a fog that never lifts is a single frame."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -67,7 +68,7 @@
                :height H
                :title "raylib [textures] example - fog of war"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         ;; Two random tile shades, so the map under the fog is not flat.
         tile-ids (vec (repeatedly (* TILES-X TILES-Y) (fn [] (rl/get-random-value 0 1))))
         ;; One pixel per tile. Stretching THIS is what softens the fog edges.
@@ -81,7 +82,7 @@
                py 130.0
                fog (vec (repeat (* TILES-X TILES-Y) 0))
                steered? false]
-          (when (rl/keep-running? deadline)
+          (when (app/keep-running? deadline)
             (let [dx (+ (if (rl/key-down? rl/KEY-RIGHT) SPEED 0) (if (rl/key-down? rl/KEY-LEFT) (- SPEED) 0))
                   dy (+ (if (rl/key-down? rl/KEY-DOWN) SPEED 0) (if (rl/key-down? rl/KEY-UP) (- SPEED) 0))
                   steered? (or steered? (not (zero? dx)) (not (zero? dy)))
@@ -144,7 +145,7 @@
                          :y (- H 25)
                          :size 20
                          :color rl/RAYWHITE})
-              (rl/maybe-screenshot! frame 120)
+              (app/maybe-screenshot! frame 120)
               (rl/end-drawing)
               (recur (inc frame) px py fog steered?))))
         (rl/unload-render-texture! fog-rt))))

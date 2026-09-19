@@ -5,7 +5,8 @@
   ENTER, and also auto-advances on a timer so the headless smoke test flows through
   every screen. A keyword state drives the background + label."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -27,9 +28,9 @@
                :height H
                :title "raylib [core] example - screen manager"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 idx 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [advance? (or (rl/key-pressed? KEY-ENTER)
                            (zero? (mod (inc frame) 90)))   ; auto-advance every ~1.5s
               idx (if advance? (mod (inc idx) (count screens)) idx)
@@ -45,7 +46,7 @@
                                               :y 260
                                               :size 20
                                               :color tc})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) idx)))))
   (rl/close-window))

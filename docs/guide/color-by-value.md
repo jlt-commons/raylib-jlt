@@ -32,7 +32,7 @@ Contrast [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md):
 
 `Color` is little-endian in memory: `r` at the lowest byte, then `g`, `b`, `a`. So
 the `uint32` is `r | g<<8 | b<<16 | a<<24`. That is exactly `rgba`
-(`src/net/b12n/raylib_jlt/raylib.clj`):
+(`lib/src/net/b12n/raylib/color.clj`):
 
 ```clojure
 (defn rgba

@@ -10,7 +10,8 @@
   The atlas is generated on the GPU via `rl/texture-from-fn` rather than
   loaded from a PNG, following this project's no-external-assets convention."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -93,10 +94,10 @@
                :height H
                :title "raylib [models] example - textured cube"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         atlas (rl/texture-from-fn ATLAS ATLAS atlas-pixel)]
     (loop [frame 0]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (rl/unload-texture! atlas)
         (let [angle (* frame 0.01)]
           (rl/begin-drawing)
@@ -129,7 +130,7 @@
                      :y 10
                      :size 18
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

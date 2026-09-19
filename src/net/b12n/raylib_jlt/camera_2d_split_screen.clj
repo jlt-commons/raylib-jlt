@@ -8,7 +8,8 @@
   and rl/texture! exactly as camera2d.clj and render_texture.clj already do.
   Ported from raylib's examples/core/core_2d_camera_split_screen.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 440)
@@ -79,7 +80,7 @@
                :height H
                :title "raylib [core] example - 2d camera split screen"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         rt1       (rl/render-texture HALF-W H)
         rt2       (rl/render-texture HALF-W H)]
     (if-not (and rt1 rt2)
@@ -87,7 +88,7 @@
         (println "camera-2d-split-screen: the driver reported an incomplete framebuffer"))
       (do
         (loop [frame 0 p1x 200.0 p1y 200.0 p2x 250.0 p2y 200.0]
-          (when (rl/keep-running? deadline)
+          (when (app/keep-running? deadline)
             (let [p1y (cond (rl/key-down? rl/KEY-S) (+ p1y 3.0)
                             (rl/key-down? rl/KEY-W) (- p1y 3.0)
                             :else p1y)
@@ -125,7 +126,7 @@
                          :width 4
                          :height H
                          :color rl/LIGHTGRAY})
-              (rl/maybe-screenshot! frame 30)
+              (app/maybe-screenshot! frame 30)
               (rl/end-drawing)
               (recur (inc frame) p1x p1y p2x p2y))))
         (rl/unload-render-texture! rt1)

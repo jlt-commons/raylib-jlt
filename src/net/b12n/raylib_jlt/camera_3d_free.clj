@@ -17,7 +17,8 @@
   two new bindings, both plain void calls.
   Ported from raylib's examples/core/core_3d_camera_free.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -38,12 +39,12 @@
                                 :up-z 0.0
                                 :fovy 45.0
                                 :projection 0})
-        deadline (rl/auto-quit-deadline)]
+        deadline (app/auto-quit-deadline)]
     (rl/disable-cursor!)
     (rl/set-target-fps 60)
     (try
       (loop [frame 0]
-        (when (rl/keep-running? deadline)
+        (when (app/keep-running? deadline)
           (rl/update-camera! cam rl/CAMERA-FREE)
           (when (rl/key-pressed? rl/KEY-Z)
             (rl/camera3d-set-target! cam [0.0 0.0 0.0]))
@@ -92,7 +93,7 @@
                                                 :size 10
                                                 :color rl/DARKGRAY})
 
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame))))
       (finally

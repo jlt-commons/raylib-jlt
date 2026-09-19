@@ -7,12 +7,13 @@
   SPACE clears them.
 
   raylib's version loads wabbit_alpha.png; there is no image loader here (see
-  raylib.clj on why LoadTexture has no binding), so the sprite is drawn into an
-  RGBA buffer by hand and uploaded with rlLoadTexture. Every bunny is then one
-  rl/texture! quad, which rlgl batches into the same draw call as long as they
+  net.b12n.raylib.textures on why LoadTexture has no binding), so the sprite
+  is drawn into an RGBA buffer by hand and uploaded with rlLoadTexture. Every
+  bunny is then one rl/texture! quad, which rlgl batches into the same draw call as long as they
   all share the texture."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -69,11 +70,11 @@
                :height H
                :title "raylib [textures] example - bunnymark"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         id (rl/texture-from-fn SPRITE SPRITE bunny-texel)]
     (loop [frame 0
            bunnies (spawn 200 :scattered :scattered)]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (rl/unload-texture! id)
         (let [bunnies (cond
                         (rl/key-pressed? rl/KEY-SPACE) []
@@ -106,7 +107,7 @@
                      :y 14
                      :size 16
                      :color rl/LIGHTGRAY})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) bunnies)))))
   (rl/close-window))

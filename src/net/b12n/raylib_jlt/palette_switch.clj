@@ -16,7 +16,8 @@
   rl/set-uniform-ivec3-array! stages 8 x 3 ints and hands them to SetShaderValueV
   with a count, where the other setters send a single value."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -76,7 +77,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - palette switching"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
     (if-not sh
       (binding [*out* *err*]
@@ -89,7 +90,7 @@ void main() {
           (loop [frame 0
                  pick 0
                  cycling? true]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [pick (cond
                            (rl/key-pressed? rl/KEY-RIGHT) (mod (inc pick) (count palettes))
                            (rl/key-pressed? rl/KEY-LEFT) (mod (dec pick) (count palettes))
@@ -140,7 +141,7 @@ void main() {
                                          :y (- H 30)
                                          :size 16
                                          :color (if (> (+ r g b) 380) rl/BLACK rl/RAYWHITE)}))))
-                (rl/maybe-screenshot! frame 5)
+                (app/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) pick cycling?))))
           (finally (rl/unload-shader! sh))))))

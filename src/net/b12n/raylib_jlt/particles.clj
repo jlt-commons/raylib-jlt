@@ -7,7 +7,8 @@
   already-bound rl/rgba, since a Color here is a plain :uint.
   Ported from raylib's examples/shapes/shapes_simple_particles.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -113,9 +114,9 @@
                :height H
                :title "raylib [shapes] example - simple particles"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 particles [] current-type :water]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [ex (rl/get-mouse-x)
               ey (rl/get-mouse-y)
               emitted (if (< (count particles) MAX-PARTICLES)
@@ -151,7 +152,7 @@
                      :y 40
                      :size 10
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) particles current-type)))))
   (rl/close-window))

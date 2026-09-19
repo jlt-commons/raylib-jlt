@@ -3,7 +3,8 @@
   on a wheel of radius r rolling inside a ring of radius R traces roulette curves;
   resets with new random r/d after a fixed number of points."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def cx 400.0)
 (def cy 225.0)
@@ -38,10 +39,10 @@
                :height 450
                :title "raylib [generative] example - spirograph"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            st (new-params)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [{:keys [r d t points]} st
               new-pts (mapv (fn [i] (pt r d (+ t (* i 0.04)))) (range 8))
               points (into points new-pts)
@@ -55,7 +56,7 @@
                        :x2 (int x2)
                        :y2 (int y2)
                        :color (rainbow i)}))
-          (rl/maybe-screenshot! frame 70)
+          (app/maybe-screenshot! frame 70)
           (rl/end-drawing)
           (recur (inc frame) st)))))
   (rl/close-window))

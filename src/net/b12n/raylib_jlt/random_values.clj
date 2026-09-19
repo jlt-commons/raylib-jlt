@@ -4,7 +4,8 @@
   A new random value (0-99) every two seconds via GetRandomValue, with a small
   history of recent rolls."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 
@@ -14,9 +15,9 @@
                :height 450
                :title "raylib [core] example - random values"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 value (rl/get-random-value 0 99) history []]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [roll?   (zero? (mod frame 120))            ; every 2s at 60fps
               value   (if roll? (rl/get-random-value 0 99) value)
               history (if roll? (vec (take-last 8 (conj history value))) history)]
@@ -35,7 +36,7 @@
                      :y 380
                      :size 20
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) value history)))))
   (rl/close-window))

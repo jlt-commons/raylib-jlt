@@ -3,7 +3,8 @@
   alignment, and cohesion; each drawn as a dot with a heading line along its velocity.
   Pure vector math."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def width 800)
 (def height 450)
@@ -70,15 +71,15 @@
                :height height
                :title "raylib [generative] example - boids"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            boids (spawn)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [boids (mapv (fn [b] (step-boid b boids)) boids)]
           (rl/begin-drawing)
           (rl/clear-background (rl/rgba 20 20 30 255))
           (doseq [b boids] (draw-boid b))
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) boids)))))
   (rl/close-window))

@@ -12,7 +12,7 @@
   Ray out. `GetRayCollisionBox` then takes that Ray with a by-value BoundingBox
   and returns a by-value RayCollision, whose first field is a one-byte C _Bool,
   so the layout only lands `distance` at offset 4 if the field is declared
-  `:bool` rather than an int. raylib.clj asserts both struct sizes at load
+  `:bool` rather than an int. net.b12n.raylib.rays asserts both struct sizes at load
   instead of trusting that, because a wrong offset here reads a plausible float
   out of the wrong bytes and never errors.
 
@@ -27,7 +27,8 @@
   scripts/demo_manifest.edn) and the C's camera does not move until a person
   moves it."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -81,7 +82,7 @@
                :height H
                :title "raylib [core] example - 3d picking"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            orbit-frame 0
            pos (:pos (orbit-angles 0))
@@ -91,7 +92,7 @@
            hit? false
            last-mx nil
            last-my nil]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (rl/get-mouse-x)
               my (rl/get-mouse-y)
               toggling? (rl/mouse-pressed? rl/MOUSE-RIGHT)
@@ -172,7 +173,7 @@
                      :color rl/GRAY})
           (rl/fps! {:x 10
                     :y 10})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) orbit-frame pos yaw pitch ray hit? mx my)))))
   (rl/enable-cursor!)

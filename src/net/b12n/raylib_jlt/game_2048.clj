@@ -3,7 +3,8 @@
   reach 2048. Slide/merge is one pure function reused for all four directions via
   row reversal / transpose. (Handle is game-2048; bb can't name a task '2048'.)"
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (defn- compress
   [row]
@@ -99,11 +100,11 @@
                :height 450
                :title "raylib [games] example - 2048"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            st {:board (new-board)
                :score 0}]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [over? (stuck? (:board st))
               st (cond
                    over? (if (rl/key-pressed? rl/KEY-SPACE) {:board (new-board)
@@ -137,7 +138,7 @@
                                                      :y 415
                                                      :size 24
                                                      :color rl/RAYWHITE}))
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))
   (rl/close-window))

@@ -15,7 +15,8 @@
   brackets, and anything that does not fit that shape is text, including a
   stray `[`."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -125,11 +126,11 @@
                :height H
                :title "raylib [text] example - inline styling"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         faded (rl/rgba 0 0 0 100)]
     (loop [frame 0
            tint rl/RED]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [tint (if (zero? (mod frame 20))
                      (rl/rgba (rl/get-random-value 0 255)
                               (rl/get-random-value 0 255)
@@ -164,7 +165,7 @@
                      :y 320
                      :size 10
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) tint)))))
   (rl/close-window))

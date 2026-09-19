@@ -9,7 +9,7 @@ convention, with citations to the source files that implement it.
 
 The examples show you *what* the suite draws; these pages explain *why* the binding
 layer is shaped the way it is. Almost every non-obvious decision in
-`net.b12n.raylib-jlt.raylib` traces back to one question (how a given C struct
+`net.b12n.raylib` traces back to one question (how a given C struct
 crosses the FFI boundary), and the answer differs per struct. Read these when you
 want to bind a C library from Jolt yourself, or when an example does something that
 looks needlessly indirect and you want the ABI reason behind it.
@@ -19,7 +19,8 @@ looks needlessly indirect and you want the ABI reason behind it.
 A community suite of 171 raylib examples: the classic core/shapes/text demos, a
 handful of games (asteroids, tetris, pong, vampire-survivors), and a 3D set
 (orbiting cameras, waving cubes, an rlgl solar system), each a small Clojure
-namespace on top of one shared binding layer, `net.b12n.raylib-jlt.raylib`.
+namespace on top of a shared library, `net.b12n.raylib` (see
+[`the-library.md`](the-library.md)).
 
 It is the **graphics sibling** of `b12n-tsj` (tree-sitter from Jolt, not yet
 public). Both bind a real external C library directly over its C ABI with
@@ -64,33 +65,42 @@ Nothing about `jolt.ffi` is raylib-specific: it binds any C ABI symbol. The
 
 ## Capability pages
 
+### The library
+
+- ✅ [`the-library.md`](the-library.md): what `net.b12n.raylib` is, its 19
+  modules, how to depend on it from another jolt project (in-repo and
+  `:git/url`), and why `net.b12n.raylib.all` is generated rather than
+  hand-written.
+
 ### The FFI core (the reason this repo is interesting)
 
 - ✅ [`structs-by-value.md`](structs-by-value.md): `[:by-value [:struct ...]]` in
   argument and return position, the leading-destination-pointer return
   convention, why the descriptor must be a literal, `ffi/layout` /
   `with-layout` / `read-field` / `write-field`, and why a uniform-type enum is
-  read from the header actually being linked. Source: `raylib.clj` (the shader
-  bindings, `set-uniform-texture!`).
+  read from the header actually being linked. Source: `net.b12n.raylib.shaders`
+  (`set-uniform-texture!`).
 - ✅ [`color-by-value.md`](color-by-value.md): why raylib's `Color` crosses the
   FFI boundary as a packed `:uint` and not a struct, the little-endian `rgba`
   packing, and the two-by-value-Colors-in-one-call case (`DrawRectangleGradientV`).
-  Source: `src/net/b12n/raylib_jlt/raylib.clj` (`rgba`, `clear-background`, the palette).
+  Source: `net.b12n.raylib.color` (`rgba`, the palette) and `net.b12n.raylib.core`
+  (`clear-background`).
 - ✅ [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md): how a
   24-byte `Camera2D` / 44-byte `Camera3D` is passed by value on AArch64 by
   allocating the struct in native memory and binding `BeginMode2D`/`BeginMode3D` as
   `[:pointer]`. **The x86-64 non-portability caveat is here.** Source:
-  `raylib.clj` (`with-camera-2d`, `with-camera-3d`).
+  `net.b12n.raylib.camera` (`with-camera-2d`, `with-camera-3d`).
 - ✅ [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md): the fallback for by-value
   `Vector2`/`Vector3` args the pointer trick can't fake: rlgl scalar immediate mode
   (`rlBegin`/`rlVertex2f`/`rlVertex3f`/`rlColor4ub`) for the 2D triangle and the 3D
   `cube!`, plus the rlgl matrix stack for nested transforms (the solar-system demo).
-  Source: `raylib.clj` (`cube!`, `quad-3f`, the `rl-*` binds).
+  Source: `net.b12n.raylib.models` (`cube!`, `quad-3f`) and
+  `net.b12n.raylib.rlgl` (the `rl-*` binds).
 - ✅ [`textures-via-rlgl.md`](textures-via-rlgl.md): why every raylib `Load*`
   function is unbindable (a >16-byte struct returned through `x8`), and how
   `rlLoadTexture` / `rlLoadFramebuffer` reach the same GPU objects with nothing
   but ints. Includes the HiDPI restore that `EndTextureMode` does across two
-  functions and which is easy to get subtly wrong. Source: `raylib.clj`
+  functions and which is easy to get subtly wrong. Source: `net.b12n.raylib.textures`
   (`texture-from-fn`, `texture!`, `render-texture`, `with-render-texture`).
 
 ### The drawing API
@@ -98,7 +108,7 @@ Nothing about `jolt.ffi` is raylib-specific: it binds any C ABI symbol. The
 - ✅ [`kwarg-drawing-api.md`](kwarg-drawing-api.md): the two-layer design: raw
   positional `ffi/defcfn` binds at the boundary (mirroring C), ergonomic
   keyword-argument wrappers (`text!`/`rect!`/`circle!`/…) on top, and the
-  ">3 arguments → keyword args" style convention. Source: `raylib.clj`.
+  ">3 arguments → keyword args" style convention. Source: `net.b12n.raylib.kwargs`.
 
 ### Working from an editor
 
@@ -106,15 +116,16 @@ Nothing about `jolt.ffi` is raylib-specific: it binds any C ABI symbol. The
   `(-main)` over nREPL kills the whole process on macOS (AppKit only initializes
   on the main thread, an nREPL eval does not run there), the `rl/run!` call that
   fixes it, and what does and does not work against a running window. Source:
-  `raylib.clj` (`run!`).
+  `net.b12n.raylib.core` (`run!`).
 
 ### Verifying without a display
 
 - ✅ [`headless-smoke-testing.md`](headless-smoke-testing.md): how a windowed
   example proves itself with no person at the keyboard: `RAYLIB_APP_AUTO_QUIT_MS`
   (auto-close), `RAYLIB_APP_SHOT` (dump one PNG), and the batched-geometry flush
-  that makes the screenshot non-empty. Source: `raylib.clj` (`auto-quit-deadline`,
-  `keep-running?`, `maybe-screenshot!`).
+  that makes the screenshot non-empty. Source: `src/net/b12n/raylib_jlt/app.clj`
+  (`auto-quit-deadline`, `keep-running?`, `maybe-screenshot!`) -- this one stayed
+  with the examples rather than moving into the library.
 
 ### Orientation
 

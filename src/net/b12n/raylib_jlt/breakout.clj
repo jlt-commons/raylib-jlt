@@ -2,7 +2,8 @@
   "raylib [games] example - breakout. The paddle follows the mouse; bounce the ball
   to clear every brick. Ball/wall/paddle/brick collisions computed in Clojure."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def width 800)
 (def height 450)
@@ -82,10 +83,10 @@
                :height height
                :title "raylib [games] example - breakout"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            st (new-game)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (rl/get-mouse-x)
               paddle-x (double (max 0 (min (- width paddle-w) (- mx (quot paddle-w 2)))))
               st (if (or (:over? st) (:won? st))
@@ -121,7 +122,7 @@
                                                          :y 210
                                                          :size 28
                                                          :color rl/DARKGREEN}))
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))
   (rl/close-window))

@@ -4,7 +4,8 @@
   Ported from examples/core/core_input_mouse_wheel.c: scroll the mouse wheel to
   move a box up and down. Exercises a float-returning binding (GetMouseWheelMove)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -16,9 +17,9 @@
                :height H
                :title "raylib [core] example - mouse wheel"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 y (/ (- H BOX) 2.0)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [y (-> (- y (* (rl/get-mouse-wheel) 20.0))
                     (max 0.0)
                     (min (double (- H BOX))))]
@@ -34,7 +35,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) y)))))
   (rl/close-window))

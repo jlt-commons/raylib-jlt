@@ -19,7 +19,8 @@
   The trade is deliberate: the example keeps working, and the culling lesson
   moves to this docstring."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -58,12 +59,12 @@
                :height H
                :title "raylib [shapes] example - rlgl triangle"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            pts start-positions
            dragging nil
            lines? false]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx      (double (rl/get-mouse-x))
               my      (double (rl/get-mouse-y))
               down?   (rl/mouse-down? rl/MOUSE-LEFT)
@@ -114,7 +115,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) pts dragging lines?)))))
   (rl/close-window))

@@ -4,7 +4,8 @@
   A word aligned left / centre / right inside a box using MeasureText to compute
   the horizontal offset. The alignment cycles over time."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -15,11 +16,11 @@
                :height H
                :title "raylib [text] example - word alignment"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         bx 150 by 180 bw 500 bh 90
         word "aligned" size 40]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mode (nth [:left :center :right] (mod (quot frame 60) 3))
               tw   (rl/text-width word :size size)
               tx   (case mode
@@ -42,7 +43,7 @@
                                                      :y 110
                                                      :size 20
                                                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

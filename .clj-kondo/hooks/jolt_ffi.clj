@@ -6,9 +6,9 @@
       (ffi/defcfn draw-text \"DrawText\" [:string :int :int :int :uint] :void)
 
   clj-kondo cannot see through the macro, so without this hook every bound name
-  is an `Unresolved symbol` inside raylib.clj and an `Unresolved var: rl/…` at
-  each of the ~460 call sites in the examples, enough noise to make the linter
-  useless as a gate.
+  is an `Unresolved symbol` inside its own library module and an
+  `Unresolved var: rl/…` at each of the ~460 call sites in the examples,
+  enough noise to make the linter useless as a gate.
 
   The hook rewrites the form into a `defn` of the same name whose parameter count
   matches the C argument-type vector, and whose body is a literal of the declared

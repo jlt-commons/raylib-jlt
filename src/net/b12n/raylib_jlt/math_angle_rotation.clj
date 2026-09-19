@@ -4,7 +4,8 @@
   A ring of fixed-angle spokes plus one spoke that spins, showing angle-based line
   drawing with sin/cos."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -17,10 +18,10 @@
                :height H
                :title "raylib [shapes] example - angle rotation"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx (/ W 2.0) cy (/ H 2.0) r 160.0]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/circle-lines! {:x (int cx)
@@ -44,7 +45,7 @@
                                                       :y 10
                                                       :size 20
                                                       :color rl/DARKGRAY})
-        (rl/maybe-screenshot! frame 20)
+        (app/maybe-screenshot! frame 20)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

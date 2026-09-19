@@ -1,8 +1,8 @@
 #!/usr/bin/env bb
 ;; Convert flat keyword-argument calls into an explicit map literal.
 ;;
-;; raylib.clj's drawing/window functions are defined `[& {:keys [...]}]`, which
-;; lets a caller write either
+;; net.b12n.raylib.kwargs's drawing/window functions are defined `[& {:keys [...]}]`,
+;; which lets a caller write either
 ;;
 ;;   (rl/window! :width W :height H :title "hi")
 ;;   (rl/window! {:width W :height H :title "hi"})
@@ -63,7 +63,12 @@
    "cube!"            0
    "sphere!"          0})
 
-(def source-dirs ["src" "test"])
+;; "src" is the example suite, "lib/src" is the binding library where the
+;; kwargs definitions themselves now live. Without lib/src this checker finds
+;; no kwargs definitions at all and reports zero violations from a clean exit,
+;; which looks exactly like success. "lib/test" is the library's own unit
+;; suite, listed for the same reason.
+(def source-dirs ["src" "lib/src" "lib/test"])
 
 (def file-pattern
   "\"**\" requires at least one directory level, so it alone would miss files

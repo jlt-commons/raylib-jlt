@@ -8,7 +8,8 @@
   rl/world-to-screen, so the label always matches what actually got drawn.
   Ported from raylib's examples/core/core_world_screen.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -21,9 +22,9 @@
                :height H
                :title "raylib [core] example - world screen"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 t 0.7854]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [t      (+ t (* 0.3 (rl/get-frame-time)))
               cam    {:pos-x (* CAM-R (Math/cos t))
                       :pos-y 10.0
@@ -62,7 +63,7 @@
                      :y 40
                      :size 20
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) t)))))
   (rl/close-window))

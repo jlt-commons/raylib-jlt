@@ -2,7 +2,8 @@
   "raylib [games] example - flappy bird. SPACE to flap; fly through the pipe gaps.
   Gravity + scrolling pipes + AABB/circle collision, all in Clojure."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def width 800)
 (def height 450)
@@ -65,10 +66,10 @@
                :height height
                :title "raylib [games] example - flappy bird"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            st (new-game)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [st (if (:over? st)
                    (if (rl/key-pressed? rl/KEY-SPACE) (new-game) st)
                    (step st))]
@@ -97,7 +98,7 @@
                                                            :y 200
                                                            :size 28
                                                            :color rl/MAROON}))
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))
   (rl/close-window))

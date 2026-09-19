@@ -18,8 +18,9 @@
   Curves come from reasings/by-name, the shared table that also feeds
   easings-ball and easings-box. Adding a curve there adds it here for free."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]
-   [net.b12n.raylib-jlt.reasings :as ez]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib-jlt.reasings :as ez]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -38,12 +39,12 @@
                :height H
                :title "raylib [shapes] example - easings testbed"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            idx 0
            counter 0.0
            plot? true]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [next?   (rl/key-pressed? rl/KEY-RIGHT)
               prev?   (rl/key-pressed? rl/KEY-LEFT)
               replay? (rl/key-pressed? rl/KEY-SPACE)
@@ -98,7 +99,7 @@
                        :x2 (+ PLOT-X PLOT-W)
                        :y2 (+ PLOT-Y PLOT-H 60)
                        :color (rl/rgba 220 220 220 255)}))
-          (rl/maybe-screenshot! frame 70)
+          (app/maybe-screenshot! frame 70)
           (rl/end-drawing)
           (recur (inc frame) idx counter plot?)))))
   (rl/close-window))

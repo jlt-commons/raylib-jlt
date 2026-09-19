@@ -20,7 +20,8 @@
   and a plain middle, which is what makes a stretched patch legible: if the
   corners smeared you would see it immediately."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -89,7 +90,7 @@
                :height H
                :title "raylib [textures] example - npatch drawing"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         tex (rl/texture-from-fn SRC SRC patch-pixel)]
     ;; CLAMP, not the REPEAT texture-from-fn leaves behind: a stretched edge
     ;; cell samples right up to its border and REPEAT would wrap the far side
@@ -97,7 +98,7 @@
     (rl/texture-wrap! tex rl/RL-TEXTURE-WRAP-CLAMP)
     (rl/texture-filter! tex rl/RL-TEXTURE-FILTER-NEAREST)
     (loop [frame 0]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (rl/unload-texture! tex)
         (let [;; Until the pointer moves the panels breathe on their own.
               mx (rl/get-mouse-x)
@@ -160,7 +161,7 @@
                               :y (- H 18)
                               :size 10
                               :color rl/GRAY})
-          (rl/maybe-screenshot! frame 60)
+          (app/maybe-screenshot! frame 60)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

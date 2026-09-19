@@ -30,7 +30,8 @@
   top for curved edges, a fine checker in the middle that only survives the
   sharpen, and a smooth gradient at the bottom that only the Sobel leaves blank."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -104,7 +105,7 @@
                :height H
                :title "raylib [textures] example - image kernel"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         seed (rl/texture-from-fn PANEL H test-card)
         img (rl/image-from-texture! seed PANEL H)
         panels [(convolved img gaussian 0)
@@ -112,7 +113,7 @@
                 (convolved img sobel 1)
                 (convolved img gaussian 6)]]
     (loop [frame 0]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (do (doseq [id panels] (rl/unload-texture! id))
             (rl/unload-texture! seed)
             (rl/unload-image! img))
@@ -138,7 +139,7 @@
                                         :y (- H 18)
                                         :size 10
                                         :color rl/RAYWHITE}))
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

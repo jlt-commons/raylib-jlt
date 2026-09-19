@@ -12,7 +12,8 @@
   transform is current to each vertex as it is submitted, so wrapping the model in
   a push/pop moves the whole thing and leaves the rest of the scene alone."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -77,12 +78,12 @@
                :height H
                :title "raylib [models] example - yaw pitch roll"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            yaw 0.0
            pitch 0.0
            roll 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [yaw (cond (rl/key-down? rl/KEY-A) (min 90.0 (+ yaw 1.1))
                         (rl/key-down? rl/KEY-D) (max -90.0 (- yaw 1.1))
                         :else (ease-to-zero yaw))
@@ -137,7 +138,7 @@
                      :y 396
                      :size 14
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) yaw pitch roll)))))
   (rl/close-window))

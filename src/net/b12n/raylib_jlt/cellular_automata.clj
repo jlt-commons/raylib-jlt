@@ -12,7 +12,8 @@
   title spells the current rule out as the eight neighbourhood transitions it
   stands for."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -76,12 +77,12 @@
                :height H
                :title "raylib [shapes] example - cellular automata"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            rule 30
            random? false
            rows (generations 30 false)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [d (cond
                   (rl/key-pressed? rl/KEY-RIGHT) 1
                   (rl/key-pressed? rl/KEY-LEFT) -1
@@ -127,7 +128,7 @@
                      :y 88
                      :size 13
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) rule random? rows)))))
   (rl/close-window))

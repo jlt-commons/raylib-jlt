@@ -22,7 +22,8 @@
 
   See easings for the curve family compared side by side."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -45,11 +46,11 @@
                :height H
                :title "raylib [shapes] example - easings rectangles"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            counter 0.0
            playing? true]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [counter  (if playing? (inc counter) counter)
               done?    (>= counter PLAY-FRAMES)
               playing? (cond
@@ -84,7 +85,7 @@
                      :y (- H 30)
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) counter playing?)))))
   (rl/close-window))

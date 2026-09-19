@@ -9,7 +9,8 @@
   One immutable state map threaded through the loop; `step` reads input and returns
   the next state."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -239,13 +240,13 @@
                :height H
                :title "vampire survivors"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 s (initial-state)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [s' (step s)]
           (rl/begin-drawing)
           (draw-state s')
-          (rl/maybe-screenshot! frame 100)
+          (app/maybe-screenshot! frame 100)
           (rl/end-drawing)
           (recur (inc frame) s')))))
   (rl/close-window))

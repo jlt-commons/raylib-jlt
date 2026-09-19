@@ -88,10 +88,12 @@ Two rules worth knowing before you write any code:
 
 - **Definitions must precede their first use.** Since jolt 0.4.0 an unresolved
   symbol is a compile error, not a late-bound reference. This bites hardest in the
-  shared `src/net/b12n/raylib_jlt/raylib.clj` binding layer, where one misordered
-  symbol stops *every* example from loading and only the first offender is
-  reported. Fix them one at a time; `bb check` is the quick confirmation.
-- **Write against the shared API, not raw FFI.** `net.b12n.raylib-jlt.raylib`
+  library's modules under `lib/src/net/b12n/raylib/`, where one misordered
+  symbol stops the module compiling and, because every example requires
+  `net.b12n.raylib.all` (which aggregates all 19 modules), *every* example
+  along with it. Only the first offender is reported. Fix them one at a
+  time; `bb check:lib` is the quick confirmation.
+- **Write against the library's API, not raw FFI.** `net.b12n.raylib.all`
   already exposes a keyword-argument drawing layer (`rl/text!`, `rl/rect!`,
   `rl/circle!`, …) plus the color palette. Add a new binding there only if the
   example genuinely needs a raylib call nothing else uses.
@@ -100,7 +102,7 @@ Two rules worth knowing before you write any code:
 
 If you're touching the binding layer rather than adding an example, read
 [`docs/guide/`](docs/guide/index.md) first. Every non-obvious decision in
-`raylib.clj` traces back to how a particular C struct crosses the FFI boundary,
+the library traces back to how a particular C struct crosses the FFI boundary,
 and the answer differs per struct: `Color` packs into a `:uint`,
 `Camera2D`/`Camera3D` go by pointer, and `Vector2`/`Vector3` geometry has to fall
 back to rlgl immediate mode. Those three pages explain why.

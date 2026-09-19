@@ -16,7 +16,8 @@
   Ported from raylib's examples/text/text_rectangle_bounds.c."
   (:require
    [clojure.string :as str]
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -106,9 +107,9 @@
                :height H
                :title "raylib [text] example - rectangle bounds"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 cw MAX-W ch 200.0 resizing? false wrap? true last-mx 0.0 last-my 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (double (rl/get-mouse-x))
               my (double (rl/get-mouse-y))
               rx (- (+ CX cw) 17.0)
@@ -171,7 +172,7 @@
                      :y (- H 38)
                      :size 20
                      :color rl/RAYWHITE})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) cw ch resizing? wrap? mx my)))))
   (rl/close-window))
