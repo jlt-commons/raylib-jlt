@@ -6,9 +6,9 @@
   A/D rotate, and R resets.
 
   This is the project's one struct-by-value example. raylib's BeginMode2D takes a
-  24-byte `Camera2D` BY VALUE; net.b12n.raylib-jlt.raylib/with-camera-2d builds that struct in
+  24-byte `Camera2D` BY VALUE; net.b12n.raylib.camera/with-camera-2d builds that struct in
   native memory and passes a pointer (the AArch64 ABI for a >16-byte struct, see
-  the note in net.b12n.raylib-jlt.raylib and README.md).
+  the note in net.b12n.raylib.camera and README.md).
 
   Verified: the struct-by-value pointer approach renders correctly on AArch64
   (Apple silicon). If you ever hit an invalid-memory crash on another platform

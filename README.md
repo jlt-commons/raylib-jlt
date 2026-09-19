@@ -9,8 +9,9 @@ the upstream C game library (raysan5/raylib), and jolt binds it directly over it
 with `jolt.ffi`: no wrapper library, no codegen, just the shared `libraylib` loaded at
 runtime and called through the FFI.
 
-All the FFI bindings and an ergonomic keyword-argument drawing API live in one
-shared namespace, `net.b12n.raylib-jlt.raylib`; each example is a small namespace on top of it.
+All the FFI bindings and an ergonomic keyword-argument drawing API live in
+`net.b12n.raylib`, a library of 19 focused modules aggregated as
+`net.b12n.raylib.all`; each example is a small namespace on top of it.
 
 **Documentation site: <https://jlt-commons.github.io/raylib-jlt/>** carries the guide, the full
 example catalog, and every demo GIF at full size.
@@ -99,22 +100,26 @@ is bound with, and below that the binding fails at compile with a type error. So
 0.7.23 is where these bindings became expressible, while 0.8.0 is what the suite
 needs today.
 
-One thing to know if you edit the shared binding layer
-(`src/net/b12n/raylib_jlt/raylib.clj`): since **jolt 0.4.0** unresolved symbols are a
-compile error rather than being resolved late, so a definition must appear before
-its first use in the file. That layer is shared by every example, so a single
-misordered symbol stops the whole suite from loading:
+One thing to know if you edit the library's modules
+(`lib/src/net/b12n/raylib/`): since **jolt 0.4.0** unresolved symbols are a
+compile error rather than being resolved late, so within each module a
+definition must appear before its first use. Every example requires
+`net.b12n.raylib.all`, which aggregates all 19 modules, so a single
+misordered symbol in any one of them stops the whole suite from loading:
 
 ```
-Unhandled exception: Unable to resolve symbol: rgba in this context
-  at ./src/net/b12n/raylib_jlt/raylib.clj:139:3
+$ bb check:lib
+error[analyze/unresolved-symbol]: Unable to resolve symbol: rgba in this context
+  --> ./src/net/b12n/raylib/color.clj:11:16
 ```
 
-This is why the `Color` section (`rgba` plus the named palette) sits at the top of
-the file, above `shade-color` / `cube!` / `sphere!` which use it. Compilation stops
-at the first unresolved symbol, so fix them one at a time. `jolt -M:check`
-compiles every example namespace headlessly and is the quickest confirmation that
-the suite still loads.
+This is why `color.clj`'s `rgba` (and the named palette built from it) is
+defined before anything that calls it, and why `models.clj` requires `color`
+for `shade-color` / `cube!` / `sphere!` rather than redefining it. Compilation
+stops at the first unresolved symbol, so fix them one at a time. `bb
+check:lib` compiles the library headlessly and `jolt -M:check` (or `bb
+check`) does the same for every example namespace; both are the quickest
+confirmation that the suite still loads.
 
 The launcher is `jolt`. It was called `joltc` before jolt 0.5.0, and current
 releases install only `jolt`, so if a `joltc` shim is still on your PATH from an older
@@ -393,7 +398,7 @@ Camera2D note below for the x86-64 caveat.
 
 raylib's `Color` is a 4-byte struct `{u8 r,g,b,a}` passed **by value**. On the
 AArch64 and x86-64 ABIs a 4-byte all-integer struct travels in a single
-general-purpose register, exactly like a `uint32`, so `net.b12n.raylib-jlt.raylib/rgba` packs RGBA
+general-purpose register, exactly like a `uint32`, so `net.b12n.raylib.color/rgba` packs RGBA
 little-endian into an int and each `Color` parameter is bound as `:uint`:
 
 ```clojure
@@ -405,7 +410,7 @@ little-endian into an int and each `Color` parameter is bound as `:uint`:
 
 ### Keyword-argument drawing API
 
-raylib's C functions are positional; `net.b12n.raylib-jlt.raylib` wraps the multi-argument draw
+raylib's C functions are positional; `net.b12n.raylib.kwargs` wraps the multi-argument draw
 calls so examples read self-descriptively:
 
 ```clojure
@@ -425,7 +430,7 @@ reduce to the `Color` trick (a 2-float struct goes in floating-point registers).
 
 raylib's `BeginMode2D(Camera2D)` takes a 24-byte struct by value. On the AArch64
 (Apple) ABI a composite larger than 16 bytes is passed **indirectly**: the caller
-allocates a copy and passes a pointer, so `net.b12n.raylib-jlt.raylib/with-camera-2d` builds the
+allocates a copy and passes a pointer, so `net.b12n.raylib.camera/with-camera-2d` builds the
 struct in native memory (`ffi/alloc` + six `ffi/write :float`s) and binds
 `BeginMode2D` as `[:pointer]`.
 
@@ -441,7 +446,7 @@ passing is the cause; switch to the rlgl-matrix approach.
 
 The same pointer approach scales to 3D: `BeginMode3D(Camera3D)` takes a 44-byte
 struct (three `Vector3` + `fovy` + `projection`), which is `>16` bytes so it goes
-by pointer too; `net.b12n.raylib-jlt.raylib/with-camera-3d` builds it (`ffi/alloc` 44 +
+by pointer too; `net.b12n.raylib.camera/with-camera-3d` builds it (`ffi/alloc` 44 +
 `ffi/write` ten floats + an `:int`). But 3D shape helpers (`DrawCube`,
 `DrawSphere`, `DrawLine3D`) take a `Vector3` **by value**, a 12-byte float struct
 passed in FP registers, which the pointer trick does **not** cover. So `camera-3d`
@@ -505,13 +510,18 @@ can cover, so this repo needs no shim at all.
 ```
 raylib-jlt/
 ├── bb.edn                   ; babashka tasks + the example registry (bb info / run-all)
-├── deps.edn                 ; libraylib :jolt/native + one alias per example
+├── deps.edn                 ; net.b12n/raylib dep (:local/root "lib") + one alias per example
 ├── docs/guide/              ; the pattern guides listed under Documentation above
+├── lib/                     ; the net.b12n.raylib library: 19 FFI-binding modules
+│   └── src/net/b12n/raylib/
+│       ├── all.clj          ; GENERATED aggregator (bb gen:all); never hand-edited
+│       ├── check.clj        ; headless compile-check of the library itself
+│       ├── color.clj  core.clj  kwargs.clj  native.clj  …
+│       └── …
 ├── scripts/                 ; check_positional_args.clj (bb check:positional-args)
 │                             ; kwarg_calls_to_maps.clj (bb check|fix:kwarg-calls)
 │                             ; check_demos.clj (bb check:demos)
 └── src/net/b12n/raylib_jlt/
-    ├── raylib.clj           ; ALL bindings + the kwarg API + Color palette + guards
     ├── check.clj            ; headless compile-check of every example
     ├── core.clj             ; basic window (the default, jolt -M:run)
     ├── input.clj  bounce.clj  colors.clj   mouse.clj  wheel.clj
@@ -521,7 +531,7 @@ raylib-jlt/
 ```
 
 Adding an example touches four places: write `src/net/b12n/raylib_jlt/<name>.clj` against
-the `net.b12n.raylib-jlt.raylib` API, add a `:<name>` alias to `deps.edn`, add the
+the `net.b12n.raylib.all` API, add a `:<name>` alias to `deps.edn`, add the
 namespace to `net.b12n.raylib-jlt.check` so the headless compile-check covers it, and add
 a registry row to `bb.edn` so it appears in `bb info` / `bb examples` / `bb run-all`.
 The [example catalog](docs/guide/example-catalog.md) walks through all four under

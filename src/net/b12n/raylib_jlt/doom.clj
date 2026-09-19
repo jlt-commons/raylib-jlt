@@ -82,7 +82,7 @@
 (defn tile-pixel
   "The packed Color of pixel x,y within tile t. Procedural, so nothing is
   loaded from disk — which is just as well, since raylib's image loaders return
-  an Image by value and do not cross this FFI boundary (see raylib.clj)."
+  an Image by value and do not cross this FFI boundary (see net.b12n.raylib.images)."
   [t x y]
   (case (long t)
     ;; brick, offset every other course

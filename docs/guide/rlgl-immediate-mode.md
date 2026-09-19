@@ -23,7 +23,8 @@ raylib ships `rlgl`, a thin immediate-mode layer over the GPU batch. Its vertex 
 takes **individual floats**, never a vector struct:
 
 ```clojure
-;; src/net/b12n/raylib_jlt/raylib.clj
+;; net.b12n.raylib.rlgl (rl-begin/rl-end/rl-vertex-2f) and
+;; net.b12n.raylib.models (rl-vertex-3f)
 (ffi/defcfn rl-begin     "rlBegin"     [:int] :void)        ; RL-LINES / RL-TRIANGLES
 (ffi/defcfn rl-end       "rlEnd"       [] :void)
 (ffi/defcfn rl-vertex-2f "rlVertex2f"  [:float :float] :void)
@@ -108,7 +109,7 @@ caveat in [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md)
 The same wall stops `DrawCircleSector` / `DrawRing` / `DrawCircleV`: they take a
 `Vector2` center **by value** (a float pair in FP registers), so they're unbindable by
 the pointer trick. The fix is the same: draw the arc as an rlgl triangle fan.
-`sector!` (in `raylib.clj`) builds one:
+`sector!` (in `net.b12n.raylib.kwargs`) builds one:
 
 ```clojure
 (rl/sector! :cx 270 :cy 235 :radius 165
@@ -142,8 +143,9 @@ Two more by-value casualties get the same rlgl treatment:
   never flips to a culled back face. `line-ex!` also draws the clock ticks and the
   `ring-drawing` outline stroke.
 
-Both are single-color (`rl-color!` once, then the vertices) and, like `sector!`, live
-in `raylib.clj` beside the raw `rl-*` binds.
+Both are single-color (`rl-color!` once, then the vertices) and, like `sector!`,
+live in `net.b12n.raylib.kwargs`, calling the raw `rl-*` binds in
+`net.b12n.raylib.rlgl`.
 
 ## Why this generalizes
 

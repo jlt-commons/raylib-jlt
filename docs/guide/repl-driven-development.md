@@ -60,7 +60,7 @@ way rather than with a bare `(-main)`.
 `run!` hops the call onto the main thread:
 
 ```clojure
-;; src/net/b12n/raylib_jlt/raylib.clj
+;; lib/src/net/b12n/raylib/core.clj
 (defn run! [f]
   (jolt.host/call-on-main-thread-async f))
 ```

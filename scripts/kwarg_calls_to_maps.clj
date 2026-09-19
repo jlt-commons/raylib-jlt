@@ -1,8 +1,8 @@
 #!/usr/bin/env bb
 ;; Convert flat keyword-argument calls into an explicit map literal.
 ;;
-;; raylib.clj's drawing/window functions are defined `[& {:keys [...]}]`, which
-;; lets a caller write either
+;; net.b12n.raylib.kwargs's drawing/window functions are defined `[& {:keys [...]}]`,
+;; which lets a caller write either
 ;;
 ;;   (rl/window! :width W :height H :title "hi")
 ;;   (rl/window! {:width W :height H :title "hi"})

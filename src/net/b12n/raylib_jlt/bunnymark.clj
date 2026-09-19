@@ -7,9 +7,9 @@
   SPACE clears them.
 
   raylib's version loads wabbit_alpha.png; there is no image loader here (see
-  raylib.clj on why LoadTexture has no binding), so the sprite is drawn into an
-  RGBA buffer by hand and uploaded with rlLoadTexture. Every bunny is then one
-  rl/texture! quad, which rlgl batches into the same draw call as long as they
+  net.b12n.raylib.textures on why LoadTexture has no binding), so the sprite
+  is drawn into an RGBA buffer by hand and uploaded with rlLoadTexture. Every
+  bunny is then one rl/texture! quad, which rlgl batches into the same draw call as long as they
   all share the texture."
   (:require
    [net.b12n.raylib-jlt.app :as app]

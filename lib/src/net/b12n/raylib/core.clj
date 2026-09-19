@@ -32,8 +32,9 @@
 
 ;; --- take-screenshot / window-should-close? (lifted out of screenshot hook
 ;; plumbing) --------------------------------------------------------------
-;; Neither is about headless smoke tests, the banner they sat under in
-;; raylib.clj. See net.b12n.raylib.rlgl (flush-batch) and net.b12n.raylib.input
+;; Neither is about headless smoke tests, the banner they sat under in the
+;; old single-file raylib.clj this library split out of. See
+;; net.b12n.raylib.rlgl (flush-batch) and net.b12n.raylib.input
 ;; (the four key / mouse predicates) for the rest of that banner's contents.
 (ffi/defcfn take-screenshot "TakeScreenshot" [:string] :void)
 

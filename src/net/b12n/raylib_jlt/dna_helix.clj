@@ -5,10 +5,10 @@
   runged between them and coloured by base. The whole thing turns under an
   orbiting camera. UP/DOWN change how tightly it coils, SPACE stops the rotation.
 
-  Backbone spheres and base pairs are rl/sphere! and rl/cube! from the shared
-  layer, which are rlgl immediate-mode geometry rather than raylib's DrawSphere
+  Backbone spheres and base pairs are rl/sphere! and rl/cube! from the library,
+  which are rlgl immediate-mode geometry rather than raylib's DrawSphere
   and DrawCube: those take a Vector3 centre by value, which does not cross this
-  FFI boundary (see raylib.clj)."
+  FFI boundary (see net.b12n.raylib.models)."
   (:require
    [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))

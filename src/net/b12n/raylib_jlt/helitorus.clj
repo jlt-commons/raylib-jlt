@@ -24,7 +24,7 @@
   Backface culling is switched off (`rl/rl-disable-backface-culling`) because
   this example decides visibility itself, by the sign of a 2D cross product in
   screen space. That is not a winding rule, and raylib's cull would drop exactly
-  the faces the test keeps — see the note in raylib.clj."
+  the faces the test keeps — see the note in net.b12n.raylib.rlgl."
   (:require
    [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))

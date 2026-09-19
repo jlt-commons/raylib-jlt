@@ -6,11 +6,12 @@
    [jolt.ffi :as ffi]))
 
 ;; --- the trace log, and the suite's first callback INTO jolt -------------
-;; Every binding above this one calls out of jolt into C. SetTraceLogCallback
-;; goes the other way: raylib is handed a function pointer and calls it for every
-;; message it would otherwise print. ffi/foreign-callable builds that pointer out
-;; of a jolt fn, and the pointer stays live until free-callable, which is why
-;; on-trace-log! hands it back rather than dropping it on the floor.
+;; Every other binding in this library calls out of jolt into C.
+;; SetTraceLogCallback goes the other way: raylib is handed a function pointer
+;; and calls it for every message it would otherwise print. ffi/foreign-callable
+;; builds that pointer out of a jolt fn, and the pointer stays live until
+;; free-callable, which is why on-trace-log! hands it back rather than dropping
+;; it on the floor.
 ;;
 ;; The third parameter is the awkward one. raylib's callback signature ends in a
 ;; va_list, which no FFI type describes, so it is taken as an opaque :pointer and

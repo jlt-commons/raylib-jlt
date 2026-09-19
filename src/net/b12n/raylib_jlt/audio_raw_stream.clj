@@ -8,10 +8,10 @@
   generated, not loaded. Ported from raylib's examples/audio/audio_raw_stream.c.
 
   AudioStream is the first raudio binding in this suite: two pointers and
-  three u32s passed BY VALUE everywhere raudio touches it (see raylib.clj's
-  audio section). `rl/update-audio-stream` stages the refill through the same
-  `staged` helper the shader uniform setters use; at ~11 refills/second this
-  is nowhere near a hot path."
+  three u32s passed BY VALUE everywhere raudio touches it (see
+  net.b12n.raylib.audio). `rl/update-audio-stream` stages the refill through
+  the same `staged` helper the shader uniform setters use; at ~11
+  refills/second this is nowhere near a hot path."
   (:require
    [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))

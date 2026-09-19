@@ -38,9 +38,10 @@
   (not (zero? (bit-and (mouse-pressed-raw b) 0xff))))
 
 ;; --- constants (raylib KeyboardKey / MouseButton) ----------------------------
-;; Merged from three sections of raylib.clj: this one, "more KeyboardKey
-;; constants" and "more keyboard constants (keyboard-testbed)". Each block's
-;; own order is preserved and nothing is deduplicated or re-sorted.
+;; Merged from three sections of the old single-file raylib.clj: this one,
+;; "more KeyboardKey constants" and "more keyboard constants
+;; (keyboard-testbed)". Each block's own order is preserved and nothing is
+;; deduplicated or re-sorted.
 (def ^:const KEY-NULL  0)   ; not a key: "nothing closes the window"
 (def ^:const KEY-SPACE 32)  (def ^:const KEY-R     82)
 (def ^:const KEY-W     87)  (def ^:const KEY-A     65)

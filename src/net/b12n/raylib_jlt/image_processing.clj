@@ -8,7 +8,7 @@
   pixels rather than in a shader.
 
   Note how differently these bind from the generators next to them in
-  raylib.clj. Every processor takes `Image *` and works IN PLACE, so it is a
+  net.b12n.raylib.images. Every processor takes `Image *` and works IN PLACE, so it is a
   plain pointer argument and the 24-byte by-value dance never arises; only
   `ImageCopy` and `LoadImageFromTexture` move whole Images across the boundary.
 

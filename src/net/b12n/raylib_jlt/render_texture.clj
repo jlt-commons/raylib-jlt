@@ -8,7 +8,7 @@
 
   raylib spells this BeginTextureMode / EndTextureMode over a RenderTexture2D
   struct; rl/with-render-texture is the same thing in scalar rlgl calls (see
-  raylib.clj). One wrinkle carries over from OpenGL: a framebuffer texture is
+  net.b12n.raylib.textures). One wrinkle carries over from OpenGL: a framebuffer texture is
   stored bottom-up, so it is drawn back with :v0 1.0 :v1 0.0 to flip it."
   (:require
    [net.b12n.raylib-jlt.app :as app]

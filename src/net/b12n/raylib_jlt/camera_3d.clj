@@ -5,8 +5,8 @@
 
   This is the project's 3D milestone. It proves two things at once:
    • Camera3D (a 44-byte struct) is passed BY VALUE to BeginMode3D via a pointer,
-     the same >16-byte-struct-by-pointer trick as Camera2D (net.b12n.raylib-jlt.raylib/with-camera-3d).
-   • The cube is built with rlgl immediate mode (net.b12n.raylib-jlt.raylib/cube! → rl-vertex-3f)
+     the same >16-byte-struct-by-pointer trick as Camera2D (net.b12n.raylib.camera/with-camera-3d).
+   • The cube is built with rlgl immediate mode (net.b12n.raylib.models/cube! → rl-vertex-3f)
      because raylib's DrawCube takes a Vector3 BY VALUE, a 12-byte float struct
      passed in FP registers, which the pointer trick does NOT cover. DrawGrid is
      scalar."

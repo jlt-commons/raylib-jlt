@@ -8,8 +8,10 @@ the example itself.
 
 ## The two knobs
 
-Both are read in `net.b12n.raylib-jlt.raylib` and consumed by the shared loop guards, so
-every example inherits them for free.
+Both are read in `src/net/b12n/raylib_jlt/app.clj` and consumed by the shared loop
+guards, so every example inherits them for free. This lives with the examples
+rather than in the `net.b12n.raylib` library, because it is a property of the
+suite's own headless-testing harness, not of the raylib bindings.
 
 - **`RAYLIB_APP_AUTO_QUIT_MS=<n>`**: close the window after `n` milliseconds. The
   example runs, renders real frames, then exits on its own.
@@ -22,7 +24,7 @@ every example inherits them for free.
 `nil`); `keep-running?` ANDs it with raylib's own close signal:
 
 ```clojure
-;; src/net/b12n/raylib_jlt/raylib.clj
+;; src/net/b12n/raylib_jlt/app.clj
 (defn auto-quit-deadline []
   (when-let [v (System/getenv "RAYLIB_APP_AUTO_QUIT_MS")]
     (try (let [ms (Integer/parseInt v)]

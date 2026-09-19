@@ -50,9 +50,9 @@
   (rl-normal-3f-raw (double a0) (double a1) (double a2)))
 
 ;; PIXELFORMAT-R8G8B8A8 and PIXELFORMAT-R8G8B8 live in net.b12n.raylib.native:
-;; images.clj's LoadImageFromTexture bridge needs the first, raylib.clj's
-;; still-unextracted shaders section needs it too, and images must not require
-;; textures, so native is where both this module and images reach them from.
+;; images.clj's LoadImageFromTexture bridge needs the first, net.b12n.raylib.shaders
+;; needs it too, and images must not require textures, so native is where
+;; both this module and images reach them from.
 (def ^:const RL-QUADS 7)
 (def ^:const RL-TEXTURE-WRAP-S 0x2802)        (def ^:const RL-TEXTURE-WRAP-T 0x2803)
 (def ^:const RL-TEXTURE-WRAP-REPEAT 0x2901)   (def ^:const RL-TEXTURE-WRAP-CLAMP 0x812F)

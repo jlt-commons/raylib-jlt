@@ -8,7 +8,7 @@
   side, same y-flip convention every other render-texture blit in this
   suite uses. The one new binding this needed was DrawPlane, genuinely by
   value now that Vector2/Vector3 by-value args work (see draw-cube! and
-  friends in raylib.clj). Ported from raylib's
+  friends in net.b12n.raylib.models). Ported from raylib's
   examples/core/core_3d_camera_split_screen.c."
   (:require
    [net.b12n.raylib-jlt.app :as app]

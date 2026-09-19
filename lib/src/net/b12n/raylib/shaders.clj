@@ -1,6 +1,6 @@
 (ns net.b12n.raylib.shaders
   "Shader compile/link and the uniform setter family: LoadShaderFromMemory (by
-  value, the same [:by-value [:struct ...]] convention raylib.clj's other
+  value, the same [:by-value [:struct ...]] convention this library's other
   by-value structs use), with-shader for the BeginShaderMode/EndShaderMode
   pair, and SetShaderValue* staged through net.b12n.raylib.native/staged the
   same way every other variadic raylib call in this library does.

@@ -9,7 +9,7 @@
 
   Three new bindings: rl/get-window-scale-dpi and rl/get-window-position
   are genuinely by-value Vector2 returns (the same GetWorldToScreen
-  out-pointer pattern world-to-screen already uses in raylib.clj), and
+  out-pointer pattern world-to-screen already uses in net.b12n.raylib.camera), and
   rl/toggle-borderless-windowed! is a plain void call. Everything else
   (monitor count/current/width/height, render/screen size, toggle
   fullscreen) was already bound.

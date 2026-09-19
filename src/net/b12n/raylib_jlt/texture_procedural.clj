@@ -6,7 +6,8 @@
   noise, which re-uploads that one texture in place.
 
   This is the closest jolt gets to raylib's [textures] category. LoadTexture and
-  LoadImage return structs by value and so have no binding (see raylib.clj), but
+  LoadImage return structs by value and so have no binding (see
+  net.b12n.raylib.textures and net.b12n.raylib.images), but
   rlgl's layer underneath them is entirely scalar: rl/texture-from-fn builds the
   RGBA8 buffer in native memory and hands the pointer to rlLoadTexture, and
   rl/texture! draws it as an rlgl quad. Nothing is read off disk, so every texel

@@ -12,7 +12,7 @@
   Ray out. `GetRayCollisionBox` then takes that Ray with a by-value BoundingBox
   and returns a by-value RayCollision, whose first field is a one-byte C _Bool,
   so the layout only lands `distance` at offset 4 if the field is declared
-  `:bool` rather than an int. raylib.clj asserts both struct sizes at load
+  `:bool` rather than an int. net.b12n.raylib.rays asserts both struct sizes at load
   instead of trusting that, because a wrong offset here reads a plausible float
   out of the wrong bytes and never errors.
 

@@ -11,7 +11,7 @@
 ;; time()/localtime() live in libc (always loaded); jolt.ffi resolves them exactly
 ;; like raylib's symbols. localtime returns a pointer to a struct tm whose first
 ;; three ints are tm_sec, tm_min, tm_hour (offsets 0/4/8 on Darwin and glibc). This
-;; is the repo's only non-raylib FFI call, proof jolt binds any C ABI symbol.
+;; is this library's only non-raylib FFI call, proof jolt binds any C ABI symbol.
 (ffi/defcfn ^:private c-time      "time"      [:pointer] :long)
 (ffi/defcfn ^:private c-localtime "localtime" [:pointer] :pointer)
 

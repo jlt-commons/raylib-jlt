@@ -29,9 +29,9 @@
 
 ;; texture2d-layout lives in net.b12n.raylib.native, not here: this module's
 ;; image->texture-id!/image->texture bridge needs it, so does textures.clj, and
-;; so does raylib.clj's still-unextracted shaders section (SetShaderValueTexture)
-;; -- three consumers, and native is the dependency-free leaf all three can
-;; reach without duplicating it.
+;; so does net.b12n.raylib.shaders (SetShaderValueTexture) -- three consumers,
+;; and native is the dependency-free leaf all three can reach without
+;; duplicating it.
 ;;
 ;; The five fields ARE written out again in every signature below, and that is
 ;; forced rather than sloppy: a struct descriptor is a compile-time literal, so

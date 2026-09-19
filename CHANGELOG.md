@@ -10,6 +10,34 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-20
+
+- **The raylib bindings are a library now, not one shared file in this repo.**
+  `net.b12n.raylib` lives in `lib/` as its own jolt project: 19 focused
+  modules, aggregated as `net.b12n.raylib.all` so a caller still only
+  requires one namespace. Any jolt project can depend on it the way this one
+  does, in-repo with `:local/root "lib"` or from anywhere else with
+  `:git/url` and `:git/sha`. See
+  [`docs/guide/the-library.md`](docs/guide/the-library.md).
+- **`src/net/b12n/raylib_jlt/raylib.clj` is gone.** Its 2506 lines moved into
+  the library, split by concern (color, core, input, shapes, text, kwargs,
+  rlgl, camera, models, rays, splines, images, textures, shaders, audio,
+  native, log, files, util), and every example now requires
+  `net.b12n.raylib.all` in its place.
+- **`bb check:lib` compiles the library headlessly**, the same way `bb check`
+  already did for the examples, and CI runs both. `bb gen:all` regenerates
+  `net.b12n.raylib.all` from the 19 modules' public vars, and
+  `bb check:aggregator` fails the build if the checked-in file no longer
+  matches what the generator would produce.
+- **No example behaves differently.** The split is a pure extraction: every
+  binding, docstring and comment banner crossed into its new module
+  unchanged apart from indentation and qualifying a symbol that moved
+  elsewhere, so `bb check` and `bb test` stay green throughout.
+- **`raygui-jlt` can drop its own copy of these bindings now.** It carries a
+  229-line `raylib.clj` of its own, duplicated rather than shared because
+  there was nothing to depend on before. Pulling the library out is what
+  makes sharing it possible, which was the whole point of this arc.
+
 ## 2026-09-18 (night)
 
 - **Every example has an animated GIF now, so the gallery is 171 for 171.**

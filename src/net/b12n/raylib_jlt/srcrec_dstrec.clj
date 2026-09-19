@@ -7,7 +7,7 @@
   spin in place (rotation increments every frame). Q quits.
 
   No binding for DrawTexturePro exists (Rectangle/Vector2 by-value args,
-  see raylib.clj), so this reimplements it directly: rotated-quad-corners
+  see net.b12n.raylib.textures), so this reimplements it directly: rotated-quad-corners
   mirrors raylib's own rtextures.c algorithm (rotate the four destination
   corners around the origin offset, before translating to screen
   position), and the quad is emitted through the same low-level rlgl

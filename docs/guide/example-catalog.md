@@ -279,7 +279,7 @@ The suite is deliberately mechanical to grow. One new example touches five place
 
 1. **Source**: `src/net/b12n/raylib_jlt/<name>.clj`, a namespace with a `-main` that
    runs the canonical loop (see [`headless-smoke-testing.md`](headless-smoke-testing.md))
-   against the `net.b12n.raylib-jlt.raylib` API.
+   against the `net.b12n.raylib.all` API.
 2. **`deps.edn` alias**: `:<name> {:main-opts ["-m" "net.b12n.raylib-jlt.<name>"]}` so
    `jolt -M:<name>` works.
 3. **`check.clj` require**: add `net.b12n.raylib-jlt.<name>` to the `:require` list in
@@ -317,9 +317,11 @@ Filenames use underscores (`basic_screen_manager.clj`); the namespace uses hyphe
 One ordering rule applies inside every file: since **jolt 0.4.0** an unresolved
 symbol is a compile error rather than a late-bound reference, so a definition must
 appear before its first use, in a fn body and in an `:or` destructuring default
-just as much as at top level. It bites hardest in the shared `raylib.clj` binding
-layer, where one misordered symbol stops *every* example from loading and only the
-first offender is reported. `jolt -M:check` is the quick confirmation; see the
+just as much as at top level. It bites hardest in the library's modules under
+`lib/src/net/b12n/raylib/`, where one misordered symbol stops that module
+compiling and, because every example requires `net.b12n.raylib.all`, *every*
+example along with it. Only the first offender is reported. `bb check:lib`
+and `jolt -M:check` are the quick confirmation; see the
 [jolt note in the README](../../README.md#requirements).
 
 ## See also

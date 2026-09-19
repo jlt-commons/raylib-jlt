@@ -4,7 +4,7 @@
   A tour of the scalar shape primitives: filled and outlined rectangles and
   circles, an ellipse, a line, and a triangle drawn via rlgl immediate mode.
   raylib's DrawTriangle takes Vector2 args by value; rlBegin / rlVertex2f is the
-  scalar path (see net.b12n.raylib-jlt.raylib's rl-* bindings)."
+  scalar path (see net.b12n.raylib.rlgl's rl-* bindings)."
   (:require
    [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))
