@@ -17,8 +17,7 @@
   own signatures rather than sharing this layout.
 
   The 3D geometry a with-camera-3d block draws -- cube!, sphere!, draw-grid,
-  the rlgl matrix stack -- is not here; it stays behind in raylib.clj for the
-  net.b12n.raylib.models extraction."
+  the rlgl matrix stack -- is not here; it lives in net.b12n.raylib.models."
   (:require
    [jolt.ffi :as ffi]
    [net.b12n.raylib.native :as native]))

@@ -1,8 +1,9 @@
 (ns net.b12n.raylib.models
   "3D geometry drawn inside a with-camera-3d block: rlgl immediate-mode
-  stand-ins (cube!, sphere!, draw-grid, the rlgl matrix stack), the real
-  by-value Draw{Cube,Sphere,Cylinder,Capsule}* calls, and DrawPlane, all
-  genuinely by value now that jolt's [:by-value [:struct ...]] works.
+  stand-ins (cube!, sphere!, draw-grid, the rlgl matrix stack), scalar calls
+  with no struct arguments, plus the real Draw{Cube,Sphere,Cylinder,Capsule}*
+  calls and DrawPlane, genuinely by value now that jolt's
+  [:by-value [:struct ...]] works.
 
   None of this touches Camera3D itself -- with-camera-3d, camera3d-alloc and
   the persistent-camera helpers live in net.b12n.raylib.camera, and every fn
