@@ -23,8 +23,8 @@
   raylib window (see the note in scripts/demo_manifest.edn), so the gallery
   frame shows the opening listing rather than a walk through a tree."
   (:require
-   [net.b12n.raylib-jlt.app :as app]
    [clojure.string :as str]
+   [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)

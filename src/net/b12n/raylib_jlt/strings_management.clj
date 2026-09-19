@@ -22,8 +22,8 @@
   and the grab is an index into it, so anything that rebuilds the vector drops
   the grab rather than carrying a stale index forward."
   (:require
-   [net.b12n.raylib-jlt.app :as app]
    [clojure.string :as str]
+   [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)

@@ -20,8 +20,8 @@
   storage.edn is written to the working directory, matching where raylib puts
   storage.data. It is gitignored."
   (:require
-   [net.b12n.raylib-jlt.app :as app]
    [clojure.edn :as edn]
+   [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)

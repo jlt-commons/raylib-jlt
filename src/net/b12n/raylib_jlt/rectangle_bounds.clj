@@ -15,8 +15,8 @@
   fixed color either way.
   Ported from raylib's examples/text/text_rectangle_bounds.c."
   (:require
-   [net.b12n.raylib-jlt.app :as app]
    [clojure.string :as str]
+   [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)

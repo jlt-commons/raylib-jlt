@@ -19,8 +19,8 @@
   keep its (t, b, c, d) signature. See easings for all of them at once."
   (:require
    [net.b12n.raylib-jlt.app :as app]
-   [net.b12n.raylib.all :as rl]
-   [net.b12n.raylib-jlt.reasings :as ez]))
+   [net.b12n.raylib-jlt.reasings :as ez]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)

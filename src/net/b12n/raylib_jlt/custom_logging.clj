@@ -26,8 +26,8 @@
   scripts/demo_manifest.edn), and a wall of text that never changes records as a
   single frame. The text is raylib's real log either way."
   (:require
-   [net.b12n.raylib-jlt.app :as app]
    [clojure.string :as str]
+   [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)

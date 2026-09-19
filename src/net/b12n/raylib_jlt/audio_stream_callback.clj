@@ -26,8 +26,8 @@
   raudio has drained a buffer. Same sound, opposite direction, and the push
   version never leaves the main thread."
   (:require
-   [net.b12n.raylib-jlt.app :as app]
    [jolt.ffi :as ffi]
+   [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
