@@ -124,8 +124,9 @@ instead.
 A consumer's own clj-kondo run needs the same hook this repo uses:
 `jolt.ffi/defcfn` is a macro, and without a hook to see through it,
 clj-kondo cannot tell that the vars it defines exist. Copying an isolated
-`lib/src` into a project with no config produces 207 errors and 124
-warnings for exactly this reason. The hook is
+`lib/src` into a project with no config produces hundreds of spurious
+errors, one per binding, which is enough to make the linter useless as a
+gate. The hook is
 [`.clj-kondo/hooks/jolt_ffi.clj`](../../.clj-kondo/hooks/jolt_ffi.clj),
 wired up via `.clj-kondo/config.edn`'s `:hooks` map; copy both into a
 consuming project the same way.
@@ -138,8 +139,10 @@ consuming project the same way.
 (:require [net.b12n.raylib.all :as rl])
 ```
 
-It re-exports every public var of all 19 modules under one namespace (446
-vars, zero name collisions), so `rl/rect!`, `rl/RED` and `rl/with-camera-3d`
+It re-exports every public var of all 19 modules under one namespace, with
+zero name collisions (the generator aborts rather than allow one) and the
+exact count stated in `all.clj`'s own generated header, which `bb
+check:aggregator` keeps honest. `rl/rect!`, `rl/RED` and `rl/with-camera-3d`
 all resolve without requiring 19 namespaces by hand. `bb gen:all` produces
 it by asking a live jolt process for each module's `ns-publics` and writing
 a `def` plus an `alter-meta!` (to carry `:doc`, `:arglists` and `:const`

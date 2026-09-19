@@ -165,11 +165,12 @@ jobs:
       - name: Library load gate
         run: bb check:lib
 
-      # Guards what no other gate here can see: `all.clj` is 972 generated lines,
-      # hand-editable like any other file even though nothing should touch it by
-      # hand. This fails the build if it no longer matches what `bb gen:all` would
-      # produce right now, so a module that grows (or loses) a public var without
-      # a regenerate is caught here instead of shipping a stale or leaky aggregator.
+      # Guards what no other gate here can see: `all.clj` is a large generated
+      # file, hand-editable like any other file even though nothing should touch
+      # it by hand. This fails the build if it no longer matches what `bb gen:all`
+      # would produce right now, so a module that grows (or loses) a public var
+      # without a regenerate is caught here instead of shipping a stale or leaky
+      # aggregator.
       - name: Aggregator matches the generator
         run: bb check:aggregator
 
