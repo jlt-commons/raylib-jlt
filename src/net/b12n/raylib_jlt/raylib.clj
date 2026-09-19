@@ -17,8 +17,10 @@
    [jolt.host]
    [net.b12n.raylib.color :as color]
    [net.b12n.raylib.files :as files]
+   [net.b12n.raylib.input :as input]
    [net.b12n.raylib.log :as log]
    [net.b12n.raylib.native :as native]
+   [net.b12n.raylib.rlgl :as rlgl]
    [net.b12n.raylib.util :as util]))
 
 ;; --- Color -------------------------------------------------------------------
@@ -76,31 +78,15 @@
 (ffi/defcfn draw-ellipse         "DrawEllipse"         [:int :int :float :float :uint] :void)
 
 ;; --- rlgl immediate mode (all scalar), for triangles / points ---------------
-(ffi/defcfn rl-begin     "rlBegin"     [:int] :void)   ; RL-LINES / RL-TRIANGLES
-(ffi/defcfn rl-end       "rlEnd"       [] :void)
-(ffi/defcfn ^:private rl-vertex-2f-raw "rlVertex2f"  [:float :float] :void)
-
-(defn rl-vertex-2f
-  "One vertex, in whatever space the current matrix defines.
-
-  Coerces to double, because the C takes floats and an integer argument
-  aborts the process on the first draw. The mirror of the int coercion
-  the kwarg drawing API does."
-  [a0 a1]
-  (rl-vertex-2f-raw (double a0) (double a1)))
-
-(ffi/defcfn rl-color-4ub "rlColor4ub"  [:int :int :int :int] :void)  ; u8 args
-(def ^:const RL-LINES 1)
-(def ^:const RL-TRIANGLES 4)
-
-(defn rl-color!
-  "rlColor4ub from a packed rgba Color, so rlgl immediate mode can use the same
-  Color values as the rest of the API."
-  [color]
-  (rl-color-4ub (bit-and color 0xff)
-                (bit-and (bit-shift-right color 8) 0xff)
-                (bit-and (bit-shift-right color 16) 0xff)
-                (bit-and (bit-shift-right color 24) 0xff)))
+;; Moved to net.b12n.raylib.rlgl. Re-exported here so every example that says
+;; rl/rl-begin or rl/rl-color! keeps working unchanged.
+(def rl-begin rlgl/rl-begin)
+(def rl-end rlgl/rl-end)
+(def rl-vertex-2f rlgl/rl-vertex-2f)
+(def rl-color-4ub rlgl/rl-color-4ub)
+(def RL-LINES rlgl/RL-LINES)
+(def RL-TRIANGLES rlgl/RL-TRIANGLES)
+(def rl-color! rlgl/rl-color!)
 
 ;; #region camera2d-by-value
 ;; --- Camera2D: a struct passed BY VALUE (the one non-Color by-value struct) ---
@@ -316,16 +302,14 @@
     (rl-end)))
 
 ;; --- input -------------------------------------------------------------------
-(ffi/defcfn ^:private key-down-raw     "IsKeyDown"          [:int] :int)
-(ffi/defcfn ^:private key-pressed-raw  "IsKeyPressed"       [:int] :int)
-(ffi/defcfn ^:private mouse-down-raw   "IsMouseButtonDown"  [:int] :int)
-(ffi/defcfn ^:private mouse-pressed-raw "IsMouseButtonPressed" [:int] :int)
-(ffi/defcfn get-mouse-x      "GetMouseX"         [] :int)
-(ffi/defcfn get-mouse-y      "GetMouseY"         [] :int)
-(ffi/defcfn get-mouse-wheel  "GetMouseWheelMove" [] :float)
-(ffi/defcfn get-random-value "GetRandomValue"    [:int :int] :int)
-(ffi/defcfn get-char-pressed "GetCharPressed"    [] :int)   ; unicode codepoint; 0 = queue empty
-(ffi/defcfn get-key-pressed  "GetKeyPressed"     [] :int)   ; keycode; 0 = queue empty
+;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
+;; rl/get-mouse-x or rl/get-random-value keeps working unchanged.
+(def get-mouse-x input/get-mouse-x)
+(def get-mouse-y input/get-mouse-y)
+(def get-mouse-wheel input/get-mouse-wheel)
+(def get-random-value input/get-random-value)
+(def get-char-pressed input/get-char-pressed)
+(def get-key-pressed input/get-key-pressed)
 
 ;; --- libc time (the one NON-raylib FFI) --------------------------------------
 ;; Moved to net.b12n.raylib.util. Re-exported here so every example that says
@@ -333,41 +317,40 @@
 (def local-time util/local-time)
 
 ;; --- screenshot hook plumbing (headless smoke tests) -------------------------
-(ffi/defcfn take-screenshot       "TakeScreenshot"          [:string] :void)
-(ffi/defcfn ^:private flush-batch "rlDrawRenderBatchActive" [] :void)
+;; take-screenshot moved to net.b12n.raylib.core in a later task; the four
+;; predicates moved to net.b12n.raylib.input and flush-batch to
+;; net.b12n.raylib.rlgl, both of which their banner never described.
+(ffi/defcfn take-screenshot "TakeScreenshot" [:string] :void)
+(def ^:private flush-batch rlgl/flush-batch)
 
-;; C-bool returns arrive in the low byte; mask so only 0/1 counts.
 (defn window-should-close?
   []
   (not (zero? (bit-and (should-close-raw) 0xff))))
 
-(defn key-down?
-  [k]
-  (not (zero? (bit-and (key-down-raw k) 0xff))))
-
-(defn key-pressed?
-  [k]
-  (not (zero? (bit-and (key-pressed-raw k) 0xff))))
-
-(defn mouse-down?
-  [b]
-  (not (zero? (bit-and (mouse-down-raw b) 0xff))))
-
-(defn mouse-pressed?
-  [b]
-  (not (zero? (bit-and (mouse-pressed-raw b) 0xff))))
+(def key-down? input/key-down?)
+(def key-pressed? input/key-pressed?)
+(def mouse-down? input/mouse-down?)
+(def mouse-pressed? input/mouse-pressed?)
 
 ;; --- constants (raylib KeyboardKey / MouseButton) ----------------------------
-(def ^:const KEY-NULL  0)   ; not a key: "nothing closes the window"
-(def ^:const KEY-SPACE 32)  (def ^:const KEY-R     82)
-(def ^:const KEY-W     87)  (def ^:const KEY-A     65)
-(def ^:const KEY-S     83)  (def ^:const KEY-D     68)
-(def ^:const KEY-RIGHT 262) (def ^:const KEY-LEFT  263)
-(def ^:const KEY-DOWN  264) (def ^:const KEY-UP    265)
-(def ^:const MOUSE-LEFT 0)
-(def ^:const MOUSE-RIGHT 1)
-(def ^:const MOUSE-MIDDLE 2)
-(def ^:const KEY-BACKSPACE 259) (def ^:const KEY-ENTER 257)
+;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
+;; rl/KEY-SPACE or rl/MOUSE-LEFT keeps working unchanged.
+(def KEY-NULL input/KEY-NULL)
+(def KEY-SPACE input/KEY-SPACE)
+(def KEY-R input/KEY-R)
+(def KEY-W input/KEY-W)
+(def KEY-A input/KEY-A)
+(def KEY-S input/KEY-S)
+(def KEY-D input/KEY-D)
+(def KEY-RIGHT input/KEY-RIGHT)
+(def KEY-LEFT input/KEY-LEFT)
+(def KEY-DOWN input/KEY-DOWN)
+(def KEY-UP input/KEY-UP)
+(def MOUSE-LEFT input/MOUSE-LEFT)
+(def MOUSE-RIGHT input/MOUSE-RIGHT)
+(def MOUSE-MIDDLE input/MOUSE-MIDDLE)
+(def KEY-BACKSPACE input/KEY-BACKSPACE)
+(def KEY-ENTER input/KEY-ENTER)
 
 ;; --- ergonomic keyword-argument drawing API ----------------------------------
 ;; raylib's C functions are positional; these wrappers take keyword arguments so
@@ -696,89 +679,102 @@
 (ffi/defcfn get-clipboard-text "GetClipboardText" [] :string)
 
 ;; --- gamepad -----------------------------------------------------------------
-(ffi/defcfn get-gamepad-axis-count    "GetGamepadAxisCount"    [:int] :int)
-(ffi/defcfn get-gamepad-axis-movement "GetGamepadAxisMovement" [:int :int] :float)
-(ffi/defcfn get-gamepad-name          "GetGamepadName"         [:int] :string)
-(ffi/defcfn ^:private gamepad-available-raw "IsGamepadAvailable"     [:int] :int)
-(ffi/defcfn ^:private gamepad-down-raw      "IsGamepadButtonDown"    [:int :int] :int)
-(ffi/defcfn ^:private gamepad-pressed-raw   "IsGamepadButtonPressed" [:int :int] :int)
-(ffi/defcfn ^:private gamepad-released-raw  "IsGamepadButtonReleased" [:int :int] :int)
-
-(defn gamepad-available?
-  [pad]
-  (not (zero? (bit-and (gamepad-available-raw pad) 0xff))))
-
-(defn gamepad-down?
-  [pad button]
-  (not (zero? (bit-and (gamepad-down-raw pad button) 0xff))))
-
-(defn gamepad-pressed?
-  [pad button]
-  (not (zero? (bit-and (gamepad-pressed-raw pad button) 0xff))))
-
-(defn gamepad-released?
-  [pad button]
-  (not (zero? (bit-and (gamepad-released-raw pad button) 0xff))))
-
-;; raylib GamepadButton / GamepadAxis
-(def ^:const PAD-UP     1)  (def ^:const PAD-RIGHT  2)
-(def ^:const PAD-DOWN   3)  (def ^:const PAD-LEFT   4)
-(def ^:const PAD-Y      5)  (def ^:const PAD-B      6)
-(def ^:const PAD-A      7)  (def ^:const PAD-X      8)
-(def ^:const PAD-L1     9)  (def ^:const PAD-L2    10)
-(def ^:const PAD-R1    11)  (def ^:const PAD-R2    12)
-(def ^:const PAD-SELECT 13) (def ^:const PAD-MENU  14)
-(def ^:const PAD-START 15)
-(def ^:const AXIS-LEFT-X 0) (def ^:const AXIS-LEFT-Y 1)
-(def ^:const AXIS-RIGHT-X 2) (def ^:const AXIS-RIGHT-Y 3)
+;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
+;; rl/gamepad-down? or rl/PAD-A keeps working unchanged.
+(def get-gamepad-axis-count input/get-gamepad-axis-count)
+(def get-gamepad-axis-movement input/get-gamepad-axis-movement)
+(def get-gamepad-name input/get-gamepad-name)
+(def gamepad-available? input/gamepad-available?)
+(def gamepad-down? input/gamepad-down?)
+(def gamepad-pressed? input/gamepad-pressed?)
+(def gamepad-released? input/gamepad-released?)
+(def PAD-UP input/PAD-UP)
+(def PAD-RIGHT input/PAD-RIGHT)
+(def PAD-DOWN input/PAD-DOWN)
+(def PAD-LEFT input/PAD-LEFT)
+(def PAD-Y input/PAD-Y)
+(def PAD-B input/PAD-B)
+(def PAD-A input/PAD-A)
+(def PAD-X input/PAD-X)
+(def PAD-L1 input/PAD-L1)
+(def PAD-L2 input/PAD-L2)
+(def PAD-R1 input/PAD-R1)
+(def PAD-R2 input/PAD-R2)
+(def PAD-SELECT input/PAD-SELECT)
+(def PAD-MENU input/PAD-MENU)
+(def PAD-START input/PAD-START)
+(def AXIS-LEFT-X input/AXIS-LEFT-X)
+(def AXIS-LEFT-Y input/AXIS-LEFT-Y)
+(def AXIS-RIGHT-X input/AXIS-RIGHT-X)
+(def AXIS-RIGHT-Y input/AXIS-RIGHT-Y)
 
 ;; --- touch / gestures --------------------------------------------------------
-;; On desktop raylib synthesises touch point 0 from the mouse, so these read as a
-;; one-finger stream with no touchscreen attached.
-(ffi/defcfn get-touch-point-count "GetTouchPointCount" [] :int)
-(ffi/defcfn get-touch-point-id    "GetTouchPointId"    [:int] :int)
-(ffi/defcfn get-touch-x           "GetTouchX"          [] :int)
-(ffi/defcfn get-touch-y           "GetTouchY"          [] :int)
-(ffi/defcfn get-gesture-detected  "GetGestureDetected" [] :int)
-(ffi/defcfn set-gestures-enabled  "SetGesturesEnabled" [:uint] :void)
-
-(def ^:const GESTURE-NONE 0)        (def ^:const GESTURE-TAP 1)
-(def ^:const GESTURE-DOUBLETAP 2)   (def ^:const GESTURE-HOLD 4)
-(def ^:const GESTURE-DRAG 8)        (def ^:const GESTURE-SWIPE-RIGHT 16)
-(def ^:const GESTURE-SWIPE-LEFT 32) (def ^:const GESTURE-SWIPE-UP 64)
-(def ^:const GESTURE-SWIPE-DOWN 128)
-(def ^:const GESTURE-PINCH-IN 256)  (def ^:const GESTURE-PINCH-OUT 512)
+;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
+;; rl/get-touch-x or rl/GESTURE-TAP keeps working unchanged.
+(def get-touch-point-count input/get-touch-point-count)
+(def get-touch-point-id input/get-touch-point-id)
+(def get-touch-x input/get-touch-x)
+(def get-touch-y input/get-touch-y)
+(def get-gesture-detected input/get-gesture-detected)
+(def set-gestures-enabled input/set-gestures-enabled)
+(def GESTURE-NONE input/GESTURE-NONE)
+(def GESTURE-TAP input/GESTURE-TAP)
+(def GESTURE-DOUBLETAP input/GESTURE-DOUBLETAP)
+(def GESTURE-HOLD input/GESTURE-HOLD)
+(def GESTURE-DRAG input/GESTURE-DRAG)
+(def GESTURE-SWIPE-RIGHT input/GESTURE-SWIPE-RIGHT)
+(def GESTURE-SWIPE-LEFT input/GESTURE-SWIPE-LEFT)
+(def GESTURE-SWIPE-UP input/GESTURE-SWIPE-UP)
+(def GESTURE-SWIPE-DOWN input/GESTURE-SWIPE-DOWN)
+(def GESTURE-PINCH-IN input/GESTURE-PINCH-IN)
+(def GESTURE-PINCH-OUT input/GESTURE-PINCH-OUT)
 
 ;; --- remaining input predicates ----------------------------------------------
-(ffi/defcfn set-mouse-cursor "SetMouseCursor" [:int] :void)
-(ffi/defcfn ^:private key-released-raw   "IsKeyReleased"          [:int] :int)
-(ffi/defcfn ^:private mouse-released-raw "IsMouseButtonReleased"  [:int] :int)
-
-(defn key-released?
-  [k]
-  (not (zero? (bit-and (key-released-raw k) 0xff))))
-
-(defn mouse-released?
-  [b]
-  (not (zero? (bit-and (mouse-released-raw b) 0xff))))
+;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
+;; rl/set-mouse-cursor or rl/key-released? keeps working unchanged.
+(def set-mouse-cursor input/set-mouse-cursor)
+(def key-released? input/key-released?)
+(def mouse-released? input/mouse-released?)
 
 ;; --- more KeyboardKey constants ----------------------------------------------
-(def ^:const KEY-ESCAPE 256) (def ^:const KEY-TAB   258)
-(def ^:const KEY-DELETE 261) (def ^:const KEY-HOME  268)
-(def ^:const KEY-END    269) (def ^:const KEY-F1    290)
-(def ^:const KEY-F2     291) (def ^:const KEY-F3    292)
-(def ^:const KEY-LEFT-SHIFT 340) (def ^:const KEY-LEFT-CONTROL 341)
-(def ^:const KEY-LEFT-SUPER 343)
-(def ^:const KEY-ZERO 48) (def ^:const KEY-ONE   49) (def ^:const KEY-TWO   50)
-(def ^:const KEY-THREE 51) (def ^:const KEY-FOUR 52) (def ^:const KEY-FIVE  53)
-(def ^:const KEY-SIX  54) (def ^:const KEY-SEVEN 55) (def ^:const KEY-EIGHT 56)
-(def ^:const KEY-NINE 57)
-(def ^:const KEY-B 66) (def ^:const KEY-C 67) (def ^:const KEY-E 69)
-(def ^:const KEY-F 70)
-(def ^:const KEY-G 71) (def ^:const KEY-H 72) (def ^:const KEY-M 77)
-(def ^:const KEY-N 78) (def ^:const KEY-P 80) (def ^:const KEY-Q 81)
-(def ^:const KEY-T 84) (def ^:const KEY-V 86) (def ^:const KEY-X 88)
-(def ^:const KEY-Y 89) (def ^:const KEY-Z 90)
+;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
+;; rl/KEY-ESCAPE or rl/KEY-Z keeps working unchanged.
+(def KEY-ESCAPE input/KEY-ESCAPE)
+(def KEY-TAB input/KEY-TAB)
+(def KEY-DELETE input/KEY-DELETE)
+(def KEY-HOME input/KEY-HOME)
+(def KEY-END input/KEY-END)
+(def KEY-F1 input/KEY-F1)
+(def KEY-F2 input/KEY-F2)
+(def KEY-F3 input/KEY-F3)
+(def KEY-LEFT-SHIFT input/KEY-LEFT-SHIFT)
+(def KEY-LEFT-CONTROL input/KEY-LEFT-CONTROL)
+(def KEY-LEFT-SUPER input/KEY-LEFT-SUPER)
+(def KEY-ZERO input/KEY-ZERO)
+(def KEY-ONE input/KEY-ONE)
+(def KEY-TWO input/KEY-TWO)
+(def KEY-THREE input/KEY-THREE)
+(def KEY-FOUR input/KEY-FOUR)
+(def KEY-FIVE input/KEY-FIVE)
+(def KEY-SIX input/KEY-SIX)
+(def KEY-SEVEN input/KEY-SEVEN)
+(def KEY-EIGHT input/KEY-EIGHT)
+(def KEY-NINE input/KEY-NINE)
+(def KEY-B input/KEY-B)
+(def KEY-C input/KEY-C)
+(def KEY-E input/KEY-E)
+(def KEY-F input/KEY-F)
+(def KEY-G input/KEY-G)
+(def KEY-H input/KEY-H)
+(def KEY-M input/KEY-M)
+(def KEY-N input/KEY-N)
+(def KEY-P input/KEY-P)
+(def KEY-Q input/KEY-Q)
+(def KEY-T input/KEY-T)
+(def KEY-V input/KEY-V)
+(def KEY-X input/KEY-X)
+(def KEY-Y input/KEY-Y)
+(def KEY-Z input/KEY-Z)
 
 ;; --- extra scalar drawing ----------------------------------------------------
 ;; raylib 6.0 takes the centre as a by-value Vector2; 5.5 took two ints. The C
@@ -1314,25 +1310,17 @@
   (jolt.host/call-on-main-thread-async f))
 
 ;; --- backface culling --------------------------------------------------------
-;; raylib culls back faces by default, which is why the fans and quads above are
-;; wound to raylib's front-facing order (see the note in sector!). An example
-;; that decides visibility ITSELF needs the cull switched off, because a
-;; screen-space test is not a winding rule and the two disagree: helitorus keeps
-;; a triangle when the 2D cross product of its edges is positive, which is
-;; exactly the orientation raylib treats as back-facing, so with culling on the
-;; faces it keeps are the faces raylib drops and the surface renders inside-out.
-;; Disable it, do the test, and both windings reach the rasterizer.
-(ffi/defcfn rl-disable-backface-culling "rlDisableBackfaceCulling" [] :void)
-(ffi/defcfn rl-enable-backface-culling  "rlEnableBackfaceCulling"  [] :void)
+;; Moved to net.b12n.raylib.rlgl. Re-exported here so every example that says
+;; rl/rl-disable-backface-culling keeps working unchanged.
+(def rl-disable-backface-culling rlgl/rl-disable-backface-culling)
+(def rl-enable-backface-culling rlgl/rl-enable-backface-culling)
 
 ;; --- mouse position / cursor -------------------------------------------------
-;; SetMousePosition warps the pointer; HideCursor and ShowCursor toggle whether
-;; it is drawn. Together they are mouse-look: read the offset from the window
-;; centre, turn by it, warp back to the centre, and the pointer can turn forever
-;; without leaving the window or being visible while it does (doom).
-(ffi/defcfn set-mouse-position "SetMousePosition" [:int :int] :void)
-(ffi/defcfn hide-cursor        "HideCursor"       [] :void)
-(ffi/defcfn show-cursor        "ShowCursor"       [] :void)
+;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
+;; rl/set-mouse-position or rl/hide-cursor keeps working unchanged.
+(def set-mouse-position input/set-mouse-position)
+(def hide-cursor input/hide-cursor)
+(def show-cursor input/show-cursor)
 
 ;; --- audio (raudio) -----------------------------------------------------
 ;; AudioStream is {rAudioBuffer* buffer; rAudioProcessor* processor; uint
@@ -1494,22 +1482,44 @@
         (ffi/free out)))))
 
 ;; --- more keyboard constants (keyboard-testbed) --------------------------
-(def ^:const KEY-I 73) (def ^:const KEY-J 74) (def ^:const KEY-K 75)
-(def ^:const KEY-L 76) (def ^:const KEY-O 79) (def ^:const KEY-U 85)
-(def ^:const KEY-APOSTROPHE 39) (def ^:const KEY-COMMA 44)
-(def ^:const KEY-MINUS 45) (def ^:const KEY-PERIOD 46)
-(def ^:const KEY-SLASH 47) (def ^:const KEY-SEMICOLON 59)
-(def ^:const KEY-EQUAL 61) (def ^:const KEY-LEFT-BRACKET 91)
-(def ^:const KEY-BACKSLASH 92) (def ^:const KEY-RIGHT-BRACKET 93)
-(def ^:const KEY-GRAVE 96) (def ^:const KEY-INSERT 260)
-(def ^:const KEY-PAGE-UP 266) (def ^:const KEY-PAGE-DOWN 267)
-(def ^:const KEY-CAPS-LOCK 280) (def ^:const KEY-PRINT-SCREEN 283)
-(def ^:const KEY-PAUSE 284) (def ^:const KEY-F4 293)
-(def ^:const KEY-F5 294) (def ^:const KEY-F6 295) (def ^:const KEY-F7 296)
-(def ^:const KEY-F8 297) (def ^:const KEY-F9 298) (def ^:const KEY-F10 299)
-(def ^:const KEY-F11 300) (def ^:const KEY-F12 301)
-(def ^:const KEY-LEFT-ALT 342) (def ^:const KEY-RIGHT-SHIFT 344)
-(def ^:const KEY-RIGHT-CONTROL 345) (def ^:const KEY-RIGHT-ALT 346)
+;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
+;; rl/KEY-I or rl/KEY-RIGHT-ALT keeps working unchanged.
+(def KEY-I input/KEY-I)
+(def KEY-J input/KEY-J)
+(def KEY-K input/KEY-K)
+(def KEY-L input/KEY-L)
+(def KEY-O input/KEY-O)
+(def KEY-U input/KEY-U)
+(def KEY-APOSTROPHE input/KEY-APOSTROPHE)
+(def KEY-COMMA input/KEY-COMMA)
+(def KEY-MINUS input/KEY-MINUS)
+(def KEY-PERIOD input/KEY-PERIOD)
+(def KEY-SLASH input/KEY-SLASH)
+(def KEY-SEMICOLON input/KEY-SEMICOLON)
+(def KEY-EQUAL input/KEY-EQUAL)
+(def KEY-LEFT-BRACKET input/KEY-LEFT-BRACKET)
+(def KEY-BACKSLASH input/KEY-BACKSLASH)
+(def KEY-RIGHT-BRACKET input/KEY-RIGHT-BRACKET)
+(def KEY-GRAVE input/KEY-GRAVE)
+(def KEY-INSERT input/KEY-INSERT)
+(def KEY-PAGE-UP input/KEY-PAGE-UP)
+(def KEY-PAGE-DOWN input/KEY-PAGE-DOWN)
+(def KEY-CAPS-LOCK input/KEY-CAPS-LOCK)
+(def KEY-PRINT-SCREEN input/KEY-PRINT-SCREEN)
+(def KEY-PAUSE input/KEY-PAUSE)
+(def KEY-F4 input/KEY-F4)
+(def KEY-F5 input/KEY-F5)
+(def KEY-F6 input/KEY-F6)
+(def KEY-F7 input/KEY-F7)
+(def KEY-F8 input/KEY-F8)
+(def KEY-F9 input/KEY-F9)
+(def KEY-F10 input/KEY-F10)
+(def KEY-F11 input/KEY-F11)
+(def KEY-F12 input/KEY-F12)
+(def KEY-LEFT-ALT input/KEY-LEFT-ALT)
+(def KEY-RIGHT-SHIFT input/KEY-RIGHT-SHIFT)
+(def KEY-RIGHT-CONTROL input/KEY-RIGHT-CONTROL)
+(def KEY-RIGHT-ALT input/KEY-RIGHT-ALT)
 
 ;; --- geometric primitives, genuinely by value (geometric-shapes) --------
 ;; raylib's real Draw{Cube,Sphere,Cylinder,Capsule}* calls, now that
