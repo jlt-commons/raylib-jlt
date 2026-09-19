@@ -473,6 +473,7 @@
   sprite-stacking {:doc "▶ 40 generated slices faking a 3D car" :task (run-example "sprite-stacking")}
   to-image {:doc "▶ one image, VRAM to RAM to VRAM and back up" :task (run-example "to-image")}
   raw-data {:doc "▶ textures built from a hand-filled byte buffer" :task (run-example "raw-data")}
+  sprite-animation {:doc "▶ six generated poses, one source rectangle" :task (run-example "sprite-animation")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
