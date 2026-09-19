@@ -15,7 +15,8 @@
   (:require
    [jolt.ffi :as ffi]
    [jolt.host]
-   [net.b12n.raylib.color :as color]))
+   [net.b12n.raylib.color :as color]
+   [net.b12n.raylib.native :as native]))
 
 ;; --- Color -------------------------------------------------------------------
 ;; Moved to net.b12n.raylib.color. Re-exported here so every example that says
@@ -796,7 +797,8 @@
 ;; two ints where a struct is expected and draws somewhere else entirely.
 (ffi/defcfn ^:private draw-circle-gradient-raw "DrawCircleGradient"
   [[:by-value [:struct [[:x :float] [:y :float]]]] :float :uint :uint] :void)
-(def ^:private vector2-layout (ffi/layout [:struct [[:x :float] [:y :float]]]))
+;; moved to net.b12n.raylib.native
+(def ^:private vector2-layout native/vector2-layout)
 (ffi/defcfn draw-rectangle-grad-h "DrawRectangleGradientH" [:int :int :int :int :uint :uint] :void)
 (ffi/defcfn begin-blend-mode      "BeginBlendMode"         [:int] :void)
 (ffi/defcfn end-blend-mode        "EndBlendMode"           [] :void)
@@ -1234,18 +1236,8 @@
 ;; or ints in native memory for the length of the call. An undeclared uniform
 ;; gives -1, which the nat-int? guards skip: an example whose shader drops an
 ;; unused uniform keeps working rather than erroring.
-(defn- staged
-  [write-type values f]
-  (let [p (ffi/alloc (* 4 (count values)))]
-    (try
-      (dotimes [i (count values)]
-        (ffi/write p write-type
-                   (if (= write-type :float)
-                     (double (nth values i))
-                     (int (nth values i)))
-                   (* 4 i)))
-      (f p)
-      (finally (ffi/free p)))))
+;; moved to net.b12n.raylib.native
+(def ^:private staged native/staged)
 
 (defn set-uniform-float!
   [sh loc v]
@@ -1447,8 +1439,8 @@
 ;; [:by-value [:struct ...]] passing for BOTH the Vector3 and the Camera3D --
 ;; correct on either ABI, and the pattern the rest of the by-value bindings
 ;; above already follow.
-(def ^:private vector3-layout
-  (ffi/layout [:struct [[:x :float] [:y :float] [:z :float]]]))
+;; moved to net.b12n.raylib.native
+(def ^:private vector3-layout native/vector3-layout)
 
 (def ^:private camera3d-layout
   (ffi/layout [:struct [[:position [:struct [[:x :float] [:y :float] [:z :float]]]]
@@ -1669,13 +1661,8 @@
          (finally (ffi/free p1) (ffi/free p2)))))
 
 ;; --- ground plane, genuinely by value (camera-3d-split-screen) ----------
-(defn- vec2->ptr!
-  "Allocate a vector2-layout buffer and write [x y] into it. Caller frees."
-  [[x y]]
-  (let [p (ffi/alloc (ffi/layout-size vector2-layout))]
-    (ffi/write-field p vector2-layout :x (double x))
-    (ffi/write-field p vector2-layout :y (double y))
-    p))
+;; moved to net.b12n.raylib.native
+(def ^:private vec2->ptr! native/vec2->ptr!)
 
 (ffi/defcfn ^:private draw-plane-raw "DrawPlane"
   [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]

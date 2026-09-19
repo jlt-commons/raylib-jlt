@@ -6,7 +6,8 @@
   verified with no display attached. It does not exercise rendering; that needs
   a real window, and the example suite's own screenshot smoke does it."
   (:require
-   [net.b12n.raylib.color]))
+   [net.b12n.raylib.color]
+   [net.b12n.raylib.native]))
 
 (defn -main [& _]
   (println "library namespaces loaded OK"))
