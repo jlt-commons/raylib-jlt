@@ -10,9 +10,12 @@
   (:require
    [jolt.ffi :as ffi]))
 
-(def vector2-layout (ffi/layout [:struct [[:x :float] [:y :float]]]))
+(def vector2-layout
+  "The `ffi/layout` value for raylib's Vector2: {float x, y}."
+  (ffi/layout [:struct [[:x :float] [:y :float]]]))
 
 (def vector3-layout
+  "The `ffi/layout` value for raylib's Vector3: {float x, y, z}."
   (ffi/layout [:struct [[:x :float] [:y :float] [:z :float]]]))
 
 (defn vec2->ptr!
