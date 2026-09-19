@@ -13,6 +13,8 @@
    [net.b12n.raylib.log]
    [net.b12n.raylib.native]
    [net.b12n.raylib.rlgl]
+   [net.b12n.raylib.shapes]
+   [net.b12n.raylib.text]
    [net.b12n.raylib.util]))
 
 (defn -main [& _]

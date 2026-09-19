@@ -22,6 +22,8 @@
    [net.b12n.raylib.log :as log]
    [net.b12n.raylib.native :as native]
    [net.b12n.raylib.rlgl :as rlgl]
+   [net.b12n.raylib.shapes :as shapes]
+   [net.b12n.raylib.text :as text]
    [net.b12n.raylib.util :as util]))
 
 ;; --- Color -------------------------------------------------------------------
@@ -63,20 +65,23 @@
 (def begin-scissor-mode core/begin-scissor-mode)
 (def end-scissor-mode core/end-scissor-mode)
 
-;; --- 2D shapes + text (scalar variants; Color is the only by-value struct) ---
-(ffi/defcfn draw-text            "DrawText"            [:string :int :int :int :uint] :void)
-(ffi/defcfn draw-fps             "DrawFPS"             [:int :int] :void)
-(ffi/defcfn measure-text         "MeasureText"         [:string :int] :int)
-(ffi/defcfn draw-pixel           "DrawPixel"           [:int :int :uint] :void)
-(ffi/defcfn draw-line            "DrawLine"            [:int :int :int :int :uint] :void)
-(ffi/defcfn draw-rectangle       "DrawRectangle"       [:int :int :int :int :uint] :void)
-(ffi/defcfn draw-rectangle-lines "DrawRectangleLines"  [:int :int :int :int :uint] :void)
-(ffi/defcfn draw-rectangle-grad-v "DrawRectangleGradientV" [:int :int :int :int :uint :uint] :void)
+;; --- 2D shapes + text ----------------------------------------------------------
+;; text moved to net.b12n.raylib.text, shapes to net.b12n.raylib.shapes.
+;; Re-exported here so every example that says rl/draw-text or rl/draw-circle
+;; keeps working unchanged.
+(def draw-text text/draw-text)
+(def draw-fps text/draw-fps)
+(def measure-text text/measure-text)
+(def draw-pixel shapes/draw-pixel)
+(def draw-line shapes/draw-line)
+(def draw-rectangle shapes/draw-rectangle)
+(def draw-rectangle-lines shapes/draw-rectangle-lines)
+(def draw-rectangle-grad-v shapes/draw-rectangle-grad-v)
 ;; #region draw-circle-binding
-(ffi/defcfn draw-circle          "DrawCircle"          [:int :int :float :uint] :void)
+(def draw-circle shapes/draw-circle)
 ;; #endregion
-(ffi/defcfn draw-circle-lines    "DrawCircleLines"     [:int :int :float :uint] :void)
-(ffi/defcfn draw-ellipse         "DrawEllipse"         [:int :int :float :float :uint] :void)
+(def draw-circle-lines shapes/draw-circle-lines)
+(def draw-ellipse shapes/draw-ellipse)
 
 ;; --- rlgl immediate mode (all scalar), for triangles / points ---------------
 ;; Moved to net.b12n.raylib.rlgl. Re-exported here so every example that says
@@ -730,99 +735,29 @@
 (def KEY-Y input/KEY-Y)
 (def KEY-Z input/KEY-Z)
 
-;; --- extra scalar drawing ----------------------------------------------------
-;; raylib 6.0 takes the centre as a by-value Vector2; 5.5 took two ints. The C
-;; symbol name did not change, so a symbol-existence check (nm) says nothing and
-;; only a header diff catches it - the 5.5 binding against a 6.0 library passes
-;; two ints where a struct is expected and draws somewhere else entirely.
-(ffi/defcfn ^:private draw-circle-gradient-raw "DrawCircleGradient"
-  [[:by-value [:struct [[:x :float] [:y :float]]]] :float :uint :uint] :void)
+;; --- extra scalar drawing ------------------------------------------------------
+;; Moved to net.b12n.raylib.shapes. Re-exported here so every example that says
+;; rl/circle-gradient! or rl/rect-pro! keeps working unchanged.
+;; vector2-layout stays a local alias: world <-> screen and splines below still
+;; read it bare, and neither has been extracted yet.
 ;; moved to net.b12n.raylib.native
 (def ^:private vector2-layout native/vector2-layout)
-(ffi/defcfn draw-rectangle-grad-h "DrawRectangleGradientH" [:int :int :int :int :uint :uint] :void)
-(ffi/defcfn begin-blend-mode      "BeginBlendMode"         [:int] :void)
-(ffi/defcfn end-blend-mode        "EndBlendMode"           [] :void)
-
-(def ^:const BLEND-ALPHA 0)      (def ^:const BLEND-ADDITIVE 1)
-(def ^:const BLEND-MULTIPLIED 2) (def ^:const BLEND-ADD-COLORS 3)
-(def ^:const BLEND-SUBTRACT-COLORS 4)
-(def ^:const BLEND-CUSTOM 6)     ; 5 is ALPHA_PREMULTIPLY, which nothing here uses
-
-;; rlSetBlendFactors hands its three arguments straight to glBlendFunc and
-;; glBlendEquation, so they are raw GL enums rather than raylib ones. rlgl only
-;; reads them while BLEND-CUSTOM is the current mode, and it re-applies on a mode
-;; change or a factor edit, so the order is: set the factors, then begin the mode.
-(ffi/defcfn set-blend-factors "rlSetBlendFactors" [:int :int :int] :void)
-(def ^:const GL-SRC-ALPHA 0x0302)
-(def ^:const GL-MIN 0x8007)      (def ^:const GL-MAX 0x8008)
-
-(defn circle-gradient!
-  "DrawCircleGradient. :x :y :radius :inner :outer."
-  [& {:keys [x y radius inner outer]
-      :or {x 0
-           y 0
-           radius 10
-           inner WHITE
-           outer BLACK}}]
-  ;; The kwarg surface stays scalar - the Vector2 is staged here so callers never
-  ;; see the struct.
-  (ffi/with-layout [c vector2-layout]
-    (ffi/write-field c vector2-layout :x (double x))
-    (ffi/write-field c vector2-layout :y (double y))
-    (draw-circle-gradient-raw c (double radius) inner outer)))
-
-(defn rect-pro!
-  "A rotated rectangle as an rlgl quad, the immediate-mode stand-in for
-  DrawRectanglePro. That call takes a Rectangle AND a Vector2 origin, both by
-  value, so neither the packed-uint trick nor the pointer trick reaches it.
-
-  :x :y place the ORIGIN, not the top-left corner, matching raylib: the rectangle
-  is offset by :origin-x :origin-y from that point and then rotated about it. So
-  a hand pinned at its base uses an origin of [0, half-thickness], and a shape
-  spinning about its middle uses half its width and height.
-
-  :rotation is in degrees, clockwise, because y grows downward. Emitted as two
-  triangles rather than a quad, since RL-QUADS is not bound here."
-  [& {:keys [x y width height origin-x origin-y rotation color]
-      :or {x 0
-           y 0
-           width 10
-           height 10
-           origin-x 0
-           origin-y 0
-           rotation 0
-           color BLACK}}]
-  (let [t   (Math/toRadians (double rotation))
-        cs  (Math/cos t)
-        sn  (Math/sin t)
-        ;; Corners relative to the origin, before rotation.
-        pts (for [[dx dy] [[(- origin-x) (- origin-y)]
-                           [(- width origin-x) (- origin-y)]
-                           [(- width origin-x) (- height origin-y)]
-                           [(- origin-x) (- height origin-y)]]]
-              [(+ x (- (* dx cs) (* dy sn)))
-               (+ y (* dx sn) (* dy cs))])
-        [a b c d] (vec pts)]
-    (rl-begin RL-TRIANGLES)
-    (rl-color! color)
-    ;; a-d-c then a-c-b, not a-b-c then a-c-d. raylib culls back faces, and the
-    ;; clockwise order reads as a back face in screen coordinates where y grows
-    ;; downward, so the quad is discarded and draws nothing at all. Same trap
-    ;; rlgl-triangle documents, and the winding triangle-strip already uses.
-    (doseq [[px py] [a d c a c b]]
-      (rl-vertex-2f px py))
-    (rl-end)))
-
-(defn rect-gradient-h!
-  "DrawRectangleGradientH (left->right). :x :y :width :height :left :right."
-  [& {:keys [x y width height left right]
-      :or {x 0
-           y 0
-           width 10
-           height 10
-           left WHITE
-           right BLACK}}]
-  (draw-rectangle-grad-h x y width height left right))
+(def draw-rectangle-grad-h shapes/draw-rectangle-grad-h)
+(def begin-blend-mode shapes/begin-blend-mode)
+(def end-blend-mode shapes/end-blend-mode)
+(def BLEND-ALPHA shapes/BLEND-ALPHA)
+(def BLEND-ADDITIVE shapes/BLEND-ADDITIVE)
+(def BLEND-MULTIPLIED shapes/BLEND-MULTIPLIED)
+(def BLEND-ADD-COLORS shapes/BLEND-ADD-COLORS)
+(def BLEND-SUBTRACT-COLORS shapes/BLEND-SUBTRACT-COLORS)
+(def BLEND-CUSTOM shapes/BLEND-CUSTOM)
+(def set-blend-factors shapes/set-blend-factors)
+(def GL-SRC-ALPHA shapes/GL-SRC-ALPHA)
+(def GL-MIN shapes/GL-MIN)
+(def GL-MAX shapes/GL-MAX)
+(def circle-gradient! shapes/circle-gradient!)
+(def rect-pro! shapes/rect-pro!)
+(def rect-gradient-h! shapes/rect-gradient-h!)
 
 ;; --- rlgl textures -----------------------------------------------------------
 ;; raylib's own texture API is unreachable from jolt: LoadTexture returns a
