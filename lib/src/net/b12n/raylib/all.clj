@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 457 public vars total across 19 modules, zero name collisions,
+;; 459 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
 ;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 457 concrete-module surface, re-exported
+  "Every public var of this library's 459 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -259,7 +259,7 @@
 (def get-working-directory files/get-working-directory)
 (alter-meta! #'get-working-directory merge (select-keys (meta #'files/get-working-directory) [:doc :arglists :const]))
 
-;; --- images (36) --------------------------------------------------------
+;; --- images (38) --------------------------------------------------------
 (def image->texture images/image->texture)
 (alter-meta! #'image->texture merge (select-keys (meta #'images/image->texture) [:doc :arglists :const]))
 (def image-alpha-mask! images/image-alpha-mask!)
@@ -316,6 +316,8 @@
 (alter-meta! #'image-gradient-radial merge (select-keys (meta #'images/image-gradient-radial) [:doc :arglists :const]))
 (def image-gradient-square images/image-gradient-square)
 (alter-meta! #'image-gradient-square merge (select-keys (meta #'images/image-gradient-square) [:doc :arglists :const]))
+(def image-height images/image-height)
+(alter-meta! #'image-height merge (select-keys (meta #'images/image-height) [:doc :arglists :const]))
 (def image-perlin-noise images/image-perlin-noise)
 (alter-meta! #'image-perlin-noise merge (select-keys (meta #'images/image-perlin-noise) [:doc :arglists :const]))
 (def image-resize! images/image-resize!)
@@ -330,6 +332,8 @@
 (alter-meta! #'image-text merge (select-keys (meta #'images/image-text) [:doc :arglists :const]))
 (def image-white-noise images/image-white-noise)
 (alter-meta! #'image-white-noise merge (select-keys (meta #'images/image-white-noise) [:doc :arglists :const]))
+(def image-width images/image-width)
+(alter-meta! #'image-width merge (select-keys (meta #'images/image-width) [:doc :arglists :const]))
 (def unload-image! images/unload-image!)
 (alter-meta! #'unload-image! merge (select-keys (meta #'images/unload-image!) [:doc :arglists :const]))
 

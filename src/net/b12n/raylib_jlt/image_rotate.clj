@@ -18,17 +18,10 @@
   the buffer to fit the rotated bounds, so that panel comes back wider and
   taller than it went in.
 
-  net.b12n.raylib doesn't expose an accessor for an Image's own
-  width/height fields yet (nothing before this needed one), so each
-  panel's dimensions are read straight off the rotated struct with a
-  private jolt.ffi/read-field, the same technique
-  net.b12n.raylib.{native,rays,shaders} already use internally against
-  their own structs, rather than computed from the angle or assumed
-  unchanged. This calls no new C function; it only reads memory a public
-  net.b12n.raylib call already wrote. What ends up on screen is measured,
-  not predicted."
+  Each panel's dimensions are read back with net.b12n.raylib.images'
+  image-width/image-height rather than computed from the angle or assumed
+  unchanged. What ends up on screen is measured, not predicted."
   (:require
-   [jolt.ffi :as ffi]
    [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.all :as rl]))
 
@@ -43,24 +36,6 @@
 (def ^:const X0 (quot (- W ROW-WIDTH) 2))
 (def ^:const ARB-ANGLE 40)
 (def ^:const MARKER-SIZE 18)
-
-;; Image is {void *data; int width, height, mipmaps, format;}, 24 bytes --
-;; the shape net.b12n.raylib.images documents next to its own private
-;; copy of this same layout. No accessor for it is exported yet, so this
-;; mirrors the shape locally to read the two int fields ImageRotate
-;; mutates. Not a new FFI binding: no C function is declared here, only
-;; jolt.ffi's own struct-field reader against a pointer a public
-;; net.b12n.raylib call already handed back.
-(def ^:private image-dims-layout
-  (ffi/layout [:struct [[:data :pointer] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]))
-
-(defn- image-dims
-  "[width height], read straight off `img`'s struct fields rather than
-  assumed."
-  [img]
-  [(ffi/read-field img image-dims-layout :width)
-   (ffi/read-field img image-dims-layout :height)])
 
 (def ^:private panel-specs
   ;; label, rotate! (a fn of one Image pointer mutating it in place, or nil
@@ -81,7 +56,8 @@
   [base [label rotate!]]
   (let [img (rl/image-copy! base)
         _ (when rotate! (rotate! img))
-        [w h] (image-dims img)
+        w (rl/image-width img)
+        h (rl/image-height img)
         tex (rl/image->texture img)]
     (rl/unload-image! img)
     {:label label

@@ -42,6 +42,20 @@
 ;; fields back.
 (assert (= 24 (ffi/layout-size image-layout)) "Image is a pointer and four ints")
 
+(defn image-width
+  "The Image struct's own :width field, read straight off `img`. Needed after
+  any in-place operation (ImageRotate at a non-multiple-of-90 angle,
+  ImageResize) that can change it, since the caller's original arguments no
+  longer describe the buffer."
+  [img]
+  (ffi/read-field img image-layout :width))
+
+(defn image-height
+  "The Image struct's own :height field, read straight off `img`. See
+  image-width."
+  [img]
+  (ffi/read-field img image-layout :height))
+
 (ffi/defcfn ^:private gen-image-color-raw "GenImageColor" [:int :int :uint]
   [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
                        [:mipmaps :int] [:format :int]]]])
