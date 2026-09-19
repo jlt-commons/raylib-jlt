@@ -30,7 +30,5 @@
    :task (shell "clj-kondo" "--lint" "src")}
 
   test
-  {:doc "Unit suite (moves here in P5.T3; no-op until then)"
-   :task (if (fs/exists? "test")
-           (shell jolt-cmd "-M:test")
-           (println "no test/ directory yet; the suite moves here in P5.T3"))}}}
+  {:doc "Unit suite: ffi/write argument order"
+   :task (shell jolt-cmd "-M:test")}}}

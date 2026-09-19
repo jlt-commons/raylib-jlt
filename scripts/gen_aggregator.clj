@@ -12,12 +12,12 @@
 ;;
 ;; Needs jolt + libraylib on this machine, same as `bb check:lib`: the list of
 ;; public vars per module comes from `ns-publics` against a live jolt process,
-;; not from parsing the module source as text. P0.T1's probe proved this
-;; mechanism against this exact jolt version -- `def` re-export plus
-;; `alter-meta!` to copy `:doc`/`:arglists` onto the alias -- and found
-;; `ns-publics` available, returning exactly the expected public symbols with
-;; no private leakage. Asking jolt directly sidesteps every trap a source-text
-;; parser would hit here: `def`/`defn`/`defn-`/`ffi/defcfn` are all different
+;; not from parsing the module source as text. Verified against jolt v0.8.9:
+;; `def` re-export plus `alter-meta!` to copy `:doc`/`:arglists` onto the
+;; alias works, and `ns-publics` is available there, returning exactly the
+;; expected public symbols with no private leakage. Asking jolt directly
+;; sidesteps every trap a source-text parser would hit here:
+;; `def`/`defn`/`defn-`/`ffi/defcfn` are all different
 ;; shapes, several modules pack more than one `def` on a line, and comment
 ;; banners are not code.
 ;;
@@ -66,7 +66,7 @@
   resolves, same as `bb check:lib`) and ask it, per module, for every public
   symbol sorted, each tagged with whether it carries ^:const. Returns
   {basename [[sym const?] ...]}. This is ns-publics driving the generator,
-  the mechanism P0.T1's probe proved works."
+  verified against jolt v0.8.9."
   [basenames]
   (let [nss (mapv ns-sym basenames)
         code (str "(doseq [m '" (pr-str nss) "] (require m))"
@@ -165,7 +165,7 @@
          ";;\n"
          ";; " total " public vars total across " (count basenames) " modules, zero name collisions,\n"
          ";; computed by asking a live jolt process for each module's ns-publics -- the\n"
-         ";; same mechanism P0.T1's probe proved for def re-export + alter-meta! metadata\n"
+         ";; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata\n"
          ";; copy, not a parse of the module source text.\n"
          (ns-form basenames total const-count families)
          (str/join "" (map (fn [b] (module-section b (get by-module b))) basenames)))))

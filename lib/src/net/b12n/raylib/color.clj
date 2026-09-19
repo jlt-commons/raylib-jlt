@@ -5,7 +5,14 @@
   Every drawing binding in this library takes a colour as a `:uint` rather than
   a 4-byte struct, because that is what fits in one register and what jolt could
   express long before it could pass structs by value. `rgba` is the only way
-  those integers are built.")
+  those integers are built.
+
+  `get-color` is the one Color-typed function in this module: raylib returns
+  `Color` by value there too, and it is bit-identical to this module's packed
+  `:uint`, so the FFI return type is `:uint`, not a `[:by-value [:struct ...]]`
+  layout."
+  (:require
+   [jolt.ffi :as ffi]))
 
 ;; #region rgba
 (defn rgba
@@ -15,6 +22,8 @@
   (bit-or (int r) (bit-shift-left (int g) 8)
           (bit-shift-left (int b) 16) (bit-shift-left (int a) 24)))
 ;; #endregion
+
+(ffi/defcfn get-color "GetColor" [:uint] :uint) ; hex -> packed Color uint32
 
 ;; raylib's named color palette (values from src/raylib.h).
 (def LIGHTGRAY (rgba 200 200 200 255))   (def GRAY       (rgba 130 130 130 255))

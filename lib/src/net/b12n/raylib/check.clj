@@ -1,11 +1,19 @@
 (ns net.b12n.raylib.check
   "Headless load-check for the library (`jolt -M:check` from lib/).
 
-  Requires every library namespace, which compiles each one (macro expansion,
-  var resolution, arity checks) WITHOUT opening a window, so the bindings can be
-  verified with no display attached. It does not exercise rendering; that needs
-  a real window, and the example suite's own screenshot smoke does it."
+  Requires every library namespace including net.b12n.raylib.all, so this is
+  what compiles the generated aggregator too, WITHOUT opening a window, so
+  the bindings can be verified with no display attached. Requiring a
+  namespace catches an unresolved symbol within it, and an unknown alias or
+  an unqualified unknown symbol at a call site -- but it does NOT catch a
+  wrong arity, or a var that does not exist reached through a real module
+  alias: planting either of those and running this gate still exits 0. `bb
+  lint:strict` (clj-kondo, seeing through defcfn via the project's hook)
+  checks the call graph statically and catches both. This gate also does not
+  exercise rendering; that needs a real window, and the example suite's own
+  screenshot smoke does it."
   (:require
+   [net.b12n.raylib.all]
    [net.b12n.raylib.audio]
    [net.b12n.raylib.camera]
    [net.b12n.raylib.color]

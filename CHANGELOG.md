@@ -29,10 +29,14 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
   `net.b12n.raylib.all` from the 19 modules' public vars, and
   `bb check:aggregator` fails the build if the checked-in file no longer
   matches what the generator would produce.
-- **No example behaves differently.** The split is a pure extraction: every
-  binding, docstring and comment banner crossed into its new module
-  unchanged apart from indentation and qualifying a symbol that moved
-  elsewhere, so `bb check` and `bb test` stay green throughout.
+- **No example behaves differently.** The split is a pure extraction for the
+  bindings themselves: every FFI signature and constant crossed into its new
+  module unchanged apart from indentation and qualifying a symbol that moved
+  elsewhere, so `bb check` and `bb test` stay green throughout. Comments and
+  docstrings are not held to that same word-for-word bar: several were
+  rewritten where the move left them pointing at something that no longer
+  exists, such as a comment citing "raylib.clj's still-unextracted shaders
+  section" once that section had a real module name to cite instead.
 - **`raygui-jlt` can drop its own copy of these bindings now.** It carries a
   229-line `raylib.clj` of its own, duplicated rather than shared because
   there was nothing to depend on before. Pulling the library out is what

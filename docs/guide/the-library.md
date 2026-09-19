@@ -85,9 +85,13 @@ commit on `main` in the meantime and add `:git/tag` once there is one to pin
 against; jolt accepts a git dependency with no `:git/tag` at all, it's the
 human-readable half of the pin, not the part that resolves.
 
-Either way, the dependency is on `net.b12n/raylib`, the coordinate declared
-in `lib/deps.edn`, not on this repo's own `net.b12n.raylib-jlt` example
-namespaces.
+Either way, the dependency is on `net.b12n/raylib`: the name this guide's own
+snippets use for it, not a coordinate `lib/deps.edn` declares anywhere.
+tools.deps gives a library no way to name itself; a consumer's `:deps` map
+picks whatever symbol it wants to call the dependency, and `lib/deps.edn`
+only ever describes what's inside `lib/` itself (its paths, its native
+library, its own deps). What it is not, under any of these forms, is this
+repo's own `net.b12n.raylib-jlt` example namespaces.
 
 ## `:jolt/native` comes with it
 
@@ -106,6 +110,26 @@ install the actual shared library (`brew install raylib` on macOS, or the
 distro raylib package on Linux) at version 6.0 or newer; see the
 [README](../../README.md#libraylib) for why the floor is 6.0 specifically.
 
+## The jolt version floor
+
+`lib/deps.edn` also declares `:jolt/min-version "0.8.0"`, for one specific
+reason: `jolt.ffi/write` took its arguments in a different order before
+0.8.0, and both orderings are plain integers, so a runtime below the floor
+does not fail to compile or throw. It writes the value to the wrong address
+and reports nothing. The floor makes jolt refuse to load the project
+instead.
+
+## Linting against it
+
+A consumer's own clj-kondo run needs the same hook this repo uses:
+`jolt.ffi/defcfn` is a macro, and without a hook to see through it,
+clj-kondo cannot tell that the vars it defines exist. Copying an isolated
+`lib/src` into a project with no config produces 207 errors and 124
+warnings for exactly this reason. The hook is
+[`.clj-kondo/hooks/jolt_ffi.clj`](../../.clj-kondo/hooks/jolt_ffi.clj),
+wired up via `.clj-kondo/config.edn`'s `:hooks` map; copy both into a
+consuming project the same way.
+
 ## `net.b12n.raylib.all` is generated, never hand-edited
 
 `net.b12n.raylib.all` is what a caller actually requires:
@@ -114,7 +138,7 @@ distro raylib package on Linux) at version 6.0 or newer; see the
 (:require [net.b12n.raylib.all :as rl])
 ```
 
-It re-exports every public var of all 19 modules under one namespace (445
+It re-exports every public var of all 19 modules under one namespace (446
 vars, zero name collisions), so `rl/rect!`, `rl/RED` and `rl/with-camera-3d`
 all resolve without requiring 19 namespaces by hand. `bb gen:all` produces
 it by asking a live jolt process for each module's `ns-publics` and writing

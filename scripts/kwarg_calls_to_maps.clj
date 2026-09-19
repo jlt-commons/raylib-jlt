@@ -66,9 +66,8 @@
 ;; "src" is the example suite, "lib/src" is the binding library where the
 ;; kwargs definitions themselves now live. Without lib/src this checker finds
 ;; no kwargs definitions at all and reports zero violations from a clean exit,
-;; which looks exactly like success. "lib/test" replaces "test" once P5.T3
-;; moves the unit suite; listing a directory that does not exist yet is
-;; harmless, since the glob simply matches nothing.
+;; which looks exactly like success. "lib/test" is the library's own unit
+;; suite, listed for the same reason.
 (def source-dirs ["src" "lib/src" "lib/test"])
 
 (def file-pattern

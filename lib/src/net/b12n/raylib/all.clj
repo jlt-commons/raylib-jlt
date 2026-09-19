@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 445 public vars total across 19 modules, zero name collisions,
+;; 446 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
-;; same mechanism P0.T1's probe proved for def re-export + alter-meta! metadata
+;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 445 concrete-module surface, re-exported
+  "Every public var of this library's 446 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -103,7 +103,7 @@
 (def world-to-screen camera/world-to-screen)
 (alter-meta! #'world-to-screen merge (select-keys (meta #'camera/world-to-screen) [:doc :arglists :const]))
 
-;; --- color (26) ---------------------------------------------------------
+;; --- color (27) ---------------------------------------------------------
 (def BEIGE color/BEIGE)
 (alter-meta! #'BEIGE merge (select-keys (meta #'color/BEIGE) [:doc :arglists :const]))
 (def BLACK color/BLACK)
@@ -154,6 +154,8 @@
 (alter-meta! #'WHITE merge (select-keys (meta #'color/WHITE) [:doc :arglists :const]))
 (def YELLOW color/YELLOW)
 (alter-meta! #'YELLOW merge (select-keys (meta #'color/YELLOW) [:doc :arglists :const]))
+(def get-color color/get-color)
+(alter-meta! #'get-color merge (select-keys (meta #'color/get-color) [:doc :arglists :const]))
 (def rgba color/rgba)
 (alter-meta! #'rgba merge (select-keys (meta #'color/rgba) [:doc :arglists :const]))
 

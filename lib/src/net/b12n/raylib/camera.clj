@@ -60,8 +60,20 @@
       (end-mode-2d)
       (finally (ffi/free p)))))
 
-(ffi/defcfn begin-mode-3d-ptr "BeginMode3D" [:pointer] :void)
+(ffi/defcfn ^:private begin-mode-3d-raw "BeginMode3D" [:pointer] :void)
 (ffi/defcfn end-mode-3d "EndMode3D" [] :void)
+
+(defn begin-mode-3d-ptr
+  "Pass a raw pointer to a native Camera3D struct (the 44-byte layout
+  camera3d-alloc below builds) straight to BeginMode3D. Public, unlike
+  begin-mode-2d-ptr above, because UpdateCamera mutates a Camera3D in place
+  across frames (see the persistent-buffer section below): a caller driving
+  that persistent camera has no with-camera-3d-equivalent wrapper to go
+  through, and has to open and close 3D mode around it directly. Nothing
+  here exposes an equivalent persistent Camera2D buffer, so begin-mode-2d-ptr
+  never needs the same."
+  [p]
+  (begin-mode-3d-raw p))
 
 (defn with-camera-3d
   "Run (f) with a Camera3D active (BeginMode3D → f → EndMode3D). Builds the
@@ -93,7 +105,7 @@
       (ffi/write p :float (double up-z) 32)
       (ffi/write p :float (double fovy) 36)
       (ffi/write p :int (int projection) 40)
-      (begin-mode-3d-ptr p)
+      (begin-mode-3d-raw p)
       (f)
       (end-mode-3d)
       (finally (ffi/free p)))))
