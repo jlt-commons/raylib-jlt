@@ -9,6 +9,7 @@
    [jolt.ffi :as ffi]
    [net.b12n.raylib.color :as color]
    [net.b12n.raylib.core :as core]
+   [net.b12n.raylib.native :as native]
    [net.b12n.raylib.rlgl :as rlgl]))
 
 ;; --- rlgl textures -----------------------------------------------------------
@@ -48,9 +49,11 @@
   [a0 a1 a2]
   (rl-normal-3f-raw (double a0) (double a1) (double a2)))
 
+;; PIXELFORMAT-R8G8B8A8 and PIXELFORMAT-R8G8B8 live in net.b12n.raylib.native:
+;; images.clj's LoadImageFromTexture bridge needs the first, raylib.clj's
+;; still-unextracted shaders section needs it too, and images must not require
+;; textures, so native is where both this module and images reach them from.
 (def ^:const RL-QUADS 7)
-(def ^:const PIXELFORMAT-R8G8B8A8 7)          ; rlPixelFormat, 32bpp RGBA
-(def ^:const PIXELFORMAT-R8G8B8 4)            ; 24bpp, no alpha channel at all
 (def ^:const RL-TEXTURE-WRAP-S 0x2802)        (def ^:const RL-TEXTURE-WRAP-T 0x2803)
 (def ^:const RL-TEXTURE-WRAP-REPEAT 0x2901)   (def ^:const RL-TEXTURE-WRAP-CLAMP 0x812F)
 (def ^:const RL-TEXTURE-MAG-FILTER 0x2800)    (def ^:const RL-TEXTURE-MIN-FILTER 0x2801)
@@ -84,7 +87,7 @@
       (dotimes [y h]
         (dotimes [x w]
           (ffi/write buf :uint (f x y) (* 4 (+ x (* y w))))))
-      (let [id (rl-load-texture buf w h PIXELFORMAT-R8G8B8A8 1)]
+      (let [id (rl-load-texture buf w h native/PIXELFORMAT-R8G8B8A8 1)]
         (texture-filter! id RL-TEXTURE-FILTER-NEAREST)
         (texture-wrap! id RL-TEXTURE-WRAP-REPEAT)
         id)
@@ -101,7 +104,7 @@
       (dotimes [y h]
         (dotimes [x w]
           (ffi/write buf :uint (f x y) (* 4 (+ x (* y w))))))
-      (rl-update-texture id 0 0 w h PIXELFORMAT-R8G8B8A8 buf)
+      (rl-update-texture id 0 0 w h native/PIXELFORMAT-R8G8B8A8 buf)
       (finally (ffi/free buf)))))
 
 (defn unload-texture!

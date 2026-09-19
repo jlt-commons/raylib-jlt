@@ -1,6 +1,8 @@
 (ns net.b12n.raylib.native
   "The FFI plumbing more than one module needs: struct layouts for raylib's two
-  vector types, and the two ways a Clojure value is handed to C.
+  vector types and its Texture2D descriptor, the rlgl/raylib pixel-format
+  constants that get staged into that descriptor, and the two ways a Clojure
+  value is handed to C.
 
   These are public because a consumer binding a raylib function this library
   does not cover needs exactly them. `staged` is the pattern every variadic
@@ -17,6 +19,32 @@
 (def vector3-layout
   "The `ffi/layout` value for raylib's Vector3: {float x, y, z}."
   (ffi/layout [:struct [[:x :float] [:y :float] [:z :float]]]))
+
+(def texture2d-layout
+  "The `ffi/layout` value for raylib's Texture2D: {uint id; int width, height,
+  mipmaps, format;}, 20 bytes. Shared by net.b12n.raylib.textures (upload),
+  net.b12n.raylib.images (the LoadTextureFromImage/LoadImageFromTexture
+  bridge) and raylib.clj's still-unextracted shaders section
+  (SetShaderValueTexture) -- three consumers, none of which may depend on
+  either of the other two, so it lives on this dependency-free leaf instead."
+  (ffi/layout [:struct [[:id :uint] [:width :int] [:height :int]
+                        [:mipmaps :int] [:format :int]]]))
+
+(assert (= 20 (ffi/layout-size texture2d-layout)) "Texture2D is five 4-byte fields")
+
+;; rlPixelFormat/PixelFormat enum values, not a struct layout, but the same
+;; multi-consumer shape as texture2d-layout above (textures, images, and
+;; raylib.clj's still-unextracted shaders section all read PIXELFORMAT-
+;; R8G8B8A8; nothing else in this file reads PIXELFORMAT-R8G8B8, but the two
+;; are a sibling pair from the same raylib enum and splitting them across two
+;; modules would be worse than a home neither strictly needs). ^:const to
+;; match every other raylib/rlgl enum constant in this library (RL-QUADS,
+;; the KEY-*/MOUSE-* families, FLAG-*), a deliberate choice rather than an
+;; accident of moving through an alias -- this file's existing vector2-layout/
+;; vector3-layout are plain `def` because they're structured data, not a
+;; single scalar constant.
+(def ^:const PIXELFORMAT-R8G8B8A8 7)          ; rlPixelFormat, 32bpp RGBA
+(def ^:const PIXELFORMAT-R8G8B8 4)            ; 24bpp, no alpha channel at all
 
 (defn vec2->ptr!
   "Allocate a vector2-layout buffer and write [x y] into it. Caller frees."

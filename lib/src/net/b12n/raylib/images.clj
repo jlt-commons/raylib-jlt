@@ -10,14 +10,6 @@
    [jolt.ffi :as ffi]
    [net.b12n.raylib.native :as native]))
 
-;; texture2d-layout describes raylib's Texture2D: {uint id; int width, height,
-;; mipmaps, format;}, 20 bytes. Promoted here from raylib.clj's still-
-;; unextracted shaders section (see the comment further down, at its use in
-;; this file's own by-value Image section, for why here rather than there).
-(def texture2d-layout
-  (ffi/layout [:struct [[:id :uint] [:width :int] [:height :int]
-                        [:mipmaps :int] [:format :int]]]))
-
 ;; --- Image: raylib's CPU-side pixel buffer, by value ---------------------
 ;; Image is {void *data; int width, height, mipmaps, format;}, 24 bytes, returned
 ;; by value from every generator and taken by value by everything that consumes
@@ -35,19 +27,19 @@
   (ffi/layout [:struct [[:data :pointer] [:width :int] [:height :int]
                         [:mipmaps :int] [:format :int]]]))
 
-;; texture2d-layout is defined above in this file, promoted out of raylib.clj's
-;; still-unextracted shaders section: SetShaderValueTexture needs it there and
-;; image->texture-id! needs it here, so it lives wherever both can reach it
-;; rather than being duplicated. raylib.clj keeps a private alias pointing back
-;; at this one so the shader code needs no other change.
+;; texture2d-layout lives in net.b12n.raylib.native, not here: this module's
+;; image->texture-id!/image->texture bridge needs it, so does textures.clj, and
+;; so does raylib.clj's still-unextracted shaders section (SetShaderValueTexture)
+;; -- three consumers, and native is the dependency-free leaf all three can
+;; reach without duplicating it.
 ;;
 ;; The five fields ARE written out again in every signature below, and that is
 ;; forced rather than sloppy: a struct descriptor is a compile-time literal, so
 ;; a def'd alias is rejected with "return type must be a keyword or [:by-value
 ;; [:struct ...]]". Same constraint the shader section documents, same shape of
-;; repetition, and the layout above still earns its keep for reading fields back.
+;; repetition, and native/texture2d-layout still earns its keep for reading
+;; fields back.
 (assert (= 24 (ffi/layout-size image-layout)) "Image is a pointer and four ints")
-(assert (= 20 (ffi/layout-size texture2d-layout)) "Texture2D is five 4-byte fields")
 
 (ffi/defcfn ^:private gen-image-color-raw "GenImageColor" [:int :int :uint]
   [:by-value [:struct [[:data :pointer] [:width :int] [:height :int]
@@ -89,11 +81,11 @@
   "Upload a filled Image buffer to the GPU, free the Image, and answer the rlgl
   texture id. 0 means the upload failed, which raylib has already logged."
   [img]
-  (let [tex (ffi/alloc (ffi/layout-size texture2d-layout))]
+  (let [tex (ffi/alloc (ffi/layout-size native/texture2d-layout))]
     (try
       (load-texture-from-image-raw tex img)
       (unload-image-raw img)
-      (ffi/read-field tex texture2d-layout :id)
+      (ffi/read-field tex native/texture2d-layout :id)
       (finally (ffi/free tex)))))
 
 (defn- with-image
@@ -192,14 +184,6 @@
 (ffi/defcfn ^:private image-flip-vertical-raw  "ImageFlipVertical"    [:pointer] :void)
 (ffi/defcfn ^:private image-blur-gaussian-raw  "ImageBlurGaussian"    [:pointer :int] :void)
 
-;; PIXELFORMAT-R8G8B8A8 mirrors net.b12n.raylib.textures's public constant of
-;; the same name: a tiny rlPixelFormat/PixelFormat enum value, not a helper
-;; worth a cross-namespace reach when images must not require textures (the
-;; genuine bridge, LoadTextureFromImage, stays here too -- see image->texture
-;; and image->texture-id! below -- since every one of its callers already
-;; lives in this file).
-(def ^:private PIXELFORMAT-R8G8B8A8 7)          ; rlPixelFormat, 32bpp RGBA
-
 (defn image-from-texture!
   "LoadImageFromTexture: read an rlgl texture back off the GPU into a fresh
   Image buffer, which the caller owns and must pass to unload-image!. The
@@ -207,12 +191,12 @@
   size and the format to work out how many bytes to pull back."
   [tex-id w h]
   (let [img (ffi/alloc (ffi/layout-size image-layout))]
-    (ffi/with-layout [t texture2d-layout]
-      (ffi/write-field t texture2d-layout :id tex-id)
-      (ffi/write-field t texture2d-layout :width (int w))
-      (ffi/write-field t texture2d-layout :height (int h))
-      (ffi/write-field t texture2d-layout :mipmaps 1)
-      (ffi/write-field t texture2d-layout :format PIXELFORMAT-R8G8B8A8)
+    (ffi/with-layout [t native/texture2d-layout]
+      (ffi/write-field t native/texture2d-layout :id tex-id)
+      (ffi/write-field t native/texture2d-layout :width (int w))
+      (ffi/write-field t native/texture2d-layout :height (int h))
+      (ffi/write-field t native/texture2d-layout :mipmaps 1)
+      (ffi/write-field t native/texture2d-layout :format native/PIXELFORMAT-R8G8B8A8)
       (load-image-from-texture-raw img t))
     img))
 
@@ -234,10 +218,10 @@
   "Upload an Image the caller still owns to the GPU and answer its rlgl texture
   id. Unlike the generators, this does NOT consume the Image."
   [img]
-  (let [tex (ffi/alloc (ffi/layout-size texture2d-layout))]
+  (let [tex (ffi/alloc (ffi/layout-size native/texture2d-layout))]
     (try
       (load-texture-from-image-raw tex img)
-      (ffi/read-field tex texture2d-layout :id)
+      (ffi/read-field tex native/texture2d-layout :id)
       (finally (ffi/free tex)))))
 
 (defn image-format!

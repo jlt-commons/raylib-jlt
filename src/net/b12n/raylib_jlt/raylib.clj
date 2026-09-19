@@ -771,8 +771,8 @@
 (def rl-tex-coord-2f textures/rl-tex-coord-2f)
 (def rl-normal-3f textures/rl-normal-3f)
 (def RL-QUADS textures/RL-QUADS)
-(def PIXELFORMAT-R8G8B8A8 textures/PIXELFORMAT-R8G8B8A8)
-(def PIXELFORMAT-R8G8B8 textures/PIXELFORMAT-R8G8B8)
+(def PIXELFORMAT-R8G8B8A8 native/PIXELFORMAT-R8G8B8A8)
+(def PIXELFORMAT-R8G8B8 native/PIXELFORMAT-R8G8B8)
 (def RL-TEXTURE-WRAP-S textures/RL-TEXTURE-WRAP-S)
 (def RL-TEXTURE-WRAP-T textures/RL-TEXTURE-WRAP-T)
 (def RL-TEXTURE-WRAP-REPEAT textures/RL-TEXTURE-WRAP-REPEAT)
@@ -947,8 +947,8 @@
 
 ;; texture2d-layout stays a local alias: set-uniform-texture! below still reads
 ;; it bare, and shaders hasn't been extracted yet.
-;; moved to net.b12n.raylib.images
-(def ^:private texture2d-layout images/texture2d-layout)
+;; moved to net.b12n.raylib.native
+(def ^:private texture2d-layout native/texture2d-layout)
 
 (defn set-uniform-texture!
   "Bind a texture id to a `sampler2D` uniform - the second and later samplers,
