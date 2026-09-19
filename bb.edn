@@ -466,6 +466,8 @@
   image-kernel {:doc "▶ sharpen, sobel and gaussian, one call each" :task (run-example "image-kernel")}
   image-drawing {:doc "▶ shapes baked once, then drawn live each frame" :task (run-example "image-drawing")}
   image-text {:doc "▶ text baked into the image, pixelates at 4x" :task (run-example "image-text")}
+  image-rotate {:doc "▶ 0/90/180/270 exact, one angle grows the buffer" :task (run-example "image-rotate")}
+  image-channel {:doc "▶ R/G/B/A split; alpha masked to show structure" :task (run-example "image-channel")}
   npatch-drawing {:doc "▶ nine-patch stretching, corners held fixed" :task (run-example "npatch-drawing")}
   sprite-button {:doc "▶ one sheet, three states, sliced by v" :task (run-example "sprite-button")}
 

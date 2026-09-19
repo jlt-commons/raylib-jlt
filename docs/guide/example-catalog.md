@@ -223,6 +223,8 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/image-kernel.gif" width="80">](demos.md#image-kernel) | `image-kernel` | sharpen, sobel and gaussian, one call each |
 | *not recorded yet* | `image-drawing` | shapes baked once, then drawn live each frame |
 | *not recorded yet* | `image-text` | text baked into the image, pixelates at 4x |
+| *not recorded yet* | `image-rotate` | 0/90/180/270 exact, one angle grows the buffer |
+| *not recorded yet* | `image-channel` | R/G/B/A split; alpha masked to show structure |
 | [<img src="../demos/npatch-drawing.gif" width="80">](demos.md#npatch-drawing) | `npatch-drawing` | nine-patch stretching, corners held fixed |
 | [<img src="../demos/sprite-button.gif" width="80">](demos.md#sprite-button) | `sprite-button` | one sheet, three states, sliced by v |
 

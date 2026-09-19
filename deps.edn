@@ -182,6 +182,8 @@
            :image-kernel {:main-opts ["-m" "net.b12n.raylib-jlt.image-kernel"]} ; sharpen, sobel and gaussian, one call each
            :image-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.image-drawing"]} ; shapes baked once, then drawn live each frame
            :image-text {:main-opts ["-m" "net.b12n.raylib-jlt.image-text"]} ; text baked into the image, pixelates at 4x
+           :image-rotate {:main-opts ["-m" "net.b12n.raylib-jlt.image-rotate"]} ; 0/90/180/270 exact, one angle grows the buffer
+           :image-channel {:main-opts ["-m" "net.b12n.raylib-jlt.image-channel"]} ; R/G/B/A split; alpha masked to show structure
            :npatch-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.npatch-drawing"]} ; nine-patch stretching, corners held fixed
            :sprite-button {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-button"]}} ; one sheet, three states, sliced by v
 
