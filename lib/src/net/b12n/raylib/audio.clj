@@ -1,6 +1,6 @@
 (ns net.b12n.raylib.audio
   "raudio: InitAudioDevice/CloseAudioDevice, the AudioStream family (LoadAudioStream
-  returns its 20-byte struct BY VALUE, the same [:by-value [:struct ...]]
+  returns its 32-byte struct BY VALUE, the same [:by-value [:struct ...]]
   convention net.b12n.raylib.shaders' Shader uses) for play/update/pan, and
   SetAudioStreamCallback -- the one entry point in this library raudio invokes
   from a thread jolt never started, so the one that needs jolt's :collect-safe
