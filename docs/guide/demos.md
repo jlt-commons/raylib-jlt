@@ -1,8 +1,10 @@
 # Full-size demo gallery
 
-Every example at full size, linked from
+Every recorded example at full size, linked from
 [the example catalog](example-catalog.md)'s preview thumbnails. All 171 of
-them are here, one recording each.
+them are here, one recording each. Nine examples are newer than the last
+recording pass and so are not in this gallery yet. The catalog lists them
+with "not recorded yet" where the thumbnail would go.
 
 Most are animated. Some examples draw something fixed and only move once you
 drive them, so their recording is a single frame, and that is the honest form

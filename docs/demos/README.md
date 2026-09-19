@@ -1,6 +1,6 @@
 # Examples
 
-Animated GIF previews of every example. Regenerate with `bb record` (requires the internal capture tool; the GIFs here are committed, so you do not need it to browse them).
+Animated GIF previews, one for each of the 171 recorded examples (the suite has 180; the nine newest are not recorded yet). Regenerate with `bb record` (requires the internal capture tool; the GIFs here are committed, so you do not need it to browse them).
 
 ## games
 
