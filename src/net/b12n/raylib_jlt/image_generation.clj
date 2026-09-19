@@ -25,7 +25,8 @@
   or press a key, since no synthetic input actuates a raylib window (see the note
   in scripts/demo_manifest.edn) and a single texture held still is one frame."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -51,13 +52,13 @@
                :height H
                :title "raylib [textures] example - image generation"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         textures (generate)
         n (count textures)]
     (loop [frame 0
            current 0
            steered? false]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (doseq [[id _ _] textures]
           (rl/unload-texture! id))
         (let [clicked? (or (rl/mouse-pressed? rl/MOUSE-LEFT)
@@ -100,7 +101,7 @@
                                                  :y 10
                                                  :size 20
                                                  :color caption-color})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) current steered?)))))
   (rl/close-window))

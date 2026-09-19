@@ -11,7 +11,8 @@
   gamepad-released?, mirroring gamepad-down?/gamepad-pressed? exactly.
   Ported from raylib's examples/core/core_input_actions.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -65,9 +66,9 @@
                :height H
                :title "raylib [core] example - input actions"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 px 400.0 py 200.0 default? true]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [ks (if default? default-keys cursor-keys)
               px (cond
                    (action-down? ks :left) (- px 2)
@@ -98,7 +99,7 @@
                                                                 :y 50
                                                                 :size 20
                                                                 :color rl/GREEN})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) px py default?)))))
   (rl/close-window))

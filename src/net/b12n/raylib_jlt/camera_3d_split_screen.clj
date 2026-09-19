@@ -11,7 +11,8 @@
   friends in raylib.clj). Ported from raylib's
   examples/core/core_3d_camera_split_screen.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -76,11 +77,11 @@
                :height H
                :title "raylib [core] example - 3d camera split screen"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         screen1 (rl/render-texture HALF-W H)
         screen2 (rl/render-texture HALF-W H)]
     (loop [frame 0 z1 -3.0 x2 -3.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [step (* 10.0 (rl/get-frame-time))
               z1 (cond (rl/key-down? rl/KEY-W) (+ z1 step)
                        (rl/key-down? rl/KEY-S) (- z1 step)
@@ -135,7 +136,7 @@
                      :width 4
                      :height H
                      :color rl/LIGHTGRAY})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) z1 x2))))
     (rl/unload-render-texture! screen1)

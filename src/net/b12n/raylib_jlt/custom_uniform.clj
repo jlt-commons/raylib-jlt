@@ -17,7 +17,8 @@
   Framebuffer textures are bottom-up in GL's convention, so the FBO is drawn
   back with :v0 1.0 :v1 0.0."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -91,7 +92,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - a custom uniform"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sh (rl/shader fragment-shader)
         rt (rl/render-texture W H)]
     (cond
@@ -109,7 +110,7 @@ void main() {
           (loop [frame 0
                  radius 0.32
                  strength 2.6]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [mx (rl/get-mouse-x)
                     my (rl/get-mouse-y)
                     ;; An off-window pointer is reported faithfully by GetMouseX/Y,
@@ -157,7 +158,7 @@ void main() {
                            :y 38
                            :size 14
                            :color rl/LIGHTGRAY})
-                (rl/maybe-screenshot! frame 5)
+                (app/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) radius strength))))
           (finally

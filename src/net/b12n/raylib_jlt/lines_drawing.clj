@@ -3,7 +3,8 @@
   each a different width and color with round end caps, plus a thickness-scale row.
   Port of shapes_lines_drawing (minus the texture cursor)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private palette
   [rl/RED rl/ORANGE rl/GOLD rl/LIME rl/GREEN rl/SKYBLUE
@@ -13,10 +14,10 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - lines drawing"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx 400 cy 220 n 12]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (let [rot (* frame 0.01)]
@@ -48,7 +49,7 @@
                                                          :y 10
                                                          :size 20
                                                          :color rl/DARKGRAY})
-        (rl/maybe-screenshot! frame 12)
+        (app/maybe-screenshot! frame 12)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

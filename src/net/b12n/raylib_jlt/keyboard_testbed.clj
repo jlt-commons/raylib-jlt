@@ -9,7 +9,8 @@
   CheckCollisionPointRec, and Fade(RED, 0.2) is just rl/rgba with a reduced
   alpha byte. Ported from raylib's examples/core/core_keyboard_testbed.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -126,9 +127,9 @@
                :title "raylib [core] example - keyboard testbed"})
   (rl/set-exit-key rl/KEY-NULL)
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 last-key 0 last-ch 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [kp (rl/get-key-pressed)
               ch (rl/get-char-pressed)
               last-key (if (pos? kp) kp last-key)
@@ -156,7 +157,7 @@
                 (let [km (nth row i)]
                   (draw-key! (assoc km :x x :y y :h h) mx my)
                   (recur (inc i) (+ x (:w km) SPACING))))))
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) last-key last-ch)))))
   (rl/close-window))

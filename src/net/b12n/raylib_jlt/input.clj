@@ -6,15 +6,16 @@
   and the ball is drawn with the scalar DrawCircle, so no by-value Vector2 crosses
   the FFI boundary (only Color does)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (defn -main
   [& _]
   (rl/window! {:title "raylib [core] example - input keys"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 x 400.0 y 225.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [x (cond-> x
                   (rl/key-down? rl/KEY-RIGHT) (+ 2.0)
                   (rl/key-down? rl/KEY-LEFT)  (- 2.0))
@@ -31,7 +32,7 @@
                        :y (int y)
                        :radius 50
                        :color rl/MAROON})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) x y)))))
   (rl/close-window))

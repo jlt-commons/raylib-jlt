@@ -3,7 +3,8 @@
   resize a rectangle (clamped to a minimum). The live W x H is shown. Port of
   shapes_rectangle_scaling (mouse-driven; headless it shows the initial size)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private handle 18)
 
@@ -20,10 +21,10 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - rectangle scaling"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         rx 300 ry 165]
     (loop [frame 0 rw 220 rh 150]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (rl/get-mouse-x) my (rl/get-mouse-y)
               hx (+ rx rw) hy (+ ry rh)
               over? (and (>= mx (- hx handle)) (<= mx (+ hx 6))
@@ -49,7 +50,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 12)
+          (app/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame) rw rh)))))
   (rl/close-window))

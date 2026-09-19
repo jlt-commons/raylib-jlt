@@ -11,7 +11,8 @@
   axis-aligned quad and adding a rotated variant is its own separate change.
   Ported from raylib's examples/textures/textures_particles_blending.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -68,10 +69,10 @@
                :height H
                :title "raylib [textures] example - particles blending"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         spark (rl/texture-from-fn SPARK-SIZE SPARK-SIZE spark-pixel)]
     (loop [frame 0 particles (vec (repeatedly MAX-PARTICLES fresh-particle)) blending 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [particles (activate-first-inactive particles (rl/get-mouse-x) (rl/get-mouse-y))
               particles (mapv update-particle particles)
               blending (if (rl/key-pressed? rl/KEY-SPACE) (if (= blending 0) 1 0) blending)]
@@ -100,7 +101,7 @@
                                            :y (- H 40)
                                            :size 20
                                            :color rl/RAYWHITE}))
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) particles blending))))
     (rl/unload-texture! spark))

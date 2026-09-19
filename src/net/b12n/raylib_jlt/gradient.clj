@@ -5,7 +5,8 @@
   Colors by value, a good check that more than one 4-byte by-value struct can be
   passed in a single call."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (defn -main
   [& _]
@@ -13,9 +14,9 @@
                :height 450
                :title "raylib [shapes] example - rectangle gradient"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/rect-gradient! {:x 0
@@ -29,7 +30,7 @@
                    :y 10
                    :size 20
                    :color rl/RAYWHITE})
-        (rl/maybe-screenshot! frame 5)
+        (app/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

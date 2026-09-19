@@ -19,7 +19,8 @@
   See pie-chart for sectors used for something, and ring-drawing for the annulus
   built the same way."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -48,7 +49,7 @@
                :height H
                :title "raylib [shapes] example - circle sector drawing"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx (/ (- W 300) 2.0)
         cy (/ (double H) 2.0)]
     (loop [frame 0
@@ -56,7 +57,7 @@
            end-angle 180.0
            radius 180.0
            segments 10.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [start-angle (held start-angle rl/KEY-Q rl/KEY-A 2.0 0.0 720.0)
               end-angle   (held end-angle rl/KEY-W rl/KEY-S 2.0 0.0 720.0)
               radius      (held radius rl/KEY-E rl/KEY-D 2.0 0.0 200.0)
@@ -105,7 +106,7 @@
                      :color (if manual? rl/MAROON rl/DARKGRAY)})
           (rl/fps! {:x 10
                     :y 10})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) start-angle end-angle radius segments)))))
   (rl/close-window))

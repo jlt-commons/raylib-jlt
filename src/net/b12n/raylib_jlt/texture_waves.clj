@@ -15,7 +15,8 @@
   waves wrap doesn't show at the window edge.
   Loosely based on raylib/examples/shaders/shaders_texture_waves.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -54,7 +55,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - texture waves"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         tex (rl/texture-from-fn TEX TEX starfield-pixel)
         sh (rl/shader fragment-shader)]
     (if-not sh
@@ -69,7 +70,7 @@ void main() {
         (rl/set-uniform-vec2! sh loc-speed 3.0 3.0)
         (try
           (loop [frame 0 seconds 0.0]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [seconds (+ seconds (rl/get-frame-time))]
                 (rl/set-uniform-float! sh loc-seconds seconds)
                 (rl/begin-drawing)
@@ -85,7 +86,7 @@ void main() {
                                       :y 0
                                       :width TEX
                                       :height H})))
-                (rl/maybe-screenshot! frame 30)
+                (app/maybe-screenshot! frame 30)
                 (rl/end-drawing)
                 (recur (inc frame) seconds))))
           (finally (rl/unload-shader! sh)))))

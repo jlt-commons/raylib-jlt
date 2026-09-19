@@ -26,8 +26,9 @@
   scripts/demo_manifest.edn), and a wall of text that never changes records as a
   single frame. The text is raylib's real log either way."
   (:require
+   [net.b12n.raylib-jlt.app :as app]
    [clojure.string :as str]
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -81,10 +82,10 @@
                  :height H
                  :title "raylib [core] example - custom logging"})
     (rl/set-target-fps 60)
-    (let [deadline (rl/auto-quit-deadline)]
+    (let [deadline (app/auto-quit-deadline)]
       (loop [frame 0
              base 0]
-        (when (rl/keep-running? deadline)
+        (when (app/keep-running? deadline)
           (when (rl/key-pressed? rl/KEY-SPACE)
             ;; Fails to link, so `shader` answers nil every time and there is
             ;; nothing to unload; the log is the whole output.
@@ -126,7 +127,7 @@
                        :y (- H 16)
                        :size 10
                        :color (rl/rgba 120 128 145 255)})
-            (rl/maybe-screenshot! frame 120)
+            (app/maybe-screenshot! frame 120)
             (rl/end-drawing)
             (recur (inc frame) base)))))
     (rl/close-window)

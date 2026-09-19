@@ -5,7 +5,8 @@
   horizontally center two lines (the built-in bitmap font; no external font
   loading)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 
@@ -23,9 +24,9 @@
                :height 450
                :title "raylib [text] example - font sizes"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (centered! "raylib text - default font" 40 30 rl/DARKBLUE)
@@ -46,7 +47,7 @@
                              :size 40
                              :color rl/PURPLE})
         (centered! "MeasureText centers this line" 24 390 rl/GRAY)
-        (rl/maybe-screenshot! frame 5)
+        (app/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

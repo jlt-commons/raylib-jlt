@@ -23,7 +23,8 @@
   easings-ball for the same idea on three stages, and easings for the whole
   family side by side."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]
    [net.b12n.raylib-jlt.reasings :as ez]))
 
 (def ^:const W 800)
@@ -53,11 +54,11 @@
                :height H
                :title "raylib [shapes] example - easings box anim"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            stage :drop
            counter 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [restart? (rl/key-pressed? rl/KEY-SPACE)
               stage    (if restart? :drop stage)
               counter  (if restart? 0.0 (inc counter))
@@ -101,7 +102,7 @@
                      :y (- H 40)
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 90)
+          (app/maybe-screenshot! frame 90)
           (rl/end-drawing)
           (recur (inc frame) stage counter)))))
   (rl/close-window))

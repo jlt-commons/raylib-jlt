@@ -14,7 +14,8 @@
   The trail is a fixed-length window of the last few thousand points, coloured by
   age, drawn as rlgl RL_LINES segments under an orbiting camera."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -76,12 +77,12 @@
                :height H
                :title "raylib [models] example - Lorenz attractor"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            points (warm 28.0)
            rho 28.0
            running? true]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [running? (if (rl/key-pressed? rl/KEY-SPACE) (not running?) running?)
               rho (cond
                     (rl/key-down? rl/KEY-UP) (min 60.0 (+ rho 0.15))
@@ -128,7 +129,7 @@
                      :y (- H 30)
                      :size 14
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 60)
+          (app/maybe-screenshot! frame 60)
           (rl/end-drawing)
           (recur (inc frame) points rho running?)))))
   (rl/close-window))

@@ -8,7 +8,8 @@
   active matrix to each rlVertex3f at submit time, which is what makes the nested
   push/rotate/translate move each cube."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -19,9 +20,9 @@
                :height H
                :title "raylib [models] example - rlgl solar system"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [earth-orbit (double (mod (* 0.5 frame) 360))   ; degrees
               earth-spin  (double (mod (* 1.0 frame) 360))
               moon-orbit  (double (mod (* 2.0 frame) 360))]
@@ -63,7 +64,7 @@
                      :y 10
                      :size 20
                      :color rl/RAYWHITE})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

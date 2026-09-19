@@ -18,7 +18,8 @@
   convention.
   Loosely based on raylib/examples/textures/textures_srcrec_dstrec.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -84,12 +85,12 @@
                :height H
                :title "raylib [textures] example - srcrec dstrec"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sheet (rl/texture-from-fn SHEET-W FRAME-H sheet-pixel)
         cx (/ W 2.0)
         cy (/ H 2.0)]
     (loop [frame 0 rotation 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (draw-texture-pro!
@@ -113,7 +114,7 @@
                    :y 10
                    :size 10
                    :color rl/GRAY})
-        (rl/maybe-screenshot! frame 30)
+        (app/maybe-screenshot! frame 30)
         (rl/end-drawing)
         (recur (inc frame) (+ rotation 1.0))))
     (rl/unload-texture! sheet))

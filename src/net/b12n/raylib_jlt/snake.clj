@@ -3,7 +3,8 @@
   hitting a wall or yourself ends it (SPACE restarts). Grid + frame-tick movement,
   all state threaded through the loop."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def cols 32)
 (def rows 18)
@@ -53,10 +54,10 @@
                :height (* rows cell)
                :title "raylib [games] example - snake"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            st (new-game)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [st (if (:dead? st)
                    (if (rl/key-pressed? rl/KEY-SPACE) (new-game) st)
                    (let [st (assoc st :dir (turn (:dir st)))]
@@ -84,7 +85,7 @@
                                                       :y 210
                                                       :size 24
                                                       :color rl/RAYWHITE}))
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) st)))))
   (rl/close-window))

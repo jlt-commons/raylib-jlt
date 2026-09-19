@@ -21,7 +21,8 @@
   is `audio-raw-stream` and `audio-stream-callback`, both of which generate their
   samples rather than loading them. The click is silent and counted instead."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -74,14 +75,14 @@
                :height H
                :title "raylib [textures] example - sprite button"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sheet (rl/texture-from-fn BTN-W (* BTN-H FRAMES) sheet-pixel)
         bx (- (/ W 2) (/ BTN-W 2))
         by (- (/ H 2) (/ BTN-H 2))]
     (rl/texture-wrap! sheet rl/RL-TEXTURE-WRAP-CLAMP)
     (loop [frame 0
            clicks 0]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (rl/unload-texture! sheet)
         (let [mx (rl/get-mouse-x)
               my (rl/get-mouse-y)
@@ -131,7 +132,7 @@
                            :width BTN-W
                            :height BTN-H
                            :color rl/RED})
-          (rl/maybe-screenshot! frame 40)
+          (app/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame) clicks)))))
   (rl/close-window))

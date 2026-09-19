@@ -5,7 +5,8 @@
   vertical (sine, blue) and horizontal (cosine, green) projections are drawn as it
   sweeps."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -19,9 +20,9 @@
                :height H
                :title "raylib [shapes] example - sine & cosine"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [a  (* 0.03 frame)
               px (+ CX (* R (Math/cos a)))
               py (- CY (* R (Math/sin a)))]
@@ -65,7 +66,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

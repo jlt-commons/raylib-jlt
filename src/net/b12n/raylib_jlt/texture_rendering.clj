@@ -13,7 +13,8 @@
   each cell), not a port of raylib's own cubes_panning.fs.
   Loosely based on raylib's examples/shaders/shaders_texture_rendering.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -65,7 +66,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - texture rendering"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
     (if-not sh
       (binding [*out* *err*]
@@ -75,7 +76,7 @@ void main() {
         (rl/set-uniform-vec2! sh loc-res (double W) (double H))
         (try
           (loop [frame 0]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (rl/set-uniform-float! sh loc-time (rl/get-time))
               (rl/begin-drawing)
               (rl/clear-background rl/RAYWHITE)
@@ -92,7 +93,7 @@ void main() {
                          :y 10
                          :size 20
                          :color rl/MAROON})
-              (rl/maybe-screenshot! frame 30)
+              (app/maybe-screenshot! frame 30)
               (rl/end-drawing)
               (recur (inc frame))))
           (finally (rl/unload-shader! sh)))))

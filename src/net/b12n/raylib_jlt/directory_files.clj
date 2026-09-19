@@ -23,8 +23,9 @@
   raylib window (see the note in scripts/demo_manifest.edn), so the gallery
   frame shows the opening listing rather than a walk through a tree."
   (:require
+   [net.b12n.raylib-jlt.app :as app]
    [clojure.string :as str]
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -60,14 +61,14 @@
                :height H
                :title "raylib [core] example - directory files"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         start (rl/get-working-directory)]
     (loop [frame 0
            dir start
            entries (listing start)
            sel 0
            scroll 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [n (count entries)
               my (rl/get-mouse-y)
               row (when (and (>= my LIST-TOP) (< my (+ LIST-TOP (* ROW-H VISIBLE))))
@@ -161,7 +162,7 @@
                      :y (- H 18)
                      :size 10
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) dir entries sel scroll)))))
   (rl/close-window))

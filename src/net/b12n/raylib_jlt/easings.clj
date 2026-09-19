@@ -3,7 +3,8 @@
   across the lane with a different easing function of a ping-ponging t in [0,1].
   Spirit of shapes_easings_*; all easings are pure math (pow / sin / cos)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private PI Math/PI)
 
@@ -47,10 +48,10 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - easings"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cols 3 track-w 190 x-pad 30]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [p (/ (double (mod frame 240)) 120.0)   ; 0..2
               t (if (<= p 1.0) p (- 2.0 p))]         ; ping-pong 0..1..0
           (rl/begin-drawing)
@@ -80,7 +81,7 @@
                            :y y
                            :radius 9
                            :color (nth lane-colors i)})))
-          (rl/maybe-screenshot! frame 40)
+          (app/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

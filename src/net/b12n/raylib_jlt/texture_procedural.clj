@@ -12,7 +12,8 @@
   rl/texture! draws it as an rlgl quad. Nothing is read off disk, so every texel
   here comes from a Clojure function of (x, y)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -59,13 +60,13 @@
   (rl/set-target-fps 60)
   ;; Textures need the GL context, so they can only be built after the window
   ;; exists, the same rule raylib documents for LoadTexture.
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         ids (mapv (fn [[_ f]] (rl/texture-from-fn TEX TEX f)) panels)
         noise-id (nth ids 2)
         xs (mapv (fn [i] (+ 40 (* i (+ CELL 20)))) (range 4))
         top 120]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (when (rl/key-pressed? rl/KEY-SPACE)
           ;; Regenerating uploads a fresh buffer over the same id, so the quad
           ;; below keeps drawing without knowing anything changed.
@@ -102,7 +103,7 @@
                                              :y (- H 34)
                                              :size 16
                                              :color rl/GRAY})
-        (rl/maybe-screenshot! frame 5)
+        (app/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame))))
     (doseq [id ids] (rl/unload-texture! id)))

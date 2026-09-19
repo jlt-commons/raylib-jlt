@@ -5,7 +5,8 @@
   position is pushed onto a bounded history, and the whole history is drawn with
   fading alpha + shrinking radius (older = fainter and smaller)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const N 60)
 
@@ -13,9 +14,9 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - mouse trail"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 trail []]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [trail (vec (take-last N (conj trail [(rl/get-mouse-x) (rl/get-mouse-y)])))
               n     (count trail)]
           (rl/begin-drawing)
@@ -31,7 +32,7 @@
                                                          :y 10
                                                          :size 20
                                                          :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) trail)))))
   (rl/close-window))

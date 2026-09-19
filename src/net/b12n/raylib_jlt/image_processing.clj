@@ -23,7 +23,8 @@
   256x256 image every frame would be visible in the frame time for no reason,
   and the result cannot change while the mode is held."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -83,7 +84,7 @@
                :height H
                :title "raylib [textures] example - image processing"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         ;; The source, authored here and then pulled back off the GPU so
         ;; raylib's CPU-side operations have something to chew on.
         seed-tex (rl/texture-from-fn SRC SRC source-pixel)
@@ -93,7 +94,7 @@
            sel 0
            shown (apply-mode! img (nth modes 0))
            steered? false]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (do (rl/unload-texture! shown)
             (rl/unload-texture! seed-tex)
             (rl/unload-image! img))
@@ -155,7 +156,7 @@
                      :y (- H 30)
                      :size 10
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) next-sel shown steered?)))))
   (rl/close-window))

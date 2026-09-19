@@ -4,7 +4,8 @@
   sampled in Clojure and drawn as line! segments. See
   docs/guide/rlgl-immediate-mode.md."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def segments 30)
 
@@ -24,9 +25,9 @@
                :height 450
                :title "raylib [shapes] example - lines bezier"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [p0 [100.0 225.0]
               p1 [300.0 60.0]
               p2 [500.0 390.0]
@@ -51,7 +52,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

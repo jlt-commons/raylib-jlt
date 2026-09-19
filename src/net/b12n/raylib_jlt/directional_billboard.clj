@@ -15,7 +15,8 @@
   via rl/texture-from-fn rather than the upstream C example's skillbot.png.
   Based on raylib/examples/models/models_directional_billboard.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -107,13 +108,13 @@
                :height H
                :title "raylib [models] example - directional billboard"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sheet (rl/texture-from-fn SHEET-W SHEET-H sheet-pixel)]
     (loop [frame 0
            theta (/ Math/PI 4.0)
            anim 0
            anim-timer 0.0]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (rl/unload-texture! sheet)
         (let [dt (rl/get-frame-time)
               theta (+ theta (* 0.5 dt))
@@ -153,7 +154,7 @@
                                                    :y 40
                                                    :size 20
                                                    :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) theta anim anim-timer)))))
   (rl/close-window))

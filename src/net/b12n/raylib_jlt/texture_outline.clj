@@ -13,7 +13,8 @@
   upstream C example's fudesumi.png.
   Based on raylib/examples/shaders/shaders_texture_outline.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -71,7 +72,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - texture outline"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sprite (rl/texture-from-fn SPRITE SPRITE sprite-pixel)
         sh (rl/shader fragment-shader)]
     (if-not sh
@@ -85,7 +86,7 @@ void main() {
         (try
           (loop [frame 0
                  base 2.0]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [base (max 1.0 (+ base (rl/get-mouse-wheel)))
                     ;; A slow breathing drift on top of the wheel-set base, so
                     ;; the effect keeps moving even with no one at the wheel
@@ -117,7 +118,7 @@ void main() {
                            :size 20
                            :color rl/MAROON})
 
-                (rl/maybe-screenshot! frame 5)
+                (app/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) base))))
           (finally (rl/unload-shader! sh)))))

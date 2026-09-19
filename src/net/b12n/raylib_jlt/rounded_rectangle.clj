@@ -4,7 +4,8 @@
   takes a Rectangle by value, unbindable). The corner radius animates 0 -> max. Port of
   shapes_rounded_rectangle_drawing."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (defn- rounded-rect!
   [x y w h rad color]
@@ -62,9 +63,9 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - rounded rectangle"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [rad (* 60.0 (+ 0.5 (* 0.5 (Math/sin (* frame 0.03)))))]  ; 0..60
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
@@ -79,7 +80,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 12)
+          (app/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame)))))
     (rl/close-window)))

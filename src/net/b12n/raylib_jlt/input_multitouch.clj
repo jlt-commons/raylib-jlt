@@ -17,7 +17,8 @@
   reads point 0 through the scalar GetTouchX / GetTouchY pair. That is the honest
   limit: the ids of every point are visible, the coordinates of only the first."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -28,10 +29,10 @@
                :height H
                :title "raylib [core] example - input multitouch"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            trail []]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [n (rl/get-touch-point-count)
               tx (rl/get-touch-x)
               ty (rl/get-touch-y)
@@ -96,7 +97,7 @@
                        :y 86
                        :size 14
                        :color rl/GRAY}))
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) trail)))))
   (rl/close-window))

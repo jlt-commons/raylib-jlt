@@ -24,7 +24,8 @@
   still useful without the flag; SCALE FACTOR just reads 1.00x1.00.
   Ported from raylib's examples/core/core_highdpi_testbed.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -42,9 +43,9 @@
                :height H
                :title "raylib [core] example - highdpi testbed"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (when (rl/key-pressed? rl/KEY-SPACE) (rl/toggle-borderless-windowed!))
         (when (rl/key-pressed? rl/KEY-F) (rl/toggle-fullscreen))
         (let [cur (rl/get-current-monitor)
@@ -135,7 +136,7 @@
                      :size 20
                      :color rl/BLACK})
 
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

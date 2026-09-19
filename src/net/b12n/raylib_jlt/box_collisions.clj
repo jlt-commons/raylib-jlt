@@ -7,7 +7,8 @@
   rl/cube!) under a fixed 3/4 camera. The player spawns already touching one box,
   so the collision highlight is visible from frame 0."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -50,9 +51,9 @@
                :height H
                :title "raylib [models] example - box collisions"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 px 0.0 pz 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [px (+ px (* SPEED (+ (if (rl/key-down? rl/KEY-D) 1.0 0.0)
                                    (if (rl/key-down? rl/KEY-A) -1.0 0.0))))
               pz (+ pz (* SPEED (+ (if (rl/key-down? rl/KEY-S) 1.0 0.0)
@@ -83,7 +84,7 @@
                      :y 10
                      :size 20
                      :color (if colliding? rl/MAROON rl/DARKGRAY)})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) px pz)))))
   (rl/close-window))

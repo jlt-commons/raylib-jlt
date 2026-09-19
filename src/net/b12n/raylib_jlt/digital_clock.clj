@@ -4,7 +4,8 @@
   dimly visible, like a real display). Time from rl/local-time; the colons blink each
   second. Port of shapes_digital_clock (digital half)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 ;; segments: a=top g=middle d=bottom  f=top-left b=top-right  e=bot-left c=bot-right
 (def ^:private segs
@@ -40,7 +41,7 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - digital clock"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         on  (rl/rgba 80 230 120 255)
         off (rl/rgba 28 44 34 255)
         w 54 hh 46 t 12 y 110
@@ -48,7 +49,7 @@
         xs [150 216 318 384 486 552]
         colon-xs [288 456]]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [[h m s] (rl/local-time)
               digits [(quot h 10) (mod h 10) (quot m 10) (mod m 10) (quot s 10) (mod s 10)]]
           (rl/begin-drawing)
@@ -71,7 +72,7 @@
                                                        :y 10
                                                        :size 20
                                                        :color (rl/rgba 120 180 140 255)})
-          (rl/maybe-screenshot! frame 12)
+          (app/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

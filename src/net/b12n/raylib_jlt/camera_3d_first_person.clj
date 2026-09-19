@@ -8,7 +8,8 @@
   window edges (a proper lock would need GetMouseDelta, which returns a by-value
   Vector2)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -23,7 +24,7 @@
                :height H
                :title "raylib [core] example - first person"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         columns  (vec (repeatedly N-COLUMNS
                                   (fn []
                                     {:x (double (rl/get-random-value -20 20))
@@ -33,7 +34,7 @@
                                                      (rl/get-random-value 60 255)
                                                      (rl/get-random-value 60 255) 255)})))]
     (loop [frame 0 px 0.0 pz 0.0 yaw 0.0 pitch 0.0 last-mx nil last-my nil]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (rl/get-mouse-x)
               my (rl/get-mouse-y)
               yaw   (if last-mx (+ yaw (* SENS (- mx last-mx))) yaw)
@@ -72,7 +73,7 @@
                                               :color rl/DARKGRAY})
           (rl/fps! {:x 10
                     :y (- H 30)})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) px pz yaw pitch mx my)))))
   (rl/close-window))

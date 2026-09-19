@@ -539,8 +539,8 @@
            (println "Git hooks: `bb hooks:install` (fast) · `bb hooks:install:full` · nREPL: `bb nrepl [port]`"))}
 
   test
-  {:doc "Unit suite: ffi/write argument order"
-   :task (shell "jolt" "-M:test")}
+  {:doc "Unit suite: ffi/write argument order (runs in lib/)"
+   :task (shell {:dir "lib"} jolt-cmd "-M:test")}
 
   check
   {:doc "Headless compile-check of every example (no window)"

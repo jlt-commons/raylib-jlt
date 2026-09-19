@@ -2,7 +2,8 @@
   "raylib [generative] example - fireworks. Rockets rise and explode into particles
   that fall under gravity and fade out via the alpha channel."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def width 800)
 (def height 450)
@@ -39,13 +40,13 @@
                :height height
                :title "raylib [generative] example - fireworks"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            rockets []
            parts (explode {:x 400.0
                            :y 170.0
                            :color [255 220 80]})]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [rockets (if (zero? (mod frame 35)) (conj rockets (new-rocket)) rockets)
               rockets (mapv (fn [r] (-> r (update :y + (:vy r)) (update :vy + gravity))) rockets)
               exploded (filter (fn [r] (>= (:vy r) 0)) rockets)
@@ -70,7 +71,7 @@
                            :y (int (:y p))
                            :radius 2
                            :color (rl/rgba cr cg cb (int (* 255 (:life p))))})))
-          (rl/maybe-screenshot! frame 12)
+          (app/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame) rockets parts)))))
   (rl/close-window))

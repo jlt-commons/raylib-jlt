@@ -28,7 +28,8 @@
   an example with no motion of its own records as a single frame. Touch the
   light once and it stays wherever you leave it."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -201,7 +202,7 @@
                :height H
                :title "raylib [shapes] example - top down lights"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         boxes (setup-boxes)
         ;; GenImageChecked in the C. texture-from-fn leaves the wrap mode at
         ;; REPEAT, so one 64x64 tile covers the window by texcoords alone.
@@ -219,7 +220,7 @@
                    lights (vec (keep identity [(make-light 600 400 300)]))
                    show-lines? false
                    steered? false]
-              (if-not (rl/keep-running? deadline)
+              (if-not (app/keep-running? deadline)
                 lights
                 (let [mx (rl/get-mouse-x)
                       my (rl/get-mouse-y)
@@ -304,7 +305,7 @@
                                                               :color rl/DARKGREEN})
                   (rl/fps! {:x (- W 80)
                             :y 10})
-                  (rl/maybe-screenshot! frame 20)
+                  (app/maybe-screenshot! frame 20)
                   (rl/end-drawing)
                   (recur (inc frame) lights show-lines? steered?))))]
         (doseq [{:keys [mask]} remaining]

@@ -3,7 +3,8 @@
   per-index phase offset (distinct from waving-cubes, which translates a grid).
   See docs/guide/rlgl-immediate-mode.md."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def palette [rl/RED rl/ORANGE rl/GREEN rl/BLUE rl/VIOLET])
 
@@ -13,9 +14,9 @@
                :height 450
                :title "raylib [models] example - spinning cubes"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/with-camera-3d {:pos-x 0.0
@@ -38,7 +39,7 @@
                    :y 10
                    :size 20
                    :color rl/DARKGRAY})
-        (rl/maybe-screenshot! frame 10)
+        (app/maybe-screenshot! frame 10)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

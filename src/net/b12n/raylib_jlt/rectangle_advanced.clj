@@ -23,7 +23,8 @@
   See rounded-rectangle for the single-roundness version, and triangle-strip for
   the same immediate-mode path used more simply."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -84,9 +85,9 @@
                :height H
                :title "raylib [shapes] example - rectangle advanced"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [w (- W 100.0)
               h (/ (- H 100.0) (count bars))]
           (rl/begin-drawing)
@@ -100,7 +101,7 @@
                      :y 16
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

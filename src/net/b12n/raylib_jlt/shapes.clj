@@ -6,7 +6,8 @@
   raylib's DrawTriangle takes Vector2 args by value; rlBegin / rlVertex2f is the
   scalar path (see net.b12n.raylib-jlt.raylib's rl-* bindings)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (defn- triangle!
   "An immediate-mode filled triangle (scalar, avoids DrawTriangle's by-value
@@ -24,9 +25,9 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - basic shapes"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/text! "scalar shape primitives" {:x 10
@@ -62,7 +63,7 @@
                            :y2 250
                            :color rl/DARKGRAY})
         (triangle! :p1 [400 290] :p2 [330 410] :p3 [470 410] :color rl/VIOLET)
-        (rl/maybe-screenshot! frame 5)
+        (app/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

@@ -11,7 +11,8 @@
      passed in FP registers, which the pointer trick does NOT cover. DrawGrid is
      scalar."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -22,9 +23,9 @@
                :height H
                :title "raylib [core] example - 3d camera"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [a     (* 0.02 frame)                ; orbit angle
               cam-x (* 12.0 (Math/cos a))
               cam-z (* 12.0 (Math/sin a))]
@@ -48,7 +49,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

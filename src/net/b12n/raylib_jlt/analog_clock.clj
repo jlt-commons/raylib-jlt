@@ -4,7 +4,8 @@
   rl/local-time (libc); the second hand sweeps smoothly via sub-second millis. Port of
   shapes_clock_of_clocks reduced to a single face."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private d->r (/ Math/PI 180.0))
 
@@ -17,10 +18,10 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - analog clock"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx 400 cy 235 r 175]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [[h m s] (rl/local-time)
               frac (/ (double (mod (System/currentTimeMillis) 1000)) 1000.0)
               sec (+ s frac)
@@ -69,7 +70,7 @@
                      :y 10
                      :size 20
                      :color rl/RAYWHITE})
-          (rl/maybe-screenshot! frame 12)
+          (app/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

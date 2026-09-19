@@ -3,7 +3,8 @@
   via rl/sector! (an rlgl triangle fan), with a legend column. The whole chart
   rotates slowly. Port of shapes_pie_chart."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private slices
   ;; [label value color]
@@ -17,11 +18,11 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - pie chart"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx 270 cy 235 radius 165
         total (double (reduce + (map second slices)))]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (rl/text! "pie chart (rl/sector! fan)" {:x 10
@@ -57,7 +58,7 @@
                        :y (+ ly 4)
                        :size 20
                        :color rl/DARKGRAY})))
-        (rl/maybe-screenshot! frame 12)
+        (app/maybe-screenshot! frame 12)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

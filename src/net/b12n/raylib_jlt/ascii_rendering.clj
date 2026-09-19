@@ -14,7 +14,8 @@
   convention. Zero new FFI.
   Based on raylib/examples/shaders/shaders_ascii_rendering.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -99,7 +100,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - ascii rendering"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sh (rl/shader fragment-shader)
         rt (rl/render-texture W H)]
     (cond
@@ -116,7 +117,7 @@ void main() {
                  cx 40.0
                  speed 1.0
                  font-size 9.0]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [cx (+ cx speed)
                     speed (if (or (> cx 200.0) (< cx 40.0)) (* speed -1.0) speed)
                     font-size (cond
@@ -148,7 +149,7 @@ void main() {
                            :size 20
                            :color rl/LIGHTGRAY})
 
-                (rl/maybe-screenshot! frame 10)
+                (app/maybe-screenshot! frame 10)
                 (rl/end-drawing)
                 (recur (inc frame) cx speed font-size))))
           (finally

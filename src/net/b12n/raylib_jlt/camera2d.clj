@@ -17,7 +17,8 @@
   / rlTranslatef / rlRotatef / rlScalef, flushing the batch before rlPopMatrix),
   which is what BeginMode2D does internally."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -61,9 +62,9 @@
                :height H
                :title "raylib [core] example - 2d camera"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 px 400.0 zoom 1.0 rot 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [px     (cond-> px
                        (rl/key-down? rl/KEY-RIGHT) (+ 4.0)
                        (rl/key-down? rl/KEY-LEFT)  (- 4.0))
@@ -95,7 +96,7 @@
                      :y 10
                      :size 18
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) px zoom rot)))))
   (rl/close-window))

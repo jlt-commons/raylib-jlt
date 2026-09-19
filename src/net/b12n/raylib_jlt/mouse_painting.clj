@@ -7,7 +7,8 @@
   or the SAVE button takes a whole-window screenshot. No new bindings.
   Ported from raylib's examples/textures/textures_mouse_painting.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -43,7 +44,7 @@
                :height H
                :title "raylib [textures] example - mouse painting"})
   (rl/set-target-fps 120)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         canvas (rl/render-texture W H)]
     (if-not canvas
       (binding [*out* *err*]
@@ -51,7 +52,7 @@
       (do
         (rl/with-render-texture canvas (fn [] (rl/clear-background (palette-color 0))))
         (loop [frame 0 sel 0 prev 0 brush 20.0 rb-was? false save-show? false save-cnt 0]
-          (when (rl/keep-running? deadline)
+          (when (app/keep-running? deadline)
             (let [mx (rl/get-mouse-x)
                   my (rl/get-mouse-y)
                   hover (hovered-color mx my)
@@ -164,7 +165,7 @@
                            :y 180
                            :size 20
                            :color rl/RAYWHITE}))
-              (rl/maybe-screenshot! frame 30)
+              (app/maybe-screenshot! frame 30)
               (rl/end-drawing)
               (recur (inc frame) sel prev brush rb-down? save-show? save-cnt))))
         (rl/unload-render-texture! canvas))))

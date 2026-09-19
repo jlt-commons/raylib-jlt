@@ -26,7 +26,8 @@
   screen space. That is not a winding rule, and raylib's cull would drop exactly
   the faces the test keeps — see the note in raylib.clj."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 1000)
 (def ^:const H 560)
@@ -341,10 +342,10 @@
   (rl/set-target-fps 120)
   ;; See the namespace docstring: this example culls for itself.
   (rl/rl-disable-backface-culling)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            s (initial-state)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [dt (rl/get-frame-time)
               s (-> s (update :clock + dt) read-input (advance-camera dt))
               c0 (System/nanoTime)
@@ -369,7 +370,7 @@
                                  :y (- H 28)
                                  :size 16
                                  :color HELP-COLOR})
-            (rl/maybe-screenshot! frame 30)
+            (app/maybe-screenshot! frame 30)
             (rl/end-drawing)
             (recur (inc frame) s))))))
   (rl/close-window))

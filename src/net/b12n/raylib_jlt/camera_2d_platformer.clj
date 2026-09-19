@@ -29,7 +29,8 @@
   a maze. See camera-2d for the simpler follow, and camera-2d-mouse-zoom for
   zoom pinned to the cursor."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -145,7 +146,7 @@
                :height H
                :title "raylib [core] example - 2d camera platformer"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         start    {:x 400.0
                   :y 280.0
                   :speed 0.0
@@ -159,7 +160,7 @@
            player start
            cam start-cam
            mode-idx 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [dt       (rl/get-frame-time)
               reset?   (rl/key-pressed? rl/KEY-R)
               mode-idx (if (rl/key-pressed? rl/KEY-C) (mod (inc mode-idx) (count modes)) mode-idx)
@@ -193,7 +194,7 @@
                      :y 46
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 90)
+          (app/maybe-screenshot! frame 90)
           (rl/end-drawing)
           (recur (inc frame) player cam mode-idx)))))
   (rl/close-window))

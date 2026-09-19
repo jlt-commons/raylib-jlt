@@ -15,7 +15,8 @@
   jolt, and the DOS original was chunky-pixel by nature anyway.
   Ported from raylib's examples/textures/textures_screen_buffer.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -100,11 +101,11 @@
                :height H
                :title "raylib [textures] example - screen buffer"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         tex (rl/texture-from-fn IMG-W IMG-H (fn [_ _] rl/BLACK))]
     (try
       (loop [frame 0 buf (vec (repeat (* IMG-W IMG-H) 0)) roots (vec (repeat IMG-W 0))]
-        (when (rl/keep-running? deadline)
+        (when (app/keep-running? deadline)
           (let [roots (grow-roots roots)
                 buf (rise (seed-and-clear buf roots))]
             (rl/update-texture-from-fn!
@@ -116,7 +117,7 @@
                               :y 0
                               :width (* IMG-W SCALE)
                               :height (* IMG-H SCALE)})
-            (rl/maybe-screenshot! frame 200)
+            (app/maybe-screenshot! frame 200)
             (rl/end-drawing)
             (recur (inc frame) buf roots))))
       (finally (rl/unload-texture! tex))))

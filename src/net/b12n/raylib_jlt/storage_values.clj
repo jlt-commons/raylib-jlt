@@ -20,8 +20,9 @@
   storage.edn is written to the working directory, matching where raylib puts
   storage.data. It is gitignored."
   (:require
+   [net.b12n.raylib-jlt.app :as app]
    [clojure.edn :as edn]
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -54,12 +55,12 @@
                :height H
                :title "raylib [core] example - storage save/load values"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            score 0
            hiscore 0
            status "press R to roll, ENTER to save, SPACE to load"]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [roll?  (rl/key-pressed? rl/KEY-R)
               save?  (rl/key-pressed? rl/KEY-ENTER)
               load?  (rl/key-pressed? rl/KEY-SPACE)
@@ -97,7 +98,7 @@
                                                 :y 360
                                                 :size 20
                                                 :color rl/LIGHTGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) score hiscore status)))))
   (rl/close-window))

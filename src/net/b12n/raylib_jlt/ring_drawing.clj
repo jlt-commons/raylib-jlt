@@ -3,7 +3,8 @@
   angle and inner radius breathe over time, with a stroked outline (inner + outer arcs
   and radial end caps). Port of shapes_ring_drawing (minus raygui sliders)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:private d->r (/ Math/PI 180.0))
 
@@ -29,10 +30,10 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - ring drawing"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx 400 cy 235 outer 150]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [inner (+ 75 (* 25.0 (Math/sin (* frame 0.03))))
               start (* frame 0.5)
               end   (+ start 120 (* 130.0 (+ 1.0 (Math/sin (* frame 0.017)))))]
@@ -68,7 +69,7 @@
                                                        :y 10
                                                        :size 20
                                                        :color rl/RAYWHITE})
-          (rl/maybe-screenshot! frame 12)
+          (app/maybe-screenshot! frame 12)
           (rl/end-drawing)
           (recur (inc frame))))))
   (rl/close-window))

@@ -21,7 +21,8 @@
   shader here does: nothing reads from disk, so the example runs from anywhere and
   the demo recorder has no working directory to get wrong."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -69,14 +70,14 @@ void main() {
                :height H
                :title "raylib [shaders] example - hot-reloading a shader"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            sh (rl/shader (second (first variants)))
            label (first (first variants))
            reloads 0
            failures 0
            note ""]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (when sh (rl/unload-shader! sh))
         (let [want (cond
                      (rl/key-pressed? rl/KEY-ONE) 0
@@ -135,7 +136,7 @@ void main() {
                      :y (- H 28)
                      :size 14
                      :color rl/LIGHTGRAY})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) sh label reloads failures note)))))
   (rl/close-window))

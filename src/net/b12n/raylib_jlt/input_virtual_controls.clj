@@ -10,7 +10,8 @@
   and a wedge of angle around the pad's centre, both plain arithmetic, which is
   what keeps the control layout independent of the drawing API."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -60,12 +61,12 @@
                :height H
                :title "raylib [core] example - input virtual controls"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            px 400.0
            py 160.0
            hop 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx (rl/get-mouse-x)
               my (rl/get-mouse-y)
               down? (rl/mouse-down? rl/MOUSE-LEFT)
@@ -127,7 +128,7 @@
                             :y (+ BTN-Y BTN-R 10)
                             :size 14
                             :color rl/GRAY})
-          (rl/maybe-screenshot! frame 5)
+          (app/maybe-screenshot! frame 5)
           (rl/end-drawing)
           (recur (inc frame) px py hop)))))
   (rl/close-window))

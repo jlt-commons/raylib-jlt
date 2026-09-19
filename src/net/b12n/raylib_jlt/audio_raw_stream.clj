@@ -13,7 +13,8 @@
   `staged` helper the shader uniform setters use; at ~11 refills/second this
   is nowhere near a hot path."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def W 800)
 (def H 450)
@@ -50,12 +51,12 @@
   (rl/init-audio-device)
   (rl/set-audio-stream-buffer-size-default BUFFER-SIZE)
   (let [stream   (rl/load-audio-stream SAMPLE-RATE 32 1)
-        deadline (rl/auto-quit-deadline)]
+        deadline (app/auto-quit-deadline)]
     (rl/play-audio-stream stream)
     (loop [frame 0 new-freq 440 pan 0.0 osc {:idx 0
                                              :freq 440
                                              :start 0.0}]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [new-freq (cond (rl/key-down? rl/KEY-UP) (min MAX-FREQ (+ new-freq 10))
                              (rl/key-down? rl/KEY-DOWN) (max MIN-FREQ (- new-freq 10))
                              :else new-freq)
@@ -102,7 +103,7 @@
                            :x2 (inc i)
                            :y2 (+ 250.0 (* 50.0 (Math/sin (/ (* TAU t1) wavelength))))
                            :color rl/RED}))))
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) new-freq pan osc))))
     (rl/unload-audio-stream stream))

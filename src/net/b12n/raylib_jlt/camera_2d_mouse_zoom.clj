@@ -21,7 +21,8 @@
   lines of arithmetic here: the inverse camera transform, and the difference
   against the previous frame's cursor position."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -42,7 +43,7 @@
                :height H
                :title "raylib [core] example - 2d camera mouse zoom"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            cam {:offset-x 0.0
                 :offset-y 0.0
@@ -52,7 +53,7 @@
            mode :wheel
            prev-mx 0.0
            prev-my 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [mx    (double (rl/get-mouse-x))
               my    (double (rl/get-mouse-y))
               dx    (- mx prev-mx)          ; GetMouseDelta, by hand
@@ -142,7 +143,7 @@
                      :y (- H 30)
                      :size 20
                      :color rl/MAROON})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) cam mode mx my)))))
   (rl/close-window))

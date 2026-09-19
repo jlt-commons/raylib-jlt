@@ -4,7 +4,8 @@
   Port of shapes_rlgl_color_wheel (minus the raygui value slider); the hue offset
   rotates slowly so the wheel animates."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (defn- hsv->color
   "HSV -> packed Color for s=1, v=1. h in degrees (wrapped)."
@@ -26,11 +27,11 @@
   [& _]
   (rl/window! {:title "raylib [shapes] example - rlgl color wheel"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         n 64 cx 400 cy 235 radius 165
         two-pi (* 2.0 Math/PI)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background (rl/rgba 20 20 28 255))
         (let [hue-off (* frame 0.6)]
@@ -55,7 +56,7 @@
                                                          :y 10
                                                          :size 20
                                                          :color rl/RAYWHITE})
-        (rl/maybe-screenshot! frame 12)
+        (app/maybe-screenshot! frame 12)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

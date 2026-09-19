@@ -17,7 +17,8 @@
 
   See analog-clock for the same idea reduced to one large face."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -92,7 +93,7 @@
                :height H
                :title "raylib [shapes] example - clock of clocks"})
   (rl/set-target-fps 60)
-  (let [deadline    (rl/auto-quit-deadline)
+  (let [deadline    (app/auto-quit-deadline)
         bg          (rl/rgba 8 12 28 255)
         hands-color (rl/rgba 255 249 196 255)
         bezel       (rl/rgba 80 80 80 255)
@@ -104,7 +105,7 @@
            src       (vec (repeat 6 (vec (repeat 24 ZZ))))
            dst       (vec (repeat 6 (vec (repeat 24 ZZ))))
            timer     0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [hour-mode (if (rl/key-pressed? rl/KEY-SPACE)
                           (if (= hour-mode 24) 12 24)
                           hour-mode)
@@ -174,7 +175,7 @@
                                  :color hands-color})
                       (recur (inc digit) (+ x SECTION)))
                   (recur (inc digit) x)))))
-          (rl/maybe-screenshot! frame 40)
+          (app/maybe-screenshot! frame 40)
           (rl/end-drawing)
           (recur (inc frame) sec hour-mode current new-src new-dst timer)))))
   (rl/close-window))

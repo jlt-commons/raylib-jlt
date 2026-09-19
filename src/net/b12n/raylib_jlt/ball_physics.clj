@@ -2,7 +2,8 @@
   "raylib [shapes] example - 2D balls under gravity, bouncing off the window
   edges with restitution. SPACE respawns a fresh set. Pure scalar math + circle!."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def width 800)
 (def height 450)
@@ -38,10 +39,10 @@
                :height height
                :title "raylib [shapes] example - ball physics"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            balls (spawn-balls)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [balls (if (rl/key-pressed? rl/KEY-SPACE) (spawn-balls) (mapv step balls))]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
@@ -55,7 +56,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) balls)))))
   (rl/close-window))

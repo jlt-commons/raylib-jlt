@@ -14,7 +14,8 @@
   gl_FragCoord has its origin at the BOTTOM left, unlike raylib's 2D coordinates,
   so the y flip happens in the shader rather than in the mouse maths here."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -61,7 +62,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - Julia set"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
     (if-not sh
       (binding [*out* *err*]
@@ -80,7 +81,7 @@ void main() {
                  zoom 1.0
                  iter 160
                  frozen nil]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [frozen (if (rl/key-pressed? rl/KEY-SPACE)
                              (if frozen nil [(rl/get-mouse-x) (rl/get-mouse-y)])
                              frozen)
@@ -142,7 +143,7 @@ void main() {
                            :y 38
                            :size 14
                            :color rl/LIGHTGRAY})
-                (rl/maybe-screenshot! frame 5)
+                (app/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) zoom iter frozen))))
           (finally (rl/unload-shader! sh))))))

@@ -12,7 +12,8 @@
   scale factor is nothing more than that.
   Loosely based on raylib/examples/textures/textures_background_scrolling.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -49,7 +50,7 @@
                :height H
                :title "raylib [textures] example - background scrolling"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         background (rl/texture-from-fn TEX-W TEX-H
                                        (skyline-pixel 1 0.2 16 (rl/rgba 20 52 78 255)))
         midground (rl/texture-from-fn TEX-W TEX-H
@@ -59,7 +60,7 @@
         bw (* 2 TEX-W)]
     (try
       (loop [frame 0 back 0.0 mid 0.0 fore 0.0]
-        (when (rl/keep-running? deadline)
+        (when (app/keep-running? deadline)
           (let [back (let [b (- back 0.1)] (if (<= b (- bw)) 0.0 b))
                 mid (let [m (- mid 0.5)] (if (<= m (- bw)) 0.0 m))
                 fore (let [f (- fore 1.0)] (if (<= f (- bw)) 0.0 f))]
@@ -88,7 +89,7 @@
                        :size 20
                        :color rl/RED})
 
-            (rl/maybe-screenshot! frame 30)
+            (app/maybe-screenshot! frame 30)
             (rl/end-drawing)
             (recur (inc frame) back mid fore))))
       (finally

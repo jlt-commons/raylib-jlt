@@ -16,7 +16,8 @@
   no-external-assets convention.
   Loosely based on raylib/examples/shaders/shaders_color_correction.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -108,7 +109,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - color correction"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         pictures (mapv (fn [f] (rl/texture-from-fn PIC PIC f)) PICTURES)
         sh (rl/shader fragment-shader)]
     (if-not sh
@@ -119,7 +120,7 @@ void main() {
             loc-brightness (rl/uniform-loc sh "brightness")]
         (try
           (loop [frame 0 idx 0 contrast 0.0 saturation 0.0 brightness 0.0]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [idx (cond (rl/key-pressed? rl/KEY-ONE) 0
                               (rl/key-pressed? rl/KEY-TWO) 1
                               (rl/key-pressed? rl/KEY-THREE) 2
@@ -188,7 +189,7 @@ void main() {
                                                        :size 8
                                                        :color rl/GRAY})
 
-                (rl/maybe-screenshot! frame 5)
+                (app/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) idx contrast saturation brightness))))
           (finally (rl/unload-shader! sh)))))

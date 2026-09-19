@@ -1,4 +1,4 @@
-(ns net.b12n.raylib-jlt.test-runner
+(ns net.b12n.raylib.test-runner
   "Entry point for `jolt -M:test`. Requires each test namespace and runs
   clojure.test against it. Exits non-zero on any failure."
   (:require [clojure.test :as t]))
@@ -15,7 +15,7 @@
   (System/exit code))
 
 (defn -main [& _]
-  (let [namespaces '[net.b12n.raylib-jlt.ffi-write-test]
+  (let [namespaces '[net.b12n.raylib.ffi-write-test]
         ;; A namespace that fails to REQUIRE used to be printed and forgotten.
         ;; run-tests only ever sees what loaded, so its counters cannot tell a
         ;; namespace that does not exist from one that would not compile.

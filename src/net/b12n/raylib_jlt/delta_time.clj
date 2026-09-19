@@ -5,7 +5,8 @@
   speed depends on the frame rate), the bottom one moves by GetFrameTime * speed
   (frame-rate independent). Shows why delta time matters."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -16,9 +17,9 @@
                :height H
                :title "raylib [core] example - delta time"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 xf 0.0 xd 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [dt (rl/get-frame-time)
               xf (mod (+ xf 4.0) W)             ; per-frame: 4 px per frame
               xd (mod (+ xd (* 240.0 dt)) W)]   ; delta-time: 240 px per second
@@ -40,7 +41,7 @@
                      :color rl/DARKBLUE})
           (rl/fps! {:x 10
                     :y (- H 30)})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) xf xd)))))
   (rl/close-window))

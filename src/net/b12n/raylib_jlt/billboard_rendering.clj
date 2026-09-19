@@ -15,7 +15,8 @@
   farther billboard draws first so the nearer one composites over it, same
   as the upstream C example."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -92,12 +93,12 @@
                :height H
                :title "raylib [models] example - billboard rendering"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         atlas (rl/texture-from-fn ATLAS ATLAS atlas-pixel)]
     (loop [frame 0
            angle 0.8
            spin 0.0]
-      (if-not (rl/keep-running? deadline)
+      (if-not (app/keep-running? deadline)
         (rl/unload-texture! atlas)
         (let [angle (+ angle (* 0.5 (rl/get-frame-time)))
               spin (+ spin 0.4)
@@ -135,7 +136,7 @@
                      :y 40
                      :size 16
                      :color rl/GRAY})
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) angle spin)))))
   (rl/close-window))

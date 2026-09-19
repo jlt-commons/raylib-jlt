@@ -26,8 +26,9 @@
   raudio has drained a buffer. Same sound, opposite direction, and the push
   version never leaves the main thread."
   (:require
+   [net.b12n.raylib-jlt.app :as app]
    [jolt.ffi :as ffi]
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -59,7 +60,7 @@
   (rl/set-target-fps 30)
   (rl/init-audio-device)
   (rl/set-audio-stream-buffer-size-default BUFFER-SIZE)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         stream (rl/load-audio-stream SAMPLE-RATE 32 1)
         scope (ffi/alloc (+ CURSOR-OFFSET 4))
         ;; Read by the callback, written by the main loop. A long and an int,
@@ -87,7 +88,7 @@
     (ffi/write scope :int 0 CURSOR-OFFSET)
     (rl/play-audio-stream stream)
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (when (rl/key-down? rl/KEY-UP)
           (swap! *freq (fn [f] (min MAX-FREQ (+ f 10)))))
         (when (rl/key-down? rl/KEY-DOWN)
@@ -143,7 +144,7 @@
                    :y (- H 20)
                    :size 10
                    :color rl/GRAY})
-        (rl/maybe-screenshot! frame 20)
+        (app/maybe-screenshot! frame 20)
         (rl/end-drawing)
         (recur (inc frame))))
     ;; Order matters on the way out: raudio has to stop calling the pointer

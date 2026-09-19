@@ -16,7 +16,8 @@
   goes blocky. That is the shader's limit, not the maths, and it is left visible
   rather than clamped away."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -68,7 +69,7 @@ void main() {
                :height H
                :title "raylib [shaders] example - Mandelbrot set"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         sh (rl/shader fragment-shader)]
     (if-not sh
       (binding [*out* *err*]
@@ -87,7 +88,7 @@ void main() {
                  zoom 24.0
                  iter 260
                  drag nil]
-            (when (rl/keep-running? deadline)
+            (when (app/keep-running? deadline)
               (let [mx (rl/get-mouse-x)
                     my (rl/get-mouse-y)
                     over? (and (<= 0 mx W) (<= 0 my H))
@@ -139,7 +140,7 @@ void main() {
                            :y 38
                            :size 14
                            :color rl/LIGHTGRAY})
-                (rl/maybe-screenshot! frame 5)
+                (app/maybe-screenshot! frame 5)
                 (rl/end-drawing)
                 (recur (inc frame) cx cy nzoom iter drag))))
           (finally (rl/unload-shader! sh))))))

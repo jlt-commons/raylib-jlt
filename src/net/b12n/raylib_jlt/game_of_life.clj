@@ -3,7 +3,8 @@
   classic B3/S23 rules on a toroidal grid; SPACE reseeds. State is the set of live
   cells."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def cols 80)
 (def rows 45)
@@ -35,10 +36,10 @@
                :height (* rows cell)
                :title "raylib [generative] example - game of life"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            live (seed)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [live (cond (rl/key-pressed? rl/KEY-SPACE) (seed)
                          (zero? (mod frame tick)) (next-gen live)
                          :else live)]
@@ -54,7 +55,7 @@
                                                                  :y 6
                                                                  :size 18
                                                                  :color rl/RAYWHITE})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) live)))))
   (rl/close-window))

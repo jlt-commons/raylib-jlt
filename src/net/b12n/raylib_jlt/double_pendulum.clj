@@ -4,7 +4,8 @@
   A chaotic double pendulum integrated with the standard equations of motion,
   with a fading trail of the lower bob. Pure math over lines + circles."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -21,10 +22,10 @@
                :height H
                :title "raylib [shapes] example - double pendulum"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         ox (/ W 2.0) oy 150.0]
     (loop [frame 0 a1 2.2 a2 2.6 v1 0.0 v2 0.0 trail []]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [d    (- a1 a2)
               den1 (* L1 (- (+ (* 2 M1) M2) (* M2 (Math/cos (- (* 2 a1) (* 2 a2))))))
               den2 (* L2 (- (+ (* 2 M1) M2) (* M2 (Math/cos (- (* 2 a1) (* 2 a2))))))
@@ -77,7 +78,7 @@
                                                  :y 10
                                                  :size 20
                                                  :color rl/RAYWHITE})
-          (rl/maybe-screenshot! frame 70)
+          (app/maybe-screenshot! frame 70)
           (rl/end-drawing)
           (recur (inc frame) a1' a2' v1' v2' trail)))))
   (rl/close-window))

@@ -5,7 +5,8 @@
   at ±angle until a depth limit, brown trunk fading to green tips. Pure trig over
   draw-line."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -35,9 +36,9 @@
                :height H
                :title "raylib [shapes] example - recursive tree"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (rl/begin-drawing)
         (rl/clear-background rl/RAYWHITE)
         (branch :pos [(/ W 2.0) (- H 20)] :len 110.0 :angle (/ PI 2) :depth 10)  ; up, depth 10
@@ -45,7 +46,7 @@
                                            :y 10
                                            :size 20
                                            :color rl/DARKGRAY})
-        (rl/maybe-screenshot! frame 5)
+        (app/maybe-screenshot! frame 5)
         (rl/end-drawing)
         (recur (inc frame)))))
   (rl/close-window))

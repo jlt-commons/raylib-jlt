@@ -22,8 +22,9 @@
   and the grab is an index into it, so anything that rebuilds the vector drops
   the grab rather than carrying a stale index forward."
   (:require
+   [net.b12n.raylib-jlt.app :as app]
    [clojure.string :as str]
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -215,7 +216,7 @@
                :height H
                :title "raylib [text] example - strings management"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         resets {rl/KEY-ONE sentence
                 rl/KEY-TWO (str/upper-case sentence)
                 rl/KEY-THREE (str/lower-case sentence)
@@ -227,7 +228,7 @@
            grabbed nil
            ox 0.0
            oy 0.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [dt (rl/get-frame-time)
               mx (rl/get-mouse-x)
               my (rl/get-mouse-y)
@@ -317,7 +318,7 @@
                      :y (- H 30)
                      :size 20
                      :color rl/BLACK})
-          (rl/maybe-screenshot! frame 20)
+          (app/maybe-screenshot! frame 20)
           (rl/end-drawing)
           (recur (inc frame) particles grabbed ox oy)))))
   (rl/close-window))

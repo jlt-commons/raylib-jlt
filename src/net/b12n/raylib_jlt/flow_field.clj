@@ -3,7 +3,8 @@
   each leaving a short trail. The field angle is a pure function of position + time;
   trails are per-particle position history (double-buffer-safe), redrawn each frame."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def width 800)
 (def height 450)
@@ -47,11 +48,11 @@
                :height height
                :title "raylib [generative] example - flow field"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            t 0.0
            parts (spawn)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [parts (mapv (fn [p] (step-part p t)) parts)]
           (rl/begin-drawing)
           (rl/clear-background rl/BLACK)
@@ -63,7 +64,7 @@
                            :x2 (int x2)
                            :y2 (int y2)
                            :color col}))))
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) (+ t 0.005) parts)))))
   (rl/close-window))

@@ -23,7 +23,8 @@
   `rl/texture-from-fn`, generated procedurally so the example ships no assets,
   and the strips are rlgl quads wound the way `rl/texture!` winds its own."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 900)
 (def ^:const H 560)
@@ -576,16 +577,16 @@
   (rl/hide-cursor)
   ;; Only now is there a GL context to upload a texture into.
   (let [atlas-id (rl/texture-from-fn TILE (* TILE TILES) atlas-pixel)
-        deadline (rl/auto-quit-deadline)]
+        deadline (app/auto-quit-deadline)]
     (rl/set-mouse-position (quot W 2) (quot H 2))
     (let [final (loop [frame 0
                        s (initial-state)]
-                  (if-not (rl/keep-running? deadline)
+                  (if-not (app/keep-running? deadline)
                     s
                     (let [s' (step s)]
                       (rl/begin-drawing)
                       (draw-state! atlas-id s')
-                      (rl/maybe-screenshot! frame 60)
+                      (app/maybe-screenshot! frame 60)
                       (rl/end-drawing)
                       (recur (inc frame) s'))))]
       (rl/unload-texture! atlas-id)

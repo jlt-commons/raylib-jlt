@@ -5,7 +5,8 @@
   overlap, the intersection rectangle is highlighted in red. AABB overlap is
   computed in Clojure, so no by-value Rectangle crosses the FFI boundary."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -25,10 +26,10 @@
                :height H
                :title "raylib [shapes] example - collision area"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         aw 220 ah 120 bw 140 bh 100 ay 165]
     (loop [frame 0 ax 40.0 vx 4.0]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [ax (+ ax vx)
               vx (if (or (>= (+ ax aw) W) (<= ax 0)) (- vx) vx)
               bx (- (rl/get-mouse-x) (quot bw 2))
@@ -57,7 +58,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) ax vx)))))
   (rl/close-window))

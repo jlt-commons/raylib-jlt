@@ -4,7 +4,8 @@
   Vector3 by value, so it's built from rlgl triangles). SPACE respawns. See
   docs/guide/rlgl-immediate-mode.md."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def bound 4.0)
 (def gravity 0.01)
@@ -44,10 +45,10 @@
                :height 450
                :title "raylib [models] example - bouncing spheres"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0
            spheres (spawn)]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [spheres (if (rl/key-pressed? rl/KEY-SPACE) (spawn) (mapv step spheres))]
           (rl/begin-drawing)
           (rl/clear-background rl/RAYWHITE)
@@ -67,7 +68,7 @@
                      :y 10
                      :size 20
                      :color rl/DARKGRAY})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) spheres)))))
   (rl/close-window))

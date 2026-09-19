@@ -18,7 +18,8 @@
   See color-wheel for the same subject drawn with filled sectors instead, and
   rlgl-triangle for per-vertex colour on a single triangle."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -48,7 +49,7 @@
                :height H
                :title "raylib [shapes] example - rlgl color wheel"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)
+  (let [deadline (app/auto-quit-deadline)
         cx (/ (double W) 2.0)
         cy (/ (double H) 2.0)]
     (loop [frame 0
@@ -56,7 +57,7 @@
            scale 150.0
            value 1.0
            lines? false]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [tris   (clamp (+ tris (int (rl/get-mouse-wheel))) MIN-TRIS MAX-TRIS)
               scale  (cond-> scale
                        (rl/key-down? rl/KEY-UP)   (* 1.025)
@@ -103,7 +104,7 @@
                                              :y 36
                                              :size 20
                                              :color rl/MAROON})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) tris scale value lines?)))))
   (rl/close-window))

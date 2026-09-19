@@ -5,7 +5,8 @@
   window; SPACE pauses. Position/velocity are plain doubles and the ball is drawn
   with the scalar DrawCircle (no by-value Vector2)."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -17,9 +18,9 @@
                :height H
                :title "raylib [shapes] example - bouncing ball"})
   (rl/set-target-fps 60)
-  (let [deadline (rl/auto-quit-deadline)]
+  (let [deadline (app/auto-quit-deadline)]
     (loop [frame 0 x 400.0 y 225.0 vx 5.0 vy 4.0 paused? false]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [paused? (if (rl/key-pressed? rl/KEY-SPACE) (not paused?) paused?)
               [x y vx vy] (if paused?
                             [x y vx vy]
@@ -41,7 +42,7 @@
                      :color rl/LIGHTGRAY})
           (rl/fps! {:x 10
                     :y 10})
-          (rl/maybe-screenshot! frame 10)
+          (app/maybe-screenshot! frame 10)
           (rl/end-drawing)
           (recur (inc frame) x y vx vy paused?)))))
   (rl/close-window))

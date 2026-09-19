@@ -12,7 +12,8 @@
   and threaded through the buffer-fill loop.
   Ported from raylib's examples/audio/audio_amp_envelope.c."
   (:require
-   [net.b12n.raylib-jlt.raylib :as rl]))
+   [net.b12n.raylib-jlt.app :as app]
+   [net.b12n.raylib.all :as rl]))
 
 (def ^:const W 800)
 (def ^:const H 450)
@@ -96,13 +97,13 @@
   (rl/init-audio-device)
   (rl/set-audio-stream-buffer-size-default BUFFER-SIZE)
   (let [stream (rl/load-audio-stream (int SAMPLE-RATE) 32 1)
-        deadline (rl/auto-quit-deadline)]
+        deadline (app/auto-quit-deadline)]
     (rl/play-audio-stream stream)
     (loop [frame 0 attack 1.0 decay 1.0 sustain 0.5 release 1.0
            env {:value 0.0
                 :state :idle
                 :time 0.0}]
-      (when (rl/keep-running? deadline)
+      (when (app/keep-running? deadline)
         (let [step 0.02
               attack (clampf (cond (rl/key-down? rl/KEY-Q) (+ attack step)
                                    (rl/key-down? rl/KEY-A) (- attack step)
@@ -216,7 +217,7 @@
                                                      :size 20
                                                      :color rl/LIGHTGRAY})
 
-          (rl/maybe-screenshot! frame 30)
+          (app/maybe-screenshot! frame 30)
           (rl/end-drawing)
           (recur (inc frame) attack decay sustain release env))))
     (rl/unload-audio-stream stream))
