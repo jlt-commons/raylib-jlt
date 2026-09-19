@@ -69,7 +69,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/custom-logging.gif" width="80">](demos.md#custom-logging) | `custom-logging` | raylib's log captured by a jolt callback |
 | [<img src="../demos/highdpi-demo.gif" width="80">](demos.md#highdpi-demo) | `highdpi-demo` | logical points vs physical pixels, two rulers |
 
-## shapes (44)
+## shapes (45)
 
 | preview | `bb` name | shows |
 |---|---|---|
@@ -99,6 +99,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/vector-angle.gif" width="80">](demos.md#vector-angle) | `vector-angle` | the signed angle between two vectors (`atan2`) |
 | [<img src="../demos/easings.gif" width="80">](demos.md#easings) | `easings` | a grid of balls, each on a different easing |
 | [<img src="../demos/penrose-tiling.gif" width="80">](demos.md#penrose-tiling) | `penrose-tiling` | a P3 Penrose tiling by golden-ratio deflation |
+| *not recorded yet* | `outlines-thickness` | thick outlines, and what a negative one does |
 | [<img src="../demos/analog-clock.gif" width="80">](demos.md#analog-clock) | `analog-clock` | a live analog clock (libc local time) |
 | [<img src="../demos/digital-clock.gif" width="80">](demos.md#digital-clock) | `digital-clock` | a seven-segment `HH:MM:SS` display |
 | [<img src="../demos/ring-drawing.gif" width="80">](demos.md#ring-drawing) | `ring-drawing` | an animated annulus via `rl/ring!` |

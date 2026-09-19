@@ -475,6 +475,7 @@
   raw-data {:doc "▶ textures built from a hand-filled byte buffer" :task (run-example "raw-data")}
   sprite-animation {:doc "▶ six generated poses, one source rectangle" :task (run-example "sprite-animation")}
   magnifying-glass {:doc "▶ a round lens that reveals hidden markers" :task (run-example "magnifying-glass")}
+  outlines-thickness {:doc "▶ thick outlines, and what a negative one does" :task (run-example "outlines-thickness")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

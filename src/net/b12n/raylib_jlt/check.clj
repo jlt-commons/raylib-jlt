@@ -116,6 +116,7 @@
    [net.b12n.raylib-jlt.multi-sampler]
    [net.b12n.raylib-jlt.npatch-drawing]
    [net.b12n.raylib-jlt.orthographic-projection]
+   [net.b12n.raylib-jlt.outlines-thickness]
    [net.b12n.raylib-jlt.pacman]
    [net.b12n.raylib-jlt.palette-switch]
    [net.b12n.raylib-jlt.particles]
