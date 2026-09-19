@@ -1,7 +1,11 @@
 (ns net.b12n.raylib-jlt.rounded-rectangle
   "raylib [shapes] example - rounded rectangle. A rect with quarter-circle corners,
-  built from a cross of rects + four sector! corner disks (raylib's DrawRectangleRounded
-  takes a Rectangle by value, unbindable). The corner radius animates 0 -> max. Port of
+  built from a cross of rects + four sector! corner disks. That hand-rolling dates from
+  when raylib's DrawRectangleRounded was genuinely out of reach: it takes a Rectangle by
+  value and jolt could not pass one. jolt 0.7.23 changed that, and rl/rect-rounded! now
+  binds the real call (see net.b12n.raylib-jlt.outlines-thickness). This example is left
+  on the hand-rolled path deliberately, the way the rest of the suite's rlgl stand-ins
+  are, rather than migrated in passing. The corner radius animates 0 -> max. Port of
   shapes_rounded_rectangle_drawing."
   (:require
    [net.b12n.raylib-jlt.app :as app]
