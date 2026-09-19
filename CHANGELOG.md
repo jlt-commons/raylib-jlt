@@ -12,6 +12,18 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## 2026-09-20
 
+- **Three by-value rectangle outline calls are bound**, taking the suite to 182
+  with `outlines-thickness` and `textured-curve`. `DrawRectangleLinesEx`,
+  `DrawRectangleRounded` and `DrawRectangleRoundedLinesEx` each take a
+  Rectangle by value, which is why the suite went without them; jolt 0.7.23
+  made that possible and `rl/rect-lines-ex!`, `rl/rect-rounded!` and
+  `rl/rect-rounded-lines-ex!` call them directly. `rounded-rectangle` keeps its
+  hand-rolled sectors, like the rest of the suite's rlgl stand-ins, and its
+  docstring no longer calls the real function unbindable.
+- **A negative outline thickness draws nothing, whatever the slider suggests.**
+  Both rectangle calls guard their body with a thickness-above-zero test, so
+  there is no outward band. `outlines-thickness` says so on screen, and uses
+  `ring!` for its circle since raylib 6.0 exports no `DrawCircleLinesEx` at all.
 - **`rl/texture!` can rotate.** It takes `:rotation` in degrees plus
   `:origin-x`/`:origin-y` naming the pivot as an offset into the destination
   rectangle, which is what `DrawTexturePro` means by those arguments. Until

@@ -1,4 +1,4 @@
-# The example catalog: 180 raylib demos in jolt
+# The example catalog: 182 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
