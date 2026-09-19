@@ -16,10 +16,9 @@
   gate, not part of its public surface.
 
   173 of these vars carry ^:const in their source module (the raylib/rlgl enum
-  families: KEY-*, MOUSE-*, PAD-*, GESTURE-*, AXIS-*, FLAG-*, BLEND-*, UNIFORM-*,
-  RL-*, PIXELFORMAT-*, and log's LOG-*/TRACE-LOG-BUFFER). alter-meta! below copies
-  :const alongside :doc and :arglists onto every alias, so it is not lost the way
-  the hand-written shim this file replaces silently dropped it. The value read
+  families: AXIS-*, BLEND-*, CAMERA-*, FLAG-*, GESTURE-*, GL-*, KEY-*, LOG-*, MOUSE-*, PAD-*, PIXELFORMAT-*, RL-*, TRACE-*, UNIFORM-*). alter-meta! below
+  copies :const alongside :doc and :arglists onto every alias, so it is not lost the
+  way the hand-written shim this file replaces silently dropped it. The value read
   through the alias is correct either way; :const only affects whether a caller's
   own compile can inline the constant at the call site."
   (:refer-clojure :exclude [run!]) ; core/run! shadows clojure.core/run!

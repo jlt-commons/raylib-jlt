@@ -1,6 +1,10 @@
 #!/usr/bin/env bb
 ;; Regenerates lib/src/net/b12n/raylib/all.clj, the one door back into the
-;; library's twenty modules, from the module namespaces themselves.
+;; library's module namespaces. The module count is not stated here on
+;; purpose -- this is a hand-written comment, not generated output, so a
+;; literal count here can drift from reality the moment a module is added
+;; or removed. The generated file's own header states the real count,
+;; computed at generation time.
 ;;
 ;; Usage: bb scripts/gen_aggregator.clj          write lib/src/net/b12n/raylib/all.clj
 ;;        bb scripts/gen_aggregator.clj --check  compare against the committed file;
@@ -100,8 +104,24 @@
           (println (str "  " sym " is public in: " (str/join ", " (map second owners))))))
       (System/exit 1))))
 
+(defn const-families
+  "Family prefixes among the vars that carry ^:const, derived from the
+  symbol names themselves (the segment before the first '-'), not hand
+  enumerated. A hand-written list drifts the moment a module adds a new
+  ^:const family and nobody remembers to update the comment -- this one
+  can't drift, because it's read off the same live metadata that produces
+  const-count."
+  [by-module]
+  (->> (mapcat val by-module)
+       (filter second)
+       (map first)
+       (map name)
+       (map (fn [s] (first (str/split s #"-"))))
+       distinct
+       sort))
+
 (defn ns-form
-  [basenames total const-count]
+  [basenames total const-count families]
   (str
    "(ns net.b12n.raylib.all\n"
    "  \"Every public var of this library's " total " concrete-module surface, re-exported\n"
@@ -110,10 +130,9 @@
    "  net.b12n.raylib.check is not aggregated: it is the library's own headless load\n"
    "  gate, not part of its public surface.\n\n"
    "  " const-count " of these vars carry ^:const in their source module (the raylib/rlgl enum\n"
-   "  families: KEY-*, MOUSE-*, PAD-*, GESTURE-*, AXIS-*, FLAG-*, BLEND-*, UNIFORM-*,\n"
-   "  RL-*, PIXELFORMAT-*, and log's LOG-*/TRACE-LOG-BUFFER). alter-meta! below copies\n"
-   "  :const alongside :doc and :arglists onto every alias, so it is not lost the way\n"
-   "  the hand-written shim this file replaces silently dropped it. The value read\n"
+   "  families: " (str/join ", " (map (fn [f] (str f "-*")) families)) "). alter-meta! below\n"
+   "  copies :const alongside :doc and :arglists onto every alias, so it is not lost the\n"
+   "  way the hand-written shim this file replaces silently dropped it. The value read\n"
    "  through the alias is correct either way; :const only affects whether a caller's\n"
    "  own compile can inline the constant at the call site.\"\n"
    "  (:refer-clojure :exclude [run!]) ; core/run! shadows clojure.core/run!\n"
@@ -136,7 +155,8 @@
 (defn generated-content
   [basenames by-module]
   (let [total (reduce + (map (comp count val) by-module))
-        const-count (reduce + (map (fn [[_ pairs]] (count (filter second pairs))) by-module))]
+        const-count (reduce + (map (fn [[_ pairs]] (count (filter second pairs))) by-module))
+        families (const-families by-module)]
     (str ";; GENERATED FILE. Do not edit by hand.\n"
          ";; Produced by scripts/gen_aggregator.clj -- regenerate with `bb gen:all`\n"
          ";; (repo root) or `bb gen:all` from lib/. `bb check:aggregator` fails if this\n"
@@ -147,7 +167,7 @@
          ";; computed by asking a live jolt process for each module's ns-publics -- the\n"
          ";; same mechanism P0.T1's probe proved for def re-export + alter-meta! metadata\n"
          ";; copy, not a parse of the module source text.\n"
-         (ns-form basenames total const-count)
+         (ns-form basenames total const-count families)
          (str/join "" (map (fn [b] (module-section b (get by-module b))) basenames)))))
 
 (defn write-file! [content]
