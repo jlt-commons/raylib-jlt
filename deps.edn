@@ -191,6 +191,7 @@
            :raw-data {:main-opts ["-m" "net.b12n.raylib-jlt.raw-data"]} ; textures built from a hand-filled byte buffer
            :sprite-animation {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-animation"]} ; six generated poses, one source rectangle
            :magnifying-glass {:main-opts ["-m" "net.b12n.raylib-jlt.magnifying-glass"]} ; a round lens that reveals hidden markers
-           :outlines-thickness {:main-opts ["-m" "net.b12n.raylib-jlt.outlines-thickness"]}} ; thick outlines, and what a negative one does
+           :outlines-thickness {:main-opts ["-m" "net.b12n.raylib-jlt.outlines-thickness"]} ; thick outlines, and what a negative one does
+           :textured-curve {:main-opts ["-m" "net.b12n.raylib-jlt.textured-curve"]}} ; a texture laid along a cubic Bezier
 
  :tasks {run "joltc -M:run"}}

@@ -197,7 +197,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (27)
+## textures (28)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -233,6 +233,7 @@ native memory rather than loaded from a file. See
 | *not recorded yet* | `raw-data` | textures built from a hand-filled byte buffer |
 | *not recorded yet* | `sprite-animation` | six generated poses, one source rectangle |
 | *not recorded yet* | `magnifying-glass` | a round lens that reveals hidden markers |
+| *not recorded yet* | `textured-curve` | a texture laid along a cubic Bezier |
 
 ## shaders (16)
 

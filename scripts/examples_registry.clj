@@ -189,7 +189,8 @@
    ["raw-data" "raw-data" "textures" "textures built from a hand-filled byte buffer"]
    ["sprite-animation" "sprite-animation" "textures" "six generated poses, one source rectangle"]
    ["magnifying-glass" "magnifying-glass" "textures" "a round lens that reveals hidden markers"]
-   ["outlines-thickness" "outlines-thickness" "shapes" "thick outlines, and what a negative one does"]])
+   ["outlines-thickness" "outlines-thickness" "shapes" "thick outlines, and what a negative one does"]
+   ["textured-curve" "textured-curve" "textures" "a texture laid along a cubic Bezier"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
