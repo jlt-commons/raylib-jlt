@@ -159,6 +159,12 @@ jobs:
       - name: Demo gallery and counts
         run: bb check:demos
 
+      # The library's load gate: prove every namespace under lib/src loads without
+      # compile errors. If the library fails to load, report one failure instead of
+      # 171 example compile errors.
+      - name: Library load gate
+        run: bb check:lib
+
       - name: Compile every example (headless)
         run: |
           set +e

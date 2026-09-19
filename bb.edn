@@ -599,13 +599,13 @@
   ;; Formatting lives under lsp:format below, not here. See the top-of-file
   ;; note on why clojure-lsp (not cljfmt) owns formatting in this project.
   lint
-  {:doc "clj-kondo over src (report only, always exits 0); strict: bb lint:strict"
-   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src"]))]
+  {:doc "clj-kondo over src and lib/src (report only, always exits 0); strict: bb lint:strict"
+   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src" "lib/src"]))]
            (println (if (zero? exit) "✓ clj-kondo: no errors or warnings" "✗ clj-kondo: see findings above")))}
 
   lint:strict
   {:doc "bb lint, but exit non-zero if clj-kondo reports any findings (2=warnings, 3=errors)"
-   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src"]))]
+   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src" "lib/src"]))]
            (System/exit exit))}
 
   ;; --- quality: clojure-lsp (format + clean-ns + diagnostics) ---------------
