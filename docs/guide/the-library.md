@@ -4,7 +4,7 @@ Every raylib FFI binding, the keyword-argument drawing API, and the named color
 palette live in `net.b12n.raylib`, its own jolt project under `lib/`. This repo
 is the library's first consumer, not its only intended one: `lib/` has its own
 `deps.edn`, its own headless compile-check, and nothing in it depends on the
-182 examples that sit beside it. This page is for anyone who wants to bind
+183 examples that sit beside it. This page is for anyone who wants to bind
 against raylib from jolt without also taking the example suite.
 
 ## What it binds
