@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 464 public vars total across 19 modules, zero name collisions,
+;; 488 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
 ;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 464 concrete-module surface, re-exported
+  "Every public var of this library's 488 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -687,7 +687,7 @@
 (def set-trace-log-callback log/set-trace-log-callback)
 (alter-meta! #'set-trace-log-callback merge (select-keys (meta #'log/set-trace-log-callback) [:doc :arglists :const]))
 
-;; --- models (18) --------------------------------------------------------
+;; --- models (42) --------------------------------------------------------
 (def cube! models/cube!)
 (alter-meta! #'cube! merge (select-keys (meta #'models/cube!) [:doc :arglists :const]))
 (def draw-capsule! models/draw-capsule!)
@@ -704,12 +704,58 @@
 (alter-meta! #'draw-cylinder-wires! merge (select-keys (meta #'models/draw-cylinder-wires!) [:doc :arglists :const]))
 (def draw-grid models/draw-grid)
 (alter-meta! #'draw-grid merge (select-keys (meta #'models/draw-grid) [:doc :arglists :const]))
+(def draw-mesh! models/draw-mesh!)
+(alter-meta! #'draw-mesh! merge (select-keys (meta #'models/draw-mesh!) [:doc :arglists :const]))
 (def draw-plane! models/draw-plane!)
 (alter-meta! #'draw-plane! merge (select-keys (meta #'models/draw-plane!) [:doc :arglists :const]))
 (def draw-sphere! models/draw-sphere!)
 (alter-meta! #'draw-sphere! merge (select-keys (meta #'models/draw-sphere!) [:doc :arglists :const]))
 (def draw-sphere-wires! models/draw-sphere-wires!)
 (alter-meta! #'draw-sphere-wires! merge (select-keys (meta #'models/draw-sphere-wires!) [:doc :arglists :const]))
+(def material-default models/material-default)
+(alter-meta! #'material-default merge (select-keys (meta #'models/material-default) [:doc :arglists :const]))
+(def material-diffuse-color! models/material-diffuse-color!)
+(alter-meta! #'material-diffuse-color! merge (select-keys (meta #'models/material-diffuse-color!) [:doc :arglists :const]))
+(def material-free! models/material-free!)
+(alter-meta! #'material-free! merge (select-keys (meta #'models/material-free!) [:doc :arglists :const]))
+(def material-layout models/material-layout)
+(alter-meta! #'material-layout merge (select-keys (meta #'models/material-layout) [:doc :arglists :const]))
+(def matrix-alloc models/matrix-alloc)
+(alter-meta! #'matrix-alloc merge (select-keys (meta #'models/matrix-alloc) [:doc :arglists :const]))
+(def matrix-free! models/matrix-free!)
+(alter-meta! #'matrix-free! merge (select-keys (meta #'models/matrix-free!) [:doc :arglists :const]))
+(def matrix-layout models/matrix-layout)
+(alter-meta! #'matrix-layout merge (select-keys (meta #'models/matrix-layout) [:doc :arglists :const]))
+(def matrix-translate! models/matrix-translate!)
+(alter-meta! #'matrix-translate! merge (select-keys (meta #'models/matrix-translate!) [:doc :arglists :const]))
+(def mesh-alloc models/mesh-alloc)
+(alter-meta! #'mesh-alloc merge (select-keys (meta #'models/mesh-alloc) [:doc :arglists :const]))
+(def mesh-cone! models/mesh-cone!)
+(alter-meta! #'mesh-cone! merge (select-keys (meta #'models/mesh-cone!) [:doc :arglists :const]))
+(def mesh-cube! models/mesh-cube!)
+(alter-meta! #'mesh-cube! merge (select-keys (meta #'models/mesh-cube!) [:doc :arglists :const]))
+(def mesh-cylinder! models/mesh-cylinder!)
+(alter-meta! #'mesh-cylinder! merge (select-keys (meta #'models/mesh-cylinder!) [:doc :arglists :const]))
+(def mesh-free! models/mesh-free!)
+(alter-meta! #'mesh-free! merge (select-keys (meta #'models/mesh-free!) [:doc :arglists :const]))
+(def mesh-hemisphere! models/mesh-hemisphere!)
+(alter-meta! #'mesh-hemisphere! merge (select-keys (meta #'models/mesh-hemisphere!) [:doc :arglists :const]))
+(def mesh-knot! models/mesh-knot!)
+(alter-meta! #'mesh-knot! merge (select-keys (meta #'models/mesh-knot!) [:doc :arglists :const]))
+(def mesh-layout models/mesh-layout)
+(alter-meta! #'mesh-layout merge (select-keys (meta #'models/mesh-layout) [:doc :arglists :const]))
+(def mesh-plane! models/mesh-plane!)
+(alter-meta! #'mesh-plane! merge (select-keys (meta #'models/mesh-plane!) [:doc :arglists :const]))
+(def mesh-sphere! models/mesh-sphere!)
+(alter-meta! #'mesh-sphere! merge (select-keys (meta #'models/mesh-sphere!) [:doc :arglists :const]))
+(def mesh-torus! models/mesh-torus!)
+(alter-meta! #'mesh-torus! merge (select-keys (meta #'models/mesh-torus!) [:doc :arglists :const]))
+(def mesh-triangle-count models/mesh-triangle-count)
+(alter-meta! #'mesh-triangle-count merge (select-keys (meta #'models/mesh-triangle-count) [:doc :arglists :const]))
+(def mesh-vao-id models/mesh-vao-id)
+(alter-meta! #'mesh-vao-id merge (select-keys (meta #'models/mesh-vao-id) [:doc :arglists :const]))
+(def mesh-vertex-count models/mesh-vertex-count)
+(alter-meta! #'mesh-vertex-count merge (select-keys (meta #'models/mesh-vertex-count) [:doc :arglists :const]))
 (def rl-pop-matrix models/rl-pop-matrix)
 (alter-meta! #'rl-pop-matrix merge (select-keys (meta #'models/rl-pop-matrix) [:doc :arglists :const]))
 (def rl-push-matrix models/rl-push-matrix)
@@ -724,6 +770,8 @@
 (alter-meta! #'rl-vertex-3f merge (select-keys (meta #'models/rl-vertex-3f) [:doc :arglists :const]))
 (def sphere! models/sphere!)
 (alter-meta! #'sphere! merge (select-keys (meta #'models/sphere!) [:doc :arglists :const]))
+(def unload-mesh! models/unload-mesh!)
+(alter-meta! #'unload-mesh! merge (select-keys (meta #'models/unload-mesh!) [:doc :arglists :const]))
 
 ;; --- native (9) --------------------------------------------------------
 (def PIXELFORMAT-R8G8B8 native/PIXELFORMAT-R8G8B8)
