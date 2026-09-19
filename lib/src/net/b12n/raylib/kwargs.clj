@@ -25,7 +25,8 @@
 ;; raylib's C functions are positional; these wrappers take keyword arguments so
 ;; example code reads self-descriptively, e.g. (rl/text! "hi" :x 10 :y 20
 ;; :color rl/RED) instead of (draw-text "hi" 10 20 20 rl/RED). The raw bindings
-;; above remain the FFI boundary; these just name the arguments.
+;; live in color, core, rlgl, shapes and text, required above; these just name
+;; their arguments.
 
 (defn window!
   "InitWindow with keyword args. :width :height :title."
