@@ -16,6 +16,7 @@
    [jolt.ffi :as ffi]
    [net.b12n.raylib-jlt.app :as app]
    [net.b12n.raylib.audio :as audio]
+   [net.b12n.raylib.camera :as camera]
    [net.b12n.raylib.color :as color]
    [net.b12n.raylib.core :as core]
    [net.b12n.raylib.files :as files]
@@ -98,43 +99,13 @@
 (def RL-TRIANGLES rlgl/RL-TRIANGLES)
 (def rl-color! rlgl/rl-color!)
 
+;; --- Camera2D: a struct passed BY VALUE --------------------------------------
+;; Moved to net.b12n.raylib.camera. Re-exported here so every example that says
+;; rl/with-camera-2d keeps working unchanged.
 ;; #region camera2d-by-value
-;; --- Camera2D: a struct passed BY VALUE (the one non-Color by-value struct) ---
-;; raylib's BeginMode2D(Camera2D) takes {Vector2 offset; Vector2 target; float
-;; rotation; float zoom}, 24 bytes, passed by value. On the AArch64 (Apple) ABI a
-;; composite larger than 16 bytes is passed INDIRECTLY: the caller allocates a
-;; copy and passes a POINTER to it, so the binding is [:pointer] and we build the
-;; struct (six little-endian floats) in native memory. NOTE: this is AArch64-
-;; specific: on the x86-64 SysV ABI the 24 bytes are passed on the stack, which
-;; a [:pointer] binding does NOT do (see README). For a portable alternative,
-;; apply the same transform with the scalar rlgl matrix ops instead.
-(ffi/defcfn ^:private begin-mode-2d-ptr "BeginMode2D" [:pointer] :void)
+(def end-mode-2d camera/end-mode-2d)
+(def with-camera-2d camera/with-camera-2d)
 ;; #endregion
-(ffi/defcfn end-mode-2d "EndMode2D" [] :void)
-
-(defn with-camera-2d
-  "Run (f) with a Camera2D active. Allocates the 24-byte struct, writes the six
-  floats (offset.x, offset.y, target.x, target.y, rotation, zoom), passes a
-  pointer to BeginMode2D, runs f, then EndMode2D and frees. See the ABI note above."
-  [{:keys [offset-x offset-y target-x target-y rotation zoom]
-    :or {offset-x 0
-         offset-y 0
-         target-x 0
-         target-y 0
-         rotation 0
-         zoom 1.0}} f]
-  (let [p (ffi/alloc 24)]
-    (try
-      (ffi/write p :float (double offset-x) 0)
-      (ffi/write p :float (double offset-y) 4)
-      (ffi/write p :float (double target-x) 8)
-      (ffi/write p :float (double target-y) 12)
-      (ffi/write p :float (double rotation) 16)
-      (ffi/write p :float (double zoom) 20)
-      (begin-mode-2d-ptr p)
-      (f)
-      (end-mode-2d)
-      (finally (ffi/free p)))))
 
 ;; --- Camera3D + 3D geometry --------------------------------------------------
 ;; Camera3D is 44 bytes (three Vector3 + a float + an int), passed BY VALUE to
@@ -154,8 +125,9 @@
   [a0 a1 a2]
   (rl-vertex-3f-raw (double a0) (double a1) (double a2)))
 
-(ffi/defcfn begin-mode-3d-ptr "BeginMode3D" [:pointer] :void)
-(ffi/defcfn end-mode-3d "EndMode3D" [] :void)
+;; moved to net.b12n.raylib.camera
+(def begin-mode-3d-ptr camera/begin-mode-3d-ptr)
+(def end-mode-3d camera/end-mode-3d)
 
 ;; rlgl matrix stack, nested transforms for immediate-mode geometry. rlgl applies
 ;; the current transform to each rlVertex* at submit time, so push/rotate/translate
@@ -195,40 +167,8 @@
   [a0 a1 a2]
   (rl-scalef-raw (double a0) (double a1) (double a2)))
 
-(defn with-camera-3d
-  "Run (f) with a Camera3D active (BeginMode3D → f → EndMode3D). Builds the
-  44-byte struct in native memory (nine floats + fovy + projection int) and passes
-  a pointer. Keys: :pos-x/y/z :target-x/y/z :up-x/y/z :fovy :projection (0 =
-  perspective). See the ABI note above."
-  [{:keys [pos-x pos-y pos-z target-x target-y target-z up-x up-y up-z fovy projection]
-    :or {pos-x 0
-         pos-y 0
-         pos-z 0
-         target-x 0
-         target-y 0
-         target-z 0
-         up-x 0
-         up-y 1
-         up-z 0
-         fovy 45
-         projection 0}} f]
-  (let [p (ffi/alloc 44)]
-    (try
-      (ffi/write p :float (double pos-x) 0)
-      (ffi/write p :float (double pos-y) 4)
-      (ffi/write p :float (double pos-z) 8)
-      (ffi/write p :float (double target-x) 12)
-      (ffi/write p :float (double target-y) 16)
-      (ffi/write p :float (double target-z) 20)
-      (ffi/write p :float (double up-x) 24)
-      (ffi/write p :float (double up-y) 28)
-      (ffi/write p :float (double up-z) 32)
-      (ffi/write p :float (double fovy) 36)
-      (ffi/write p :int (int projection) 40)
-      (begin-mode-3d-ptr p)
-      (f)
-      (end-mode-3d)
-      (finally (ffi/free p)))))
+;; moved to net.b12n.raylib.camera
+(def with-camera-3d camera/with-camera-3d)
 
 (defn- shade-color
   "Darken a packed Color by factor f (fakes lighting so cube faces read as 3D)."
@@ -741,8 +681,9 @@
 ;; --- extra scalar drawing ------------------------------------------------------
 ;; Moved to net.b12n.raylib.shapes. Re-exported here so every example that says
 ;; rl/circle-gradient! or rl/rect-pro! keeps working unchanged.
-;; vector2-layout stays a local alias: world <-> screen and splines below still
-;; read it bare, and neither has been extracted yet.
+;; vector2-layout stays a local alias: splines below still reads it bare, and
+;; that section hasn't been extracted yet. world <-> screen used to as well;
+;; it's now net.b12n.raylib.camera.
 ;; moved to net.b12n.raylib.native
 (def ^:private vector2-layout native/vector2-layout)
 (def draw-rectangle-grad-h shapes/draw-rectangle-grad-h)
@@ -877,78 +818,14 @@
 (def update-audio-stream audio/update-audio-stream)
 (def set-audio-stream-pan audio/set-audio-stream-pan)
 
-;; --- world <-> screen (genuine by-value Camera3D) -----------------------
-;; with-camera-3d's Camera3D pointer trick above is correct on AArch64 by
-;; accident of the ABI (a struct too large for registers goes via a hidden
-;; pointer there) and wrong on x86-64 SysV, where it goes on the stack
-;; instead (see raylib.clj's file-level ABI note). GetWorldToScreen is new
-;; code, not a migration of with-camera-3d, so it uses jolt's real
-;; [:by-value [:struct ...]] passing for BOTH the Vector3 and the Camera3D --
-;; correct on either ABI, and the pattern the rest of the by-value bindings
-;; above already follow.
+;; --- world <-> screen ------------------------------------------------------
+;; Moved to net.b12n.raylib.camera. Re-exported here so every example that
+;; says rl/world-to-screen keeps working unchanged.
+;; vector3-layout stays a local alias: geometric primitives below still reads
+;; it bare, and that section hasn't been extracted yet.
 ;; moved to net.b12n.raylib.native
 (def ^:private vector3-layout native/vector3-layout)
-
-(def ^:private camera3d-layout
-  (ffi/layout [:struct [[:position [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:target   [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:up       [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:fovy :float]
-                        [:projection :int32]]]))
-
-(ffi/defcfn ^:private get-world-to-screen-raw "GetWorldToScreen"
-  [[:by-value [:struct [[:x :float] [:y :float] [:z :float]]]]
-   [:by-value [:struct [[:position [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:target   [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:up       [:struct [[:x :float] [:y :float] [:z :float]]]]
-                        [:fovy :float]
-                        [:projection :int32]]]]]
-  [:by-value [:struct [[:x :float] [:y :float]]]])
-
-(defn world-to-screen
-  "GetWorldToScreen. `pos` is [x y z] in world space; `camera` takes the same
-  keys as with-camera-3d's opts map (share one map between both calls to
-  project a point through the exact camera a frame draws with). Returns
-  [screen-x screen-y] as doubles."
-  [[px py pz]
-   {:keys [pos-x pos-y pos-z target-x target-y target-z up-x up-y up-z
-           fovy projection]
-    :or {pos-x 0
-         pos-y 0
-         pos-z 0
-         target-x 0
-         target-y 0
-         target-z 0
-         up-x 0
-         up-y 1
-         up-z 0
-         fovy 45
-         projection 0}}]
-  (let [p   (ffi/alloc (ffi/layout-size vector3-layout))
-        cam (ffi/alloc (ffi/layout-size camera3d-layout))
-        out (ffi/alloc (ffi/layout-size vector2-layout))]
-    (try
-      (ffi/write-field p vector3-layout :x (double px))
-      (ffi/write-field p vector3-layout :y (double py))
-      (ffi/write-field p vector3-layout :z (double pz))
-      (ffi/write-field cam camera3d-layout [:position :x] (double pos-x))
-      (ffi/write-field cam camera3d-layout [:position :y] (double pos-y))
-      (ffi/write-field cam camera3d-layout [:position :z] (double pos-z))
-      (ffi/write-field cam camera3d-layout [:target :x] (double target-x))
-      (ffi/write-field cam camera3d-layout [:target :y] (double target-y))
-      (ffi/write-field cam camera3d-layout [:target :z] (double target-z))
-      (ffi/write-field cam camera3d-layout [:up :x] (double up-x))
-      (ffi/write-field cam camera3d-layout [:up :y] (double up-y))
-      (ffi/write-field cam camera3d-layout [:up :z] (double up-z))
-      (ffi/write-field cam camera3d-layout :fovy (double fovy))
-      (ffi/write-field cam camera3d-layout :projection (int projection))
-      (get-world-to-screen-raw out p cam)
-      [(ffi/read-field out vector2-layout :x)
-       (ffi/read-field out vector2-layout :y)]
-      (finally
-        (ffi/free p)
-        (ffi/free cam)
-        (ffi/free out)))))
+(def world-to-screen camera/world-to-screen)
 
 ;; --- more keyboard constants (keyboard-testbed) --------------------------
 ;; Moved to net.b12n.raylib.input. Re-exported here so every example that says
@@ -1167,58 +1044,20 @@
 (def compute-sha256 util/compute-sha256)
 (def base64-encode util/base64-encode)
 
-;; --- a persistent native Camera3D, mutated by UpdateCamera (camera-3d-free) --
-;; UpdateCamera reads the mouse/wheel/keys itself and writes position/target/up
-;; back into the SAME struct, so (unlike with-camera-3d's per-frame map) this
-;; buffer has to survive across frames -- allocate it once outside the loop.
-(ffi/defcfn update-camera! "UpdateCamera" [:pointer :int] :void)
-(ffi/defcfn disable-cursor! "DisableCursor" [] :void)
-(ffi/defcfn enable-cursor! "EnableCursor" [] :void)
-
-(def ^:const CAMERA-CUSTOM 0)
-(def ^:const CAMERA-FREE 1)
-(def ^:const CAMERA-ORBITAL 2)
-(def ^:const CAMERA-FIRST-PERSON 3)
-(def ^:const CAMERA-THIRD-PERSON 4)
-
-(defn camera3d-alloc
-  "A persistent native Camera3D from the same keys with-camera-3d takes.
-  Pair with camera3d-free!."
-  [& {:keys [pos-x pos-y pos-z target-x target-y target-z up-x up-y up-z fovy projection]
-      :or {pos-x 0
-           pos-y 0
-           pos-z 0
-           target-x 0
-           target-y 0
-           target-z 0
-           up-x 0
-           up-y 1
-           up-z 0
-           fovy 45
-           projection 0}}]
-  (let [cam (ffi/alloc (ffi/layout-size camera3d-layout))]
-    (ffi/write-field cam camera3d-layout [:position :x] (double pos-x))
-    (ffi/write-field cam camera3d-layout [:position :y] (double pos-y))
-    (ffi/write-field cam camera3d-layout [:position :z] (double pos-z))
-    (ffi/write-field cam camera3d-layout [:target :x] (double target-x))
-    (ffi/write-field cam camera3d-layout [:target :y] (double target-y))
-    (ffi/write-field cam camera3d-layout [:target :z] (double target-z))
-    (ffi/write-field cam camera3d-layout [:up :x] (double up-x))
-    (ffi/write-field cam camera3d-layout [:up :y] (double up-y))
-    (ffi/write-field cam camera3d-layout [:up :z] (double up-z))
-    (ffi/write-field cam camera3d-layout :fovy (double fovy))
-    (ffi/write-field cam camera3d-layout :projection (int projection))
-    cam))
-
-(defn camera3d-free!
-  [cam]
-  (ffi/free cam))
-
-(defn camera3d-set-target!
-  [cam [x y z]]
-  (ffi/write-field cam camera3d-layout [:target :x] (double x))
-  (ffi/write-field cam camera3d-layout [:target :y] (double y))
-  (ffi/write-field cam camera3d-layout [:target :z] (double z)))
+;; --- a persistent native Camera3D, mutated by UpdateCamera ------------------
+;; Moved to net.b12n.raylib.camera. Re-exported here so every example that
+;; says rl/camera3d-alloc or rl/update-camera! keeps working unchanged.
+(def update-camera! camera/update-camera!)
+(def disable-cursor! camera/disable-cursor!)
+(def enable-cursor! camera/enable-cursor!)
+(def CAMERA-CUSTOM camera/CAMERA-CUSTOM)
+(def CAMERA-FREE camera/CAMERA-FREE)
+(def CAMERA-ORBITAL camera/CAMERA-ORBITAL)
+(def CAMERA-FIRST-PERSON camera/CAMERA-FIRST-PERSON)
+(def CAMERA-THIRD-PERSON camera/CAMERA-THIRD-PERSON)
+(def camera3d-alloc camera/camera3d-alloc)
+(def camera3d-free! camera/camera3d-free!)
+(def camera3d-set-target! camera/camera3d-set-target!)
 
 ;; --- splines by Vector2, genuinely by value (splines-drawing) -----------
 ;; DrawSplineSegment* takes every point as a Vector2 by value; each is staged
