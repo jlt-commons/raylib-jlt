@@ -2,9 +2,10 @@
   "2D shape primitives (DrawPixel, DrawLine, DrawRectangle*, DrawCircle*,
   DrawEllipse) plus the extra scalar drawing built on them: a circle gradient
   staged through a Vector2, a rotated rectangle drawn via rlgl immediate
-  mode, and blend-mode control. These bindings use raylib's scalar-argument
-  variants, so nothing but the packed colour crosses the FFI boundary by
-  value here."
+  mode, and blend-mode control. Most of these bindings use raylib's
+  scalar-argument variants, so the packed colour is usually the only thing
+  crossing the FFI boundary by value. `draw-circle-gradient-raw` is the
+  exception: raylib 6.0 takes its centre as a genuine by-value Vector2."
   (:require
    [jolt.ffi :as ffi]
    [net.b12n.raylib.color :as color]
