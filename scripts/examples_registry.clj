@@ -183,7 +183,8 @@
    ["image-rotate" "image-rotate" "textures" "0/90/180/270 exact, one angle grows the buffer"]
    ["image-channel" "image-channel" "textures" "R/G/B/A split; alpha masked to show structure"]
    ["npatch-drawing" "npatch-drawing" "textures" "nine-patch stretching, corners held fixed"]
-   ["sprite-button" "sprite-button" "textures" "one sheet, three states, sliced by v"]])
+   ["sprite-button" "sprite-button" "textures" "one sheet, three states, sliced by v"]
+   ["sprite-stacking" "sprite-stacking" "textures" "40 generated slices faking a 3D car"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

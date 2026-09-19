@@ -185,6 +185,7 @@
            :image-rotate {:main-opts ["-m" "net.b12n.raylib-jlt.image-rotate"]} ; 0/90/180/270 exact, one angle grows the buffer
            :image-channel {:main-opts ["-m" "net.b12n.raylib-jlt.image-channel"]} ; R/G/B/A split; alpha masked to show structure
            :npatch-drawing {:main-opts ["-m" "net.b12n.raylib-jlt.npatch-drawing"]} ; nine-patch stretching, corners held fixed
-           :sprite-button {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-button"]}} ; one sheet, three states, sliced by v
+           :sprite-button {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-button"]} ; one sheet, three states, sliced by v
+           :sprite-stacking {:main-opts ["-m" "net.b12n.raylib-jlt.sprite-stacking"]}} ; 40 generated slices faking a 3D car
 
  :tasks {run "joltc -M:run"}}

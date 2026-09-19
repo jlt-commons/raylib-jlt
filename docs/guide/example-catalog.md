@@ -196,7 +196,7 @@ suite as a generative-art canvas: cellular automata, agent flocking, particle
 systems, rotating-vector Fourier series, parametric roulette curves, string-rewrite
 fractals, and noise-steered flow fields.
 
-## textures (22)
+## textures (23)
 
 raylib's texture API returns structs by value and has no binding here; these go
 through rlgl's scalar layer instead, so every texture is built pixel by pixel in
@@ -227,6 +227,7 @@ native memory rather than loaded from a file. See
 | *not recorded yet* | `image-channel` | R/G/B/A split; alpha masked to show structure |
 | [<img src="../demos/npatch-drawing.gif" width="80">](demos.md#npatch-drawing) | `npatch-drawing` | nine-patch stretching, corners held fixed |
 | [<img src="../demos/sprite-button.gif" width="80">](demos.md#sprite-button) | `sprite-button` | one sheet, three states, sliced by v |
+| *not recorded yet* | `sprite-stacking` | 40 generated slices faking a 3D car |
 
 ## shaders (16)
 

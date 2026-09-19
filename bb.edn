@@ -470,6 +470,7 @@
   image-channel {:doc "▶ R/G/B/A split; alpha masked to show structure" :task (run-example "image-channel")}
   npatch-drawing {:doc "▶ nine-patch stretching, corners held fixed" :task (run-example "npatch-drawing")}
   sprite-button {:doc "▶ one sheet, three states, sliced by v" :task (run-example "sprite-button")}
+  sprite-stacking {:doc "▶ 40 generated slices faking a 3D car" :task (run-example "sprite-stacking")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
