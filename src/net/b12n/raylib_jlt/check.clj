@@ -70,6 +70,7 @@
    [net.b12n.raylib-jlt.flappy-bird]
    [net.b12n.raylib-jlt.flow-field]
    [net.b12n.raylib-jlt.fog-of-war]
+   [net.b12n.raylib-jlt.fog-rendering]
    [net.b12n.raylib-jlt.format-text]
    [net.b12n.raylib-jlt.fourier-epicycles]
    [net.b12n.raylib-jlt.framebuffer-rendering]

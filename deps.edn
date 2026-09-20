@@ -194,6 +194,7 @@
            :outlines-thickness {:main-opts ["-m" "net.b12n.raylib-jlt.outlines-thickness"]} ; thick outlines, and what a negative one does
            :textured-curve {:main-opts ["-m" "net.b12n.raylib-jlt.textured-curve"]}
            :mesh-generation {:main-opts ["-m" "net.b12n.raylib-jlt.mesh-generation"]}
-           :basic-lighting {:main-opts ["-m" "net.b12n.raylib-jlt.basic-lighting"]}} ; a texture laid along a cubic Bezier
+           :basic-lighting {:main-opts ["-m" "net.b12n.raylib-jlt.basic-lighting"]}
+           :fog-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.fog-rendering"]}} ; a texture laid along a cubic Bezier
 
  :tasks {run "joltc -M:run"}}
