@@ -12,6 +12,13 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## 2026-09-20
 
+- **`fog-rendering` adds exponential distance fog to the lighting shader**,
+  taking the suite to 185. Four lines of GLSL on top of `basic-lighting`'s
+  fragment shader, possible only because the custom vertex stage already hands
+  the fragment stage a world-space position.
+- **`rl/material-diffuse-texture!` puts a texture in a material's diffuse
+  map.** raylib reads the whole Texture2D at the head of MaterialMap, not just
+  the id, so a map with a valid id and a zero size samples nothing.
 - **`basic-lighting` is the first example here with a custom vertex shader**,
   taking the suite to 184. `rl/shader-vf` compiles a vertex and fragment source
   together; the existing `rl/shader` passes NULL for the vertex stage so raylib
