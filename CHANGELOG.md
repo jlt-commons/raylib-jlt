@@ -12,6 +12,21 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## 2026-09-20
 
+- **raylib's real mesh API is bound, and `mesh-generation` uses it**, taking the
+  suite to 183. Eight `GenMesh*` generators, `LoadMaterialDefault`, `DrawMesh`
+  and `UnloadMesh`. Everything 3D here went through rlgl immediate mode until
+  now, because Mesh is 120 bytes, Material 40 and Matrix 64, and jolt could not
+  carry a struct that size by value before 0.7.23.
+- **Two FFI rules worth knowing before binding anything else of this shape.** A
+  struct-returning call takes a caller-owned destination pointer as its FIRST
+  argument and writes the C return there, so `(mesh-cube! m w h l)` is four
+  arguments; getting it wrong is an arity error, not a crash. A struct
+  argument is a pointer to the bytes, so `DrawMesh` takes three pointers even
+  though its C signature is three values.
+- **Layouts are read from the installed header, not the raylib source tree.**
+  The checkout most people have sitting beside this repo is well past the 6.0
+  tag and reorders Mesh bone fields, so a layout taken from it disagrees with
+  the struct the linked library actually writes, silently.
 - **Three by-value rectangle outline calls are bound**, taking the suite to 182
   with `outlines-thickness` and `textured-curve`. `DrawRectangleLinesEx`,
   `DrawRectangleRounded` and `DrawRectangleRoundedLinesEx` each take a

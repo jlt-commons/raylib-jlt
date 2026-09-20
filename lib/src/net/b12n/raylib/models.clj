@@ -308,3 +308,281 @@
         s (native/vec2->ptr! size)]
     (try (draw-plane-raw p s color)
          (finally (ffi/free p) (ffi/free s)))))
+
+;; --- generated meshes --------------------------------------------------------
+;; raylib's GenMesh* family returns a Mesh by value, and DrawMesh takes a Mesh,
+;; a Material and a Matrix by value. jolt handles both directions, with two
+;; rules that are easy to get wrong:
+;;
+;;   * An aggregate-RETURNING call takes a caller-owned destination pointer as
+;;     its FIRST jolt argument, writes the C return there and answers it. So
+;;     (gen-mesh-cube-raw dest w h l) is four arguments, not three. The Image
+;;     generators in net.b12n.raylib.images have the same shape.
+;;   * An aggregate ARGUMENT is a pointer to the struct bytes, so draw-mesh-raw
+;;     takes three pointers even though the C signature is three values.
+;;
+;; The field order below is from /opt/homebrew/include/raylib.h, the header
+;; that matches the library this links. raylib's own tree has moved on: it
+;; carries a boneMatrices pointer and orders the bone fields differently, so a
+;; layout taken from a source checkout silently mismatches the struct the
+;; library actually writes.
+(def mesh-layout
+  "The `ffi/layout` value for raylib 6.0's Mesh, 120 bytes."
+  (ffi/layout [:struct [[:vertex-count :int] [:triangle-count :int]
+                        [:vertices :pointer] [:texcoords :pointer]
+                        [:texcoords2 :pointer] [:normals :pointer]
+                        [:tangents :pointer] [:colors :pointer]
+                        [:indices :pointer]
+                        [:bone-count :int]
+                        [:bone-indices :pointer] [:bone-weights :pointer]
+                        [:anim-vertices :pointer] [:anim-normals :pointer]
+                        [:vao-id :uint] [:vbo-id :pointer]]]))
+
+(def material-layout
+  "The `ffi/layout` value for raylib's Material, 40 bytes: an inlined Shader
+  {uint id; int *locs;}, then a MaterialMap pointer, then four float params."
+  (ffi/layout [:struct [[:shader-id :uint] [:shader-locs :pointer]
+                        [:maps :pointer] [:params [:array :float 4]]]]))
+
+(def matrix-layout
+  "The `ffi/layout` value for raylib's Matrix, 64 bytes. raylib declares it in
+  the order m0 m4 m8 m12, m1 m5 m9 m13, ... so that is the memory order, and the
+  identity diagonal is m0 m5 m10 m15."
+  (ffi/layout [:struct [[:m0 :float] [:m4 :float] [:m8 :float] [:m12 :float]
+                        [:m1 :float] [:m5 :float] [:m9 :float] [:m13 :float]
+                        [:m2 :float] [:m6 :float] [:m10 :float] [:m14 :float]
+                        [:m3 :float] [:m7 :float] [:m11 :float] [:m15 :float]]]))
+
+(ffi/defcfn ^:private gen-mesh-cube-raw "GenMeshCube"
+  [:float :float :float]
+  [:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                       [:vertices :pointer] [:texcoords :pointer]
+                       [:texcoords2 :pointer] [:normals :pointer]
+                       [:tangents :pointer] [:colors :pointer]
+                       [:indices :pointer] [:bone-count :int]
+                       [:bone-indices :pointer] [:bone-weights :pointer]
+                       [:anim-vertices :pointer] [:anim-normals :pointer]
+                       [:vao-id :uint] [:vbo-id :pointer]]]])
+
+(ffi/defcfn ^:private gen-mesh-sphere-raw "GenMeshSphere"
+  [:float :int :int]
+  [:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                       [:vertices :pointer] [:texcoords :pointer]
+                       [:texcoords2 :pointer] [:normals :pointer]
+                       [:tangents :pointer] [:colors :pointer]
+                       [:indices :pointer] [:bone-count :int]
+                       [:bone-indices :pointer] [:bone-weights :pointer]
+                       [:anim-vertices :pointer] [:anim-normals :pointer]
+                       [:vao-id :uint] [:vbo-id :pointer]]]])
+
+(ffi/defcfn ^:private gen-mesh-torus-raw "GenMeshTorus"
+  [:float :float :int :int]
+  [:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                       [:vertices :pointer] [:texcoords :pointer]
+                       [:texcoords2 :pointer] [:normals :pointer]
+                       [:tangents :pointer] [:colors :pointer]
+                       [:indices :pointer] [:bone-count :int]
+                       [:bone-indices :pointer] [:bone-weights :pointer]
+                       [:anim-vertices :pointer] [:anim-normals :pointer]
+                       [:vao-id :uint] [:vbo-id :pointer]]]])
+
+(ffi/defcfn ^:private gen-mesh-knot-raw "GenMeshKnot"
+  [:float :float :int :int]
+  [:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                       [:vertices :pointer] [:texcoords :pointer]
+                       [:texcoords2 :pointer] [:normals :pointer]
+                       [:tangents :pointer] [:colors :pointer]
+                       [:indices :pointer] [:bone-count :int]
+                       [:bone-indices :pointer] [:bone-weights :pointer]
+                       [:anim-vertices :pointer] [:anim-normals :pointer]
+                       [:vao-id :uint] [:vbo-id :pointer]]]])
+
+(ffi/defcfn ^:private gen-mesh-cylinder-raw "GenMeshCylinder"
+  [:float :float :int]
+  [:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                       [:vertices :pointer] [:texcoords :pointer]
+                       [:texcoords2 :pointer] [:normals :pointer]
+                       [:tangents :pointer] [:colors :pointer]
+                       [:indices :pointer] [:bone-count :int]
+                       [:bone-indices :pointer] [:bone-weights :pointer]
+                       [:anim-vertices :pointer] [:anim-normals :pointer]
+                       [:vao-id :uint] [:vbo-id :pointer]]]])
+
+(ffi/defcfn ^:private gen-mesh-cone-raw "GenMeshCone"
+  [:float :float :int]
+  [:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                       [:vertices :pointer] [:texcoords :pointer]
+                       [:texcoords2 :pointer] [:normals :pointer]
+                       [:tangents :pointer] [:colors :pointer]
+                       [:indices :pointer] [:bone-count :int]
+                       [:bone-indices :pointer] [:bone-weights :pointer]
+                       [:anim-vertices :pointer] [:anim-normals :pointer]
+                       [:vao-id :uint] [:vbo-id :pointer]]]])
+
+(ffi/defcfn ^:private gen-mesh-plane-raw "GenMeshPlane"
+  [:float :float :int :int]
+  [:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                       [:vertices :pointer] [:texcoords :pointer]
+                       [:texcoords2 :pointer] [:normals :pointer]
+                       [:tangents :pointer] [:colors :pointer]
+                       [:indices :pointer] [:bone-count :int]
+                       [:bone-indices :pointer] [:bone-weights :pointer]
+                       [:anim-vertices :pointer] [:anim-normals :pointer]
+                       [:vao-id :uint] [:vbo-id :pointer]]]])
+
+(ffi/defcfn ^:private gen-mesh-hemisphere-raw "GenMeshHemiSphere"
+  [:float :int :int]
+  [:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                       [:vertices :pointer] [:texcoords :pointer]
+                       [:texcoords2 :pointer] [:normals :pointer]
+                       [:tangents :pointer] [:colors :pointer]
+                       [:indices :pointer] [:bone-count :int]
+                       [:bone-indices :pointer] [:bone-weights :pointer]
+                       [:anim-vertices :pointer] [:anim-normals :pointer]
+                       [:vao-id :uint] [:vbo-id :pointer]]]])
+
+(ffi/defcfn ^:private load-material-default-raw "LoadMaterialDefault"
+  [] [:by-value [:struct [[:shader-id :uint] [:shader-locs :pointer]
+                          [:maps :pointer] [:params [:array :float 4]]]]])
+
+(ffi/defcfn ^:private draw-mesh-raw "DrawMesh"
+  [[:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                        [:vertices :pointer] [:texcoords :pointer]
+                        [:texcoords2 :pointer] [:normals :pointer]
+                        [:tangents :pointer] [:colors :pointer]
+                        [:indices :pointer] [:bone-count :int]
+                        [:bone-indices :pointer] [:bone-weights :pointer]
+                        [:anim-vertices :pointer] [:anim-normals :pointer]
+                        [:vao-id :uint] [:vbo-id :pointer]]]]
+   [:by-value [:struct [[:shader-id :uint] [:shader-locs :pointer]
+                        [:maps :pointer] [:params [:array :float 4]]]]]
+   [:by-value [:struct [[:m0 :float] [:m4 :float] [:m8 :float] [:m12 :float]
+                        [:m1 :float] [:m5 :float] [:m9 :float] [:m13 :float]
+                        [:m2 :float] [:m6 :float] [:m10 :float] [:m14 :float]
+                        [:m3 :float] [:m7 :float] [:m11 :float] [:m15 :float]]]]]
+  :void)
+
+(ffi/defcfn ^:private unload-mesh-raw "UnloadMesh"
+  [[:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                        [:vertices :pointer] [:texcoords :pointer]
+                        [:texcoords2 :pointer] [:normals :pointer]
+                        [:tangents :pointer] [:colors :pointer]
+                        [:indices :pointer] [:bone-count :int]
+                        [:bone-indices :pointer] [:bone-weights :pointer]
+                        [:anim-vertices :pointer] [:anim-normals :pointer]
+                        [:vao-id :uint] [:vbo-id :pointer]]]]]
+  :void)
+
+(defn mesh-alloc
+  "A zeroed 120-byte buffer the GenMesh* fns can write a Mesh into. Caller frees
+  with mesh-free! after unload-mesh!."
+  []
+  (ffi/alloc (ffi/layout-size mesh-layout)))
+
+(defn mesh-free!
+  "Free a buffer from mesh-alloc. Does NOT release the GPU-side vertex buffers;
+  unload-mesh! does that, and has to run first."
+  [m]
+  (ffi/free m))
+
+(defn mesh-vertex-count [m] (ffi/read-field m mesh-layout :vertex-count))
+(defn mesh-triangle-count [m] (ffi/read-field m mesh-layout :triangle-count))
+(defn mesh-vao-id [m] (ffi/read-field m mesh-layout :vao-id))
+
+(defn mesh-cube!
+  "GenMeshCube into `m`. raylib uploads the vertex data to the GPU itself, so the
+  mesh has a live vao id as soon as this returns."
+  [m width height length]
+  (gen-mesh-cube-raw m (double width) (double height) (double length)))
+
+(defn mesh-sphere!
+  "GenMeshSphere into `m`: a UV sphere of `rings` by `slices`."
+  [m radius rings slices]
+  (gen-mesh-sphere-raw m (double radius) (int rings) (int slices)))
+
+(defn mesh-hemisphere!
+  "GenMeshHemiSphere into `m`: half a sphere, with no bottom cap."
+  [m radius rings slices]
+  (gen-mesh-hemisphere-raw m (double radius) (int rings) (int slices)))
+
+(defn mesh-torus!
+  "GenMeshTorus into `m`. `radius` is the tube, `size` the ring it sweeps."
+  [m radius size rad-seg sides]
+  (gen-mesh-torus-raw m (double radius) (double size) (int rad-seg) (int sides)))
+
+(defn mesh-knot!
+  "GenMeshKnot into `m`: a trefoil, same parameters as the torus."
+  [m radius size rad-seg sides]
+  (gen-mesh-knot-raw m (double radius) (double size) (int rad-seg) (int sides)))
+
+(defn mesh-cylinder!
+  "GenMeshCylinder into `m`."
+  [m radius height slices]
+  (gen-mesh-cylinder-raw m (double radius) (double height) (int slices)))
+
+(defn mesh-cone!
+  "GenMeshCone into `m`."
+  [m radius height slices]
+  (gen-mesh-cone-raw m (double radius) (double height) (int slices)))
+
+(defn mesh-plane!
+  "GenMeshPlane into `m`, subdivided `res-x` by `res-z`."
+  [m width length res-x res-z]
+  (gen-mesh-plane-raw m (double width) (double length) (int res-x) (int res-z)))
+
+(defn material-default
+  "LoadMaterialDefault into a fresh 40-byte buffer: raylib's default shader with
+  a white diffuse map. Caller frees with material-free!. Do NOT pass this to
+  UnloadMaterial, which would free the shared default shader out from under
+  every other user of it."
+  []
+  (let [p (ffi/alloc (ffi/layout-size material-layout))]
+    (load-material-default-raw p)
+    p))
+
+(defn material-free! [mat] (ffi/free mat))
+
+(defn matrix-alloc
+  "A 64-byte Matrix buffer set to the identity."
+  []
+  (let [p (ffi/alloc (ffi/layout-size matrix-layout))]
+    (doseq [k [:m0 :m5 :m10 :m15]]
+      (ffi/write-field p matrix-layout k 1.0))
+    p))
+
+(defn matrix-free! [mtx] (ffi/free mtx))
+
+(defn matrix-translate!
+  "Set `mtx` to a translation, leaving the rotation block as the identity.
+  raylib's translation components are m12 m13 m14, the fourth COLUMN, which sit
+  at the end of the first three declared rows rather than contiguously."
+  [mtx x y z]
+  (doseq [[k v] [[:m0 1.0] [:m5 1.0] [:m10 1.0] [:m15 1.0]
+                 [:m12 (double x)] [:m13 (double y)] [:m14 (double z)]]]
+    (ffi/write-field mtx matrix-layout k v))
+  mtx)
+
+(defn draw-mesh!
+  "DrawMesh: draw `m` with `material` under `transform`. All three cross by
+  value, which here means jolt is handed a pointer to each. Call inside a
+  with-camera-3d block."
+  [m material transform]
+  (draw-mesh-raw m material transform))
+
+(defn unload-mesh!
+  "UnloadMesh: release the GPU-side vertex buffers. The 120-byte host buffer is
+  separate and still needs mesh-free!."
+  [m]
+  (unload-mesh-raw m))
+
+(defn material-diffuse-color!
+  "Tint a material's diffuse map. raylib's default shader multiplies this into
+  whatever the map's texture carries, and the default map is a single white
+  texel, so on a default material this is simply the colour the mesh comes out.
+
+  MaterialMap is {Texture2D texture; Color color; float value;} and Texture2D is
+  five 4-byte fields, so the colour of map 0 sits 20 bytes into the maps array."
+  [mat color]
+  (let [maps (ffi/read-field mat material-layout :maps)]
+    (ffi/write maps :uint color 20))
+  mat)
