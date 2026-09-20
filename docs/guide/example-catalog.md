@@ -236,7 +236,7 @@ native memory rather than loaded from a file. See
 | *not recorded yet* | `magnifying-glass` | a round lens that reveals hidden markers |
 | *not recorded yet* | `textured-curve` | a texture laid along a cubic Bezier |
 
-## shaders (18)
+## shaders (19)
 
 GLSL compiled at runtime and run over a full-screen quad. raylib's `LoadShader`
 returns a `Shader` by value, which needed jolt's `[:by-value [:struct ...]]` -
@@ -258,6 +258,7 @@ by-value API itself is not written yet.
 | *not recorded yet* | `fog-rendering` | exponential distance fog in the light shader |
 | [<img src="../demos/julia-set.gif" width="80">](demos.md#julia-set) | `julia-set` | the Julia set, mouse-steered, in a shader |
 | [<img src="../demos/mandelbrot-set.gif" width="80">](demos.md#mandelbrot-set) | `mandelbrot-set` | the Mandelbrot set, zoomable, in a shader |
+| *not recorded yet* | `mesh-instancing` | 10000 lit cubes in one draw call |
 | [<img src="../demos/raymarching.gif" width="80">](demos.md#raymarching) | `raymarching` | a raymarched SDF scene in a shader |
 | [<img src="../demos/rounded-rect-shader.gif" width="80">](demos.md#rounded-rect-shader) | `rounded-rect-shader` | SDF rounded rects: fill, border, shadow |
 | [<img src="../demos/palette-switch.gif" width="80">](demos.md#palette-switch) | `palette-switch` | bands recolored by an ivec3 palette |

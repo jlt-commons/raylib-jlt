@@ -480,6 +480,7 @@
   mesh-generation {:doc "▶ eight GenMesh shapes, drawn with DrawMesh" :task (run-example "mesh-generation")}
   basic-lighting {:doc "▶ four point lights, custom vertex shader" :task (run-example "basic-lighting")}
   fog-rendering {:doc "▶ exponential distance fog in the light shader" :task (run-example "fog-rendering")}
+  mesh-instancing {:doc "▶ 10000 lit cubes in one draw call" :task (run-example "mesh-instancing")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
