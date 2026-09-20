@@ -625,3 +625,70 @@
     (ffi/write maps :int 1 12)
     (ffi/write maps :int native/PIXELFORMAT-R8G8B8A8 16))
   mat)
+
+;; --- instanced drawing -------------------------------------------------------
+;; DrawMeshInstanced takes the mesh and the material by value and the transforms
+;; as a plain array of Matrix, so the array is one buffer of instances*64 bytes
+;; that matrix-array-set! fills in place.
+;;
+;; No shader plumbing is needed for the instanceTransform attribute. raylib 6.0
+;; resolves it by name when the shader loads (rcore.c assigns
+;; SHADER_LOC_VERTEX_INSTANCETRANSFORM from rlGetLocationAttrib on the name
+;; "instanceTransform"), so a vertex shader that declares `in mat4
+;; instanceTransform` is wired up already. Worth stating because raylib's own
+;; example on master sets a locs slot by hand, and it sets a DIFFERENT one:
+;; that code is for a later version than the 6.0 this links.
+(ffi/defcfn ^:private draw-mesh-instanced-raw "DrawMeshInstanced"
+  [[:by-value [:struct [[:vertex-count :int] [:triangle-count :int]
+                        [:vertices :pointer] [:texcoords :pointer]
+                        [:texcoords2 :pointer] [:normals :pointer]
+                        [:tangents :pointer] [:colors :pointer]
+                        [:indices :pointer] [:bone-count :int]
+                        [:bone-indices :pointer] [:bone-weights :pointer]
+                        [:anim-vertices :pointer] [:anim-normals :pointer]
+                        [:vao-id :uint] [:vbo-id :pointer]]]]
+   [:by-value [:struct [[:shader-id :uint] [:shader-locs :pointer]
+                        [:maps :pointer] [:params [:array :float 4]]]]]
+   :pointer :int]
+  :void)
+
+(defn matrix-array-alloc
+  "A buffer of `n` contiguous Matrix values, 64 bytes each, for
+  draw-mesh-instanced!. Caller frees with matrix-free!."
+  [n]
+  (ffi/alloc (* 64 n)))
+
+(defn matrix-array-set!
+  "Write the instance matrix at index `i`: a rotation of `angle` radians about
+  the unit axis (`ax`,`ay`,`az`), then a translation to (`x`,`y`,`z`).
+
+  Written field by field rather than through matrix-layout, because the layout
+  addresses one struct and this is an array of them. raylib stores a Matrix in
+  the order m0 m4 m8 m12, m1 m5 m9 m13, and so on, so the translation lands at
+  word offsets 3, 7 and 11 rather than at the end."
+  [buf i [ax ay az] angle [x y z]]
+  (let [base (* 64 i)
+        w (fn [slot v] (ffi/write buf :float (double v) (+ base (* 4 slot))))
+        c (Math/cos (double angle))
+        s (Math/sin (double angle))
+        t (- 1.0 c)
+        ax (double ax) ay (double ay) az (double az)]
+    ;; row 0: m0 m4 m8 m12
+    (w 0 (+ (* t ax ax) c))       (w 1 (- (* t ax ay) (* s az)))
+    (w 2 (+ (* t ax az) (* s ay))) (w 3 x)
+    ;; row 1: m1 m5 m9 m13
+    (w 4 (+ (* t ax ay) (* s az))) (w 5 (+ (* t ay ay) c))
+    (w 6 (- (* t ay az) (* s ax))) (w 7 y)
+    ;; row 2: m2 m6 m10 m14
+    (w 8 (- (* t ax az) (* s ay))) (w 9 (+ (* t ay az) (* s ax)))
+    (w 10 (+ (* t az az) c))       (w 11 z)
+    ;; row 3: m3 m7 m11 m15
+    (w 12 0.0) (w 13 0.0) (w 14 0.0) (w 15 1.0))
+  buf)
+
+(defn draw-mesh-instanced!
+  "DrawMeshInstanced: one draw call for `instances` copies of `m`, each under
+  its own matrix in `transforms`. The material's shader must declare
+  `in mat4 instanceTransform` in its vertex stage."
+  [m material transforms instances]
+  (draw-mesh-instanced-raw m material transforms (int instances)))
