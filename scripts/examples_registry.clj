@@ -194,7 +194,8 @@
    ["mesh-generation" "mesh-generation" "3d" "eight GenMesh shapes, drawn with DrawMesh"]
    ["basic-lighting" "basic-lighting" "shaders" "four point lights, custom vertex shader"]
    ["fog-rendering" "fog-rendering" "shaders" "exponential distance fog in the light shader"]
-   ["mesh-instancing" "mesh-instancing" "shaders" "10000 lit cubes in one draw call"]])
+   ["mesh-instancing" "mesh-instancing" "shaders" "10000 lit cubes in one draw call"]
+   ["vertex-displacement" "vertex-displacement" "shaders" "a flat plane made terrain in the vertex stage"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 

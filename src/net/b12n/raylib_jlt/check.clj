@@ -184,6 +184,7 @@
    [net.b12n.raylib-jlt.undo-redo]
    [net.b12n.raylib-jlt.vampire-survivors]
    [net.b12n.raylib-jlt.vector-angle]
+   [net.b12n.raylib-jlt.vertex-displacement]
    [net.b12n.raylib-jlt.viewport-scaling]
    [net.b12n.raylib-jlt.waving-cubes]
    [net.b12n.raylib-jlt.wheel]

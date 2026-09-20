@@ -481,6 +481,7 @@
   basic-lighting {:doc "▶ four point lights, custom vertex shader" :task (run-example "basic-lighting")}
   fog-rendering {:doc "▶ exponential distance fog in the light shader" :task (run-example "fog-rendering")}
   mesh-instancing {:doc "▶ 10000 lit cubes in one draw call" :task (run-example "mesh-instancing")}
+  vertex-displacement {:doc "▶ a flat plane made terrain in the vertex stage" :task (run-example "vertex-displacement")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run
