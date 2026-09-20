@@ -18,9 +18,13 @@
       three pointers even though its C signature is three values.
 
   The layouts come from the header that matches the linked library rather than
-  from a raylib source checkout. raylib's own tree has moved past the 6.0 tag
-  and reorders Mesh's bone fields, so a layout copied from there would silently
-  disagree with the struct the library writes.
+  from a raylib source checkout, which may sit any number of commits past the
+  release. The two agree on Mesh today, so nothing here depended on it, and an
+  earlier version of this docstring wrongly said they disagreed. The habit is
+  still worth keeping: that same checkout has three times offered a FUNCTION
+  the released library does not export, and DrawCircleLinesEx,
+  BeginPortalMode3D and GenMeshPoints each compiled and then failed at run
+  time.
 
   GenMesh* uploads to the GPU on its own, so each mesh has a live vao id the
   moment it is generated and there is no UploadMesh call here.

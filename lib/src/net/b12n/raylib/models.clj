@@ -323,10 +323,13 @@
 ;;     takes three pointers even though the C signature is three values.
 ;;
 ;; The field order below is from /opt/homebrew/include/raylib.h, the header
-;; that matches the library this links. raylib's own tree has moved on: it
-;; carries a boneMatrices pointer and orders the bone fields differently, so a
-;; layout taken from a source checkout silently mismatches the struct the
-;; library actually writes.
+;; that matches the library this links. Read layouts from that header rather
+;; than from a nearby raylib source checkout, which may be any number of
+;; commits past the release. For Mesh specifically the two happen to agree
+;; today, and an earlier version of this comment wrongly claimed otherwise;
+;; the habit still matters, because the same checkout has three times now
+;; offered a FUNCTION the released library does not export, each of which
+;; compiled and then failed at run time.
 (def mesh-layout
   "The `ffi/layout` value for raylib 6.0's Mesh, 120 bytes."
   (ffi/layout [:struct [[:vertex-count :int] [:triangle-count :int]
