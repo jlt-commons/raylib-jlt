@@ -604,3 +604,21 @@
   (ffi/write-field mat material-layout :shader-locs
                    (ffi/read-field sh shaders/shader-layout :locs))
   mat)
+
+(defn material-diffuse-texture!
+  "Put an rlgl texture id into a material's diffuse map, so meshes drawn with it
+  sample that texture instead of the single white texel LoadMaterialDefault
+  leaves there.
+
+  MaterialMap begins with a Texture2D, which is five 4-byte fields (id, width,
+  height, mipmaps, format) at offset 0 of the maps array. raylib reads all of
+  them, not just the id: the size and format decide how it binds and samples,
+  so a map carrying the right id and a zero size draws nothing."
+  [mat tex-id w h]
+  (let [maps (ffi/read-field mat material-layout :maps)]
+    (ffi/write maps :uint tex-id 0)
+    (ffi/write maps :int (int w) 4)
+    (ffi/write maps :int (int h) 8)
+    (ffi/write maps :int 1 12)
+    (ffi/write maps :int native/PIXELFORMAT-R8G8B8A8 16))
+  mat)

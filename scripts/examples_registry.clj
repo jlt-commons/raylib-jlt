@@ -192,7 +192,8 @@
    ["outlines-thickness" "outlines-thickness" "shapes" "thick outlines, and what a negative one does"]
    ["textured-curve" "textured-curve" "textures" "a texture laid along a cubic Bezier"]
    ["mesh-generation" "mesh-generation" "3d" "eight GenMesh shapes, drawn with DrawMesh"]
-   ["basic-lighting" "basic-lighting" "shaders" "four point lights, custom vertex shader"]])
+   ["basic-lighting" "basic-lighting" "shaders" "four point lights, custom vertex shader"]
+   ["fog-rendering" "fog-rendering" "shaders" "exponential distance fog in the light shader"]])
 
 (def by-name (into {} (map (fn [row] [(nth row 0) row]) examples)))
 
