@@ -236,7 +236,7 @@ native memory rather than loaded from a file. See
 | *not recorded yet* | `magnifying-glass` | a round lens that reveals hidden markers |
 | *not recorded yet* | `textured-curve` | a texture laid along a cubic Bezier |
 
-## shaders (16)
+## shaders (17)
 
 GLSL compiled at runtime and run over a full-screen quad. raylib's `LoadShader`
 returns a `Shader` by value, which needed jolt's `[:by-value [:struct ...]]` -
@@ -252,6 +252,7 @@ That `[:by-value ...]` support also supersedes the workarounds described in
 pages still describe what the suite currently does elsewhere. A page on the
 by-value API itself is not written yet.
 
+| *not recorded yet* | `basic-lighting` | four point lights, custom vertex shader |
 | preview | `bb` name | shows |
 |---|---|---|
 | [<img src="../demos/julia-set.gif" width="80">](demos.md#julia-set) | `julia-set` | the Julia set, mouse-steered, in a shader |

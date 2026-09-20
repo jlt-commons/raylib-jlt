@@ -478,6 +478,7 @@
   outlines-thickness {:doc "▶ thick outlines, and what a negative one does" :task (run-example "outlines-thickness")}
   textured-curve {:doc "▶ a texture laid along a cubic Bezier" :task (run-example "textured-curve")}
   mesh-generation {:doc "▶ eight GenMesh shapes, drawn with DrawMesh" :task (run-example "mesh-generation")}
+  basic-lighting {:doc "▶ four point lights, custom vertex shader" :task (run-example "basic-lighting")}
 
   ;; --- meta tasks -----------------------------------------------------------
   run

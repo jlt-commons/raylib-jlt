@@ -16,6 +16,7 @@
    [net.b12n.raylib-jlt.audio-stream-callback]
    [net.b12n.raylib-jlt.background-scrolling]
    [net.b12n.raylib-jlt.ball-physics]
+   [net.b12n.raylib-jlt.basic-lighting]
    [net.b12n.raylib-jlt.basic-screen-manager]
    [net.b12n.raylib-jlt.basic-voxel]
    [net.b12n.raylib-jlt.billboard-rendering]
