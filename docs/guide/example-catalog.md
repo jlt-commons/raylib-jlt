@@ -252,9 +252,9 @@ That `[:by-value ...]` support also supersedes the workarounds described in
 pages still describe what the suite currently does elsewhere. A page on the
 by-value API itself is not written yet.
 
-| [<img src="../demos/basic-lighting.png" width="80">](demos.md#basic-lighting) | `basic-lighting` | four point lights, custom vertex shader |
 | preview | `bb` name | shows |
 |---|---|---|
+| [<img src="../demos/basic-lighting.png" width="80">](demos.md#basic-lighting) | `basic-lighting` | four point lights, custom vertex shader |
 | [<img src="../demos/fog-rendering.png" width="80">](demos.md#fog-rendering) | `fog-rendering` | exponential distance fog in the light shader |
 | [<img src="../demos/julia-set.gif" width="80">](demos.md#julia-set) | `julia-set` | the Julia set, mouse-steered, in a shader |
 | [<img src="../demos/mandelbrot-set.gif" width="80">](demos.md#mandelbrot-set) | `mandelbrot-set` | the Mandelbrot set, zoomable, in a shader |
