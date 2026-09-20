@@ -12,6 +12,16 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## 2026-09-20
 
+- **`mesh-instancing` draws 10000 lit cubes in one call**, taking the suite to
+  186. `rl/draw-mesh-instanced!` plus `rl/matrix-array-alloc` and
+  `rl/matrix-array-set!` for the transform array. Measured at 59 fps, which is
+  the claim the example exists to make.
+- **Nothing has to be wired up for the `instanceTransform` attribute.** raylib
+  6.0 resolves it by name at shader load. raylib's own example on master
+  assigns a locs slot by hand and assigns a different one, because that code
+  targets a later raylib: copying it would set a slot 6.0 never reads while
+  leaving the one it does read already correct. Read from the vendored raylib
+  6.0 in `b12n-oss/raylib-jnk` rather than a checkout tracking master.
 - **`fog-rendering` adds exponential distance fog to the lighting shader**,
   taking the suite to 185. Four lines of GLSL on top of `basic-lighting`'s
   fragment shader, possible only because the custom vertex stage already hands

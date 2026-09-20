@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 491 public vars total across 19 modules, zero name collisions,
+;; 494 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
 ;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 491 concrete-module surface, re-exported
+  "Every public var of this library's 494 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -687,7 +687,7 @@
 (def set-trace-log-callback log/set-trace-log-callback)
 (alter-meta! #'set-trace-log-callback merge (select-keys (meta #'log/set-trace-log-callback) [:doc :arglists :const]))
 
-;; --- models (44) --------------------------------------------------------
+;; --- models (47) --------------------------------------------------------
 (def cube! models/cube!)
 (alter-meta! #'cube! merge (select-keys (meta #'models/cube!) [:doc :arglists :const]))
 (def draw-capsule! models/draw-capsule!)
@@ -706,6 +706,8 @@
 (alter-meta! #'draw-grid merge (select-keys (meta #'models/draw-grid) [:doc :arglists :const]))
 (def draw-mesh! models/draw-mesh!)
 (alter-meta! #'draw-mesh! merge (select-keys (meta #'models/draw-mesh!) [:doc :arglists :const]))
+(def draw-mesh-instanced! models/draw-mesh-instanced!)
+(alter-meta! #'draw-mesh-instanced! merge (select-keys (meta #'models/draw-mesh-instanced!) [:doc :arglists :const]))
 (def draw-plane! models/draw-plane!)
 (alter-meta! #'draw-plane! merge (select-keys (meta #'models/draw-plane!) [:doc :arglists :const]))
 (def draw-sphere! models/draw-sphere!)
@@ -726,6 +728,10 @@
 (alter-meta! #'material-shader! merge (select-keys (meta #'models/material-shader!) [:doc :arglists :const]))
 (def matrix-alloc models/matrix-alloc)
 (alter-meta! #'matrix-alloc merge (select-keys (meta #'models/matrix-alloc) [:doc :arglists :const]))
+(def matrix-array-alloc models/matrix-array-alloc)
+(alter-meta! #'matrix-array-alloc merge (select-keys (meta #'models/matrix-array-alloc) [:doc :arglists :const]))
+(def matrix-array-set! models/matrix-array-set!)
+(alter-meta! #'matrix-array-set! merge (select-keys (meta #'models/matrix-array-set!) [:doc :arglists :const]))
 (def matrix-free! models/matrix-free!)
 (alter-meta! #'matrix-free! merge (select-keys (meta #'models/matrix-free!) [:doc :arglists :const]))
 (def matrix-layout models/matrix-layout)
