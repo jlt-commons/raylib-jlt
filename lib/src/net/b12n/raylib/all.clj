@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 490 public vars total across 19 modules, zero name collisions,
+;; 491 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
 ;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 490 concrete-module surface, re-exported
+  "Every public var of this library's 491 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -687,7 +687,7 @@
 (def set-trace-log-callback log/set-trace-log-callback)
 (alter-meta! #'set-trace-log-callback merge (select-keys (meta #'log/set-trace-log-callback) [:doc :arglists :const]))
 
-;; --- models (43) --------------------------------------------------------
+;; --- models (44) --------------------------------------------------------
 (def cube! models/cube!)
 (alter-meta! #'cube! merge (select-keys (meta #'models/cube!) [:doc :arglists :const]))
 (def draw-capsule! models/draw-capsule!)
@@ -716,6 +716,8 @@
 (alter-meta! #'material-default merge (select-keys (meta #'models/material-default) [:doc :arglists :const]))
 (def material-diffuse-color! models/material-diffuse-color!)
 (alter-meta! #'material-diffuse-color! merge (select-keys (meta #'models/material-diffuse-color!) [:doc :arglists :const]))
+(def material-diffuse-texture! models/material-diffuse-texture!)
+(alter-meta! #'material-diffuse-texture! merge (select-keys (meta #'models/material-diffuse-texture!) [:doc :arglists :const]))
 (def material-free! models/material-free!)
 (alter-meta! #'material-free! merge (select-keys (meta #'models/material-free!) [:doc :arglists :const]))
 (def material-layout models/material-layout)
