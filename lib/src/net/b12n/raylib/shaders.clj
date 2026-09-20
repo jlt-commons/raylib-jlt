@@ -176,3 +176,36 @@
       p
       (do (ffi/free p) nil))))
 
+;; --- binding a sampler to a texture slot by hand -----------------------------
+;; set-uniform-texture! above goes through SetShaderValueTexture, which raylib
+;; applies through its own render batch. That covers the 2D calls and the
+;; immediate-mode helpers, and it does NOT cover DrawMesh, which draws outside
+;; that batch. A shader whose VERTEX stage samples a texture therefore reads
+;; zeroes, which is a quiet failure: the sample returns 0, so a displacement
+;; comes out flat and a colour comes out at whichever end of its ramp 0 maps to.
+;;
+;; The fix is what raylib's own example does, and it is a one-off GL state
+;; change rather than a per-frame uniform: select a slot, bind the texture to
+;; it, and tell the sampler which slot to read. Slot 0 belongs to raylib for the
+;; material's diffuse map, so anything else starts at 1.
+(ffi/defcfn rl-enable-shader "rlEnableShader" [:uint] :void)
+(ffi/defcfn rl-active-texture-slot "rlActiveTextureSlot" [:int] :void)
+(ffi/defcfn rl-enable-texture "rlEnableTexture" [:uint] :void)
+(ffi/defcfn rl-set-uniform-sampler "rlSetUniformSampler" [:int :uint] :void)
+
+(defn bind-sampler!
+  "Bind `tex-id` to texture slot `slot` and point the sampler at `loc` to it.
+  Call once after the shader links, not per frame: this changes GL state rather
+  than queueing a uniform, and it survives until something else rebinds the
+  slot.
+
+  Use this rather than set-uniform-texture! whenever the sampler is read by the
+  VERTEX stage, or whenever the draw goes through DrawMesh, since neither goes
+  through the batch SetShaderValueTexture feeds."
+  [sh loc tex-id slot]
+  (when (nat-int? loc)
+    (rl-enable-shader (ffi/read-field sh shader-layout :id))
+    (rl-active-texture-slot (int slot))
+    (rl-enable-texture tex-id)
+    (rl-set-uniform-sampler (int loc) (int slot)))
+  sh)
