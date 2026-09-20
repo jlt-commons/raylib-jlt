@@ -1,10 +1,11 @@
 # Full-size demo gallery
 
-Every recorded example at full size, linked from
-[the example catalog](example-catalog.md)'s preview thumbnails. All 171 of
-them are here, one recording each. Sixteen examples are newer than the last
-recording pass and so are not in this gallery yet. The catalog lists them
-with "not recorded yet" where the thumbnail would go.
+Every example at full size, linked from
+[the example catalog](example-catalog.md)'s preview thumbnails. All 187 are
+here. 171 are animated GIFs from `bb record`; the other 16 are single still
+frames, captured with the headless screenshot hook because they are newer than
+the last recording pass. A still is one frame of a thing that usually moves, so
+it shows what an example draws without showing what it does.
 
 Most are animated. Some examples draw something fixed and only move once you
 drive them, so their recording is a single frame, and that is the honest form
@@ -286,8 +287,7 @@ logical points vs physical pixels, two rulers
 
 ![highdpi-demo](../demos/highdpi-demo.gif)
 
-## shapes (44)
-
+## shapes (45)
 ### bouncing-ball
 
 a ball bouncing around the window
@@ -552,6 +552,12 @@ lights and shadow volumes in an alpha mask
 
 ![top-down-lights](../demos/top-down-lights.gif)
 
+### outlines-thickness
+
+thick outlines, and what a negative one does
+
+![outlines-thickness](../demos/outlines-thickness.png)
+
 ## text (8)
 
 ### font-sizes
@@ -602,8 +608,7 @@ colour markup inside the string itself
 
 ![inline-styling](../demos/inline-styling.gif)
 
-## 3d (27)
-
+## 3d (28)
 ### camera-3d
 
 an orbiting 3D camera (Camera3D by value)
@@ -766,6 +771,12 @@ click a box: a real GetScreenToWorldRay pick
 
 ![picking-3d](../demos/picking-3d.gif)
 
+### mesh-generation
+
+eight GenMesh shapes, drawn with DrawMesh
+
+![mesh-generation](../demos/mesh-generation.png)
+
 ## generative (10)
 
 ### game-of-life
@@ -828,8 +839,7 @@ water/smoke/fire particles follow the mouse
 
 ![particles](../demos/particles.gif)
 
-## textures (18)
-
+## textures (28)
 ### texture-procedural
 
 four textures built pixel by pixel
@@ -938,8 +948,67 @@ one sheet, three states, sliced by v
 
 ![sprite-button](../demos/sprite-button.gif)
 
-## shaders (16)
+### image-drawing
 
+shapes baked once, then drawn live each frame
+
+![image-drawing](../demos/image-drawing.png)
+
+### image-text
+
+text baked into the image, pixelates at 4x
+
+![image-text](../demos/image-text.png)
+
+### image-rotate
+
+0/90/180/270 exact, one angle grows the buffer
+
+![image-rotate](../demos/image-rotate.png)
+
+### image-channel
+
+R/G/B/A split; alpha masked to show structure
+
+![image-channel](../demos/image-channel.png)
+
+### sprite-stacking
+
+40 generated slices faking a 3D car
+
+![sprite-stacking](../demos/sprite-stacking.png)
+
+### to-image
+
+one image, VRAM to RAM to VRAM and back up
+
+![to-image](../demos/to-image.png)
+
+### raw-data
+
+textures built from a hand-filled byte buffer
+
+![raw-data](../demos/raw-data.png)
+
+### sprite-animation
+
+six generated poses, one source rectangle
+
+![sprite-animation](../demos/sprite-animation.png)
+
+### magnifying-glass
+
+a round lens that reveals hidden markers
+
+![magnifying-glass](../demos/magnifying-glass.png)
+
+### textured-curve
+
+a texture laid along a cubic Bezier
+
+![textured-curve](../demos/textured-curve.png)
+
+## shaders (20)
 ### julia-set
 
 the Julia set, mouse-steered, in a shader
@@ -1035,6 +1104,30 @@ a shader outline around a sprite's alpha edge
 ascii art from a post-process shader
 
 ![ascii-rendering](../demos/ascii-rendering.gif)
+
+### basic-lighting
+
+four point lights, custom vertex shader
+
+![basic-lighting](../demos/basic-lighting.png)
+
+### fog-rendering
+
+exponential distance fog in the light shader
+
+![fog-rendering](../demos/fog-rendering.png)
+
+### mesh-instancing
+
+10000 lit cubes in one draw call
+
+![mesh-instancing](../demos/mesh-instancing.png)
+
+### vertex-displacement
+
+a flat plane made terrain in the vertex stage
+
+![vertex-displacement](../demos/vertex-displacement.png)
 
 ## audio (3)
 
