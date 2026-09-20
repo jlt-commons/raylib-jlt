@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 488 public vars total across 19 modules, zero name collisions,
+;; 490 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
 ;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 488 concrete-module surface, re-exported
+  "Every public var of this library's 490 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -687,7 +687,7 @@
 (def set-trace-log-callback log/set-trace-log-callback)
 (alter-meta! #'set-trace-log-callback merge (select-keys (meta #'log/set-trace-log-callback) [:doc :arglists :const]))
 
-;; --- models (42) --------------------------------------------------------
+;; --- models (43) --------------------------------------------------------
 (def cube! models/cube!)
 (alter-meta! #'cube! merge (select-keys (meta #'models/cube!) [:doc :arglists :const]))
 (def draw-capsule! models/draw-capsule!)
@@ -720,6 +720,8 @@
 (alter-meta! #'material-free! merge (select-keys (meta #'models/material-free!) [:doc :arglists :const]))
 (def material-layout models/material-layout)
 (alter-meta! #'material-layout merge (select-keys (meta #'models/material-layout) [:doc :arglists :const]))
+(def material-shader! models/material-shader!)
+(alter-meta! #'material-shader! merge (select-keys (meta #'models/material-shader!) [:doc :arglists :const]))
 (def matrix-alloc models/matrix-alloc)
 (alter-meta! #'matrix-alloc merge (select-keys (meta #'models/matrix-alloc) [:doc :arglists :const]))
 (def matrix-free! models/matrix-free!)
@@ -825,7 +827,7 @@
 (def rl-vertex-2f rlgl/rl-vertex-2f)
 (alter-meta! #'rl-vertex-2f merge (select-keys (meta #'rlgl/rl-vertex-2f) [:doc :arglists :const]))
 
-;; --- shaders (22) -------------------------------------------------------
+;; --- shaders (23) -------------------------------------------------------
 (def UNIFORM-FLOAT shaders/UNIFORM-FLOAT)
 (alter-meta! #'UNIFORM-FLOAT merge (select-keys (meta #'shaders/UNIFORM-FLOAT) [:doc :arglists :const]))
 (def UNIFORM-INT shaders/UNIFORM-INT)
@@ -864,6 +866,8 @@
 (alter-meta! #'shader merge (select-keys (meta #'shaders/shader) [:doc :arglists :const]))
 (def shader-layout shaders/shader-layout)
 (alter-meta! #'shader-layout merge (select-keys (meta #'shaders/shader-layout) [:doc :arglists :const]))
+(def shader-vf shaders/shader-vf)
+(alter-meta! #'shader-vf merge (select-keys (meta #'shaders/shader-vf) [:doc :arglists :const]))
 (def uniform-loc shaders/uniform-loc)
 (alter-meta! #'uniform-loc merge (select-keys (meta #'shaders/uniform-loc) [:doc :arglists :const]))
 (def unload-shader! shaders/unload-shader!)

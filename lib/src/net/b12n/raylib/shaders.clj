@@ -154,3 +154,25 @@
       (ffi/write-field t native/texture2d-layout :mipmaps 1)
       (ffi/write-field t native/texture2d-layout :format native/PIXELFORMAT-R8G8B8A8)
       (set-shader-value-texture-raw sh loc t))))
+
+;; --- custom vertex shaders ---------------------------------------------------
+;; `shader` above passes NULL for the vertex stage, which makes raylib supply its
+;; own. A lighting shader cannot do that: it needs the world-space position and
+;; the transformed normal passed through from the vertex stage, and raylib's
+;; default vertex shader emits neither. Hence a second entry point that takes
+;; both sources. The C function is the same one; only the first argument differs,
+;; so it needs its own binding with :string rather than :pointer there.
+(ffi/defcfn ^:private load-shader-vf-raw "LoadShaderFromMemory" [:string :string]
+  [:by-value [:struct [[:id :uint] [:locs :pointer]]]])
+
+(defn shader-vf
+  "Compile `vs-source` and `fs-source` together. Returns a pointer to the Shader
+  struct, or nil if the program did not link (raylib prints the log to stderr).
+  Pair with `unload-shader!`, exactly like `shader`."
+  [vs-source fs-source]
+  (let [p (ffi/alloc (ffi/layout-size shader-layout))]
+    (load-shader-vf-raw p vs-source fs-source)
+    (if (pos? (ffi/read-field p shader-layout :id))
+      p
+      (do (ffi/free p) nil))))
+
