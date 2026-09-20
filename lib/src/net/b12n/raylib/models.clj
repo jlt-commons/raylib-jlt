@@ -13,7 +13,8 @@
    [jolt.ffi :as ffi]
    [net.b12n.raylib.color :as color]
    [net.b12n.raylib.native :as native]
-   [net.b12n.raylib.rlgl :as rlgl]))
+   [net.b12n.raylib.rlgl :as rlgl]
+   [net.b12n.raylib.shaders :as shaders]))
 
 ;; --- Camera3D + 3D geometry --------------------------------------------------
 ;; Camera3D is 44 bytes (three Vector3 + a float + an int), passed BY VALUE to
@@ -585,4 +586,21 @@
   [mat color]
   (let [maps (ffi/read-field mat material-layout :maps)]
     (ffi/write maps :uint color 20))
+  mat)
+
+(defn material-shader!
+  "Point a material at `sh`, the way C does with `model.materials[0].shader`.
+
+  This is not optional plumbing, and BeginShaderMode is not a substitute for
+  it. DrawMesh reads the shader out of the MATERIAL it is handed; the shader
+  mode rlgl tracks applies to the default batch, which is what the 2D calls and
+  the immediate-mode 3D helpers go through. Wrapping a DrawMesh in
+  with-shader therefore does nothing at all: the mesh still draws with whatever
+  shader its material carries, which for a default material is raylib's unlit
+  one, and the result is a flat silhouette that looks like the shader failed."
+  [mat sh]
+  (ffi/write-field mat material-layout :shader-id
+                   (ffi/read-field sh shaders/shader-layout :id))
+  (ffi/write-field mat material-layout :shader-locs
+                   (ffi/read-field sh shaders/shader-layout :locs))
   mat)

@@ -193,6 +193,7 @@
            :magnifying-glass {:main-opts ["-m" "net.b12n.raylib-jlt.magnifying-glass"]} ; a round lens that reveals hidden markers
            :outlines-thickness {:main-opts ["-m" "net.b12n.raylib-jlt.outlines-thickness"]} ; thick outlines, and what a negative one does
            :textured-curve {:main-opts ["-m" "net.b12n.raylib-jlt.textured-curve"]}
-           :mesh-generation {:main-opts ["-m" "net.b12n.raylib-jlt.mesh-generation"]}} ; a texture laid along a cubic Bezier
+           :mesh-generation {:main-opts ["-m" "net.b12n.raylib-jlt.mesh-generation"]}
+           :basic-lighting {:main-opts ["-m" "net.b12n.raylib-jlt.basic-lighting"]}} ; a texture laid along a cubic Bezier
 
  :tasks {run "joltc -M:run"}}

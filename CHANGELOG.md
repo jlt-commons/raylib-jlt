@@ -12,6 +12,22 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## 2026-09-20
 
+- **`basic-lighting` is the first example here with a custom vertex shader**,
+  taking the suite to 184. `rl/shader-vf` compiles a vertex and fragment source
+  together; the existing `rl/shader` passes NULL for the vertex stage so raylib
+  supplies its own, which cannot pass through the world position and
+  transformed normal that per-fragment lighting needs.
+- **`rl/material-shader!` points a Material at a Shader.** `DrawMesh` reads the
+  shader out of the material it is handed, so `BeginShaderMode` has no effect
+  on it: the shader mode rlgl tracks governs the default batch that the 2D
+  calls and immediate-mode 3D helpers use. A `DrawMesh` wrapped in
+  `with-shader` draws unlit and looks exactly like a shader that failed to
+  link.
+- **There is no helper for writing a Shader's locs array, on purpose.**
+  `SHADER_LOC_VECTOR_VIEW` appears nowhere in raylib's source except its own
+  enum, so nothing reads that slot; the C examples use it to stash a location
+  they then push themselves every frame. Measured rather than assumed: adding
+  and removing the write left the rendered frame byte-identical.
 - **raylib's real mesh API is bound, and `mesh-generation` uses it**, taking the
   suite to 183. Eight `GenMesh*` generators, `LoadMaterialDefault`, `DrawMesh`
   and `UnloadMesh`. Everything 3D here went through rlgl immediate mode until
