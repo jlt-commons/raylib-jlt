@@ -1,6 +1,6 @@
 # Examples
 
-Animated GIF previews, one for each of the 171 recorded examples (the suite has 187; the sixteen newest are not recorded yet). Regenerate with `bb record` (requires the internal capture tool; the GIFs here are committed, so you do not need it to browse them).
+A preview for each of the 187 examples: 171 animated GIFs and 16 single still frames for the newest, which have not been through a recording pass yet. Regenerate the GIFs with `bb record` (requires the internal capture tool; everything here is committed, so you do not need it to browse).
 
 ## games
 
@@ -277,7 +277,6 @@ logical points vs physical pixels, two rulers
 ![highdpi-demo](highdpi-demo.gif)
 
 ## shapes
-
 ### bouncing-ball
 
 a ball bouncing around the window
@@ -542,6 +541,12 @@ lights and shadow volumes in an alpha mask
 
 ![top-down-lights](top-down-lights.gif)
 
+### outlines-thickness
+
+thick outlines, and what a negative one does
+
+![outlines-thickness](outlines-thickness.png)
+
 ## text
 
 ### font-sizes
@@ -593,7 +598,6 @@ colour markup inside the string itself
 ![inline-styling](inline-styling.gif)
 
 ## 3d
-
 ### camera-3d
 
 an orbiting 3D camera (Camera3D by value)
@@ -756,6 +760,12 @@ click a box: a real GetScreenToWorldRay pick
 
 ![picking-3d](picking-3d.gif)
 
+### mesh-generation
+
+eight GenMesh shapes, drawn with DrawMesh
+
+![mesh-generation](mesh-generation.png)
+
 ## generative
 
 ### game-of-life
@@ -819,7 +829,6 @@ water/smoke/fire particles follow the mouse
 ![particles](particles.gif)
 
 ## textures
-
 ### texture-procedural
 
 four textures built pixel by pixel
@@ -928,8 +937,67 @@ one sheet, three states, sliced by v
 
 ![sprite-button](sprite-button.gif)
 
-## shaders
+### image-drawing
 
+shapes baked once, then drawn live each frame
+
+![image-drawing](image-drawing.png)
+
+### image-text
+
+text baked into the image, pixelates at 4x
+
+![image-text](image-text.png)
+
+### image-rotate
+
+0/90/180/270 exact, one angle grows the buffer
+
+![image-rotate](image-rotate.png)
+
+### image-channel
+
+R/G/B/A split; alpha masked to show structure
+
+![image-channel](image-channel.png)
+
+### sprite-stacking
+
+40 generated slices faking a 3D car
+
+![sprite-stacking](sprite-stacking.png)
+
+### to-image
+
+one image, VRAM to RAM to VRAM and back up
+
+![to-image](to-image.png)
+
+### raw-data
+
+textures built from a hand-filled byte buffer
+
+![raw-data](raw-data.png)
+
+### sprite-animation
+
+six generated poses, one source rectangle
+
+![sprite-animation](sprite-animation.png)
+
+### magnifying-glass
+
+a round lens that reveals hidden markers
+
+![magnifying-glass](magnifying-glass.png)
+
+### textured-curve
+
+a texture laid along a cubic Bezier
+
+![textured-curve](textured-curve.png)
+
+## shaders
 ### julia-set
 
 the Julia set, mouse-steered, in a shader
@@ -1025,6 +1093,30 @@ a shader outline around a sprite's alpha edge
 ascii art from a post-process shader
 
 ![ascii-rendering](ascii-rendering.gif)
+
+### basic-lighting
+
+four point lights, custom vertex shader
+
+![basic-lighting](basic-lighting.png)
+
+### fog-rendering
+
+exponential distance fog in the light shader
+
+![fog-rendering](fog-rendering.png)
+
+### mesh-instancing
+
+10000 lit cubes in one draw call
+
+![mesh-instancing](mesh-instancing.png)
+
+### vertex-displacement
+
+a flat plane made terrain in the vertex stage
+
+![vertex-displacement](vertex-displacement.png)
 
 ## audio
 

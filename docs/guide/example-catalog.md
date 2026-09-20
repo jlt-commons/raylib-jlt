@@ -99,7 +99,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | [<img src="../demos/vector-angle.gif" width="80">](demos.md#vector-angle) | `vector-angle` | the signed angle between two vectors (`atan2`) |
 | [<img src="../demos/easings.gif" width="80">](demos.md#easings) | `easings` | a grid of balls, each on a different easing |
 | [<img src="../demos/penrose-tiling.gif" width="80">](demos.md#penrose-tiling) | `penrose-tiling` | a P3 Penrose tiling by golden-ratio deflation |
-| *not recorded yet* | `outlines-thickness` | thick outlines, and what a negative one does |
+| [<img src="../demos/outlines-thickness.png" width="80">](demos.md#outlines-thickness) | `outlines-thickness` | thick outlines, and what a negative one does |
 | [<img src="../demos/analog-clock.gif" width="80">](demos.md#analog-clock) | `analog-clock` | a live analog clock (libc local time) |
 | [<img src="../demos/digital-clock.gif" width="80">](demos.md#digital-clock) | `digital-clock` | a seven-segment `HH:MM:SS` display |
 | [<img src="../demos/ring-drawing.gif" width="80">](demos.md#ring-drawing) | `ring-drawing` | an animated annulus via `rl/ring!` |
@@ -137,7 +137,7 @@ bb run-all [secs]  # every example, N seconds each (unattended)
 | preview | `bb` name | shows |
 |---|---|---|
 | [<img src="../demos/camera-3d.gif" width="80">](demos.md#camera-3d) | `camera-3d` | an orbiting 3D camera, `Camera3D` by value |
-| *not recorded yet* | `mesh-generation` | eight GenMesh shapes, drawn with DrawMesh |
+| [<img src="../demos/mesh-generation.png" width="80">](demos.md#mesh-generation) | `mesh-generation` | eight GenMesh shapes, drawn with DrawMesh |
 | [<img src="../demos/waving-cubes.gif" width="80">](demos.md#waving-cubes) | `waving-cubes` | 196 cubes rippling in 3D (shared `rl/cube!`) |
 | [<img src="../demos/camera-3d-first-person.gif" width="80">](demos.md#camera-3d-first-person) | `camera-3d-first-person` | WASD + mouse-look walk through columns |
 | [<img src="../demos/tesseract-view.gif" width="80">](demos.md#tesseract-view) | `tesseract-view` | a rotating 4D hypercube projected 4D→3D→2D |
@@ -223,18 +223,18 @@ native memory rather than loaded from a file. See
 | [<img src="../demos/image-generation.gif" width="80">](demos.md#image-generation) | `image-generation` | nine procedural textures, none of them loaded |
 | [<img src="../demos/image-processing.gif" width="80">](demos.md#image-processing) | `image-processing` | nine CPU-side image operations, picked live |
 | [<img src="../demos/image-kernel.gif" width="80">](demos.md#image-kernel) | `image-kernel` | sharpen, sobel and gaussian, one call each |
-| *not recorded yet* | `image-drawing` | shapes baked once, then drawn live each frame |
-| *not recorded yet* | `image-text` | text baked into the image, pixelates at 4x |
-| *not recorded yet* | `image-rotate` | 0/90/180/270 exact, one angle grows the buffer |
-| *not recorded yet* | `image-channel` | R/G/B/A split; alpha masked to show structure |
+| [<img src="../demos/image-drawing.png" width="80">](demos.md#image-drawing) | `image-drawing` | shapes baked once, then drawn live each frame |
+| [<img src="../demos/image-text.png" width="80">](demos.md#image-text) | `image-text` | text baked into the image, pixelates at 4x |
+| [<img src="../demos/image-rotate.png" width="80">](demos.md#image-rotate) | `image-rotate` | 0/90/180/270 exact, one angle grows the buffer |
+| [<img src="../demos/image-channel.png" width="80">](demos.md#image-channel) | `image-channel` | R/G/B/A split; alpha masked to show structure |
 | [<img src="../demos/npatch-drawing.gif" width="80">](demos.md#npatch-drawing) | `npatch-drawing` | nine-patch stretching, corners held fixed |
 | [<img src="../demos/sprite-button.gif" width="80">](demos.md#sprite-button) | `sprite-button` | one sheet, three states, sliced by v |
-| *not recorded yet* | `sprite-stacking` | 40 generated slices faking a 3D car |
-| *not recorded yet* | `to-image` | one image, VRAM to RAM to VRAM and back up |
-| *not recorded yet* | `raw-data` | textures built from a hand-filled byte buffer |
-| *not recorded yet* | `sprite-animation` | six generated poses, one source rectangle |
-| *not recorded yet* | `magnifying-glass` | a round lens that reveals hidden markers |
-| *not recorded yet* | `textured-curve` | a texture laid along a cubic Bezier |
+| [<img src="../demos/sprite-stacking.png" width="80">](demos.md#sprite-stacking) | `sprite-stacking` | 40 generated slices faking a 3D car |
+| [<img src="../demos/to-image.png" width="80">](demos.md#to-image) | `to-image` | one image, VRAM to RAM to VRAM and back up |
+| [<img src="../demos/raw-data.png" width="80">](demos.md#raw-data) | `raw-data` | textures built from a hand-filled byte buffer |
+| [<img src="../demos/sprite-animation.png" width="80">](demos.md#sprite-animation) | `sprite-animation` | six generated poses, one source rectangle |
+| [<img src="../demos/magnifying-glass.png" width="80">](demos.md#magnifying-glass) | `magnifying-glass` | a round lens that reveals hidden markers |
+| [<img src="../demos/textured-curve.png" width="80">](demos.md#textured-curve) | `textured-curve` | a texture laid along a cubic Bezier |
 
 ## shaders (20)
 
@@ -252,13 +252,13 @@ That `[:by-value ...]` support also supersedes the workarounds described in
 pages still describe what the suite currently does elsewhere. A page on the
 by-value API itself is not written yet.
 
-| *not recorded yet* | `basic-lighting` | four point lights, custom vertex shader |
+| [<img src="../demos/basic-lighting.png" width="80">](demos.md#basic-lighting) | `basic-lighting` | four point lights, custom vertex shader |
 | preview | `bb` name | shows |
 |---|---|---|
-| *not recorded yet* | `fog-rendering` | exponential distance fog in the light shader |
+| [<img src="../demos/fog-rendering.png" width="80">](demos.md#fog-rendering) | `fog-rendering` | exponential distance fog in the light shader |
 | [<img src="../demos/julia-set.gif" width="80">](demos.md#julia-set) | `julia-set` | the Julia set, mouse-steered, in a shader |
 | [<img src="../demos/mandelbrot-set.gif" width="80">](demos.md#mandelbrot-set) | `mandelbrot-set` | the Mandelbrot set, zoomable, in a shader |
-| *not recorded yet* | `mesh-instancing` | 10000 lit cubes in one draw call |
+| [<img src="../demos/mesh-instancing.png" width="80">](demos.md#mesh-instancing) | `mesh-instancing` | 10000 lit cubes in one draw call |
 | [<img src="../demos/raymarching.gif" width="80">](demos.md#raymarching) | `raymarching` | a raymarched SDF scene in a shader |
 | [<img src="../demos/rounded-rect-shader.gif" width="80">](demos.md#rounded-rect-shader) | `rounded-rect-shader` | SDF rounded rects: fill, border, shadow |
 | [<img src="../demos/palette-switch.gif" width="80">](demos.md#palette-switch) | `palette-switch` | bands recolored by an ivec3 palette |
@@ -273,7 +273,7 @@ by-value API itself is not written yet.
 | [<img src="../demos/color-correction.gif" width="80">](demos.md#color-correction) | `color-correction` | contrast/saturation/brightness shader |
 | [<img src="../demos/texture-outline.gif" width="80">](demos.md#texture-outline) | `texture-outline` | a shader outline around a sprite's alpha edge |
 | [<img src="../demos/ascii-rendering.gif" width="80">](demos.md#ascii-rendering) | `ascii-rendering` | ascii art from a post-process shader |
-| *not recorded yet* | `vertex-displacement` | a flat plane made terrain in the vertex stage |
+| [<img src="../demos/vertex-displacement.png" width="80">](demos.md#vertex-displacement) | `vertex-displacement` | a flat plane made terrain in the vertex stage |
 
 ## audio (3)
 

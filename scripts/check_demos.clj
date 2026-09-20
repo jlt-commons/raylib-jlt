@@ -14,9 +14,16 @@
   a step its author was told to skip. What is not fine is the galleries and
   the prose disagreeing about which examples have one.
 
-  So an unrecorded example must be absent from the full-size gallery, carry a
-  `*not recorded yet*` row in the catalog, and be excluded from every stated
-  count. Record it and all three flip together.
+  There are three states, not two. An example may have an animated GIF from
+  `bb record`, or a single still PNG, or nothing yet. A GIF and a still are
+  both SHOWN: they appear in both galleries and carry a catalog thumbnail. What
+  separates them is that only a GIF counts toward prose about GIFs or
+  recordings, because a still is not a recording and claiming otherwise is
+  the kind of drift this gate exists to stop.
+
+  An example with neither must be absent from the full-size gallery, carry a
+  `*not recorded yet*` row in the catalog, and be excluded from the gallery
+  headings. Give it either and all three flip together.
 
   Every expected value is derived from the registry or from the file itself,
   so adding an example never means editing a number in here. Read-only, and
@@ -31,6 +38,12 @@
 (def ^:private ids (mapv first examples-registry/examples))
 
 (defn- gif? [id] (.exists (io/file (str "docs/demos/" id ".gif"))))
+(defn- still? [id] (.exists (io/file (str "docs/demos/" id ".png"))))
+
+;; The image a gallery should point at: the GIF when there is one, else the
+;; still. An example carrying both is not an error, it is a still awaiting
+;; replacement, and the GIF wins.
+(defn- media [id] (cond (gif? id) (str id ".gif") (still? id) (str id ".png")))
 
 (defn- problems []
   (let [demos    (slurp (io/file "docs/guide/demos.md"))
@@ -39,7 +52,8 @@
         ledger   (read-string (slurp (io/file "docs/demos/ledger.edn")))
         id-set   (set ids)
         recorded (set (filter gif? ids))
-        pending  (set/difference id-set recorded)
+        shown    (set (filter media ids))
+        pending  (set/difference id-set shown)
         probs    (atom [])
         add!     (fn [what] (swap! probs conj what))]
 
@@ -51,10 +65,10 @@
 
     ;; 2. The full-size gallery carries exactly the recorded examples.
     (let [in-demos (set (map second (re-seq #"(?m)^### (\S+)" demos)))]
-      (doseq [id (sort (set/difference recorded in-demos))]
-        (add! (str "docs/guide/demos.md has no entry for " id ", which has a GIF")))
+      (doseq [id (sort (set/difference shown in-demos))]
+        (add! (str "docs/guide/demos.md has no entry for " id ", which has a GIF or a still")))
       (doseq [id (sort (set/intersection pending in-demos))]
-        (add! (str "docs/guide/demos.md has an entry for " id ", which has no GIF"))))
+        (add! (str "docs/guide/demos.md has an entry for " id ", which has neither"))))
 
     ;; 3. The catalog carries every example, recorded or not, and marks which.
     (let [rows  (set (map second (re-seq #"\| `([a-z0-9-]+)` \|" catalog)))
@@ -62,15 +76,15 @@
       (doseq [id (sort (set/difference id-set rows))]
         (add! (str "docs/guide/example-catalog.md has no row for " id)))
       (doseq [id (sort (set/difference pending noted))]
-        (add! (str id " has no GIF, so its catalog row should read *not recorded yet*")))
-      (doseq [id (sort (set/intersection recorded noted))]
-        (add! (str id " has a GIF, but its catalog row still reads *not recorded yet*"))))
+        (add! (str id " has neither a GIF nor a still, so its catalog row should read *not recorded yet*")))
+      (doseq [id (sort (set/intersection shown noted))]
+        (add! (str id " has a GIF or a still, but its catalog row still reads *not recorded yet*"))))
 
     ;; 4. Every image reference resolves. A gallery pointing at a deleted still
     ;;    renders as a broken image on the published site, silently.
     (doseq [[file txt pat] [["docs/guide/demos.md" demos #"\.\./demos/([A-Za-z0-9_.-]+)"]
                             ["docs/guide/example-catalog.md" catalog #"\.\./demos/([A-Za-z0-9_.-]+)"]
-                            ["docs/demos/README.md" flat #"\]\(([A-Za-z0-9_.-]+\.gif)\)"]]
+                            ["docs/demos/README.md" flat #"\]\(([A-Za-z0-9_.-]+\.(?:gif|png))\)"]]
             [_ f] (re-seq pat txt)]
       (when-not (.exists (io/file (str "docs/demos/" f)))
         (add! (str file " references a missing docs/demos/" f))))
@@ -90,9 +104,9 @@
                        actual " entries"))))))
     (let [stated (reduce + 0 (map (fn [m] (parse-long (second m)))
                                   (re-seq #"(?m)^## \S+ \((\d+)\)" demos)))]
-      (when (not= stated (count recorded))
+      (when (not= stated (count shown))
         (add! (str "docs/guide/demos.md group headings total " stated ", but "
-                   (count recorded) " examples have a GIF"))))
+                   (count shown) " examples have a GIF or a still"))))
 
     ;; 7. Prose counting GIFs or recordings must say what is on disk. Scoped to
     ;;    a number immediately followed by a gallery word, so it does not fire
@@ -106,12 +120,12 @@
         (add! (str file " says \"" (str/trim whole) "\", but docs/demos holds "
                    (count recorded) " GIFs"))))
 
-    [@probs pending]))
+    [@probs pending recorded]))
 
 (defn -main [& _]
-  (let [[probs pending] (problems)]
+  (let [[probs pending recorded] (problems)]
     (when (seq pending)
-      (println (str (count pending) " example(s) not recorded yet: "
+      (println (str (count pending) " example(s) have neither a GIF nor a still: "
                     (str/join ", " (sort pending))))
       (println "That is allowed. A maintainer records them with `bb record`.")
       (println))
@@ -124,6 +138,8 @@
         (println "GIF. See AGENTS.md \"Counts live in several places\".")
         (System/exit 1))
       (println (str "demo gallery ok, " (count ids) " examples, "
-                    (- (count ids) (count pending)) " recorded, galleries and counts agree")))))
+                    (count recorded) " recorded and "
+                    (- (count ids) (count pending) (count recorded)) " as stills, "
+                    "galleries and counts agree")))))
 
 (when (= *file* (System/getProperty "babashka.file")) (-main))
