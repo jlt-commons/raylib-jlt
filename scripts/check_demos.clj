@@ -108,6 +108,50 @@
         (add! (str "docs/guide/demos.md group headings total " stated ", but "
                    (count shown) " examples have a GIF or a still"))))
 
+    ;; 6b. The catalog's own group headings state their row counts, and every
+    ;;     group's table starts with its header. A row inserted above the header
+    ;;     renders as a literal |---|---|---| on the published site and nothing
+    ;;     else in this gate can see it, because every row is still present and
+    ;;     every image still resolves.
+    (doseq [m (re-seq #"(?m)^## (\S+) \((\d+)\)$" catalog)]
+      (let [[whole grp n] m
+            start (+ (.indexOf catalog whole) (count whole))
+            rest' (subs catalog start)
+            end   (if-let [i (re-find #"(?m)^## " rest')]
+                    (.indexOf rest' i) (count rest'))
+            sec   (subs rest' 0 end)
+            rows  (filter #(str/starts-with? % "| ") (str/split-lines sec))
+            data  (remove #(or (str/includes? % "| preview |")
+                               (str/starts-with? % "|---")) rows)]
+        (when (and (seq rows) (not (str/includes? (first rows) "| preview |")))
+          (add! (str "docs/guide/example-catalog.md: the " grp
+                     " table has a row above its header, which renders as a broken table")))
+        (when (not= (parse-long n) (count data))
+          (add! (str "docs/guide/example-catalog.md heading \"## " grp " (" n ")\" but the section holds "
+                     (count data) " rows")))))
+
+    ;; 6c. The homepage states the example count in several places and had
+    ;;     nothing gating it, which is how it sat at a stale 175 in four spots
+    ;;     and carried per-group counts wrong in six of nine groups.
+    (let [home "docs/templates/home.html"]
+      (when (.exists (io/file home))
+        (let [txt (slurp (io/file home))
+              want (count ids)]
+          (doseq [[whole num] (re-seq #"(\d+)\s+(?:<strong>)?raylib(?:</strong>)?\s+examples" txt)]
+            (when (not= (parse-long num) want)
+              (add! (str home " says \"" (str/trim whole) "\", but the registry holds " want))))
+          (doseq [[whole num] (re-seq #"(?:Browse all|all of|compile-check of all)\s+(\d+)" txt)]
+            (when (not= (parse-long num) want)
+              (add! (str home " says \"" (str/trim whole) "\", but the registry holds " want))))
+          (doseq [[whole num] (re-seq #"(\d+)\s+example namespaces" txt)]
+            (when (not= (parse-long num) want)
+              (add! (str home " says \"" (str/trim whole) "\", but the registry holds " want))))
+          (let [by-group (frequencies (map #(nth % 2) examples-registry/examples))]
+            (doseq [[whole grp num] (re-seq #"([a-z0-9]+) (\d+)(?: ·|\.)" txt)]
+              (when-let [actual (by-group grp)]
+                (when (not= (parse-long num) actual)
+                  (add! (str home " says \"" (str/trim whole) "\", but that group holds " actual)))))))))
+
     ;; 7. Prose counting GIFs or recordings must say what is on disk. Scoped to
     ;;    a number immediately followed by a gallery word, so it does not fire
     ;;    on a resolution, a year or an example count.
