@@ -2,7 +2,7 @@
 
 Every recorded example at full size, linked from
 [the example catalog](example-catalog.md)'s preview thumbnails. All 171 of
-them are here, one recording each. Fifteen examples are newer than the last
+them are here, one recording each. Sixteen examples are newer than the last
 recording pass and so are not in this gallery yet. The catalog lists them
 with "not recorded yet" where the thumbnail would go.
 

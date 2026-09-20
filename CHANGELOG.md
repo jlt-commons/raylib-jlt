@@ -12,6 +12,15 @@ Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
 ## 2026-09-20
 
+- **`vertex-displacement` turns a flat plane into terrain on the GPU**, taking
+  the suite to 187. The mesh never changes; the vertex stage samples Perlin
+  noise and moves each vertex, and the sample coordinate is animated by time.
+- **`rl/bind-sampler!` binds a texture to a sampler slot directly**, which is
+  the only way to feed a texture to a VERTEX stage here.
+  `rl/set-uniform-texture!` goes through `SetShaderValueTexture`, which raylib
+  applies through its own render batch, and `DrawMesh` draws outside it. The
+  sampler then reads zeroes with no error reported anywhere: the plane renders
+  flat, in the low colour of its own height ramp.
 - **`mesh-instancing` draws 10000 lit cubes in one call**, taking the suite to
   186. `rl/draw-mesh-instanced!` plus `rl/matrix-array-alloc` and
   `rl/matrix-array-set!` for the transform array. Measured at 59 fps, which is
