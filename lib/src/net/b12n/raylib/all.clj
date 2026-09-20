@@ -4,12 +4,12 @@
 ;; file no longer matches what the generator produces from the 19 concrete
 ;; module namespaces.
 ;;
-;; 494 public vars total across 19 modules, zero name collisions,
+;; 499 public vars total across 19 modules, zero name collisions,
 ;; computed by asking a live jolt process for each module's ns-publics -- the
 ;; same mechanism verified against jolt v0.8.9 for def re-export + alter-meta! metadata
 ;; copy, not a parse of the module source text.
 (ns net.b12n.raylib.all
-  "Every public var of this library's 494 concrete-module surface, re-exported
+  "Every public var of this library's 499 concrete-module surface, re-exported
   under net.b12n.raylib.all so a caller can (:require [net.b12n.raylib.all :as rl])
   and keep calling rl/rect! instead of requiring all 19 modules by hand.
   net.b12n.raylib.check is not aggregated: it is the library's own headless load
@@ -835,7 +835,7 @@
 (def rl-vertex-2f rlgl/rl-vertex-2f)
 (alter-meta! #'rl-vertex-2f merge (select-keys (meta #'rlgl/rl-vertex-2f) [:doc :arglists :const]))
 
-;; --- shaders (23) -------------------------------------------------------
+;; --- shaders (28) -------------------------------------------------------
 (def UNIFORM-FLOAT shaders/UNIFORM-FLOAT)
 (alter-meta! #'UNIFORM-FLOAT merge (select-keys (meta #'shaders/UNIFORM-FLOAT) [:doc :arglists :const]))
 (def UNIFORM-INT shaders/UNIFORM-INT)
@@ -854,8 +854,18 @@
 (alter-meta! #'UNIFORM-VEC3 merge (select-keys (meta #'shaders/UNIFORM-VEC3) [:doc :arglists :const]))
 (def UNIFORM-VEC4 shaders/UNIFORM-VEC4)
 (alter-meta! #'UNIFORM-VEC4 merge (select-keys (meta #'shaders/UNIFORM-VEC4) [:doc :arglists :const]))
+(def bind-sampler! shaders/bind-sampler!)
+(alter-meta! #'bind-sampler! merge (select-keys (meta #'shaders/bind-sampler!) [:doc :arglists :const]))
 (def end-shader-mode shaders/end-shader-mode)
 (alter-meta! #'end-shader-mode merge (select-keys (meta #'shaders/end-shader-mode) [:doc :arglists :const]))
+(def rl-active-texture-slot shaders/rl-active-texture-slot)
+(alter-meta! #'rl-active-texture-slot merge (select-keys (meta #'shaders/rl-active-texture-slot) [:doc :arglists :const]))
+(def rl-enable-shader shaders/rl-enable-shader)
+(alter-meta! #'rl-enable-shader merge (select-keys (meta #'shaders/rl-enable-shader) [:doc :arglists :const]))
+(def rl-enable-texture shaders/rl-enable-texture)
+(alter-meta! #'rl-enable-texture merge (select-keys (meta #'shaders/rl-enable-texture) [:doc :arglists :const]))
+(def rl-set-uniform-sampler shaders/rl-set-uniform-sampler)
+(alter-meta! #'rl-set-uniform-sampler merge (select-keys (meta #'shaders/rl-set-uniform-sampler) [:doc :arglists :const]))
 (def set-uniform-float! shaders/set-uniform-float!)
 (alter-meta! #'set-uniform-float! merge (select-keys (meta #'shaders/set-uniform-float!) [:doc :arglists :const]))
 (def set-uniform-int! shaders/set-uniform-int!)

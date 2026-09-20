@@ -196,6 +196,7 @@
            :mesh-generation {:main-opts ["-m" "net.b12n.raylib-jlt.mesh-generation"]}
            :basic-lighting {:main-opts ["-m" "net.b12n.raylib-jlt.basic-lighting"]}
            :fog-rendering {:main-opts ["-m" "net.b12n.raylib-jlt.fog-rendering"]}
-           :mesh-instancing {:main-opts ["-m" "net.b12n.raylib-jlt.mesh-instancing"]}} ; a texture laid along a cubic Bezier
+           :mesh-instancing {:main-opts ["-m" "net.b12n.raylib-jlt.mesh-instancing"]}
+           :vertex-displacement {:main-opts ["-m" "net.b12n.raylib-jlt.vertex-displacement"]}} ; a texture laid along a cubic Bezier
 
  :tasks {run "joltc -M:run"}}

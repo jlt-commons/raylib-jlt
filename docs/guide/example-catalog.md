@@ -1,4 +1,4 @@
-# The example catalog: 186 raylib demos in jolt
+# The example catalog: 187 raylib demos in jolt
 
 A map of the whole suite. Each example is one namespace under
 `src/net/b12n/raylib_jlt/`, runnable by a friendly `bb <name>` task or the underlying
@@ -236,7 +236,7 @@ native memory rather than loaded from a file. See
 | *not recorded yet* | `magnifying-glass` | a round lens that reveals hidden markers |
 | *not recorded yet* | `textured-curve` | a texture laid along a cubic Bezier |
 
-## shaders (19)
+## shaders (20)
 
 GLSL compiled at runtime and run over a full-screen quad. raylib's `LoadShader`
 returns a `Shader` by value, which needed jolt's `[:by-value [:struct ...]]` -
@@ -273,6 +273,7 @@ by-value API itself is not written yet.
 | [<img src="../demos/color-correction.gif" width="80">](demos.md#color-correction) | `color-correction` | contrast/saturation/brightness shader |
 | [<img src="../demos/texture-outline.gif" width="80">](demos.md#texture-outline) | `texture-outline` | a shader outline around a sprite's alpha edge |
 | [<img src="../demos/ascii-rendering.gif" width="80">](demos.md#ascii-rendering) | `ascii-rendering` | ascii art from a post-process shader |
+| *not recorded yet* | `vertex-displacement` | a flat plane made terrain in the vertex stage |
 
 ## audio (3)
 
