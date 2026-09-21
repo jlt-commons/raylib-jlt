@@ -1,3 +1,18 @@
+;; Ported from Michiel Borkent's (@borkdude) examples/helitorus.clj in babashka/ffi:
+;; https://github.com/babashka/ffi/blob/main/examples/helitorus.clj
+;;
+;; That program is the original. The geometry, the painter ordering, the
+;; backface test, the lighting and the palette all came from there and are
+;; substantially unchanged. What this port changed is how the program reaches
+;; raylib: babashka.ffi calls became this project's wrapper, and the buffers
+;; gained jolt type hints.
+;;
+;; His own header credits it one step further back, to a Scittle demo drawing
+;; the same figure to a 2D canvas.
+;;
+;; babashka/ffi is MIT licensed, Copyright (c) 2026 Michiel Borkent. See
+;; NOTICE at the root of this repository for the notice in full.
+
 (ns net.b12n.raylib-jlt.helitorus
   "A helix wound around a torus, swept into a tube (`jolt -M:helitorus`).
 

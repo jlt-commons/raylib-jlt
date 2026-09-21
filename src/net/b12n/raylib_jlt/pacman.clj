@@ -1,3 +1,16 @@
+;; Ported from Michiel Borkent's (@borkdude) examples/pacman.clj in babashka/ffi:
+;; https://github.com/babashka/ffi/blob/main/examples/pacman.clj
+;;
+;; That program is the original. The maze, the ghost personalities and the
+;; tile-centre movement rule all came from there and are substantially
+;; unchanged. What this port changed is how the program reaches raylib:
+;; babashka.ffi calls became this project's wrapper, and the buffers gained
+;; jolt type hints. The twenty-one maze rows below are byte-identical to the
+;; original's.
+;;
+;; babashka/ffi is MIT licensed, Copyright (c) 2026 Michiel Borkent. See
+;; NOTICE at the root of this repository for the notice in full.
+
 (ns net.b12n.raylib-jlt.pacman
   "Pac-Man (`jolt -M:pacman`).
 

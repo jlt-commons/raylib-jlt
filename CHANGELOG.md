@@ -10,6 +10,19 @@ released library, so "what changed, and when" is the useful question.
 
 Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
 
+## 2026-09-21
+
+- **`helitorus`, `doom` and `pacman` now credit Michiel Borkent (@borkdude)**,
+  whose programs in [babashka/ffi](https://github.com/babashka/ffi) they are
+  ports of. All three shipped naming no source at all, which was our mistake.
+  The example table pointed at raylib for every other port and left these three
+  as `(showcase)` or `(game)`, which read as though they were written here. Each
+  file now opens with the attribution, the table names babashka/ffi, and `NOTICE`
+  carries the MIT notice in full alongside raylib's zlib one.
+- **The example table's second column is `Ported from` rather than
+  `raylib source`**, because three of its rows no longer point at raylib.
+  `(showcase)` now means what it says: no upstream, written here.
+
 ## 2026-09-20
 
 - **`vertex-displacement` turns a flat plane into terrain on the GPU**, taking

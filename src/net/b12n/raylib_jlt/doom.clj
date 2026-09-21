@@ -1,3 +1,16 @@
+;; Ported from Michiel Borkent's (@borkdude) examples/doom.clj in babashka/ffi:
+;; https://github.com/babashka/ffi/blob/main/examples/doom.clj
+;;
+;; That program is the original. The level data, the raycasting, the texture
+;; atlas and the sprite handling all came from there and are substantially
+;; unchanged. What this port changed is how the program reaches raylib:
+;; babashka.ffi calls became this project's wrapper, and the buffers gained
+;; jolt type hints. The sixteen level rows below are byte-identical to the
+;; original's.
+;;
+;; babashka/ffi is MIT licensed, Copyright (c) 2026 Michiel Borkent. See
+;; NOTICE at the root of this repository for the notice in full.
+
 (ns net.b12n.raylib-jlt.doom
   "A textured raycaster (`jolt -M:doom`).
 

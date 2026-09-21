@@ -303,7 +303,7 @@ jolt -M:check      # requires every example namespace; prints "compiled OK"
 
 ## The examples
 
-| Alias | raylib source | Shows |
+| Alias | Ported from | Shows |
 |---|---|---|
 | `run` | core/core_basic_window | window, clear, text |
 | `input` | core/core_input_keys | `IsKeyDown`, move a circle |
@@ -380,9 +380,15 @@ jolt -M:check      # requires every example namespace; prints "compiled OK"
 | `rounded-rectangle` | shapes/shapes_rounded_rectangle_drawing | rounded rects from `sector!` corners + rects |
 | `rectangle-scaling` | shapes/shapes_rectangle_scaling | drag the corner handle to resize a rectangle |
 | `lines-drawing` | shapes/shapes_lines_drawing | a rotating fan of thick lines via `rl/line-ex!` |
-| `helitorus` | (showcase) | a helix wound around a torus, swept into a tube: hand-rolled projection, painter's-algorithm depth, ~10k vertices/frame from primitive arrays |
-| `doom` | (showcase) | a textured raycaster: one ray per screen column, procedural atlas via `rl/texture-from-fn`, sprites depth-tested against a per-column z-buffer |
-| `pacman` | (game) | pac-man with the classic ghost personalities (Blinky/Pinky/Inky/Clyde), buffered turns, `rl/sector!` for the mouth |
+| `helitorus` | [babashka/ffi](https://github.com/babashka/ffi/blob/main/examples/helitorus.clj) | a helix wound around a torus, swept into a tube: hand-rolled projection, painter's-algorithm depth, ~10k vertices/frame from primitive arrays |
+| `doom` | [babashka/ffi](https://github.com/babashka/ffi/blob/main/examples/doom.clj) | a textured raycaster: one ray per screen column, procedural atlas via `rl/texture-from-fn`, sprites depth-tested against a per-column z-buffer |
+| `pacman` | [babashka/ffi](https://github.com/babashka/ffi/blob/main/examples/pacman.clj) | pac-man with the classic ghost personalities (Blinky/Pinky/Inky/Clyde), buffered turns, `rl/sector!` for the mouth |
+
+Most rows name a raylib example. Three name
+[babashka/ffi](https://github.com/babashka/ffi) instead: `helitorus`, `doom`
+and `pacman` are ports of Michiel Borkent's (@borkdude) programs from that
+repository's examples directory, MIT licensed, and `NOTICE` carries the
+notice. Rows marked `(showcase)` have no upstream and were written here.
 
 ### Verification status
 
@@ -556,13 +562,20 @@ convention won instead, since one exception across the organisation is harder to
 explain than that symmetry was worth.
 
 Changing the outbound licence relicenses nothing that arrived under another one,
-because those files are not ours to relicense. The ported examples remain derived
+because those files are not ours to relicense. Most ported examples remain derived
 from raylib's zlib-licensed originals (raylib is Copyright (c) 2013-2026 Ramon
 Santamaria, @raysan5). zlib is permissive and imposes nothing EPL 2.0 conflicts
 with, so the combination distributes cleanly provided raylib's notice travels with
 it, which is what `NOTICE` is for. zlib's requirement that altered sources be
 plainly marked survives the change: the example table above names the upstream
 source of every port, and it has to keep doing so.
+
+Three examples came from somewhere else and are MIT rather than zlib.
+`helitorus`, `doom` and `pacman` are ports of Michiel Borkent's (@borkdude)
+programs in [babashka/ffi](https://github.com/babashka/ffi) (Copyright (c) 2026
+Michiel Borkent). MIT requires its copyright and permission notice to travel
+with the work, which `NOTICE` now does. These three were shipped for a while
+naming no source at all, which was our mistake and is corrected here.
 
 This project does not vendor or redistribute raylib; it loads the system-installed
 `libraylib` at runtime over its C ABI.

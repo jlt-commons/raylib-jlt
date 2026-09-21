@@ -6,6 +6,58 @@ It was zlib until 2026-09-05, chosen to match raylib. EPL 2.0 relicenses
 nothing that arrived under another licence: the whole is EPL 2.0 and each
 part below keeps what it came with, and its notice travels with it here.
 
+babashka.ffi examples
+---------------------
+  Copyright (c) 2026 Michiel Borkent (@borkdude)
+  https://github.com/babashka/ffi
+  Licensed under the MIT license, reproduced below.
+
+  Three examples here are Clojure ports of programs from the babashka/ffi
+  examples directory, not of raylib's own examples:
+
+    helitorus  <- examples/helitorus.clj  (1034e56, 2026-08-28)
+    doom       <- examples/doom.clj       (1034e56, 2026-08-28)
+    pacman     <- examples/pacman.clj     (94ccd77, 2026-08-31)
+
+  The geometry, level data, game rules and palettes came from those
+  originals and are substantially unchanged. What the ports here changed is
+  how the program reaches raylib: babashka.ffi calls became this project's
+  wrapper, and the buffers gained jolt type hints. The shared data is the
+  quickest way to check the claim, since doom's sixteen level rows and
+  pacman's twenty-one maze rows are byte-identical to the originals, and
+  helitorus keeps the same hsl(337..349, 100..78%, 17..72%) palette.
+
+  The README's example table names babashka/ffi as the source for these
+  three, the way it names the raylib example for every other port.
+
+  Michiel Borkent's own header for helitorus credits it one step further
+  back, to a Scittle demo drawing the same figure to a 2D canvas. That
+  attribution is repeated here rather than independently verified.
+
+  babashka/ffi's licence notice, as shipped in its LICENSE file:
+
+    MIT License
+
+    Copyright (c) 2026 Michiel Borkent
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
 raylib
 ------
   Copyright (c) 2013-2026 Ramon Santamaria (@raysan5)
