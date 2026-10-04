@@ -1,16 +1,16 @@
-;; Babashka runner for the net.b12n.raylib-jlt raylib examples.
+;; Babashka runner for net.b12n.raylib, the raylib bindings for jolt in lib/.
+;;
+;; The 187 example programs that used to live here moved to their own repo,
+;; https://github.com/jlt-commons/raylib-jolt-demo, one runnable project each.
 ;;
 ;;   bb info            grouped cheat-sheet
-;;   bb examples        flat list with descriptions
-;;   bb <name>          run one example (opens a window), e.g. bb bouncing-ball
-;;   bb run <name>      run one example by argument
-;;   bb run-all [secs]  demo reel / smoke test: every example, N seconds each
-;;   bb check           headless compile-check of every example (no window)
+;;   bb test            unit suite (runs in lib/)
+;;   bb check:lib       headless load-check of every library namespace
 ;;   bb lib:check       is the native libraylib installed for this OS/arch?
 ;;   bb lib:install     install libraylib via the platform package manager
 ;;
 ;; ── Quality: lint/format/checks ──
-;;   bb lint                          clj-kondo over src (report only)
+;;   bb lint                          clj-kondo over lib/src and lib/test (report only)
 ;;   bb lint:strict                   bb lint, but exit non-zero if any findings
 ;;   bb lsp:format                    reformat all Clojure files (clojure-lsp)
 ;;   bb lsp:format-check              check formatting, dry run
@@ -23,22 +23,25 @@
 ;;   bb check:positional-args:strict  bb check:positional-args, but exit non-zero if any found
 ;;   bb check:kwarg-calls             find flat :k v calls to a kwargs fn (report only)
 ;;   bb check:kwarg-calls:strict      bb check:kwarg-calls, but exit non-zero if any found
-;;   bb check:demos                   gallery, ledger and counts agree with the registry
 ;;   bb fix:kwarg-calls               rewrite flat :k v call sites into an explicit {} map
+;;   bb gen:all                       regenerate lib/src/net/b12n/raylib/all.clj
+;;   bb check:aggregator              all.clj matches the generator
+;;
+;; ── Docs site ──
+;;   bb site:build / site:serve / site:clean   (needs a docs-engine checkout)
 ;;
 ;; ── Git hooks ──
 ;;   bb hooks:install                 install FAST pre-commit hook (lint + format + clean-ns, ~2s)
-;;   bb hooks:install:full            install FULL pre-commit hook (+ bb check, slower)
+;;   bb hooks:install:full            install FULL pre-commit hook (+ check:lib and test, slower)
 ;;   bb hooks:uninstall               remove the git pre-commit hook
 ;;
 ;; ── Dev ──
 ;;   bb nrepl [port]                  start a jolt nREPL server (default 7888)
 ;;
-;; Each `bb <name>` example task shells out to the example's joltc alias in
-;; deps.edn. Formatting is owned by clojure-lsp, not cljfmt: the two disagree
-;; on some compact literal tables (e.g. digital_clock.clj's segment map), so
-;; only one formatter may run against src, and clojure-lsp was chosen so
-;; `lsp:clean-ns` (no cljfmt equivalent) and `lsp:format` share one tool.
+;; Formatting is owned by clojure-lsp, not cljfmt: the two disagree on some
+;; compact literal tables, so only one formatter may run against the source,
+;; and clojure-lsp was chosen so `lsp:clean-ns` (no cljfmt equivalent) and
+;; `lsp:format` share one tool.
 ;; NOTE: task bodies are read by babashka's EDN reader, which does NOT support
 ;; #"regex", @deref, or #(...) reader macros. Use (fn [x] ...) etc.
 {:min-bb-version "1.3.0"
@@ -64,9 +67,6 @@
       (if (fs/which "clj-kondo")
         ["clj-kondo"]
         ["clojure" "-Sdeps" kondo-dep "-M" "-m" "clj-kondo.main"]))
-
-    (require '[examples-registry :as reg])
-    (require '[registration :as regi])
 
     ;; jolt's launcher was renamed `joltc` -> `jolt` in 0.5.0, and the current
     ;; installer ships ONLY `jolt`. Machines that have used jolt since before
@@ -110,21 +110,6 @@
           (println)
           (println "CI does not need this — it checks the engine out itself.")
           (System/exit 1))))
-    (def examples reg/examples)
-    (def by-name reg/by-name)
-
-    (defn run-example [name]
-      (let [row (get by-name name)]
-        (if row
-          (do (println (str "▶ " name))
-              (shell jolt-cmd (str "-M:" (nth row 1))))
-          (do (binding [*out* *err*]
-                (println (str "Unknown example: " (pr-str name)))
-                (println "Run `bb examples` to see the list."))
-              (System/exit 1)))))
-
-    (def print-row reg/print-row)
-
     ;; --- native-library (libraylib) detection + install ----------------------
     ;; jolt loads the shared libraylib over its C ABI (see deps.edn :jolt/native).
     ;; These helpers report where that library lives, or how to install it, for
@@ -240,290 +225,6 @@
                  :else {:manual "No supported package manager found. Build from source: https://github.com/raysan5/raylib/wiki/Working-on-GNU-Linux"})
         {:manual "Unsupported OS. See https://github.com/raysan5/raylib for build instructions."})))
 
-  ;; --- one task per example (so `bb <name>` runs it) ------------------------
-  basic-window      {:doc "▶ the minimal raylib window + text"             :task (run-example "basic-window")}
-  input-keys        {:doc "▶ steer a ball with the arrow keys"            :task (run-example "input-keys")}
-  input-mouse       {:doc "▶ a ball follows the mouse; click to recolor"  :task (run-example "input-mouse")}
-  input-mouse-wheel {:doc "▶ scroll a box with the mouse wheel"           :task (run-example "input-mouse-wheel")}
-  camera-2d         {:doc "▶ a 2D camera over a skyline (struct-by-value)" :task (run-example "camera-2d")}
-  bouncing-ball     {:doc "▶ a ball bouncing around the window"           :task (run-example "bouncing-ball")}
-  basic-shapes      {:doc "▶ shape primitives + an rlgl triangle"         :task (run-example "basic-shapes")}
-  colors-palette    {:doc "▶ every named raylib color in a grid"          :task (run-example "colors-palette")}
-  gradient          {:doc "▶ a vertical two-color gradient"               :task (run-example "gradient")}
-  following-eyes    {:doc "▶ two eyes track the mouse"                     :task (run-example "following-eyes")}
-  starfield         {:doc "▶ a twinkling starfield"                        :task (run-example "starfield")}
-  logo-raylib       {:doc "▶ the raylib logo from rectangles + text"      :task (run-example "logo-raylib")}
-  font-sizes        {:doc "▶ font sizes + MeasureText centering"          :task (run-example "font-sizes")}
-  delta-time        {:doc "▶ per-frame vs delta-time movement"            :task (run-example "delta-time")}
-  scissor-test      {:doc "▶ a scissor rectangle clips a grid"            :task (run-example "scissor-test")}
-  mouse-trail       {:doc "▶ a fading trail follows the cursor"           :task (run-example "mouse-trail")}
-  recursive-tree    {:doc "▶ a binary fractal tree"                       :task (run-example "recursive-tree")}
-  math-sine-cosine  {:doc "▶ a live unit-circle trig visualization"       :task (run-example "math-sine-cosine")}
-  bullet-hell       {:doc "▶ a rotating bullet spiral"                    :task (run-example "bullet-hell")}
-  triangle-strip    {:doc "▶ a rainbow strip via rlgl immediate mode"     :task (run-example "triangle-strip")}
-  writing-anim      {:doc "▶ a message types itself out"                  :task (run-example "writing-anim")}
-  format-text       {:doc "▶ padded score + MM:SS timer readouts"         :task (run-example "format-text")}
-  collision-area    {:doc "▶ AABB collision between two boxes"            :task (run-example "collision-area")}
-  dashed-line       {:doc "▶ a dashed line follows the mouse"             :task (run-example "dashed-line")}
-  double-pendulum   {:doc "▶ chaotic double-pendulum motion + trail"      :task (run-example "double-pendulum")}
-  kaleidoscope      {:doc "▶ strokes mirrored with 6-fold symmetry"       :task (run-example "kaleidoscope")}
-  hilbert-curve     {:doc "▶ a rainbow Hilbert space-filling curve"       :task (run-example "hilbert-curve")}
-  math-angle-rotation {:doc "▶ fixed spokes + a spinning line"            :task (run-example "math-angle-rotation")}
-  basic-screen-manager {:doc "▶ a LOGO/TITLE/GAMEPLAY/ENDING flow"        :task (run-example "basic-screen-manager")}
-  random-values     {:doc "▶ a new random value every two seconds"        :task (run-example "random-values")}
-  words-alignment   {:doc "▶ align a word inside a box (MeasureText)"     :task (run-example "words-alignment")}
-  camera-3d         {:doc "▶ an orbiting 3D camera (Camera3D by value)"    :task (run-example "camera-3d")}
-  waving-cubes      {:doc "▶ an NxN grid of cubes rippling in 3D"          :task (run-example "waving-cubes")}
-  camera-3d-first-person {:doc "▶ walk a yard of columns in first person"  :task (run-example "camera-3d-first-person")}
-  tesseract-view    {:doc "▶ a rotating 4D hypercube projected to 2D"       :task (run-example "tesseract-view")}
-  wireframe-shapes  {:doc "▶ pyramid/octahedron/torus/helix in 3D lines"    :task (run-example "wireframe-shapes")}
-  rlgl-solar-system {:doc "▶ Sun/Earth/Moon via the rlgl matrix stack"      :task (run-example "rlgl-solar-system")}
-  box-collisions    {:doc "▶ a player cube colliding with 3D boxes"         :task (run-example "box-collisions")}
-  asteroids         {:doc "▶ the classic vector shooter (rotate/thrust/fire)" :task (run-example "asteroids")}
-  tetris            {:doc "▶ the block-stacking puzzle (move/rotate/drop)"  :task (run-example "tetris")}
-  pong              {:doc "▶ two-paddle classic, you (W/S) vs a CPU"        :task (run-example "pong")}
-  vampire-survivors {:doc "▶ auto-fire survival: move, waves chase you"      :task (run-example "vampire-survivors")}
-  rotating-cube     {:doc "▶ a single cube spinning via the rlgl matrix stack" :task (run-example "rotating-cube")}
-  spinning-cubes    {:doc "▶ a row of cubes each spinning with a phase offset" :task (run-example "spinning-cubes")}
-  orthographic-projection {:doc "▶ perspective vs orthographic (SPACE toggles)" :task (run-example "orthographic-projection")}
-  point-cloud       {:doc "▶ ~1500 points as tiny rlgl cubes, rotating"        :task (run-example "point-cloud")}
-  bouncing-spheres  {:doc "▶ spheres bouncing in a 3D box (rl/sphere!)"        :task (run-example "bouncing-spheres")}
-  ball-physics      {:doc "▶ 2D balls under gravity, SPACE respawns"           :task (run-example "ball-physics")}
-  lines-bezier      {:doc "▶ a cubic Bézier that follows the mouse"            :task (run-example "lines-bezier")}
-  input-box         {:doc "▶ type into a text box (GetCharPressed)"            :task (run-example "input-box")}
-  snake             {:doc "▶ the classic snake (arrow keys, grow, don't crash)" :task (run-example "snake")}
-  breakout          {:doc "▶ paddle + ball + brick grid (mouse paddle)"        :task (run-example "breakout")}
-  space-invaders    {:doc "▶ marching aliens (arrows + SPACE to shoot)"        :task (run-example "space-invaders")}
-  flappy-bird       {:doc "▶ flap through the pipe gaps (SPACE)"               :task (run-example "flappy-bird")}
-  game-2048         {:doc "▶ 2048: 4x4 tile-merge puzzle (arrow keys)"         :task (run-example "game-2048")}
-  minesweeper       {:doc "▶ reveal/flag grid (mouse L reveal, R flag)"        :task (run-example "minesweeper")}
-  game-of-life      {:doc "▶ Conway's Game of Life (SPACE reseeds)"            :task (run-example "game-of-life")}
-  boids             {:doc "▶ flocking birds (separation/alignment/cohesion)"  :task (run-example "boids")}
-  fireworks         {:doc "▶ rockets + fading particle bursts"                :task (run-example "fireworks")}
-  fourier-epicycles {:doc "▶ rotating circles trace a square wave"            :task (run-example "fourier-epicycles")}
-  spirograph        {:doc "▶ animated hypotrochoid roulette curves"           :task (run-example "spirograph")}
-  l-system          {:doc "▶ an L-system fractal plant (grows + regrows)"     :task (run-example "l-system")}
-  flow-field        {:doc "▶ particles steered by a flow field (trails)"      :task (run-example "flow-field")}
-  color-wheel       {:doc "▶ an HSV color wheel (rlgl triangle fan)"          :task (run-example "color-wheel")}
-  pie-chart         {:doc "▶ labelled pie slices via rl/sector!"               :task (run-example "pie-chart")}
-  splines           {:doc "▶ Catmull-Rom / Bezier / B-spline (SPACE cycles)"    :task (run-example "splines")}
-  vector-angle      {:doc "▶ the angle between two vectors (arc + readout)"     :task (run-example "vector-angle")}
-  easings           {:doc "▶ a grid of balls on different easing curves"        :task (run-example "easings")}
-  penrose-tiling    {:doc "▶ a P3 Penrose rhombus tiling (deflation)"           :task (run-example "penrose-tiling")}
-  analog-clock      {:doc "▶ a live analog clock (libc local time)"             :task (run-example "analog-clock")}
-  digital-clock     {:doc "▶ a seven-segment HH:MM:SS clock (libc time)"        :task (run-example "digital-clock")}
-  ring-drawing      {:doc "▶ an animated annulus via rl/ring!"                   :task (run-example "ring-drawing")}
-  rounded-rectangle {:doc "▶ rounded rects via sector! corners"                 :task (run-example "rounded-rectangle")}
-  rectangle-scaling {:doc "▶ drag the corner handle to resize a rect"           :task (run-example "rectangle-scaling")}
-  lines-drawing     {:doc "▶ a rotating fan of thick lines (line-ex!)"           :task (run-example "lines-drawing")}
-  texture-procedural {:doc "▶ four textures built pixel by pixel" :task (run-example "texture-procedural")}
-  texture-tiling    {:doc "▶ one tile repeated across the window"               :task (run-example "texture-tiling")}
-  render-texture    {:doc "▶ a scene drawn off-screen, then reused"             :task (run-example "render-texture")}
-  window-letterbox  {:doc "▶ a fixed picture letterboxed into the window"       :task (run-example "window-letterbox")}
-  bunnymark         {:doc "▶ the sprite-count benchmark (click to add)"         :task (run-example "bunnymark")}
-  window-flags      {:doc "▶ toggle vsync/resizable/topmost live"               :task (run-example "window-flags")}
-  monitor-detector  {:doc "▶ every attached display, current one lit"           :task (run-example "monitor-detector")}
-  clipboard-text    {:doc "▶ type, C copies, V pastes"                          :task (run-example "clipboard-text")}
-
-  camera-2d-mouse-zoom
-  {:doc "▶ zoom toward the cursor, pinning the point under it"
-   :task (run-example "camera-2d-mouse-zoom")}
-
-  camera-2d-platformer
-  {:doc "▶ five ways a camera can follow a jumping player"
-   :task (run-example "camera-2d-platformer")}
-
-  circle-sector-drawing
-  {:doc "▶ a sector whose segment count you can starve"
-   :task (run-example "circle-sector-drawing")}
-
-  clock-of-clocks
-  {:doc "▶ six digits spelled by a grid of clock hands"
-   :task (run-example "clock-of-clocks")}
-
-  easings-ball
-  {:doc "▶ slide, swell and fade, one curve each"
-   :task (run-example "easings-ball")}
-
-  easings-box
-  {:doc "▶ drop, flatten, spin, grow, fade: five curves"
-   :task (run-example "easings-box")}
-
-  easings-rectangles
-  {:doc "▶ a grid easing out in size and rotation at once"
-   :task (run-example "easings-rectangles")}
-
-  easings-testbed
-  {:doc "▶ one curve at a time, plotted and run"
-   :task (run-example "easings-testbed")}
-
-  ellipse-collision
-  {:doc "▶ two ellipses that redden when they overlap"
-   :task (run-example "ellipse-collision")}
-
-  input-gestures
-  {:doc "▶ tap, hold, drag and swipe, named as they happen"
-   :task (run-example "input-gestures")}
-
-  logo-anim
-  {:doc "▶ the raylib logo assembling itself, unsmoothed"
-   :task (run-example "logo-anim")}
-
-  random-sequence
-  {:doc "▶ bars in a shuffled order, each height used once"
-   :task (run-example "random-sequence")}
-
-  rectangle-advanced
-  {:doc "▶ per-side roundness with a horizontal gradient"
-   :task (run-example "rectangle-advanced")}
-
-  rlgl-color-wheel
-  {:doc "▶ a hue wheel as a triangle fan, per-vertex colour"
-   :task (run-example "rlgl-color-wheel")}
-
-  rlgl-triangle
-  {:doc "▶ a Gouraud triangle with draggable corners"
-   :task (run-example "rlgl-triangle")}
-
-  storage-values
-  {:doc "▶ values that survive a restart, via a file"
-   :task (run-example "storage-values")}
-
-  undo-redo
-  {:doc "▶ move a square, then step back through the history"
-   :task (run-example "undo-redo")}
-
-  window-should-close
-  {:doc "▶ close is a question: ESC asks before it exits"
-   :task (run-example "window-should-close")}
-  input-gamepad     {:doc "▶ sticks, triggers and buttons for pad 0"            :task (run-example "input-gamepad")}
-  input-multitouch  {:doc "▶ touch points (the mouse is point 0)"               :task (run-example "input-multitouch")}
-  input-virtual-controls {:doc "▶ an on-screen D-pad and action button" :task (run-example "input-virtual-controls")}
-  lorenz-attractor  {:doc "▶ the Lorenz attractor traced in 3D"                 :task (run-example "lorenz-attractor")}
-  dna-helix         {:doc "▶ a turning double helix, coloured bases"            :task (run-example "dna-helix")}
-  yaw-pitch-roll    {:doc "▶ the three aircraft rotations in 3D"                :task (run-example "yaw-pitch-roll")}
-  first-person-maze {:doc "▶ walk a grid maze, with a minimap"                  :task (run-example "first-person-maze")}
-  cellular-automata {:doc "▶ Wolfram's elementary automata"                     :task (run-example "cellular-automata")}
-  julia-set         {:doc "▶ the Julia set, mouse-steered, in a shader" :task (run-example "julia-set")}
-  mandelbrot-set    {:doc "▶ the Mandelbrot set, zoomable, in a shader" :task (run-example "mandelbrot-set")}
-  raymarching       {:doc "▶ a raymarched SDF scene in a shader" :task (run-example "raymarching")}
-  rounded-rect-shader {:doc "▶ SDF rounded rects: fill, border, shadow" :task (run-example "rounded-rect-shader")}
-  palette-switch    {:doc "▶ bands recolored by an ivec3 palette" :task (run-example "palette-switch")}
-  shader-hot-reload {:doc "▶ swap and recompile the GLSL at runtime" :task (run-example "shader-hot-reload")}
-  multi-sampler     {:doc "▶ two textures blended by a second sampler" :task (run-example "multi-sampler")}
-  postprocessing    {:doc "▶ post-process shaders cycled over a scene" :task (run-example "postprocessing")}
-  custom-uniform    {:doc "▶ a mouse-steered swirl over a scene" :task (run-example "custom-uniform")}
-  texture-painting  {:doc "▶ a blank texture painted by a shader" :task (run-example "texture-painting")}
-  helitorus         {:doc "▶ a helix wound around a torus, swept into a tube" :task (run-example "helitorus")}
-  doom              {:doc "▶ a textured raycaster: one ray per screen column" :task (run-example "doom")}
-  pacman            {:doc "▶ pac-man, with the classic ghost personalities" :task (run-example "pacman")}
-  audio-raw-stream  {:doc "▶ arrow keys steer a live sine tone's pitch/pan" :task (run-example "audio-raw-stream")}
-  starfield-effect  {:doc "▶ flying starfield (wheel=speed, SPACE=mode)"    :task (run-example "starfield-effect")}
-  world-screen      {:doc "▶ a 2D label tracks a cube via GetWorldToScreen" :task (run-example "world-screen")}
-  camera-2d-split-screen {:doc "▶ two players, two cameras, two render textures" :task (run-example "camera-2d-split-screen")}
-  eratosthenes-sieve {:doc "▶ the Sieve of Eratosthenes, one test per pixel" :task (run-example "eratosthenes-sieve")}
-  keyboard-testbed  {:doc "▶ an on-screen ENG-US keyboard, every key lit"   :task (run-example "keyboard-testbed")}
-  mouse-painting    {:doc "▶ a paint program on a render-texture canvas"   :task (run-example "mouse-painting")}
-  input-actions     {:doc "▶ abstract input actions: keyboard + gamepad"   :task (run-example "input-actions")}
-  particles         {:doc "▶ water/smoke/fire particles follow the mouse" :task (run-example "particles")}
-  particles-blending {:doc "▶ 200 sparks trail the mouse, alpha vs additive" :task (run-example "particles-blending")}
-  smooth-pixelperfect {:doc "▶ sub-pixel camera smoothing at 5x upscale" :task (run-example "smooth-pixelperfect")}
-  viewport-scaling  {:doc "▶ 6 viewport-scaling policies, resize live"   :task (run-example "viewport-scaling")}
-  geometric-shapes  {:doc "▶ cubes, spheres, cylinders, cones, capsules" :task (run-example "geometric-shapes")}
-  camera-3d-split-screen {:doc "▶ two players, two render-texture halves" :task (run-example "camera-3d-split-screen")}
-  rectangle-bounds  {:doc "▶ draggable word-wrap text container"  :task (run-example "rectangle-bounds")}
-  polygon-drawing   {:doc "▶ hue-wheel texture on a spinning polygon" :task (run-example "polygon-drawing")}
-  texture-rendering {:doc "▶ a grid of squares painted entirely by a shader" :task (run-example "texture-rendering")}
-  texture-waves     {:doc "▶ a starfield rippled by a UV-displacement shader" :task (run-example "texture-waves")}
-  srcrec-dstrec     {:doc "▶ srcrec picks the frame, dstrec scales+spins it" :task (run-example "srcrec-dstrec")}
-  amp-envelope      {:doc "▶ ADSR amplitude envelope on a 440Hz tone" :task (run-example "amp-envelope")}
-  blend-modes       {:doc "▶ four 2D blend modes over a night skyline" :task (run-example "blend-modes")}
-  color-correction  {:doc "▶ contrast/saturation/brightness shader" :task (run-example "color-correction")}
-  highdpi-testbed   {:doc "▶ diagnostic overlay: monitors, DPI, crosshair" :task (run-example "highdpi-testbed")}
-  compute-hash      {:doc "▶ CRC32/MD5/SHA1/SHA256 + Base64 of typed text" :task (run-example "compute-hash")}
-  camera-3d-free    {:doc "▶ a free-look camera around a cube, UpdateCamera" :task (run-example "camera-3d-free")}
-  screen-buffer     {:doc "▶ the classic DOS fire effect" :task (run-example "screen-buffer")}
-  background-scrolling {:doc "▶ three parallax skyline layers, each scrolling" :task (run-example "background-scrolling")}
-  textured-cube     {:doc "▶ two cubes, one textured atlas, one sub-rect" :task (run-example "textured-cube")}
-  billboard-rendering {:doc "▶ camera-facing quads, one spins" :task (run-example "billboard-rendering")}
-  texture-outline   {:doc "▶ a shader outline around a sprite's alpha edge" :task (run-example "texture-outline")}
-  directional-billboard {:doc "▶ a billboard whose facing row turns with the camera" :task (run-example "directional-billboard")}
-  ascii-rendering   {:doc "▶ ascii art from a post-process shader" :task (run-example "ascii-rendering")}
-  top-down-lights {:doc "▶ lights and shadow volumes in an alpha mask" :task (run-example "top-down-lights")}
-  basic-voxel {:doc "▶ an 8x8x8 voxel block, click one out" :task (run-example "basic-voxel")}
-  strings-management {:doc "▶ bouncing text you slice, shatter and glue" :task (run-example "strings-management")}
-  picking-3d {:doc "▶ click a box: a real GetScreenToWorldRay pick" :task (run-example "picking-3d")}
-  drop-files {:doc "▶ drag files in: FilePathList by value" :task (run-example "drop-files")}
-  directory-files {:doc "▶ a file browser over LoadDirectoryFilesEx" :task (run-example "directory-files")}
-  custom-logging {:doc "▶ raylib's log captured by a jolt callback" :task (run-example "custom-logging")}
-  audio-stream-callback {:doc "▶ raudio pulls samples from its own thread" :task (run-example "audio-stream-callback")}
-  inline-styling {:doc "▶ colour markup inside the string itself" :task (run-example "inline-styling")}
-  fog-of-war {:doc "▶ fog lifted by a 25x15 render texture" :task (run-example "fog-of-war")}
-  framebuffer-rendering {:doc "▶ two cameras, two framebuffers, one scene" :task (run-example "framebuffer-rendering")}
-  highdpi-demo {:doc "▶ logical points vs physical pixels, two rulers" :task (run-example "highdpi-demo")}
-  image-generation {:doc "▶ nine procedural textures, none of them loaded" :task (run-example "image-generation")}
-  image-processing {:doc "▶ nine CPU-side image operations, picked live" :task (run-example "image-processing")}
-  image-kernel {:doc "▶ sharpen, sobel and gaussian, one call each" :task (run-example "image-kernel")}
-  image-drawing {:doc "▶ shapes baked once, then drawn live each frame" :task (run-example "image-drawing")}
-  image-text {:doc "▶ text baked into the image, pixelates at 4x" :task (run-example "image-text")}
-  image-rotate {:doc "▶ 0/90/180/270 exact, one angle grows the buffer" :task (run-example "image-rotate")}
-  image-channel {:doc "▶ R/G/B/A split; alpha masked to show structure" :task (run-example "image-channel")}
-  npatch-drawing {:doc "▶ nine-patch stretching, corners held fixed" :task (run-example "npatch-drawing")}
-  sprite-button {:doc "▶ one sheet, three states, sliced by v" :task (run-example "sprite-button")}
-  sprite-stacking {:doc "▶ 40 generated slices faking a 3D car" :task (run-example "sprite-stacking")}
-  to-image {:doc "▶ one image, VRAM to RAM to VRAM and back up" :task (run-example "to-image")}
-  raw-data {:doc "▶ textures built from a hand-filled byte buffer" :task (run-example "raw-data")}
-  sprite-animation {:doc "▶ six generated poses, one source rectangle" :task (run-example "sprite-animation")}
-  magnifying-glass {:doc "▶ a round lens that reveals hidden markers" :task (run-example "magnifying-glass")}
-  outlines-thickness {:doc "▶ thick outlines, and what a negative one does" :task (run-example "outlines-thickness")}
-  textured-curve {:doc "▶ a texture laid along a cubic Bezier" :task (run-example "textured-curve")}
-  mesh-generation {:doc "▶ eight GenMesh shapes, drawn with DrawMesh" :task (run-example "mesh-generation")}
-  basic-lighting {:doc "▶ four point lights, custom vertex shader" :task (run-example "basic-lighting")}
-  fog-rendering {:doc "▶ exponential distance fog in the light shader" :task (run-example "fog-rendering")}
-  mesh-instancing {:doc "▶ 10000 lit cubes in one draw call" :task (run-example "mesh-instancing")}
-  vertex-displacement {:doc "▶ a flat plane made terrain in the vertex stage" :task (run-example "vertex-displacement")}
-
-  ;; --- meta tasks -----------------------------------------------------------
-  run
-  {:doc "Run an example by name: bb run <name>"
-   :override-builtin true
-   :task (run-example (first *command-line-args*))}
-
-  run-all
-  {:doc "Demo reel / smoke test: every example N seconds each (default 15): bb run-all [secs]"
-   :task (let [secs (or (some-> (first *command-line-args*) parse-long) 15)
-               ms   (str (* secs 1000))]
-           (println (str "Running " (count examples) " examples, " secs "s each…"))
-           (doseq [row examples]
-             (println (str "▶ " (nth row 0)))
-             (shell {:extra-env {"RAYLIB_APP_AUTO_QUIT_MS" ms} :continue true}
-                    jolt-cmd (str "-M:" (nth row 1)))))}
-
-  record
-  {:doc "Batch-record a demo GIF for every example: bb record [--only a,b] [--force] [--dry-run]"
-   :task (if-not (fs/which "screen-grab")
-           (binding [*out* *err*]
-             (println "bb record needs the `screen-grab` capture CLI on your PATH.")
-             (println "That tool is internal and not publicly released yet, so this")
-             (println "task is maintainer-only. You do not need it to view the demos:")
-             (println "every GIF is committed under docs/demos/. See docs/demos/README.md.")
-             (System/exit 1))
-           (let [{:keys [exit]} (apply shell {:continue true}
-                                       "screen-grab" "record"
-                                       "--manifest" "scripts/demo_manifest.edn"
-                                       *command-line-args*)]
-             (System/exit exit)))}
-
-  demos:examples
-  {:doc "Print the demo item list as EDN for screen-grab"
-   :task
-   (prn (vec (for [row examples]
-               {:id (nth row 0)
-                :group (nth row 2)
-                :desc (nth row 3)
-                :src (reg/src-path (nth row 1))
-                :run (str jolt-cmd " -M:" (nth row 1))})))}
-
   site:build
   {:doc "Build the documentation site into _site/ (needs a docs-engine checkout)"
    :task (site-task "build")}
@@ -536,76 +237,22 @@
   {:doc "Delete the _site/ build output"
    :task (site-task "clean")}
 
-  examples
-  {:doc "List every runnable example with its description"
-   :task (doseq [row examples] (print-row row))}
-
   info
-  {:doc "Grouped cheat-sheet of all examples"
+  {:doc "Grouped cheat-sheet"
    :task (do
-           (doseq [g ["games" "core" "shapes" "text" "3d" "generative" "textures" "shaders" "audio"]]
-             (let [rows (filterv (fn [row] (= g (nth row 2))) examples)]
-               (println (str "\n=== " g " (" (count rows) ") ==="))
-               (doseq [row rows] (print-row row))))
+           (println "net.b12n.raylib: raylib bindings for jolt, in lib/")
+           (println "Examples: https://github.com/jlt-commons/raylib-jolt-demo")
            (println)
-           (println "Run any example with `bb <name>` · list: `bb examples` · all tasks: `bb tasks`")
-           (println "Demo reel / smoke test: `bb run-all [secs]` · headless check: `bb check`")
-           (println "Lint: `bb lint` (clj-kondo) · Format: `bb lsp:format` · `bb lsp:fix` (format + clean-ns)")
-           (println "Native library: `bb lib:check` (is libraylib installed?) · `bb lib:install`")
-           (println "Git hooks: `bb hooks:install` (fast) · `bb hooks:install:full` · nREPL: `bb nrepl [port]`"))}
+           (println "Verify:  `bb test` (unit suite) · `bb check:lib` (load every namespace)")
+           (println "         `bb check:aggregator` (all.clj up to date) · regenerate: `bb gen:all`")
+           (println "Lint:    `bb lint` (clj-kondo) · Format: `bb lsp:format` · `bb lsp:fix` (format + clean-ns)")
+           (println "Native:  `bb lib:check` (is libraylib installed?) · `bb lib:install`")
+           (println "Docs:    `bb site:serve` · Git hooks: `bb hooks:install` (fast) · `bb hooks:install:full`")
+           (println "Dev:     `bb nrepl [port]` · all tasks: `bb tasks`"))}
 
   test
   {:doc "Unit suite: ffi/write argument order (runs in lib/)"
    :task (shell {:dir "lib"} jolt-cmd "-M:test")}
-
-  check
-  {:doc "Headless compile-check of every example (no window)"
-   :task (shell jolt-cmd "-M:check")}
-
-  check:registration
-  {:doc "Source, deps.edn alias, check.clj require and bb.edn task all agree"
-   ;; The gate `check` cannot be for itself.
-   ;;
-   ;; `bb check` compiles what check.clj requires, so an example left out of
-   ;; that list is never compiled and the run still prints "all example
-   ;; namespaces compiled OK" and exits 0. Measured 2026-08-29: a namespace
-   ;; carrying a deliberate unresolved symbol fails `bb check` with its
-   ;; require present and passes with it removed. CONTRIBUTING.md has warned
-   ;; about this in prose for a while; this is the gate for it.
-   ;;
-   ;; Note the registry's alias is NOT the display name, and the namespace is
-   ;; derivable from neither: ["basic-window" "run" ...] reaches
-   ;; net.b12n.raylib-jlt.core through deps.edn's :run alias, and 12 rows
-   ;; differ this way. deps.edn is the source of truth for which namespace a
-   ;; row means.
-   ;;
-   ;; Needs no jolt and no libraylib, so it runs on a bare checkout.
-   :task
-   (let [root (str (fs/parent (fs/absolutize "bb.edn")))
-         probs (regi/problems root reg/examples)]
-     (if (seq probs)
-       (binding [*out* *err*]
-         (println "registration gaps:")
-         (doseq [[n what] probs] (println (str "  " n ": " what)))
-         (System/exit 1))
-       (println (str "registration ok, " (count reg/examples)
-                     " examples across source, alias, check.clj and bb.edn"))))}
-
-  check:demos
-  {:doc "Every example has a GIF, both galleries carry it, and the counts agree"
-   ;; check:registration gates the example count across source, deps.edn,
-   ;; check.clj and bb.edn. This is the same idea for the gallery, which
-   ;; nothing gated: docs/guide/demos.md once opened with "All 151 recordings
-   ;; are here" while the suite had grown to 171, and AGENTS.md could only
-   ;; warn about it in prose.
-   ;;
-   ;; Every expected value is derived from the registry or from the file
-   ;; itself, so adding an example never means editing a number in here.
-   ;;
-   ;; Needs no jolt, no libraylib and no capture tool, so it runs on a bare
-   ;; checkout and in CI.
-   :task (let [{:keys [exit]} (shell {:continue true} "bb" "scripts/check_demos.clj")]
-           (System/exit exit))}
 
   check:lib
   {:doc "Headless load-check of every library namespace in lib/"
@@ -624,13 +271,13 @@
   ;; Formatting lives under lsp:format below, not here. See the top-of-file
   ;; note on why clojure-lsp (not cljfmt) owns formatting in this project.
   lint
-  {:doc "clj-kondo over src and lib/src (report only, always exits 0); strict: bb lint:strict"
-   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src" "lib/src"]))]
+  {:doc "clj-kondo over lib/src and lib/test (report only, always exits 0); strict: bb lint:strict"
+   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "lib/src" "lib/test"]))]
            (println (if (zero? exit) "✓ clj-kondo: no errors or warnings" "✗ clj-kondo: see findings above")))}
 
   lint:strict
   {:doc "bb lint, but exit non-zero if clj-kondo reports any findings (2=warnings, 3=errors)"
-   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "src" "lib/src"]))]
+   :task (let [{:keys [exit]} (apply shell {:continue true} (concat (kondo-argv) ["--lint" "lib/src" "lib/test"]))]
            (System/exit exit))}
 
   ;; --- quality: clojure-lsp (format + clean-ns + diagnostics) ---------------
@@ -689,7 +336,7 @@
              (shell {:continue true} "clojure-lsp" "format")
              (println "-> clean-ns")
              (shell {:continue true} "clojure-lsp" "clean-ns")
-             (println "✓ auto-fixes applied, run bb lsp:diagnostics + bb check to confirm"))}
+             (println "✓ auto-fixes applied, run bb lsp:diagnostics + bb check:lib to confirm"))}
 
   ;; --- quality: positional-args check ---------------------------------------
   check:positional-args
@@ -774,17 +421,14 @@
 
   ;; --- git hooks --------------------------------------------------------------
   ;; FAST hook: lint (any finding blocks, matching `bb lint:strict`) + format +
-  ;; clean-ns dry-run, ~2s. FULL adds `bb check` (headless compile of every
-  ;; example), the project has no unit-test suite, so that's the closest
-  ;; equivalent pre-commit gate.
+  ;; clean-ns dry-run, ~2s. FULL adds `bb check:lib` (load every library
+  ;; namespace) and `bb test`.
   hooks:install
   {:doc "Install FAST git pre-commit hook (lint + format + clean-ns, ~2s)"
    :task (let [hook ".git/hooks/pre-commit"]
            (spit hook (str "#!/bin/bash\n"
-                           "# net.b12n.raylib-jlt pre-commit (FAST, lint + format + clean-ns dry-run).\n"
-                           "# Full (+ headless compile-check): bb hooks:install:full\n"
-                           "echo 'pre-commit 0/3: bb check:registration'\n"
-                           "bb check:registration || { echo 'pre-commit: registration gaps. See above'; exit 1; }\n"
+                           "# net.b12n.raylib pre-commit (FAST, lint + format + clean-ns dry-run).\n"
+                           "# Full (+ check:lib and test): bb hooks:install:full\n"
                            "echo 'pre-commit 1/3: bb lint:strict (clj-kondo)'\n"
                            "bb lint:strict || { echo 'pre-commit: lint findings. See above'; exit 1; }\n"
                            "echo 'pre-commit 2/3: clojure-lsp format --dry'\n"
@@ -797,18 +441,18 @@
            (println ">> skip once with: git commit --no-verify"))}
 
   hooks:install:full
-  {:doc "Install FULL git pre-commit hook (+ headless compile-check of every example, slower)"
+  {:doc "Install FULL git pre-commit hook (+ check:lib and test, slower)"
    :task (let [hook ".git/hooks/pre-commit"]
            (spit hook (str "#!/bin/bash\n"
-                           "# net.b12n.raylib-jlt pre-commit (FULL). Fast: bb hooks:install\n"
+                           "# net.b12n.raylib pre-commit (FULL). Fast: bb hooks:install\n"
                            "echo 'pre-commit 1/4: bb lint:strict (clj-kondo)'\n"
                            "bb lint:strict || { echo 'pre-commit: lint findings. See above'; exit 1; }\n"
                            "echo 'pre-commit 2/4: clojure-lsp format --dry'\n"
                            "clojure-lsp format --dry || { echo 'run bb lsp:format'; exit 1; }\n"
                            "echo 'pre-commit 3/4: clojure-lsp clean-ns --dry'\n"
                            "clojure-lsp clean-ns --dry || { echo 'run bb lsp:clean-ns'; exit 1; }\n"
-                           "echo 'pre-commit 4/4: bb check (headless compile-check of every example)'\n"
-                           "bb check\n"
+                           "echo 'pre-commit 4/4: bb check:lib + bb test'\n"
+                           "bb check:lib && bb test\n"
                            "exit $?\n"))
            (shell "chmod" "+x" hook)
            (println "✓ full pre-commit hook installed")

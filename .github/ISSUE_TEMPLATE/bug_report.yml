@@ -1,5 +1,5 @@
 name: Bug report
-description: An example crashes, renders wrong, or won't compile
+description: A binding crashes, renders wrong, or won't compile
 labels: [bug]
 body:
   - type: markdown
@@ -9,17 +9,21 @@ body:
         jolt version, and where `libraylib` came from. Please fill those in. They
         turn a guess into a diagnosis.
 
-        **Known issue, please check first:** the `camera2d` and `camera-3d`
-        examples pass a struct by value using an AArch64-specific pointer trick.
+        **A problem with one example program?** The examples moved to
+        [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo), so
+        please file it there unless the cause is in a binding here.
+
+        **Known issue, please check first:** `with-camera-2d` and `with-camera-3d`
+        pass a struct by value using an AArch64-specific pointer trick.
         On **x86-64** they can crash with an invalid memory reference. That is
         [documented and expected](https://github.com/jlt-commons/raylib-jlt/blob/main/docs/guide/struct-by-value-pointer-trick.md),
         not a new bug, though a portable rlgl-matrix replacement is very welcome.
 
   - type: input
-    id: example
+    id: binding
     attributes:
-      label: Which example?
-      description: The `bb` name or `joltc` alias, e.g. `bb tetris` or `joltc -M:camera2d`.
+      label: Which binding or namespace?
+      description: The function or namespace, e.g. `rl/rect!` or `net.b12n.raylib.camera`, and the program that shows the problem.
     validations:
       required: true
 
@@ -65,13 +69,13 @@ body:
   - type: textarea
     id: compile-check
     attributes:
-      label: Does the headless compile-check pass?
+      label: Does the headless load-check pass?
       description: |
-        `bb check` (or `joltc -M:check`) compiles every example without opening a
-        window. If it fails, the problem is in the shared binding layer rather
-        than in one example. Paste its output here.
+        `bb check:lib` loads every library namespace without opening a window.
+        If it fails, the problem is in the binding layer itself. Paste its
+        output here.
       value: |
         ```
-        $ bb check
+        $ bb check:lib
         (paste here)
         ```

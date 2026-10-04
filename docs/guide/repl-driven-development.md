@@ -79,7 +79,7 @@ flowchart TB
 ```
 
 The same call is correct outside the REPL. With no pump running, which is what
-`bb bounce` and `jolt -M:bounce` do, `call-on-main-thread-async` invokes the thunk
+`bb bounce` and `jolt -M:bounce` do in raylib-jolt-demo, `call-on-main-thread-async` invokes the thunk
 **inline** on the caller's thread, which is already the main one. So wrapping an
 example's entry point costs nothing in the normal run path.
 
@@ -152,5 +152,5 @@ before the process died.
 - [`headless-smoke-testing.md`](headless-smoke-testing.md): `RAYLIB_APP_AUTO_QUIT_MS`
   closes the window on a timer, which is handy from the REPL too when you would
   rather not reach for the mouse.
-- [`example-catalog.md`](example-catalog.md): every example shares the `-main` shape
+- [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo): every example shares the `-main` shape
   that `rl/run!` starts.

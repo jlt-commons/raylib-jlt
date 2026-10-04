@@ -41,7 +41,8 @@ The wrappers also absorb small coercions the raw bind is strict about, e.g.
 `circle!` calls `(double radius)` so a caller can pass an int radius without a type
 error at the `:float` boundary.
 
-The payoff at the call site (`net.b12n.raylib-jlt.core`):
+The payoff at the call site (`net.b12n.raylib-jlt.core`, raylib-jolt-demo's
+[`core/`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/core)):
 
 ```clojure
 (rl/text! "Congrats! You created your first window!"
@@ -108,5 +109,5 @@ the raw `:uint`/`rlColor4ub` binds rather than replacing them.
   wrappers pass through unchanged.
 - [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md): `cube!` is the keyword-arg
   wrapper over the positional `rl-vertex-3f` stream.
-- [`example-catalog.md`](example-catalog.md): every example is written against this
+- [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo): every example is written against this
   wrapper API.

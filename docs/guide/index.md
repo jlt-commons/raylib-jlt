@@ -1,13 +1,17 @@
 # raylib-jlt Guide
 
-User-facing documentation for `raylib-jlt`: a suite of **[raylib](https://github.com/raysan5/raylib)
-examples written in [jolt](https://github.com/jolt-lang)** (native Clojure on Chez
-Scheme, no JVM) over `jolt.ffi`. Each page below covers one FFI pattern or drawing
+User-facing documentation for `raylib-jlt`: **[raylib](https://github.com/raysan5/raylib)
+bindings for [jolt](https://github.com/jolt-lang)** (native Clojure on Chez Scheme,
+no JVM) over `jolt.ffi`. Each page below covers one FFI pattern or drawing
 convention, with citations to the source files that implement it.
+
+The 187 example programs that used to live in this repo moved to
+[raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo), one runnable project each, with a
+[gallery](https://jlt-commons.github.io/raylib-jolt-demo/).
 
 ## Why this exists
 
-The examples show you *what* the suite draws; these pages explain *why* the binding
+The examples show you *what* the bindings draw; these pages explain *why* the binding
 layer is shaped the way it is. Almost every non-obvious decision in
 `net.b12n.raylib` traces back to one question (how a given C struct
 crosses the FFI boundary), and the answer differs per struct. Read these when you
@@ -16,11 +20,12 @@ looks needlessly indirect and you want the ABI reason behind it.
 
 ## What raylib-jlt is
 
-A community suite of 187 raylib examples: the classic core/shapes/text demos, a
-handful of games (asteroids, tetris, pong, vampire-survivors), and a 3D set
-(orbiting cameras, waving cubes, an rlgl solar system), each a small Clojure
-namespace on top of a shared library, `net.b12n.raylib` (see
-[`the-library.md`](the-library.md)).
+A library of raylib bindings, `net.b12n.raylib` (see
+[`the-library.md`](the-library.md)), and the guide to how they work. Its 187
+examples, the classic core/shapes/text demos, a handful of games (asteroids,
+tetris, pong, vampire-survivors) and a 3D set (orbiting cameras, waving cubes, an
+rlgl solar system), live in [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo), each a small Clojure
+namespace on top of the library.
 
 It is the **graphics sibling** of `b12n-tsj` (tree-sitter from Jolt, not yet
 public). Both bind a real external C library directly over its C ABI with
@@ -48,10 +53,10 @@ Four ABI facts drive every distinctive decision in this repo:
    ([`rlgl-immediate-mode.md`](rlgl-immediate-mode.md))
 4. **Structs by value, in both directions**: jolt 0.7.23's
    `[:by-value [:struct ...]]` passes and returns C structs directly, which is
-   what makes `LoadShader` and the sixteen `shaders` examples possible.
+   what makes `LoadShader` and raylib-jolt-demo's `shaders` examples possible.
    ([`structs-by-value.md`](structs-by-value.md))
 
-   Facts 2 and 3 predate it and describe what the suite still mostly does;
+   Facts 2 and 3 predate it and describe what the examples still mostly do;
    before 0.7.23 a returned struct could not be expressed at all, and
    `LoadTexture`'s 20-byte `Texture2D` coming back through AArch64's `x8`
    indirect-result register is why textures and framebuffers are still reached
@@ -60,7 +65,7 @@ Four ABI facts drive every distinctive decision in this repo:
 
 Nothing about `jolt.ffi` is raylib-specific: it binds any C ABI symbol. The
 `analog-clock` / `digital-clock` examples call plain **libc** `time()`/`localtime()`
-(via `rl/local-time`) for real wall-clock time, the repo's one non-raylib FFI, reading
+(via `rl/local-time`) for real wall-clock time, the library's one non-raylib FFI, reading
 `struct tm`'s `tm_hour`/`tm_min`/`tm_sec` ints straight out of native memory.
 
 ## Capability pages
@@ -123,22 +128,22 @@ Nothing about `jolt.ffi` is raylib-specific: it binds any C ABI symbol. The
 - ✅ [`headless-smoke-testing.md`](headless-smoke-testing.md): how a windowed
   example proves itself with no person at the keyboard: `RAYLIB_APP_AUTO_QUIT_MS`
   (auto-close), `RAYLIB_APP_SHOT` (dump one PNG), and the batched-geometry flush
-  that makes the screenshot non-empty. Source: `src/net/b12n/raylib_jlt/app.clj`
-  (`auto-quit-deadline`, `keep-running?`, `maybe-screenshot!`) -- this one stayed
-  with the examples rather than moving into the library.
+  that makes the screenshot non-empty. Source: raylib-jolt-demo's
+  `common/src/net/b12n/raylib_jlt/app.clj` (`auto-quit-deadline`,
+  `keep-running?`, `maybe-screenshot!`). It stayed with the examples rather than
+  moving into the library.
 
 ### Orientation
 
-- ✅ [`example-catalog.md`](example-catalog.md): a tour of all 187 examples grouped
-  games / core / shapes / text / 3d / generative / textures / shaders / audio, what each demonstrates, and the
-  five-touchpoint recipe for adding one (source ns + `deps.edn` alias +
-  `check.clj` require + `examples_registry.clj` row + `bb.edn` task). Read this
-  for the map; the FFI pages for the mechanics.
+- [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo): all 187 examples, grouped games / core /
+  shapes / text / 3d / generative / textures / shaders / audio, each its own
+  project with a page saying what it demonstrates. Read it for the map, and the
+  FFI pages here for the mechanics.
 
 ## See also
 
 - [raylib](https://github.com/raysan5/raylib): the upstream C library, and the
-  source of most examples here. Its own `examples/` tree is the reference these
+  source of most of raylib-jolt-demo's examples. Its own `examples/` tree is the reference these
   ports are named after.
 - [jolt](https://github.com/jolt-lang): the native Clojure implementation whose
   `jolt.ffi` does all the binding work described on these pages.
