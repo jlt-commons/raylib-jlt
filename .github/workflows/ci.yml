@@ -7,9 +7,9 @@ name: CI
 # now is, so the PR gate costs nothing. It was authored dormant while the repo
 # was private, where minutes bill against the account's included quota.
 #
-# The gate that matters most is "Compile every example": it is the only check
-# that catches a new example missing its `check.clj` require, the easiest of
-# the four touchpoints to skip (see CONTRIBUTING.md).
+# The example programs moved to jlt-commons/raylib-jolt-demo, which has its
+# own CI that compiles all of them against a pinned commit of this library.
+# What is gated here is the library itself.
 # ---------------------------------------------------------------------------
 
 on:
@@ -43,7 +43,7 @@ env:
 
 jobs:
   gates:
-    name: compile · test · lint · format
+    name: load · test · lint · format
     runs-on: ubuntu-latest
 
     steps:
@@ -109,7 +109,7 @@ jobs:
       # clj-kondo or clojure-lsp changes a default.
       #   `cli` (Clojure CLI) is required by clojure-lsp for classpath
       #   discovery and by `bb lint`'s fallback path when no native clj-kondo
-      #   is present. Nothing in the example suite needs a JVM at runtime.
+      #   is present. Nothing in the library needs a JVM at runtime.
       - uses: DeLaGuardo/setup-clojure@13.6.1
         with:
           bb: 1.12.196
@@ -129,22 +129,10 @@ jobs:
       # takes a by-value Vector2 in 6.0 and two ints before it, same symbol
       # name. An older library links fine and draws in the wrong place. So
       # lib:check refuses anything that does not export a 6.0-only symbol, and
-      # this job goes red here rather than green at `bb check`.
+      # this job goes red here rather than green at `bb check:lib`.
       - name: libraylib is discoverable, and is 6.0+
         run: bb lib:check
 
-      # The gate that matters most: compiles all 91 example namespaces
-      # headlessly. It is the only check that catches a new example missing
-      # its `check.clj` require, the easiest of the four touchpoints to skip.
-      #
-      # Failure output is echoed normally AND re-emitted as a ::error::
-      # annotation plus a job summary. Annotations and summaries are readable
-      # without downloading the log archive, which some networks block; a bare
-      # `run: bb check` leaves a reader with nothing but "exit code 1".
-      # Guards what the compile step below cannot see. `bb check` compiles
-      # what check.clj requires, so an example missing from that list is never
-      # compiled and the run still reports success. Needs no jolt and no
-      # libraylib, so it is the cheapest gate here and runs first.
       # The only gate here that EXECUTES code rather than compiling it. Every
       # 4-argument ffi/write in this project is written in jolt 0.8.0's argument
       # order, and a runtime with the old order writes to the wrong address and
@@ -153,17 +141,23 @@ jobs:
       - name: Unit suite
         run: bb test
 
-      - name: Registration touchpoints
-        run: bb check:registration
-
-      - name: Demo gallery and counts
-        run: bb check:demos
-
-      # The library's load gate: prove every namespace under lib/src loads without
-      # compile errors. If the library fails to load, report one failure instead of
-      # 171 example compile errors.
+      # The library's load gate: prove every namespace under lib/src loads
+      # without compile errors. Failure output is echoed and also re-emitted as
+      # an annotation plus a job summary, readable without the log archive.
       - name: Library load gate
-        run: bb check:lib
+        run: |
+          set +e
+          out="$(bb check:lib 2>&1)"; rc=$?
+          printf '%s\n' "$out"
+          if [ "$rc" -ne 0 ]; then
+            {
+              printf '### `bb check:lib` failed (exit %s)\n\n```\n%s\n```\n' \
+                "$rc" "$(printf '%s\n' "$out" | tail -60)"
+            } >> "$GITHUB_STEP_SUMMARY"
+            printf '%s\n' "$out" | tail -c 2000 \
+              | python3 -c 'import sys; print("::error title=bb check:lib failed::" + sys.stdin.read().replace("%","%25").replace("\r","%0D").replace("\n","%0A"))'
+          fi
+          exit "$rc"
 
       # Guards what no other gate here can see: `all.clj` is a large generated
       # file, hand-editable like any other file even though nothing should touch
@@ -173,21 +167,6 @@ jobs:
       # aggregator.
       - name: Aggregator matches the generator
         run: bb check:aggregator
-
-      - name: Compile every example (headless)
-        run: |
-          set +e
-          out="$(bb check 2>&1)"; rc=$?
-          printf '%s\n' "$out"
-          if [ "$rc" -ne 0 ]; then
-            {
-              printf '### `bb check` failed (exit %s)\n\n```\n%s\n```\n' \
-                "$rc" "$(printf '%s\n' "$out" | tail -60)"
-            } >> "$GITHUB_STEP_SUMMARY"
-            printf '%s\n' "$out" | tail -c 2000 \
-              | python3 -c 'import sys; print("::error title=bb check failed::" + sys.stdin.read().replace("%","%25").replace("\r","%0D").replace("\n","%0A"))'
-          fi
-          exit "$rc"
 
       - name: clj-kondo
         run: bb lint:strict

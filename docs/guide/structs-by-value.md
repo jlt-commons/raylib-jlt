@@ -142,7 +142,7 @@ Texture2D 20  (id 0 w 4 h 8 mips 12 fmt 16)
 AAPCS64 puts an all-integer struct of 16 bytes or less in general-purpose
 registers and passes anything larger indirectly, by a pointer the caller
 supplies. So `Shader` rides in registers and `Texture2D` does not, in the same
-signature. jolt 0.7.23 handles the pair; `multi-sampler` is the example.
+signature. jolt 0.7.23 handles the pair; [`multi-sampler`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/multi-sampler) is the example.
 
 ## Read the enum from the header you are actually linking
 
@@ -197,6 +197,6 @@ still what most of these examples use - but new bindings should start here.
 - [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md) -
   superseded by this page, and x86-64-unsafe.
 - [`textures-via-rlgl.md`](textures-via-rlgl.md) - superseded for the reason it
-  gives for existing, though the suite still draws through rlgl.
+  gives for existing, though the examples still draw through rlgl.
 - [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md) - still the right tool for
   geometry, independent of how structs cross.

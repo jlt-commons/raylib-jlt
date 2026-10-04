@@ -1,8 +1,8 @@
-;; clj-kondo configuration for net.b12n.raylib-jlt.
+;; clj-kondo configuration for net.b12n.raylib (lib/).
 ;;
 ;; jolt.ffi/defcfn defines a var per bound C symbol. clj-kondo cannot see through
 ;; the macro, so hooks/jolt_ffi.clj rewrites each call into an equivalent `defn`
-;; See that file for why. Without it the suite reports ~500 false positives and
+;; See that file for why. Without it the library reports ~500 false positives and
 ;; the linter is unusable as a gate.
 {:hooks {:analyze-call {jolt.ffi/defcfn hooks.jolt-ffi/defcfn}}
 
@@ -12,39 +12,8 @@
  :lint-as {jolt.ffi/with-layout    clojure.core/with-open
            jolt.ffi/with-alloc     clojure.core/with-open
            jolt.ffi/with-out       clojure.core/with-open
-           jolt.ffi/with-c-string  clojure.core/with-open}
+           jolt.ffi/with-c-string  clojure.core/with-open}}
 
- ;; :redundant-nested-call flags (+ a (+ b c)) in favour of (+ a b c). That is
- ;; the right call for a plain accumulation, and those sites were flattened. In
- ;; the namespaces below the nesting is load-bearing *notation*. It mirrors the
- ;; maths the code implements, and flattening would obscure it:
- ;;
- ;;   asteroids / kaleidoscope   a 2D rotation, written so the x and y lines are
- ;;                              visually parallel
- ;;                                x (+ cx (- (* ax ca) (* ay sa)))
- ;;                                y (+ cy (+ (* ax sa) (* ay ca)))
- ;;                              only the y line *can* flatten, so flattening it
- ;;                              breaks the pairing that makes the matrix legible.
- ;;   splines                    the four bracketed terms are the B-spline basis
- ;;                              coefficients; the last, (+ a (* 4.0 b) c), is one
- ;;                              coefficient and reads exactly as the formula does.
- ;;   flow-field                 (* 0.5 (+ sin cos)) is "average the two waves back
- ;;                              to [-1,1]" before scaling by a full turn.
- ;;   raymarching                the three camera-move lines are one vector
- ;;                              equation written across three axes -
- ;;                                px (+ px (* speed (+ (* f fwd-x) (* s rt-x))))
- ;;                                py (+ py (* speed (* f fwd-y)))
- ;;                                pz (+ pz (* speed (+ (* f fwd-z) (* s rt-z))))
- ;;                              y has no strafe term because you cannot strafe
- ;;                              vertically, so its (* f fwd-y) reads as the same
- ;;                              shape minus that term. Flattening only the middle
- ;;                              line is what breaks the parallel.
- ;;
- ;; Scoped per-namespace rather than switched off globally, so a genuinely
- ;; redundant nest anywhere else in the suite is still reported.
- :config-in-ns
- {net.b12n.raylib-jlt.asteroids    {:linters {:redundant-nested-call {:level :off}}}
-  net.b12n.raylib-jlt.kaleidoscope {:linters {:redundant-nested-call {:level :off}}}
-  net.b12n.raylib-jlt.splines      {:linters {:redundant-nested-call {:level :off}}}
-  net.b12n.raylib-jlt.flow-field   {:linters {:redundant-nested-call {:level :off}}}
-  net.b12n.raylib-jlt.raymarching  {:linters {:redundant-nested-call {:level :off}}}}}
+;; The per-namespace :redundant-nested-call overrides for asteroids,
+;; kaleidoscope, splines, flow-field and raymarching left with those examples
+;; for jlt-commons/raylib-jolt-demo.

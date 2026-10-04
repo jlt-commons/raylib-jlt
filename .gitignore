@@ -25,9 +25,6 @@ raylib_shot.png
 CONTINUATION_PROMPT.md
 .DS_Store
 
-# screen-grab teardown markers (out-dir scratch; recover-pending! executes these)
-docs/demos/.screen-grab-pending.edn*
-
 # Generated documentation site (bb site:build). Published by CI from main;
 # never committed, since a stale build in the tree is worse than none.
 _site/
@@ -36,5 +33,5 @@ _site/
 # than as a sibling. CI checks it out itself.
 .docs-engine/
 
-# storage-values writes here, matching where raylib puts storage.data
+# storage-values (now in raylib-jolt-demo) wrote here when it lived in this repo
 storage.edn

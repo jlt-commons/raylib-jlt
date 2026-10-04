@@ -78,7 +78,7 @@ just two `:uint` parameters:
   [:int :int :int :int :uint :uint] :void)   ; x y w h topColor bottomColor
 ```
 
-The `gradient` example (`net.b12n.raylib-jlt.gradient`) uses it directly. Two by-value
+The [`gradient`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/gradient) demo (`net.b12n.raylib-jlt.gradient`) uses it directly. Two by-value
 structs in one signature would be a real problem if they didn't each collapse to a
 register; this is a second dividend of the register-fit fact.
 

@@ -1,11 +1,10 @@
 # The library: `net.b12n.raylib`
 
 Every raylib FFI binding, the keyword-argument drawing API, and the named color
-palette live in `net.b12n.raylib`, its own jolt project under `lib/`. This repo
-is the library's first consumer, not its only intended one: `lib/` has its own
-`deps.edn`, its own headless compile-check, and nothing in it depends on the
-187 examples that sit beside it. This page is for anyone who wants to bind
-against raylib from jolt without also taking the example suite.
+palette live in `net.b12n.raylib`, its own jolt project under `lib/`. `lib/` has its
+own `deps.edn` and its own headless compile-check. Its first consumer is
+[raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo), the 187 examples that used to sit beside it in
+this repo. This page is for anyone who wants to bind against raylib from jolt.
 
 ## What it binds
 
@@ -56,8 +55,8 @@ them would have been worse than one dependency-free leaf the rest can reach.
 
 ## Depending on it from another jolt project
 
-**In this repo**, the example project depends on the library by path, since
-they live side by side in the same checkout:
+**In this repo**, the root `deps.edn` puts the library on the classpath by path,
+for the repo's own tooling:
 
 ```clojure
 ;; deps.edn (repo root)
@@ -83,7 +82,9 @@ needs `:deps/root`:
 This repo has not cut a tagged release yet, so pin `:git/sha` to a specific
 commit on `main` in the meantime and add `:git/tag` once there is one to pin
 against; jolt accepts a git dependency with no `:git/tag` at all, it's the
-human-readable half of the pin, not the part that resolves.
+human-readable half of the pin, not the part that resolves. raylib-jolt-demo
+does exactly this, once, in its
+[`common/deps.edn`](https://github.com/jlt-commons/raylib-jolt-demo/blob/main/common/deps.edn).
 
 Either way, the dependency is on `net.b12n/raylib`: the name this guide's own
 snippets use for it, not a coordinate `lib/deps.edn` declares anywhere.
@@ -157,7 +158,7 @@ and commit the regenerated file alongside the change that caused it.
 
 ## See also
 
-- [`example-catalog.md`](example-catalog.md): every example in this repo is
+- [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo): every example there is
   written against `net.b12n.raylib.all`.
 - [`structs-by-value.md`](structs-by-value.md),
   [`color-by-value.md`](color-by-value.md),

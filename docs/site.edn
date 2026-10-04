@@ -11,12 +11,8 @@
  :base-path   "/raylib-jlt"
 
  :title       "raylib-jlt"
- :description "187 raylib examples in Jolt: native Clojure on Chez Scheme, calling libraylib directly over its C ABI through jolt.ffi. No wrapper library, no codegen, no C shim."
+ :description "raylib bindings for Jolt: native Clojure on Chez Scheme, calling libraylib directly over its C ABI through jolt.ffi. No wrapper library, no codegen, no C shim."}
 
- ;; docs/demos holds 171 recorded GIFs, referenced as
- ;; ../demos/*.gif. Without this the pages render with every image broken.
- :asset-dirs  ["demos"]
-
- ;; Relative to docs/templates/. Drop this line and the engine renders a
- ;; generic homepage from docs/guide/index.md instead.
- :home-template "home.html"}
+;; No :home-template, so the engine renders a generic homepage from
+;; docs/guide/index.md. The gallery homepage and docs/demos left with the
+;; examples, for https://jlt-commons.github.io/raylib-jolt-demo/.

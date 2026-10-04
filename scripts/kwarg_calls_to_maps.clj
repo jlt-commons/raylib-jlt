@@ -63,12 +63,12 @@
    "cube!"            0
    "sphere!"          0})
 
-;; "src" is the example suite, "lib/src" is the binding library where the
-;; kwargs definitions themselves now live. Without lib/src this checker finds
-;; no kwargs definitions at all and reports zero violations from a clean exit,
-;; which looks exactly like success. "lib/test" is the library's own unit
-;; suite, listed for the same reason.
-(def source-dirs ["src" "lib/src" "lib/test"])
+;; "lib/src" is the binding library, where the kwargs definitions live.
+;; Without it this checker finds no kwargs definitions at all and reports zero
+;; violations from a clean exit, which looks exactly like success. "lib/test" is
+;; the library's own unit suite. Most call sites were in the examples, which
+;; moved to jlt-commons/raylib-jolt-demo.
+(def source-dirs ["lib/src" "lib/test"])
 
 (def file-pattern
   "\"**\" requires at least one directory level, so it alone would miss files

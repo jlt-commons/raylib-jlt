@@ -7,7 +7,7 @@
 ;;        --strict: exit non-zero if any functions are found
 ;;
 ;; Adapted from glitter's scripts/check_positional_args.clj, same script,
-;; source-dirs pointed at this project's flat src/net/b12n/raylib_jlt layout.
+;; source-dirs pointed at this project's lib/src layout.
 
 (ns check-positional-args
   (:require [babashka.fs :as fs]
@@ -23,10 +23,9 @@
 
 (def source-dirs
   "Directories to scan"
-  ;; lib/src holds the binding library now that the extraction arc has moved
-  ;; every module (kwargs included) out of src; without it this gate would
-  ;; stop seeing the functions it is meant to check.
-  ["src" "lib/src"])
+  ;; lib/src is the binding library. The examples that used to sit in src/
+  ;; moved to jlt-commons/raylib-jolt-demo.
+  ["lib/src"])
 
 (def file-pattern
   "Glob pattern for files to check. \"**\" requires at least one directory

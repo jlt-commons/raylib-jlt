@@ -1,32 +1,25 @@
 ## What this changes
 
-<!-- One or two sentences. If it adds an example, name it and its upstream raylib
-     source (e.g. shapes/shapes_bouncing_ball) if it's a port. -->
+<!-- One or two sentences. New examples belong in
+     https://github.com/jlt-commons/raylib-jolt-demo, not here. -->
 
 ## Gates
 
-<!-- All three are fast and need no JVM at runtime. Please paste or confirm. -->
+<!-- All four are fast and need no JVM at runtime. Please paste or confirm. -->
 
-- [ ] `bb check` passes (headless compile-check of every example)
+- [ ] `bb check:lib` passes (headless load-check of every library namespace)
+- [ ] `bb test` passes (ffi/write argument order)
 - [ ] `bb lint:strict` passes (clj-kondo, non-zero exit on any finding)
 - [ ] `bb lsp:format-check` passes (clojure-lsp formatting, **not** cljfmt)
 
-## If this adds an example
+## If this changes a public var
 
-<!-- Skip this section otherwise. All four touchpoints are required, or the
-     example won't be compile-checked or won't appear in bb info / run-all.
-     See docs/guide/example-catalog.md -->
-
-- [ ] Source namespace under `src/net/b12n/raylib_jlt/`
-- [ ] `:<name>` alias in `deps.edn`
-- [ ] Namespace added to the `:require` list in `check.clj`
-- [ ] Registry row + `bb <name>` task in `bb.edn`
-- [ ] Row added to the example table in `README.md`
-- [ ] Ran it in a real window, or verified with `RAYLIB_APP_AUTO_QUIT_MS` / `RAYLIB_APP_SHOT`
+- [ ] Ran `bb gen:all` and committed the regenerated `all.clj`
+- [ ] Ran raylib-jolt-demo's `bb check` against this commit, if callers could break
 
 ## Environment you tested on
 
-<!-- The pointer trick used by camera2d / camera-3d is AArch64-specific, so
+<!-- The pointer trick behind with-camera-2d / with-camera-3d is AArch64-specific, so
      architecture matters for anything touching the binding layer. -->
 
 - OS / arch (`uname -sm`):

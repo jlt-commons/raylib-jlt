@@ -5,10 +5,30 @@ Notable changes to raylib-jlt, newest first. The format follows
 one bullet per user-visible change, written as what a reader would
 notice rather than what a commit did.
 
-Sections are dated, not numbered. This is an example suite rather than a
-released library, so "what changed, and when" is the useful question.
+Sections are dated, not numbered. The library has no tagged release yet, so
+"what changed, and when" is the useful question.
 
-Examples read at <https://jlt-commons.github.io/raylib-jlt/>.
+The guide reads at <https://jlt-commons.github.io/raylib-jlt/>. Entries before
+2026-10-04 describe examples that now live in
+[raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo).
+
+## 2026-10-04
+
+- **The 187 examples moved to
+  [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo)**, one
+  runnable project each, with a gallery at
+  <https://jlt-commons.github.io/raylib-jolt-demo/>. This repo keeps the
+  library in `lib/`, its tests, the lint and aggregator tooling, and the guide.
+  `bb <example>`, `bb run`, `bb run-all`, `bb check`, `bb record`,
+  `bb check:registration` and `bb check:demos` went with them, and so did
+  `docs/demos/`, the gallery and the example catalog. raylib-jolt-demo has the
+  same per-example tasks and keeps each example's alias.
+- **Depend on the library by git sha.** `{:git/url
+  "https://github.com/jlt-commons/raylib-jlt.git" :git/sha "..." :deps/root
+  "lib"}` is the coordinate, and raylib-jolt-demo pins it that way.
+- **`bb lint`, `bb check:positional-args` and `bb check:kwarg-calls` now scan
+  `lib/`** rather than the old example sources. CI gates the library with
+  `bb check:lib` where it used to compile every example.
 
 ## 2026-09-21
 

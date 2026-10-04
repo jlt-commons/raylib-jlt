@@ -4,12 +4,15 @@ A raylib example opens a window and runs until you close it. That's fine for a h
 useless for CI or an agent: nothing here can click a close button, and a test that
 blocks forever is worse than no test. Two environment variables turn every windowed
 example into something a machine can drive and verify, without changing a line of
-the example itself.
+the example itself. The examples, and the harness this page describes, live in
+[raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo), so the commands below run there.
 
 ## The two knobs
 
-Both are read in `src/net/b12n/raylib_jlt/app.clj` and consumed by the shared loop
-guards, so every example inherits them for free. This lives with the examples
+Both are read in raylib-jolt-demo's
+[`common/src/net/b12n/raylib_jlt/app.clj`](https://github.com/jlt-commons/raylib-jolt-demo/blob/main/common/src/net/b12n/raylib_jlt/app.clj)
+and consumed by the shared loop guards, so every example inherits them for free.
+This lives with the examples
 rather than in the `net.b12n.raylib` library, because it is a property of the
 suite's own headless-testing harness, not of the raylib bindings.
 
@@ -24,7 +27,7 @@ suite's own headless-testing harness, not of the raylib bindings.
 `nil`); `keep-running?` ANDs it with raylib's own close signal:
 
 ```clojure
-;; src/net/b12n/raylib_jlt/app.clj
+;; raylib-jolt-demo: common/src/net/b12n/raylib_jlt/app.clj
 (defn auto-quit-deadline []
   (when-let [v (System/getenv "RAYLIB_APP_AUTO_QUIT_MS")]
     (try (let [ms (Integer/parseInt v)]
@@ -41,7 +44,8 @@ window is open", normal interactive behavior. Set it, and the loop ends on its o
 
 ## The canonical loop
 
-Every example is the same shape (`net.b12n.raylib-jlt.core`, the basic window):
+Every example is the same shape (`net.b12n.raylib-jlt.core`, the basic window, in
+raylib-jolt-demo's [`core/`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/core)):
 
 ```clojure
 (defn -main [& _]
@@ -91,7 +95,7 @@ flowchart LR
 
 ## Driving it
 
-One example, auto-quit + shot:
+One example, auto-quit + shot, from a raylib-jolt-demo checkout:
 
 ```sh
 RAYLIB_APP_AUTO_QUIT_MS=2000 RAYLIB_APP_SHOT=shot.png jolt -M:run
@@ -109,7 +113,7 @@ And the display-free check that belongs in CI: it compiles every example namespa
 without opening a window at all:
 
 ```sh
-jolt -M:check   # "net.b12n.raylib-jlt: all example namespaces compiled OK"
+jolt -M:check   # "OK: every demo namespace compiled"
 bb check         # same, via babashka
 ```
 
@@ -143,6 +147,6 @@ predicates mask before testing so a dirty high byte can't read as "true":
 
 ## See also
 
-- [`example-catalog.md`](example-catalog.md): every example inherits these guards
+- [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo): every example inherits these guards
   through the shared loop shape.
 - [`kwarg-drawing-api.md`](kwarg-drawing-api.md): the `rl/*!` calls inside the loop.
