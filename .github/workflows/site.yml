@@ -30,9 +30,10 @@ jobs:
     with:
       base-path: /raylib-jlt
       # Pinned rather than trusting the shared workflow's own default.
+      # v0.4.1 adds nav search (search-documents.json + lazily loaded lunr).
       # v0.3.2 fixes `jolt run build`/`clean` (docs-engine#3); v0.3.1
       # added heading anchors, v0.3.0 the default Contributing page.
-      docs-engine-ref: v0.3.2
+      docs-engine-ref: v0.4.1
     permissions:
       contents: read
       pages: write
