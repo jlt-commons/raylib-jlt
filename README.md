@@ -279,38 +279,30 @@ calls so programs read self-descriptively:
 ### rlgl immediate mode (for shapes with by-value `Vector2` args)
 
 A few raylib calls (e.g. `DrawTriangle`) take `Vector2` by value, which does **not**
-reduce to the `Color` trick (a 2-float struct goes in floating-point registers). The
-[`shapes`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/shapes) demo draws its triangle with rlgl's scalar immediate mode instead:
+reduce to the `Color` trick (a 2-float struct goes in floating-point registers).
+jolt's `[:by-value [:struct ...]]` passes them correctly (the spline family,
+`DrawCircleGradient` and `GetWorldToScreen` are bound that way), but the
+[`shapes`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/shapes) demo predates it and draws its triangle with rlgl's scalar immediate mode:
 `rlBegin` / `rlColor4ub` / `rlVertex2f` / `rlEnd`.
 
 ### `Camera2D` struct by value (the [`camera2d`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/camera2d) demo)
 
-raylib's `BeginMode2D(Camera2D)` takes a 24-byte struct by value. On the AArch64
-(Apple) ABI a composite larger than 16 bytes is passed **indirectly**: the caller
-allocates a copy and passes a pointer, so `net.b12n.raylib.camera/with-camera-2d` builds the
-struct in native memory (`ffi/alloc` + six `ffi/write :float`s) and binds
-`BeginMode2D` as `[:pointer]`.
-
-**This is AArch64-specific.** On the x86-64 SysV ABI those 24 bytes are passed on
-the stack, which a `[:pointer]` binding does not do, so this binding is not portable
-as written. The portable alternative is to apply the same transform with rlgl's
-scalar matrix ops (`rlPushMatrix` / `rlTranslatef` / `rlRotatef` / `rlScalef`,
-flushing the batch before `rlPopMatrix`), which is exactly what `BeginMode2D` does
-internally. If `camera2d` crashes with an "invalid memory reference", the struct
-passing is the cause; switch to the rlgl-matrix approach.
+raylib's `BeginMode2D(Camera2D)` takes a 24-byte struct by value.
+`net.b12n.raylib.camera/with-camera-2d` builds the struct in native memory and
+binds `BeginMode2D` with `[:by-value [:struct ...]]`, so jolt passes it the way
+the platform ABI wants: through a hidden pointer on AArch64, on the stack on
+x86-64. (It used to bind `[:pointer]`, which only matched AArch64; see
+[`struct-by-value-pointer-trick.md`](docs/guide/struct-by-value-pointer-trick.md).)
 
 ### 3D: `Camera3D` by value + rlgl geometry (the [`camera-3d`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/camera-3d) demo)
 
-The same pointer approach scales to 3D: `BeginMode3D(Camera3D)` takes a 44-byte
-struct (three `Vector3` + `fovy` + `projection`), which is `>16` bytes so it goes
-by pointer too; `net.b12n.raylib.camera/with-camera-3d` builds it (`ffi/alloc` 44 +
-`ffi/write` ten floats + an `:int`). But 3D shape helpers (`DrawCube`,
-`DrawSphere`, `DrawLine3D`) take a `Vector3` **by value**, a 12-byte float struct
-passed in FP registers, which the pointer trick does **not** cover. So `camera-3d`
-draws its cube with rlgl immediate mode (`rlVertex3f`, scalar) inside `BeginMode3D`;
-`DrawGrid` is scalar and used directly. That combination (`Camera3D` by pointer +
-rlgl for geometry) is the path for any 3D program until jolt gains native
-by-value struct support for `Vector3`-taking functions.
+`BeginMode3D(Camera3D)` takes a 44-byte struct (three `Vector3` + `fovy` +
+`projection`); `net.b12n.raylib.camera/with-camera-3d` builds it and passes it by
+value the same way. 3D shape helpers (`DrawCube`, `DrawSphere`, `DrawLine3D`)
+take a `Vector3` by value, a 12-byte float struct passed in FP registers; jolt's
+`[:by-value [:struct ...]]` can bind those too, but the library's `cube!` was
+written before it could and draws with rlgl immediate mode (`rlVertex3f`,
+scalar) inside `BeginMode3D`. `DrawGrid` is scalar and used directly.
 
 ## Documentation
 
@@ -322,8 +314,8 @@ which is the nicer way to read it.
   - [`the-library.md`](docs/guide/the-library.md): the 19 modules and how to depend on them
   - [`structs-by-value.md`](docs/guide/structs-by-value.md): `[:by-value [:struct ...]]` in both directions, and where the jolt floor comes from
   - [`color-by-value.md`](docs/guide/color-by-value.md): why `Color` crosses the FFI as a packed `:uint`
-  - [`struct-by-value-pointer-trick.md`](docs/guide/struct-by-value-pointer-trick.md): `Camera2D`/`Camera3D` by pointer on AArch64 (+ the x86-64 caveat)
-  - [`rlgl-immediate-mode.md`](docs/guide/rlgl-immediate-mode.md): the fallback for by-value `Vector2`/`Vector3` geometry, + the matrix stack
+  - [`struct-by-value-pointer-trick.md`](docs/guide/struct-by-value-pointer-trick.md): how `Camera2D`/`Camera3D` used to go by pointer on AArch64, and why that broke on x86-64
+  - [`rlgl-immediate-mode.md`](docs/guide/rlgl-immediate-mode.md): rlgl stand-ins for by-value `Vector2`/`Vector3` geometry, + the matrix stack
   - [`textures-via-rlgl.md`](docs/guide/textures-via-rlgl.md): why `LoadTexture` has no binding, and reaching textures and framebuffers from underneath it
   - [`kwarg-drawing-api.md`](docs/guide/kwarg-drawing-api.md): the positional-binds / keyword-wrappers two-layer design
   - [`headless-smoke-testing.md`](docs/guide/headless-smoke-testing.md): proving a window rendered with nobody watching

@@ -13,9 +13,11 @@
    [net.b12n.raylib.rlgl :as rlgl]))
 
 ;; --- rlgl textures -----------------------------------------------------------
-;; raylib's own texture API is unreachable from jolt: LoadTexture returns a
-;; 20-byte Texture2D BY VALUE, which the AArch64 ABI hands back through the x8
-;; indirect-result register, and Chez's foreign-procedure cannot express that.
+;; This predates jolt's [:by-value [:struct ...]]: LoadTexture returns a 20-byte
+;; Texture2D BY VALUE (through AArch64's x8 indirect-result register), which
+;; jolt.ffi could not express then and can now (see images.clj, which binds
+;; LoadTextureFromImage that way). The textures here stay on rlgl's layer, which
+;; needs no struct at all.
 ;; rlgl's layer underneath it is entirely scalar, though, rlLoadTexture takes a
 ;; raw pixel pointer and returns the GL texture id as an unsigned int, and
 ;; rlSetTexture/rlTexCoord2f draw with it in immediate mode. So a texture here is

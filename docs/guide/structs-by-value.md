@@ -187,15 +187,16 @@ version it came from, so the next version bump has something to check against.
 Any C API whose types are small structs is now reachable directly rather than
 through a workaround: `Texture2D`, `Rectangle`, `Vector2`, `Camera2D`,
 `RenderTexture2D`, and the file loaders and audio API that return them. The
-suite has not migrated - the rlgl and pointer-trick code still works and is
-still what most of these examples use - but new bindings should start here.
+cameras have migrated (`with-camera-2d` / `with-camera-3d` pass their structs
+this way); the rlgl code still works and is still what most of the examples
+use, but new bindings should start here.
 
 ## See also
 
 - [`color-by-value.md`](color-by-value.md) - `Color` as a packed `:uint`, which
   is still the cheapest way to move a 4-byte struct and needs no layout at all.
 - [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md) -
-  superseded by this page, and x86-64-unsafe.
+  superseded by this page, and x86-64-unsafe; the cameras no longer use it.
 - [`textures-via-rlgl.md`](textures-via-rlgl.md) - superseded for the reason it
   gives for existing, though the examples still draw through rlgl.
 - [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md) - still the right tool for

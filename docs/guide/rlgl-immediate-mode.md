@@ -1,5 +1,15 @@
 # rlgl immediate mode: for the by-value float structs the pointer trick can't fake
 
+> **Superseded as a constraint, still current as practice.** This page says
+> functions taking a `Vector2`/`Vector3` by value can't be bound. That stopped
+> being true with jolt **0.7.23**'s `[:by-value [:struct ...]]`, which passes
+> them in the floating-point registers the ABI wants; the library already binds
+> `DrawCircleGradient`, the spline family, `GetWorldToScreen` and the ray
+> functions that way (see [`structs-by-value.md`](structs-by-value.md)). The
+> rlgl helpers below (`cube!`, `sector!`, `ring!`, `line-ex!`, `texture!`) are
+> still what the library ships, and rlgl is still a good fit for batching
+> custom geometry, so the page stays as written.
+
 Some raylib calls take a `Vector2` or `Vector3` **by value**: `DrawTriangle(Vector2,
 Vector2, Vector2, Color)`, `DrawCube(Vector3, …)`, `DrawSphere(Vector3, …)`. These
 are the one FFI case that neither [`color-by-value.md`](color-by-value.md) (packed
@@ -42,8 +52,8 @@ unpacks the shared packed `Color` into the four `u8` args.
 
 ## 3D: `cube!` is 12 rlgl triangles
 
-The same move scales to 3D. `with-camera-3d` gets the camera active (via the pointer
-trick), but `DrawCube` takes a `Vector3` by value (unbindable), so `cube!` builds a
+The same move scales to 3D. `with-camera-3d` gets the camera active, and `cube!`
+(written when `DrawCube`'s by-value `Vector3` could not be expressed) builds a
 box out of `rl-vertex-3f`. Each face is a quad = two triangles, and faces are shaded
 by darkening the packed color so the cube reads as 3D without a lighting pass:
 
@@ -100,15 +110,16 @@ flowchart TD
 
 The [`rlgl-solar-system`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/rlgl-solar-system) demo (`net.b12n.raylib-jlt.rlgl-solar-system`) uses exactly
 this to make Earth orbit the Sun and the Moon orbit Earth: nested push/translate/
-rotate around three `cube!` calls, no matrix math in Clojure. It's also the
-**portable** substitute for the AArch64-only camera pointer trick (see the x86-64
-caveat in [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md)).
+rotate around three `cube!` calls, no matrix math in Clojure. It was also the
+**portable** substitute for the AArch64-only camera pointer trick the cameras used
+before they passed their structs by value (see the x86-64 caveat in
+[`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md)).
 
 ## 2D: filled arcs with `sector!`
 
 The same wall stops `DrawCircleSector` / `DrawRing` / `DrawCircleV`: they take a
-`Vector2` center **by value** (a float pair in FP registers), so they're unbindable by
-the pointer trick. The fix is the same: draw the arc as an rlgl triangle fan.
+`Vector2` center **by value** (a float pair in FP registers), which the pointer trick
+cannot reproduce (`[:by-value [:struct ...]]` can). The rlgl route is the same: draw the arc as an rlgl triangle fan.
 `sector!` (in `net.b12n.raylib.kwargs`) builds one:
 
 ```clojure

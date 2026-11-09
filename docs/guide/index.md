@@ -44,19 +44,21 @@ Four ABI facts drive every distinctive decision in this repo:
 1. **`Color` packs into a `:uint`**: a 4-byte all-integer struct travels in one
    general-purpose register, so every draw call passes color as an int, no struct
    marshaling. ([`color-by-value.md`](color-by-value.md))
-2. **`Camera2D`/`Camera3D` go by pointer**: a >16-byte composite is passed
-   indirectly on AArch64, so a `[:pointer]` binding + a hand-built native struct
-   works (with an x86-64 caveat). ([`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md))
-3. **`Vector2`/`Vector3` geometry uses rlgl**: small float structs go in FP
-   registers, which the pointer trick does *not* cover, so shapes and 3D cubes are
-   drawn with rlgl's scalar immediate mode instead.
+2. **`Camera2D`/`Camera3D` used to go by pointer**: a >16-byte composite is
+   passed indirectly on AArch64, so a `[:pointer]` binding + a hand-built native
+   struct worked there (and was wrong on x86-64). The cameras are passed with
+   `[:by-value [:struct ...]]` now. ([`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md))
+3. **Some `Vector2`/`Vector3` geometry uses rlgl**: small float structs go in FP
+   registers, which the pointer trick could not reproduce, so shapes and 3D cubes
+   were drawn with rlgl's scalar immediate mode. `[:by-value [:struct ...]]`
+   binds those calls directly now; the rlgl helpers remain.
    ([`rlgl-immediate-mode.md`](rlgl-immediate-mode.md))
 4. **Structs by value, in both directions**: jolt 0.7.23's
    `[:by-value [:struct ...]]` passes and returns C structs directly, which is
    what makes `LoadShader` and raylib-jolt-demo's `shaders` examples possible.
    ([`structs-by-value.md`](structs-by-value.md))
 
-   Facts 2 and 3 predate it and describe what the examples still mostly do;
+   Facts 2 and 3 predate it;
    before 0.7.23 a returned struct could not be expressed at all, and
    `LoadTexture`'s 20-byte `Texture2D` coming back through AArch64's `x8`
    indirect-result register is why textures and framebuffers are still reached
@@ -91,12 +93,12 @@ Nothing about `jolt.ffi` is raylib-specific: it binds any C ABI symbol. The
   Source: `net.b12n.raylib.color` (`rgba`, the palette) and `net.b12n.raylib.core`
   (`clear-background`).
 - ✅ [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md): how a
-  24-byte `Camera2D` / 44-byte `Camera3D` is passed by value on AArch64 by
+  24-byte `Camera2D` / 44-byte `Camera3D` used to be passed by value on AArch64 by
   allocating the struct in native memory and binding `BeginMode2D`/`BeginMode3D` as
-  `[:pointer]`. **The x86-64 non-portability caveat is here.** Source:
-  `net.b12n.raylib.camera` (`with-camera-2d`, `with-camera-3d`).
-- ✅ [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md): the fallback for by-value
-  `Vector2`/`Vector3` args the pointer trick can't fake: rlgl scalar immediate mode
+  `[:pointer]`, and why that was wrong on x86-64. History: the cameras use
+  `[:by-value [:struct ...]]` now.
+- ✅ [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md): the rlgl stand-ins written
+  for by-value `Vector2`/`Vector3` args before jolt could pass them: rlgl scalar immediate mode
   (`rlBegin`/`rlVertex2f`/`rlVertex3f`/`rlColor4ub`) for the 2D triangle and the 3D
   `cube!`, plus the rlgl matrix stack for nested transforms (the solar-system demo).
   Source: `net.b12n.raylib.models` (`cube!`, `quad-3f`) and

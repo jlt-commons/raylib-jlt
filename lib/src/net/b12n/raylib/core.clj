@@ -75,8 +75,9 @@
   (not (zero? (bit-and (window-resized-raw) 0xff))))
 
 ;; --- monitors ----------------------------------------------------------------
-;; GetMonitorPosition returns a Vector2 by value and so has no binding; the
-;; scalar width/height/refresh/name queries cover what a monitor listing needs.
+;; GetMonitorPosition (a Vector2 returned by value) is not bound; it could be
+;; with [:by-value [:struct ...]], but the scalar width/height/refresh/name
+;; queries cover what a monitor listing needs.
 (ffi/defcfn get-monitor-count        "GetMonitorCount"       [] :int)
 (ffi/defcfn get-current-monitor      "GetCurrentMonitor"     [] :int)
 (ffi/defcfn get-monitor-width        "GetMonitorWidth"       [:int] :int)
