@@ -3,8 +3,8 @@
 > **Superseded, and never portable.** This page passes a by-value struct by
 > handing C a pointer and relying on AArch64 passing anything over 16 bytes
 > indirectly. jolt **0.7.23** added `[:by-value [:struct ...]]`, which expresses
-> the same call properly and on every architecture. New bindings should use it -
-> see [`structs-by-value.md`](structs-by-value.md).
+> the same call properly and on every architecture. New bindings should use it; see
+> [`structs-by-value.md`](structs-by-value.md).
 >
 > `with-camera-2d`, `with-camera-3d` and `begin-mode-3d-ptr` no longer use it:
 > they bind `BeginMode2D`/`BeginMode3D` with `[:by-value [:struct ...]]` now.
@@ -69,7 +69,7 @@ the struct with `ffi/alloc` + six little-endian `ffi/write :float`s:
       (finally (ffi/free p)))))
 ```
 
-The struct layout is the whole game: **the field byte-offsets must match the C
+The struct layout has to be exact: **the field byte-offsets must match the C
 struct exactly** (0, 4, 8, 12 for the four `Vector2` floats, then 16 = rotation,
 20 = zoom), and the buffer size must equal `sizeof(Camera2D)` = 24. Get either wrong
 and you read garbage or corrupt the stack.

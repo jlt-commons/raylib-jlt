@@ -82,16 +82,16 @@ needs `:deps/root`:
 This repo has not cut a tagged release yet, so pin `:git/sha` to a specific
 commit on `main` in the meantime and add `:git/tag` once there is one to pin
 against; jolt accepts a git dependency with no `:git/tag` at all, it's the
-human-readable half of the pin, not the part that resolves. raylib-jolt-demo
+human-readable half of the pin and plays no part in resolving. raylib-jolt-demo
 does exactly this, once, in its
 [`common/deps.edn`](https://github.com/jlt-commons/raylib-jolt-demo/blob/main/common/deps.edn).
 
 Either way, the dependency is on `net.b12n/raylib`: the name this guide's own
-snippets use for it, not a coordinate `lib/deps.edn` declares anywhere.
+snippets use, and `lib/deps.edn` declares no such coordinate anywhere.
 tools.deps gives a library no way to name itself; a consumer's `:deps` map
 picks whatever symbol it wants to call the dependency, and `lib/deps.edn`
 only ever describes what's inside `lib/` itself (its paths, its native
-library, its own deps). What it is not, under any of these forms, is this
+library, its own deps). Under any of these forms it stays separate from this
 repo's own `net.b12n.raylib-jlt` example namespaces.
 
 ## `:jolt/native` comes with it

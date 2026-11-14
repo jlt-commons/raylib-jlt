@@ -49,7 +49,7 @@ positions:
 
 ## The return convention: a leading destination pointer
 
-This is the part that surprises. `load-shader-from-memory` is *declared* with
+`load-shader-from-memory` is *declared* with
 two argument types, and *called* with three:
 
 ```clojure
@@ -64,7 +64,7 @@ The caller allocates the struct's bytes and passes that pointer first; jolt
 writes C's return value there and hands the same pointer back. The declared
 argument list does not mention it.
 
-That asymmetry is worth knowing before you write a lint rule: this repo's
+The mismatch matters for lint rules: this repo's
 clj-kondo hook for `defcfn` has to add one to the expected arity whenever the
 return type is an aggregate, or every aggregate-returning call site reports as
 a wrong-arity error.
@@ -92,15 +92,15 @@ Unhandled exception: jolt.ffi layout descriptor must be
   ex-data: {:jolt/error {:type :analysis-error, :line 3, :column 1, ...}}
 ```
 
-An `:analysis-error`, so it fails at compile time rather than at the call - the
-good outcome. The cost is that the struct shape is repeated at every binding
+An `:analysis-error`, so it fails at compile time rather than at the call, which is
+the better outcome. The cost is that the struct shape is repeated at every binding
 site, which is why `net.b12n.raylib.shaders` keeps a `shader-layout` next to them: the
 `ffi/layout` value cannot be shared with the `defcfn` forms, but it is what
 every field access goes through.
 
 ## Reading and writing fields
 
-`ffi/layout` compiles the descriptor into ABI layout data - Chez supplies size,
+`ffi/layout` compiles the descriptor into ABI layout data: Chez supplies size,
 alignment and offsets, so no offset is ever written by hand:
 
 ```clojure
@@ -119,13 +119,13 @@ alignment and offsets, so no offset is ever written by hand:
 - `read-field` / `write-field` take `[pointer layout path]`. A path is a
   keyword, or a vector for nesting. Integer components index arrays; jolt's own
   docstring gives `[:params 3]`, `[:events 1 :frame]` and `[:matrix 1 2]`.
-  Nothing in this suite needs a nested path yet - every struct it binds is flat.
+  Nothing in this suite needs a nested path yet, since every struct it binds is flat.
 - `layout-size` and `layout-alignment` read the compiled layout, which is how
   the allocation above is sized.
 - A path naming a struct or array rather than a scalar is rejected, so a
   half-written field access fails loudly.
 
-Nesting matters for correctness, not just tidiness. Flattening a nested struct
+Nesting affects correctness as well as tidiness. Flattening a nested struct
 into one field list drops the inner struct's alignment padding, and the fields
 after it read as garbage.
 
@@ -193,9 +193,9 @@ use, but new bindings should start here.
 
 ## See also
 
-- [`color-by-value.md`](color-by-value.md) - `Color` as a packed `:uint`, which
+- [`color-by-value.md`](color-by-value.md): `Color` as a packed `:uint`, which
   is still the cheapest way to move a 4-byte struct and needs no layout at all.
-- [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md) -
+- [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md):
   superseded by this page, and x86-64-unsafe; the cameras no longer use it.
 - [`textures-via-rlgl.md`](textures-via-rlgl.md) - superseded for the reason it
   gives for existing, though the examples still draw through rlgl.

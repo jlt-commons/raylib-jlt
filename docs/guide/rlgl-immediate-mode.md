@@ -25,7 +25,7 @@ those in **floating-point registers**, one field per register, *not* as an integ
 (so the `Color` `:uint` trick is out) and *not* indirectly through a pointer (so the
 `Camera2D` `[:pointer]` trick is out; that only applies to composites **larger**
 than 16 bytes). There is no scalar or pointer binding that reproduces "three floats
-in three FP registers." So these functions are simply unbindable from Jolt.
+in three FP registers." So these functions can't be bound from Jolt.
 
 ## rlgl is all scalars
 
@@ -117,7 +117,7 @@ before they passed their structs by value (see the x86-64 caveat in
 
 ## 2D: filled arcs with `sector!`
 
-The same wall stops `DrawCircleSector` / `DrawRing` / `DrawCircleV`: they take a
+The same limit rules out `DrawCircleSector` / `DrawRing` / `DrawCircleV`: they take a
 `Vector2` center **by value** (a float pair in FP registers), which the pointer trick
 cannot reproduce (`[:by-value [:struct ...]]` can). The rlgl route is the same: draw the arc as an rlgl triangle fan.
 `sector!` (in `net.b12n.raylib.kwargs`) builds one:

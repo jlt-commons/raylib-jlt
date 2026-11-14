@@ -8,7 +8,7 @@
 >
 > The rlgl technique below is still what this suite's texture and framebuffer
 > code actually does, and still the right tool when you want GPU objects
-> without raylib's file loaders - so the page stays as written rather than
+> without raylib's file loaders, so the page stays as written rather than
 > being rewritten around the newer API.
 
 The three earlier FFI pages are all about arguments going *in*: a `Color` packed
@@ -37,9 +37,9 @@ leading `[:pointer]` argument does not work either: that lands in `x0`, so rayli
 would read it as `fileName` and write the struct somewhere it was never told
 about.
 
-This is not specific to `LoadTexture`. `LoadImage`, `LoadRenderTexture`,
-`LoadFont`, `LoadShader`, `LoadModel` and `LoadSound` all return their struct by
-value, which is why this suite has no image, font, shader, model or audio
+`LoadImage`, `LoadRenderTexture`, `LoadFont`, `LoadShader`, `LoadModel` and
+`LoadSound` hit the same wall, since they all return their struct by value. That
+is why this suite has no image, font, shader, model or audio
 examples.
 
 ## rlgl is scalar all the way down
@@ -118,7 +118,7 @@ Framebuffers are scalar too, so an off-screen target is `rlLoadFramebuffer` plus
 two `rlFramebufferAttach` calls. What `BeginTextureMode` adds around them is
 viewport and projection bookkeeping, which `rl/with-render-texture` spells out.
 
-The half worth reading closely is the restore. raylib does it across two
+The restore is the tricky half. raylib does it across two
 functions: `EndTextureMode` calls its private `SetupViewport`, and the next
 `BeginDrawing` multiplies a **screen-scale matrix** into the modelview. On a
 HiDPI display those are different numbers:
