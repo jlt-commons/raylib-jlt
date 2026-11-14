@@ -79,8 +79,8 @@ just two `:uint` parameters:
 ```
 
 The [`gradient`](https://github.com/jlt-commons/raylib-jolt-demo/tree/main/gradient) demo (`net.b12n.raylib-jlt.gradient`) uses it directly. Two by-value
-structs in one signature would be a real problem if they didn't each collapse to a
-register; this is a second dividend of the register-fit fact.
+structs in one signature would be a problem if they didn't each collapse to a
+register, so this is a second payoff of the register-fit fact.
 
 ## Getting the color back out (for rlgl)
 

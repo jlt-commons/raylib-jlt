@@ -54,7 +54,7 @@ INFO:     > raudio:.... loaded (optional)
   (rl/run! -main))
 ```
 
-That is the whole change. Every example's `(comment ...)` block should start it this
+Every example's `(comment ...)` block should start it this
 way rather than with a bare `(-main)`.
 
 `run!` hops the call onto the main thread:
@@ -108,8 +108,8 @@ Measured on macOS 26 (Darwin 25.5), jolt 0.7.28, raylib 6.0, against `bounce`:
   still open. This is ordinary var indirection: the loop resolves the var each
   frame rather than capturing the function value once.
 
-That second point is the interesting one, because it is what makes this a real
-interactive loop rather than just a way to launch a window. Tweak a drawing function,
+That second point is what makes this an interactive loop and not just a way to
+launch a window. Tweak a drawing function,
 re-evaluate it, watch the running window change.
 
 ## What not to do from the REPL

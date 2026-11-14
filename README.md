@@ -67,7 +67,7 @@ raises and nothing warns. An older jolt running this code writes every camera an
 uniform field to the wrong address, then draws something subtly wrong instead of
 failing.
 
-**The floor is a forward guard, not protection against that particular break.**
+The floor guards against future breaks and does nothing for that particular one.
 jolt honours `:jolt/min-version` only from the release that introduced the key, and
 that commit is the direct child of the one that moved `ffi/write`. The two sets
 don't overlap: any jolt new enough to read the key already has the new argument
@@ -192,14 +192,14 @@ bb gen:all                       # regenerate lib/src/net/b12n/raylib/all.clj
 bb check:aggregator              # all.clj matches what gen:all would write
 ```
 
-`bb check:lib`, `bb test` and `bb lint`/`bb lsp:format-check` are the gates worth
+`bb check:lib`, `bb test` and `bb lint`/`bb lsp:format-check` are the checks worth
 running before a commit: `check:lib` loads every library namespace, `test`
 round-trips `ffi/write` to prove the value lands where the offset says, `lint`
 runs clj-kondo (static analysis), `lsp:format-check` runs clojure-lsp
 (formatting). `check:lib` alone cannot catch an `ffi/write` argument flip,
 because both arguments are integers and the swapped call compiles cleanly,
-which is what `test` is there for. **Formatting is owned by clojure-lsp, not
-cljfmt.** The two disagree on some compact literal tables, so only one
+which is what `test` is there for. Formatting belongs to clojure-lsp rather than
+cljfmt. The two disagree on some compact literal tables, so only one
 formatter runs against the source, and clojure-lsp was chosen so
 `lsp:clean-ns` (no cljfmt equivalent) and `lsp:format` share one tool.
 `bb lsp:fix` applies both format and clean-ns fixes in place.
@@ -352,7 +352,7 @@ raylib-jlt/
 
 ## Contributing
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for setup, the pre-PR gates
+See [`CONTRIBUTING.md`](CONTRIBUTING.md) for setup, the pre-PR checks
 (`bb check:lib`, `bb test`, `bb lint:strict`, `bb lsp:format-check`), and what to
 know before touching the shared binding layer. New examples belong in
 [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo).

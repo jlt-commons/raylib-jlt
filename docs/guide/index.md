@@ -11,7 +11,7 @@ The 187 example programs that used to live in this repo moved to
 
 ## Why this exists
 
-The examples show you *what* the bindings draw; these pages explain *why* the binding
+The examples show what the bindings draw. These pages explain why the binding
 layer is shaped the way it is. Almost every non-obvious decision in
 `net.b12n.raylib` traces back to one question (how a given C struct
 crosses the FFI boundary), and the answer differs per struct. Read these when you
@@ -30,7 +30,7 @@ namespace on top of the library.
 It is the **graphics sibling** of `b12n-tsj` (tree-sitter from Jolt, not yet
 public). Both bind a real external C library directly over its C ABI with
 `jolt.ffi`, Chez `foreign-procedure` under the hood. They differ on how hard the
-library leans on **by-value structs**, and that difference is the whole story of the
+library leans on **by-value structs**, and that difference shapes the
 FFI pages here:
 
 > **raylib hits the *mild* version of struct-by-value: its hot path is `Color`,

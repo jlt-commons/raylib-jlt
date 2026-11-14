@@ -59,7 +59,7 @@ groups:
 - **2D shapes rlgl has to draw**: `sector!`, `ring!`, `line-ex!`. Their raylib
   originals (`DrawCircleSector`, `DrawRing`, `DrawLineEx`) take a `Vector2` by
   value and are unbindable, so these emit triangles instead. Same keyword-arg
-  surface; see [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md).
+  API; see [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md).
 - **3D**: `cube!` and `sphere!`, likewise rlgl vertex streams standing in for the
   by-value-`Vector3` `DrawCube` / `DrawSphere`.
 
