@@ -58,10 +58,13 @@ groups:
   `ellipse!`, `line!`, `pixel!`.
 - **2D shapes rlgl has to draw**: `sector!`, `ring!`, `line-ex!`. Their raylib
   originals (`DrawCircleSector`, `DrawRing`, `DrawLineEx`) take a `Vector2` by
-  value and are unbindable, so these emit triangles instead. Same keyword-arg
+  value. These were written before jolt could pass one, so they emit triangles
+  instead, and the library doesn't bind the originals. Same keyword-arg
   API; see [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md).
 - **3D**: `cube!` and `sphere!`, likewise rlgl vertex streams standing in for the
-  by-value-`Vector3` `DrawCube` / `DrawSphere`.
+  by-value-`Vector3` `DrawCube` / `DrawSphere`. `net.b12n.raylib.models` now
+  binds those two directly as `draw-cube!` and `draw-sphere!`, and the rlgl
+  versions stay for the examples that use them.
 
 (`rl-color!` and `maybe-screenshot!` also end in `!` but are not part of this
 wrapper layer, one unpacks a `Color` for rlgl, the other is smoke-test plumbing.)

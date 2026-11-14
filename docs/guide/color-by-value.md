@@ -1,9 +1,11 @@
 # `Color` passed by value, as a packed `:uint`
 
 Every raylib draw call takes a `Color`. `Color` is a struct passed **by value**,
-and Jolt's FFI (Chez `foreign-procedure`) has no calling convention for a by-value
-struct. raylib gets away with it anyway, because `Color` is the one by-value struct
-that reduces to a scalar the ABI *does* pass in a register.
+and until jolt 0.7.23 added `[:by-value [:struct ...]]` (see
+[`structs-by-value.md`](structs-by-value.md)), Jolt's FFI had no way to pass one.
+raylib got away with it anyway, because `Color` is the one by-value struct that
+reduces to a scalar the ABI *does* pass in a register. The library still binds it
+this way, since an integer needs no native allocation per call.
 
 ## The ABI fact that makes it work
 
@@ -25,7 +27,8 @@ an ordinary integer; the C side reads the same four bytes back as `{r,g,b,a}`. N
 struct marshaling, no shim, no native allocation.
 
 Contrast [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md):
-`Camera2D` is 24 bytes, too big for a register, so it needs the pointer approach.
+`Camera2D` is 24 bytes, too big for a register, so it needed the pointer approach
+until the cameras moved to `[:by-value [:struct ...]]`.
 `Color` is the easy case precisely because it fits in a register.
 
 ## The packing
@@ -101,16 +104,19 @@ whole API:
 
 Any Chez/Jolt FFI against a C library with a small all-integer by-value struct can
 use this: pack the fields little-endian into the matching-width integer and bind the
-parameter as that integer type. It works for structs up to 8 bytes (a register); the
-moment the struct is >16 bytes or contains floats, the ABI stops passing it in a GP
-register and you need [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md)
+parameter as that integer type. It works for structs up to 8 bytes, which fit one
+register. From 9 to 16 bytes an all-integer struct takes two registers, so a single
+integer parameter no longer matches, and once the struct is over 16 bytes or
+contains floats the ABI stops passing it in GP registers at all. Before jolt 0.7.23
+those cases needed [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md)
 (large structs) or [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md) (float
-structs).
+structs). Now [`structs-by-value.md`](structs-by-value.md) covers all of them.
 
 ## See also
 
 - [`struct-by-value-pointer-trick.md`](struct-by-value-pointer-trick.md): the
-  >16-byte case (`Camera2D`/`Camera3D`) that a register can't hold.
+  >16-byte case (`Camera2D`/`Camera3D`) that a register can't hold, as it was
+  handled before jolt 0.7.23.
 - `b12n-tsj` (the Jolt tree-sitter sibling, not yet public): its by-value struct
   (`TSNode`) is both large *and* returned, so no register trick saves it and it
   must ship a C shim.
