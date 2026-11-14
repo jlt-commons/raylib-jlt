@@ -34,10 +34,11 @@ library leans on **by-value structs**, and that difference shapes the
 FFI pages here:
 
 > **raylib hits the *mild* version of struct-by-value: its hot path is `Color`,
-> a 4-byte struct that reduces to a `uint32`, and its only large structs
-> (`Camera2D`/`Camera3D`) are by-value *arguments* it can fake behind a pointer on
-> AArch64. tree-sitter hits the *severe* version: a 32-byte `TSNode` passed AND
-> returned by value, so it needs a full C shim. raylib needs none.**
+> a 4-byte struct that reduces to a `uint32`, and the first large structs it
+> needed (`Camera2D`/`Camera3D`) are by-value *arguments* it used to fake behind
+> a pointer on AArch64 and now passes with `[:by-value ...]`. tree-sitter hits
+> the *severe* version: a 32-byte `TSNode` passed AND returned by value, so it
+> needs a full C shim. raylib needs none.**
 
 Four ABI facts drive every distinctive decision in this repo:
 
@@ -103,8 +104,9 @@ Nothing about `jolt.ffi` is raylib-specific: it binds any C ABI symbol. The
   `cube!`, plus the rlgl matrix stack for nested transforms (the solar-system demo).
   Source: `net.b12n.raylib.models` (`cube!`, `quad-3f`) and
   `net.b12n.raylib.rlgl` (the `rl-*` binds).
-- ✅ [`textures-via-rlgl.md`](textures-via-rlgl.md): why every raylib `Load*`
-  function is unbindable (a >16-byte struct returned through `x8`), and how
+- ✅ [`textures-via-rlgl.md`](textures-via-rlgl.md): why raylib's `Load*`
+  functions couldn't be bound before jolt 0.7.23 (a >16-byte struct returned
+  through `x8`), and how
   `rlLoadTexture` / `rlLoadFramebuffer` reach the same GPU objects with nothing
   but ints. Includes the HiDPI restore that `EndTextureMode` does across two
   functions and which is easy to get subtly wrong. Source: `net.b12n.raylib.textures`

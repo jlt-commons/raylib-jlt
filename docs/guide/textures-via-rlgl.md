@@ -13,7 +13,7 @@
 
 The three earlier FFI pages are all about arguments going *in*: a `Color` packed
 into a [`:uint`](color-by-value.md), a `Camera2D`
-[passed by pointer](struct-by-value-pointer-trick.md), `Vector2`/`Vector3`
+[passed by pointer](struct-by-value-pointer-trick.md) (as it was then), `Vector2`/`Vector3`
 geometry [rerouted through rlgl](rlgl-immediate-mode.md). Textures fail on the
 way *out*, which none of those tricks touch, and the fix is different in kind:
 stop calling raylib's texture API and call the layer it is built on.
@@ -39,8 +39,9 @@ about.
 
 `LoadImage`, `LoadRenderTexture`, `LoadFont`, `LoadShader`, `LoadModel` and
 `LoadSound` hit the same wall, since they all return their struct by value. That
-is why this suite has no image, font, shader, model or audio
-examples.
+is why the suite had no image, font, shader, model or audio examples before jolt
+0.7.23. raylib-jolt-demo has image, shader and audio examples now, built on the
+library's by-value bindings for images, shaders and audio streams.
 
 ## rlgl is scalar all the way down
 

@@ -188,8 +188,8 @@ Any C API whose types are small structs is now reachable directly rather than
 through a workaround: `Texture2D`, `Rectangle`, `Vector2`, `Camera2D`,
 `RenderTexture2D`, and the file loaders and audio API that return them. The
 cameras have migrated (`with-camera-2d` / `with-camera-3d` pass their structs
-this way); the rlgl code still works and is still what most of the examples
-use, but new bindings should start here.
+this way). The rlgl helpers still work, and dozens of raylib-jolt-demo's
+examples still call them, but new bindings should start here.
 
 ## See also
 

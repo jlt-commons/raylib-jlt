@@ -25,7 +25,7 @@ those in **floating-point registers**, one field per register, *not* as an integ
 (so the `Color` `:uint` trick is out) and *not* indirectly through a pointer (so the
 `Camera2D` `[:pointer]` trick is out; that only applies to composites **larger**
 than 16 bytes). There is no scalar or pointer binding that reproduces "three floats
-in three FP registers." So these functions can't be bound from Jolt.
+in three FP registers." So these functions couldn't be bound from Jolt before 0.7.23.
 
 ## rlgl is all scalars
 

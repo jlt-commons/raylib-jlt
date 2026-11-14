@@ -107,11 +107,11 @@ The trick works *because* AArch64 passes >16-byte structs indirectly. On the
 where the callee expects 24 bytes of struct data, and the call reads garbage
 (typically an "invalid memory reference" crash).
 
-So `camera2d`/`camera-3d` are AArch64-only as written. The **portable** alternative
-is to skip `BeginMode2D` entirely and apply the same transform with rlgl's scalar
+So `camera2d`/`camera-3d` were AArch64-only as written. The **portable** alternative
+was to skip `BeginMode2D` entirely and apply the same transform with rlgl's scalar
 matrix ops (`rlPushMatrix`/`rlTranslatef`/`rlRotatef`/`rlScalef`), which is exactly
 what `BeginMode2D` does internally. See [`rlgl-immediate-mode.md`](rlgl-immediate-mode.md)
-for the matrix stack. The source flags this inline:
+for the matrix stack. The source flagged this inline:
 
 ```clojure
 ;; NOTE: this is AArch64-specific. On the x86-64 SysV ABI the 24 bytes are passed
