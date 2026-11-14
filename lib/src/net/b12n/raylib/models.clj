@@ -17,10 +17,9 @@
    [net.b12n.raylib.shaders :as shaders]))
 
 ;; --- Camera3D + 3D geometry --------------------------------------------------
-;; Camera3D is 44 bytes (three Vector3 + a float + an int), passed BY VALUE to
-;; BeginMode3D, the same >16-byte-struct-by-pointer approach as Camera2D. 3D
-;; shape helpers like DrawCube take a Vector3 BY VALUE (a 12-byte float struct
-;; passed in FP registers, which the pointer trick does NOT cover), so draw 3D
+;; Camera3D (net.b12n.raylib.camera) is passed BY VALUE to BeginMode3D. 3D shape
+;; helpers like DrawCube take a Vector3 BY VALUE (a 12-byte float struct passed
+;; in FP registers); these predate jolt's [:by-value [:struct ...]] and draw 3D
 ;; geometry with rlgl immediate mode (rl-vertex-3f) instead. DrawGrid is scalar.
 (ffi/defcfn draw-grid    "DrawGrid"    [:int :float] :void)
 (ffi/defcfn ^:private rl-vertex-3f-raw "rlVertex3f"  [:float :float :float] :void)

@@ -143,8 +143,8 @@
 
 (defn sector!
   "A filled circular sector (pie slice / arc) drawn as an rlgl triangle fan, the
-  immediate-mode stand-in for DrawCircleSector, whose Vector2 center is by-value and
-  so unbindable (see rlgl-immediate-mode.md). The fan runs from the center across
+  immediate-mode stand-in for DrawCircleSector (written before jolt could pass its
+  by-value Vector2 center; see rlgl-immediate-mode.md). The fan runs from the center across
   [start-deg, end-deg] in `segments` sub-triangles, a single packed `:color`.
   0 deg points up and the angle increases clockwise (rim = (sin, -cos)); vertices are
   emitted rim -> center -> rim so the fan carries raylib's front-facing winding and is
@@ -180,8 +180,8 @@
 
 (defn ring!
   "A filled annulus (donut sector) as an rlgl quad strip between :inner and :outer
-  radius over [start-deg, end-deg], the immediate-mode stand-in for DrawRing (Vector2
-  center by value). Same angle convention as sector! (0 deg up, clockwise, increasing).
+  radius over [start-deg, end-deg], the immediate-mode stand-in for DrawRing (written
+  before jolt could pass its by-value Vector2 center). Same angle convention as sector! (0 deg up, clockwise, increasing).
   Each segment is two front-wound triangles.
     :cx :cy    center
     :inner :outer   radii
@@ -219,7 +219,7 @@
 
 (defn line-ex!
   "A thick line (rlgl quad) from (x1,y1) to (x2,y2), :thick pixels wide, the
-  immediate-mode stand-in for DrawLineEx (Vector2 endpoints by value). The quad is
+  immediate-mode stand-in for DrawLineEx (whose Vector2 endpoints are by value). The quad is
   front-wound at every line direction (perpendicular = (dy,-dx)/len).
     :x1 :y1 :x2 :y2   endpoints
     :thick   width in px (default 2)

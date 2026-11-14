@@ -6,10 +6,12 @@
 > the same call properly and on every architecture. New bindings should use it -
 > see [`structs-by-value.md`](structs-by-value.md).
 >
-> The trick is still what `with-camera-2d` / `with-camera-3d` do here, so the
-> page describes live code. Read the x86-64 caveat below before copying it
-> anywhere: on that ABI these structs go on the stack, not behind a pointer, and
-> the trick is simply wrong rather than merely unidiomatic.
+> `with-camera-2d`, `with-camera-3d` and `begin-mode-3d-ptr` no longer use it:
+> they bind `BeginMode2D`/`BeginMode3D` with `[:by-value [:struct ...]]` now.
+> The page is kept as the history of why the trick worked on AArch64 at all.
+> Read the x86-64 caveat below before copying it anywhere: on that ABI these
+> structs go on the stack, not behind a pointer, and the trick is simply wrong
+> rather than merely unidiomatic.
 
 raylib's cameras are structs passed **by value**: `BeginMode2D(Camera2D)` takes 24
 bytes, `BeginMode3D(Camera3D)` takes 44 bytes. Chez `foreign-procedure` (what

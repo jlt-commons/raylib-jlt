@@ -12,6 +12,19 @@ The guide reads at <https://jlt-commons.github.io/raylib-jlt/>. Entries before
 2026-10-04 describe examples that now live in
 [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo).
 
+## Unreleased
+
+- **`with-camera-2d`, `with-camera-3d` and `begin-mode-3d-ptr` pass the camera
+  by value** with jolt's `[:by-value [:struct ...]]` instead of binding
+  `BeginMode2D`/`BeginMode3D` as `[:pointer]`. The old binding only matched
+  AArch64, where a struct over 16 bytes travels behind a hidden pointer; on
+  x86-64 it is copied onto the stack, so the cameras were wrong there.
+- `world-to-screen` returns doubles, as its docstring always said, rather than
+  the `java.lang.Float`s a `:float` field reads back as.
+- The README, the guide and docstrings no longer say by-value `Vector2`/`Vector3`
+  arguments can't be bound; they can, and the rlgl helpers are described as the
+  library's choice rather than a workaround.
+
 ## 2026-11-14
 
 - **`init-window`'s title stays valid while the window is open.** raylib keeps
