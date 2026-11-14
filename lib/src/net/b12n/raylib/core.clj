@@ -13,13 +13,44 @@
    [net.b12n.raylib.native :as native]))
 
 ;; --- window / lifecycle ------------------------------------------------------
-(ffi/defcfn init-window    "InitWindow"   [:int :int :string] :void)
+;; InitWindow keeps the title pointer it is given (CORE.Window.title) instead of
+;; copying the text, so the title goes in as a C string this namespace owns. A
+;; :string argument is only guaranteed for the length of the call. The buffer
+;; lives until the next init-window or close-window, which frees it.
+(ffi/defcfn ^:private init-window-raw "InitWindow" [:int :int :pointer] :void)
+(ffi/defcfn ^:private close-window-raw "CloseWindow" [] :void)
+
+;; The C copy of the title raylib currently holds, or nil.
+(defonce ^:private window-title (atom nil))
+
+(defn- release-title!
+  "Swap in p as the held title and free the one it replaces."
+  [p]
+  (when-let [old (first (reset-vals! window-title p))]
+    (ffi/free old)))
+
+(defn init-window
+  "InitWindow. The title is copied to C memory that stays valid until
+  close-window, because raylib keeps the pointer rather than the text."
+  [width height title]
+  (let [p (ffi/string->ptr title)]
+    (try
+      (init-window-raw width height p)
+      (catch Throwable t
+        (when p (ffi/free p))
+        (throw t)))
+    (release-title! p)))
+
 (ffi/defcfn set-target-fps "SetTargetFPS" [:int] :void)
 ;; Reassigns the key that closes the window. Passing KEY-NULL takes ESC away, so
 ;; an example can put its own confirmation in front of a close request rather
 ;; than being closed out from under it. See window-should-close.
 (ffi/defcfn set-exit-key   "SetExitKey"   [:int] :void)
-(ffi/defcfn close-window   "CloseWindow"  [] :void)
+(defn close-window
+  "CloseWindow, then free the title init-window handed raylib."
+  []
+  (close-window-raw)
+  (release-title! nil))
 (ffi/defcfn ^:private should-close-raw "WindowShouldClose" [] :int)
 
 ;; --- frame -------------------------------------------------------------------

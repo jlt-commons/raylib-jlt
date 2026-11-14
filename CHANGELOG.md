@@ -12,6 +12,16 @@ The guide reads at <https://jlt-commons.github.io/raylib-jlt/>. Entries before
 2026-10-04 describe examples that now live in
 [raylib-jolt-demo](https://github.com/jlt-commons/raylib-jolt-demo).
 
+## 2026-11-14
+
+- **`init-window`'s title stays valid while the window is open.** raylib keeps
+  the title pointer it's given instead of copying the text, but a jolt
+  `:string` argument is only guaranteed for the length of the call. The title
+  now goes through a C string the library owns, which `close-window` (or the
+  next `init-window`) frees. raylib only reads the stored pointer during
+  `InitWindow` today, so nothing visibly changes. This removes the dangling
+  pointer before a raylib version starts reading it later.
+
 ## 2026-10-04
 
 - **The 187 examples moved to
