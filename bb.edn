@@ -92,14 +92,14 @@
               "../docs-engine"
               (str home "/dev/jlt-commons/docs-engine")]
              (remove nil?)
-             (filter (fn [d] (fs/exists? (fs/file d "bb.edn"))))
+             (filter (fn [d] (fs/exists? (fs/file d "src" "site" "core.clj"))))
              first)))
 
     (defn site-task
       "Runs one of the engine's tasks against this project."
       [task & args]
       (if-let [engine (docs-engine-dir)]
-        (let [argv (into ["bb" task (str (fs/cwd))] (remove nil? args))
+        (let [argv (into ["jolt" "run" task (str (fs/cwd))] (remove nil? args))
               res  (apply shell {:dir (str engine) :continue true} argv)]
           (when-not (zero? (:exit res)) (System/exit (:exit res))))
         (do
